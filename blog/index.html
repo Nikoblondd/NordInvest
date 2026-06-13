@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — NordInvest</title>
+  <meta name="description" content="Expert guides on Nordic property investment — rental yields, cash flow analysis, market research, and investment strategies for Denmark, Norway, and Sweden.">
+  <link rel="canonical" href="https://nordinvest.vercel.app/blog">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nordinvest.vercel.app/blog">
+  <meta property="og:title" content="Blog — NordInvest">
+  <meta property="og:description" content="Expert guides on Nordic property investment — rental yields, cash flow analysis, market research, and investment strategies for Denmark, Norway, and Sweden.">
+  <meta property="og:image" content="https://nordinvest.vercel.app/images/og-default.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Blog — NordInvest">
+  <meta name="twitter:description" content="Expert guides on Nordic property investment.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0F1F3D;
+      --blue: #2563EB;
+      --blue-light: #EFF6FF;
+      --bg: #FFFFFF;
+      --surface: #F8F9FA;
+      --surface-2: #F1F5F9;
+      --border: #E5E7EB;
+      --text: #111827;
+      --muted: #6B7280;
+      --green: #10B981;
+      --amber: #F59E0B;
+      --radius-card: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+    .logo-img { width: 32px; height: 32px; object-fit: contain; }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-link {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--navy); }
+    .nav-cta {
+      background: var(--navy);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .nav-cta:hover { background: #1a3360; }
+
+    /* HEADER */
+    .blog-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 24px;
+      text-align: center;
+    }
+    .blog-header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.75rem);
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .blog-header p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* FILTERS */
+    .filters-bar {
+      max-width: 1100px;
+      margin: 32px auto 0;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-label { font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-right: 4px; }
+    .tag-filter {
+      padding: 5px 14px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .tag-filter:hover { border-color: var(--blue); color: var(--blue); }
+    .tag-filter.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+    /* GRID */
+    .posts-grid {
+      max-width: 1100px;
+      margin: 32px auto 80px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    /* POST CARD */
+    .post-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .post-card:hover {
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-2px);
+    }
+    .post-card-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 2rem;
+    }
+    .post-card-img img { width: 100%; height: 180px; object-fit: cover; }
+    .post-card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .post-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .tag-pill {
+      padding: 2px 10px;
+      border-radius: 99px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .post-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+    .post-card-excerpt {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.55;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .post-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .post-card-date { font-size: 0.78rem; color: var(--muted); }
+    .post-card-reading { font-size: 0.78rem; color: var(--muted); }
+
+    /* FEATURED */
+    .featured-card {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      min-height: 260px;
+    }
+    .featured-card .post-card-img {
+      height: 100%;
+      border-radius: 0;
+    }
+    .featured-card .post-card-img img { height: 100%; border-radius: 0; }
+    .featured-card .post-card-body { padding: 32px; justify-content: center; }
+    .featured-card .post-card-title { font-size: 1.25rem; }
+    .featured-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 99px;
+      background: var(--amber);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    /* EMPTY / LOADING */
+    .posts-empty {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--muted);
+    }
+    .posts-empty h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--navy); }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.7);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+    .footer-logo .logo-img { filter: invert(1); }
+    footer p { font-size: 0.8rem; }
+
+    @media (max-width: 768px) {
+      .featured-card { grid-template-columns: 1fr; }
+      .featured-card .post-card-img { height: 200px; }
+      .nav-links .nav-link:not(.nav-cta) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="/N (4).png" class="logo-img" alt="NordInvest logo">
+      NordInvest
+    </a>
+    <div class="nav-links">
+      <a href="/#features" class="nav-link">Features</a>
+      <a href="/#how-it-works" class="nav-link">How It Works</a>
+      <a href="/blog" class="nav-link active">Blog</a>
+      <a href="/#analyze-section" class="nav-cta">Analyze Now</a>
+    </div>
+  </div>
+</nav>
+
+<header class="blog-header">
+  <h1>Nordic Property Insights</h1>
+  <p>In-depth guides on investing in Denmark, Norway, and Sweden — from yield analysis to market strategy.</p>
+</header>
+
+<div class="filters-bar" id="filtersBar">
+  <span class="filter-label">Filter:</span>
+  <button class="tag-filter active" data-tag="all">All Posts</button>
+</div>
+
+<main id="main-content">
+  <div class="posts-grid" id="postsGrid">
+    <div class="posts-empty">
+      <div class="spinner"></div>
+      <p>Loading posts…</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <a href="/" class="footer-logo">
+    <img src="/N (4).png" class="logo-img" alt="NordInvest logo">
+    NordInvest
+  </a>
+  <p>&copy; 2026 NordInvest. All rights reserved.</p>
+</footer>
+
+<script>
+  const grid   = document.getElementById('postsGrid');
+  const filtersBar = document.getElementById('filtersBar');
+
+  let allPosts = [];
+  let activeTag = 'all';
+
+  function formatDate(str) {
+    if (!str) return '';
+    const d = new Date(str);
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  function renderCard(post, index) {
+    const isFeatured = index === 0;
+    const imgHtml = post.image
+      ? `<div class="post-card-img"><img src="${post.image}" alt="${escHtml(post.title)}" loading="${index < 3 ? 'eager' : 'lazy'}"></div>`
+      : `<div class="post-card-img">📊</div>`;
+
+    const tags = (post.tags || []).slice(0, 3)
+      .map(t => `<span class="tag-pill">${escHtml(formatTag(t))}</span>`).join('');
+
+    const featuredBadge = isFeatured ? `<div class="featured-badge">★ Latest</div>` : '';
+
+    return `
+      <a class="post-card${isFeatured ? ' featured-card' : ''}" href="/blog/${post.slug}" data-tags="${(post.tags||[]).join(',')}">
+        ${imgHtml}
+        <div class="post-card-body">
+          ${featuredBadge}
+          <div class="post-card-tags">${tags}</div>
+          <div class="post-card-title">${escHtml(post.title)}</div>
+          <div class="post-card-excerpt">${escHtml(post.description || '')}</div>
+          <div class="post-card-meta">
+            <span class="post-card-date">${formatDate(post.date)}</span>
+            <span class="post-card-reading">${post.readingTime || 1} min read</span>
+          </div>
+        </div>
+      </a>`;
+  }
+
+  function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function formatTag(t) {
+    return t.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function renderPosts(posts) {
+    if (!posts.length) {
+      grid.innerHTML = `<div class="posts-empty"><h3>No posts found</h3><p>Try a different filter.</p></div>`;
+      return;
+    }
+    grid.innerHTML = posts.map((p, i) => renderCard(p, i)).join('');
+  }
+
+  function buildFilters(posts) {
+    const tagCounts = {};
+    posts.forEach(p => (p.tags||[]).forEach(t => { tagCounts[t] = (tagCounts[t]||0)+1; }));
+    const topTags = Object.entries(tagCounts).sort((a,b)=>b[1]-a[1]).slice(0,8).map(e=>e[0]);
+    topTags.forEach(tag => {
+      const btn = document.createElement('button');
+      btn.className = 'tag-filter';
+      btn.dataset.tag = tag;
+      btn.textContent = formatTag(tag);
+      filtersBar.appendChild(btn);
+    });
+
+    filtersBar.addEventListener('click', e => {
+      const btn = e.target.closest('.tag-filter');
+      if (!btn) return;
+      activeTag = btn.dataset.tag;
+      filtersBar.querySelectorAll('.tag-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filtered = activeTag === 'all' ? allPosts : allPosts.filter(p => (p.tags||[]).includes(activeTag));
+      renderPosts(filtered);
+    });
+  }
+
+  async function loadPosts() {
+    try {
+      const res = await fetch('/api/blog-index');
+      if (!res.ok) throw new Error('Failed to load posts');
+      const data = await res.json();
+      allPosts = data.posts || [];
+      buildFilters(allPosts);
+      renderPosts(allPosts);
+    } catch (err) {
+      grid.innerHTML = `<div class="posts-empty"><h3>Could not load posts</h3><p>${err.message}</p></div>`;
+    }
+  }
+
+  loadPosts();
+</script>
+</body>
+</html>

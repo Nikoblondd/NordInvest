@@ -1,1 +1,11 @@
-{}
+{
+  "functions": {
+    "api/blog-index.js": { "includeFiles": "content/**" },
+    "api/blog-post.js":  { "includeFiles": "content/**" },
+    "api/sitemap.js":    { "includeFiles": "content/**" }
+  },
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/blog/:slug+", "destination": "/blog/post.html" }
+  ]
+}

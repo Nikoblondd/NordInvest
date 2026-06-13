@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Loading… — NordInvest Blog</title>
+  <meta id="meta-desc" name="description" content="">
+  <link id="canonical" rel="canonical" href="https://nordinvest.vercel.app/blog">
+  <meta id="og-type"  property="og:type"  content="article">
+  <meta id="og-url"   property="og:url"   content="">
+  <meta id="og-title" property="og:title" content="">
+  <meta id="og-desc"  property="og:description" content="">
+  <meta id="og-image" property="og:image" content="https://nordinvest.vercel.app/images/og-default.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta id="tw-title" name="twitter:title" content="">
+  <meta id="tw-desc"  name="twitter:description" content="">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <script id="json-ld" type="application/ld+json">{}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0F1F3D;
+      --blue: #2563EB;
+      --blue-light: #EFF6FF;
+      --bg: #FFFFFF;
+      --surface: #F8F9FA;
+      --surface-2: #F1F5F9;
+      --border: #E5E7EB;
+      --text: #111827;
+      --muted: #6B7280;
+      --green: #10B981;
+      --amber: #F59E0B;
+      --radius-card: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+      --content-width: 680px;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+    .logo-img { width: 32px; height: 32px; object-fit: contain; }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-link {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--navy); }
+    .nav-cta {
+      background: var(--navy);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .nav-cta:hover { background: #1a3360; }
+
+    /* BREADCRUMB */
+    .breadcrumb {
+      max-width: 1100px;
+      margin: 20px auto 0;
+      padding: 0 24px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--navy); }
+    .breadcrumb span { margin: 0 6px; }
+
+    /* LAYOUT */
+    .post-layout {
+      max-width: 1100px;
+      margin: 32px auto 80px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: var(--content-width) 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* ARTICLE */
+    article { min-width: 0; }
+    .post-hero-img {
+      width: 100%;
+      border-radius: var(--radius-card);
+      margin-bottom: 32px;
+      max-height: 420px;
+      object-fit: cover;
+    }
+    .post-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tag-pill {
+      padding: 3px 12px;
+      border-radius: 99px;
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .post-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .post-meta-item { display: flex; align-items: center; gap: 5px; }
+    .post-meta svg { opacity: 0.6; }
+
+    /* BODY */
+    .post-body {
+      font-family: 'Lora', serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #1f2937;
+    }
+    .post-body h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 2.2em 0 0.7em;
+      letter-spacing: -0.02em;
+    }
+    .post-body h3 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 1.8em 0 0.5em;
+    }
+    .post-body p { margin-bottom: 1.4em; }
+    .post-body ul, .post-body ol {
+      margin: 0.8em 0 1.4em 1.4em;
+    }
+    .post-body li { margin-bottom: 0.5em; }
+    .post-body strong { font-weight: 700; color: var(--navy); }
+    .post-body em { font-style: italic; }
+    .post-body a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+    .post-body a:hover { color: #1d4ed8; }
+    .post-body blockquote {
+      border-left: 3px solid var(--blue);
+      margin: 1.4em 0;
+      padding: 12px 20px;
+      background: var(--blue-light);
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: #374151;
+    }
+    .post-body pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin: 1.4em 0;
+    }
+    .post-body code {
+      background: var(--surface-2);
+      color: var(--navy);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.85em;
+    }
+    .post-body pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+    .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+    .post-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.4em 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+    }
+    .post-body th {
+      background: var(--surface);
+      color: var(--navy);
+      font-weight: 600;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+    }
+    .post-body td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: #374151;
+    }
+    .post-body tr:last-child td { border-bottom: none; }
+    .post-body img { max-width: 100%; border-radius: 8px; margin: 1em 0; }
+
+    /* SHARE */
+    .share-section {
+      margin-top: 40px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+    .share-label { font-size: 0.82rem; font-weight: 600; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .share-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .share-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .share-btn:hover { background: var(--surface); border-color: #d1d5db; }
+    .share-btn.twitter { color: #1d9bf0; border-color: #bfdbfe; }
+    .share-btn.linkedin { color: #0077b5; border-color: #bfdbfe; }
+    .share-btn.copy.copied { color: var(--green); border-color: #a7f3d0; }
+
+    /* CTA CARD */
+    .cta-card {
+      margin-top: 40px;
+      background: var(--navy);
+      color: #fff;
+      border-radius: var(--radius-card);
+      padding: 28px;
+      text-align: center;
+    }
+    .cta-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .cta-card p { font-size: 0.875rem; opacity: 0.75; margin-bottom: 16px; }
+    .cta-card a {
+      display: inline-block;
+      background: #fff;
+      color: var(--navy);
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .cta-card a:hover { opacity: 0.9; }
+
+    /* SIDEBAR */
+    .sidebar { position: sticky; top: 84px; }
+    .toc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .toc-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .toc-list { list-style: none; }
+    .toc-list li { margin-bottom: 2px; }
+    .toc-list a {
+      font-size: 0.84rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: block;
+      line-height: 1.35;
+      transition: all 0.15s;
+    }
+    .toc-list a:hover, .toc-list a.active { background: var(--blue-light); color: var(--blue); }
+    .toc-list .toc-h3 a { padding-left: 20px; font-size: 0.8rem; }
+
+    .sidebar-analyze {
+      background: var(--blue-light);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-card);
+      padding: 20px;
+    }
+    .sidebar-analyze h4 { font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .sidebar-analyze p { font-size: 0.82rem; color: var(--muted); margin-bottom: 14px; }
+    .sidebar-analyze a {
+      display: block;
+      background: var(--navy);
+      color: #fff;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.84rem;
+      text-decoration: none;
+      text-align: center;
+      transition: background 0.15s;
+    }
+    .sidebar-analyze a:hover { background: #1a3360; }
+
+    /* RELATED */
+    .related-section {
+      max-width: 1100px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .related-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .related-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .related-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-2px); }
+    .related-card-title { font-size: 0.9rem; font-weight: 700; color: var(--navy); line-height: 1.35; margin-bottom: 6px; }
+    .related-card-date { font-size: 0.75rem; color: var(--muted); }
+
+    /* LOADING */
+    .post-loading {
+      max-width: 680px;
+      margin: 80px auto;
+      text-align: center;
+      color: var(--muted);
+      padding: 0 24px;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.7);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+    .footer-logo .logo-img { filter: invert(1); }
+    footer p { font-size: 0.8rem; }
+
+    @media (max-width: 900px) {
+      .post-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar { position: static; }
+    }
+    @media (max-width: 600px) {
+      .nav-links .nav-link:not(.nav-cta) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="/N (4).png" class="logo-img" alt="NordInvest logo">
+      NordInvest
+    </a>
+    <div class="nav-links">
+      <a href="/#features" class="nav-link">Features</a>
+      <a href="/#how-it-works" class="nav-link">How It Works</a>
+      <a href="/blog" class="nav-link">Blog</a>
+      <a href="/#analyze-section" class="nav-cta">Analyze Now</a>
+    </div>
+  </div>
+</nav>
+
+<div class="breadcrumb" id="breadcrumb">
+  <a href="/">Home</a><span>›</span>
+  <a href="/blog">Blog</a><span>›</span>
+  <span id="breadcrumb-title">Loading…</span>
+</div>
+
+<div id="post-loading" class="post-loading">
+  <div class="spinner"></div>
+  <p>Loading post…</p>
+</div>
+
+<div id="post-content" style="display:none">
+  <div class="post-layout">
+    <article id="article">
+      <img id="hero-img" class="post-hero-img" src="" alt="" style="display:none">
+      <div class="post-tags" id="post-tags"></div>
+      <h1 class="post-title" id="post-title"></h1>
+      <div class="post-meta" id="post-meta"></div>
+      <div class="post-body" id="post-body"></div>
+
+      <div class="share-section">
+        <div class="share-label">Share this article</div>
+        <div class="share-btns">
+          <a class="share-btn twitter" id="share-twitter" href="#" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.735l7.73-8.835L1.254 2.25H8.08l4.213 5.57zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Share on X
+          </a>
+          <a class="share-btn linkedin" id="share-linkedin" href="#" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+            Share on LinkedIn
+          </a>
+          <button class="share-btn copy" id="share-copy" onclick="copyLink()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span id="copy-label">Copy link</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="cta-card">
+        <h3>Analyze any Nordic property in 60 seconds</h3>
+        <p>Use the NordInvest analyzer — free, instant, no sign-up required.</p>
+        <a href="/#analyze-section">Try the Analyzer →</a>
+      </div>
+    </article>
+
+    <aside class="sidebar">
+      <div class="toc-card" id="toc-card" style="display:none">
+        <div class="toc-title">In this article</div>
+        <ul class="toc-list" id="toc-list"></ul>
+      </div>
+      <div class="sidebar-analyze">
+        <h4>Free Property Analyzer</h4>
+        <p>Enter any property URL or details and get an instant investment report.</p>
+        <a href="/#analyze-section">Analyze a Property →</a>
+      </div>
+    </aside>
+  </div>
+
+  <section class="related-section" id="related-section" style="display:none">
+    <div class="related-title">Related Articles</div>
+    <div class="related-grid" id="related-grid"></div>
+  </section>
+</div>
+
+<footer>
+  <a href="/" class="footer-logo">
+    <img src="/N (4).png" class="logo-img" alt="NordInvest logo">
+    NordInvest
+  </a>
+  <p>&copy; 2026 NordInvest. All rights reserved.</p>
+</footer>
+
+<script>
+  const slug = location.pathname.replace(/^\/blog\/?/, '').replace(/\/$/, '') || '';
+
+  function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function formatDate(str) {
+    if (!str) return '';
+    const d = new Date(str);
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  function formatTag(t) {
+    return t.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(location.href).then(() => {
+      const btn  = document.getElementById('share-copy');
+      const lbl  = document.getElementById('copy-label');
+      btn.classList.add('copied');
+      lbl.textContent = 'Copied!';
+      setTimeout(() => { btn.classList.remove('copied'); lbl.textContent = 'Copy link'; }, 2000);
+    });
+  }
+
+  function buildToc(toc) {
+    if (!toc || toc.length < 2) return;
+    const card = document.getElementById('toc-card');
+    const list = document.getElementById('toc-list');
+    list.innerHTML = toc.map(item => `
+      <li class="toc-h${item.level}">
+        <a href="#${escHtml(item.id)}" onclick="handleTocClick(event, '${escHtml(item.id)}')">${escHtml(item.text)}</a>
+      </li>`).join('');
+    card.style.display = 'block';
+
+    // Highlight active heading on scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          list.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+          const a = list.querySelector(`a[href="#${CSS.escape(e.target.id)}"]`);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    toc.forEach(item => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+  }
+
+  function handleTocClick(e, id) {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function buildRelated(related) {
+    if (!related || !related.length) return;
+    const section = document.getElementById('related-section');
+    const grid    = document.getElementById('related-grid');
+    grid.innerHTML = related.map(p => `
+      <a class="related-card" href="/blog/${escHtml(p.slug)}">
+        <div class="related-card-title">${escHtml(p.title)}</div>
+        <div class="related-card-date">${formatDate(p.date)}</div>
+      </a>`).join('');
+    section.style.display = 'block';
+  }
+
+  function setMeta(meta, postUrl) {
+    document.getElementById('page-title').textContent = `${meta.title} — NordInvest Blog`;
+    document.getElementById('meta-desc').content = meta.description || '';
+    document.getElementById('canonical').href = postUrl;
+    document.getElementById('og-url').content = postUrl;
+    document.getElementById('og-title').content = meta.title;
+    document.getElementById('og-desc').content = meta.description || '';
+    if (meta.image) document.getElementById('og-image').content = 'https://nordinvest.vercel.app' + meta.image;
+    document.getElementById('tw-title').content = meta.title;
+    document.getElementById('tw-desc').content = meta.description || '';
+
+    // Article JSON-LD
+    const ld = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description || '',
+      "url": postUrl,
+      "datePublished": meta.date || '',
+      "dateModified": meta.date || '',
+      "author": { "@type": "Organization", "name": meta.author || "NordInvest", "url": "https://nordinvest.vercel.app" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "NordInvest",
+        "url": "https://nordinvest.vercel.app",
+        "logo": { "@type": "ImageObject", "url": "https://nordinvest.vercel.app/N (4).png" }
+      }
+    };
+    if (meta.image) ld.image = 'https://nordinvest.vercel.app' + meta.image;
+    document.getElementById('json-ld').textContent = JSON.stringify(ld);
+  }
+
+  async function loadPost() {
+    if (!slug) { location.href = '/blog'; return; }
+
+    try {
+      const res = await fetch(`/api/blog-post?slug=${encodeURIComponent(slug)}`);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      const { meta, toc, html, related } = data;
+
+      const postUrl = `https://nordinvest.vercel.app/blog/${meta.slug}`;
+      setMeta(meta, postUrl);
+
+      // Breadcrumb
+      document.getElementById('breadcrumb-title').textContent = meta.title;
+
+      // Hero image
+      if (meta.image) {
+        const img = document.getElementById('hero-img');
+        img.src = meta.image;
+        img.alt = meta.title;
+        img.style.display = 'block';
+      }
+
+      // Tags
+      const tags = meta.tags || [];
+      document.getElementById('post-tags').innerHTML =
+        tags.map(t => `<span class="tag-pill">${escHtml(formatTag(t))}</span>`).join('');
+
+      // Title
+      document.getElementById('post-title').textContent = meta.title;
+
+      // Meta row
+      document.getElementById('post-meta').innerHTML = `
+        <span class="post-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${formatDate(meta.date)}
+        </span>
+        <span class="post-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          ${meta.readingTime || 1} min read
+        </span>
+        <span class="post-meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          ${escHtml(meta.author || 'NordInvest')}
+        </span>`;
+
+      // Body
+      document.getElementById('post-body').innerHTML = html;
+
+      // Share links
+      const encodedUrl   = encodeURIComponent(postUrl);
+      const encodedTitle = encodeURIComponent(meta.title);
+      document.getElementById('share-twitter').href =
+        `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
+      document.getElementById('share-linkedin').href =
+        `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+
+      buildToc(toc);
+      buildRelated(related);
+
+      document.getElementById('post-loading').style.display = 'none';
+      document.getElementById('post-content').style.display = 'block';
+
+    } catch (err) {
+      document.getElementById('post-loading').innerHTML = `
+        <h2 style="color:var(--navy);margin-bottom:12px">Post not found</h2>
+        <p style="margin-bottom:20px">${escHtml(err.message)}</p>
+        <a href="/blog" style="color:var(--blue);text-decoration:underline">← Back to Blog</a>`;
+    }
+  }
+
+  loadPost();
+</script>
+</body>
+</html>
