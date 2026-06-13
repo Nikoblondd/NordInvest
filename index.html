@@ -1581,10 +1581,7 @@ async function _acFetch(query, dropdown, input) {
 }
 
 // ── URL EXTRACTION ────────────────────────────
-const CORS_PROXIES = [
-  u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-  u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
-];
+const SCRAPE_API = '/api/scrape';
 
 const FX_RATES = { NOK: 0.0882, SEK: 0.0870, DKK: 0.134, GBP: 1.17, USD: 0.92, EUR: 1, CHF: 1.08, AUD: 0.60, CAD: 0.68 };
 
@@ -1720,34 +1717,27 @@ async function extractPropertyData() {
   document.getElementById('extracted-review').style.display = 'none';
 
   try {
-    let html = null;
-    for (const proxyFn of CORS_PROXIES) {
-      try {
-        const r = await Promise.race([
-          fetch(proxyFn(url)),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 9000))
-        ]);
-        if (r.ok) { const t = await r.text(); if (t && t.length > 300) { html = t; break; } }
-      } catch(_) {}
-    }
-    if (!html) throw new Error('Could not fetch the listing. Please enter details manually.');
+    const apiUrl = `${SCRAPE_API}?url=${encodeURIComponent(url)}`;
+    const r = await Promise.race([
+      fetch(apiUrl),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 15000))
+    ]);
 
-    const parsed = parsePropertyFromHtml(html, url);
-    const priceEur = parsed.price ? toEur(parsed.price, parsed.currency) : null;
+    if (!r.ok) throw new Error(`Server error (${r.status}). Please enter details manually.`);
+    const parsed = await r.json();
 
-    if (!priceEur && !parsed.location) {
-      throw new Error('Could not extract data from this page. Please try entering details manually.');
-    }
+    if (!parsed.success) throw new Error(parsed.error || 'Could not extract data. Please enter details manually.');
+    if (!parsed.priceEur && !parsed.location) throw new Error('Could not find property data on this page. Please enter details manually.');
 
     if (parsed.location) document.getElementById('ext-location').value = parsed.location;
-    if (priceEur) {
-      document.getElementById('ext-price').value = priceEur;
+    if (parsed.priceEur) {
+      document.getElementById('ext-price').value = parsed.priceEur;
       const noteEl = document.getElementById('ext-price-note');
       noteEl.textContent = parsed.currency !== 'EUR'
         ? `Converted from ${parsed.currency} ${(parsed.price || 0).toLocaleString()} at current rate`
         : '';
     }
-    const estRent = priceEur ? estimateRentFromPrice(priceEur, parsed.location || '') : null;
+    const estRent = parsed.priceEur ? estimateRentFromPrice(parsed.priceEur, parsed.location || '') : null;
     if (estRent) document.getElementById('ext-rent').value = estRent;
 
     document.getElementById('extracted-review').style.display = 'block';
