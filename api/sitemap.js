@@ -1,9 +1,3 @@
-import { readdir, readFile } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 const BASE_URL = 'https://nordinvest.vercel.app';
 
 function parseMeta(content) {
@@ -27,21 +21,28 @@ export default async function handler(req, res) {
     { url: '/blog', changefreq: 'weekly',  priority: '0.9' },
   ];
 
+  // Fetch manifest + posts from static CDN files — no filesystem needed
   let blogEntries = [];
   try {
-    const dir  = join(__dirname, 'content', 'blog');
-    const files = (await readdir(dir)).filter(f => f.endsWith('.md'));
-    blogEntries = await Promise.all(files.map(async f => {
-      const src  = await readFile(join(dir, f), 'utf-8');
-      const meta = parseMeta(src);
-      return {
-        url:        `/blog/${meta.slug || f.replace('.md', '')}`,
-        lastmod:    meta.date || '',
-        changefreq: 'monthly',
-        priority:   '0.8',
-      };
-    }));
-    blogEntries.sort((a, b) => (b.lastmod > a.lastmod ? 1 : -1));
+    const origin = `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host || 'nordinvest.vercel.app'}`;
+    const manifestRes = await fetch(`${origin}/content/blog/manifest.json`);
+    if (manifestRes.ok) {
+      const { posts: slugs } = await manifestRes.json();
+      const entries = await Promise.all(slugs.map(async slug => {
+        try {
+          const r = await fetch(`${origin}/content/blog/${slug}.md`);
+          if (!r.ok) return null;
+          const meta = parseMeta(await r.text());
+          return {
+            url:        `/blog/${meta.slug || slug}`,
+            lastmod:    meta.date || '',
+            changefreq: 'monthly',
+            priority:   '0.8',
+          };
+        } catch { return null; }
+      }));
+      blogEntries = entries.filter(Boolean).sort((a, b) => b.lastmod > a.lastmod ? 1 : -1);
+    }
   } catch (_) {}
 
   const allPages = [...staticPages, ...blogEntries];
