@@ -767,6 +767,12 @@
     .proj-header-row, .proj-row { grid-template-columns: 65px 1fr 1fr; font-size: 13px; }
   }
 
+
+  .market-source {
+    font-size: 11.5px; color: var(--text-muted); margin-top: 10px;
+    padding-top: 10px; border-top: 1px solid var(--border);
+  }
+
 </style>
 </head>
 <body>
@@ -1276,25 +1282,26 @@
         <div id="market-results" style="display:none">
           <div class="market-grid">
             <div class="market-stat">
-              <div class="market-stat-label">Market Average Rent</div>
+              <div class="market-stat-label">Avg. Sale Price</div>
               <div class="market-stat-value" id="market-avg">—</div>
-              <div class="market-stat-sub">per month, comparable units</div>
+              <div class="market-stat-sub">per m², area average</div>
             </div>
             <div class="market-stat">
-              <div class="market-stat-label">Market Range</div>
+              <div class="market-stat-label">Avg. Rent per m²</div>
               <div class="market-stat-value" id="market-range">—</div>
-              <div class="market-stat-sub">low – high per month</div>
+              <div class="market-stat-sub">per month, gross estimate</div>
             </div>
             <div class="market-stat">
-              <div class="market-stat-label">Avg. Yield in Area</div>
+              <div class="market-stat-label">Avg. Gross Yield</div>
               <div class="market-stat-value" id="market-yield">—</div>
-              <div class="market-stat-sub">gross rental yield estimate</div>
+              <div class="market-stat-sub">area benchmark, not guaranteed</div>
             </div>
           </div>
           <div class="market-comparison">
             <div class="market-comparison-text" id="market-comparison-text">—</div>
             <span id="market-comparison-badge">—</span>
           </div>
+          <div class="market-source" id="market-source" style="display:none"></div>
         </div>
       </div>
 
@@ -1582,38 +1589,19 @@ function lookupCountry(countryName) {
 }
 
 async function researchMarket(locationInput) {
-  // 1. Try local city lookup first (instant)
-  const localMatch = lookupCity(locationInput);
-
-  // 2. Geocode via Nominatim to get canonical name + country
-  let displayName = locationInput;
-  let countryData = COUNTRY_TIERS.default;
-  try {
-    const query = encodeURIComponent(locationInput);
-    const res = await Promise.race([
-      fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1&accept-language=en`, {
-        headers: { 'Accept-Language': 'en' }
-      }),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 5000))
-    ]);
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data[0]) {
-        const parts = data[0].display_name.split(',').map(s => s.trim());
-        displayName = parts[0];
-        const country = parts[parts.length - 1];
-        countryData = lookupCountry(country);
-        // Try to match geocoded city name against our data
-        const geoMatch = lookupCity(parts.slice(0, 3).join(' '));
-        if (geoMatch) return { data: geoMatch, displayName };
-      }
-    }
-  } catch (_) {
-    // Nominatim unavailable — fall through to local data
-  }
-
-  if (localMatch) return { data: localMatch, displayName };
-  return { data: countryData, displayName };
+  const sqm = window._niPropertySqm || null;
+  const params = new URLSearchParams({
+    location: locationInput,
+    currency: activeCurrency,
+    ...(sqm ? { sqm } : {}),
+  });
+  const res = await fetch(`${MARKET_API}?${params}`, {
+    signal: AbortSignal.timeout ? AbortSignal.timeout(12000) : undefined,
+  });
+  if (!res.ok) throw new Error('market API error');
+  const d = await res.json();
+  if (!d.success) throw new Error(d.error || 'market API failed');
+  return { data: d, displayName: d.regionName || locationInput };
 }
 
 function showMarketResults(marketInfo, userRent) {
@@ -1623,25 +1611,56 @@ function showMarketResults(marketInfo, userRent) {
   document.getElementById('market-results').style.display = 'block';
   document.getElementById('market-location-text').textContent = marketInfo.displayName;
 
-  const sym = CURRENCY_SYMBOLS[activeCurrency] || activeCurrency;
-  document.getElementById('market-avg').textContent   = sym + d.avg.toLocaleString();
-  document.getElementById('market-range').textContent = sym + d.low.toLocaleString() + ' – ' + sym + d.high.toLocaleString();
-  document.getElementById('market-yield').textContent = d.yield.toFixed(1) + '%';
+  const sym = CURRENCY_SYMBOLS[d.currency || activeCurrency] || (d.currency || activeCurrency);
+  document.getElementById('market-avg').textContent   = sym + (d.pricePerSqm || '—').toLocaleString() + '/m²';
+  document.getElementById('market-range').textContent = sym + (d.rentPerSqm  || '—').toLocaleString() + '/m²/mo';
+  document.getElementById('market-yield').textContent = (d.grossYield || '—') + '%';
 
-  const diff = userRent - d.avg;
-  const diffPct = Math.abs(Math.round((diff / d.avg) * 100));
   const compEl  = document.getElementById('market-comparison-text');
   const badgeEl = document.getElementById('market-comparison-badge');
+  const srcEl   = document.getElementById('market-source');
+  if (srcEl && d.source) {
+    srcEl.textContent = '↗ Source: ' + d.source;
+    srcEl.style.display = 'block';
+  }
 
-  if (diff > d.avg * 0.15) {
-    compEl.innerHTML = `Your expected rent of <strong>${sym}${userRent.toLocaleString()}/mo</strong> is <strong>${diffPct}% above</strong> the market average for this area (${sym}${d.avg.toLocaleString()}/mo). Verify demand supports this rate.`;
-    badgeEl.className = 'market-badge-neg'; badgeEl.textContent = '⚠ Above market';
-  } else if (diff < -d.avg * 0.1) {
-    compEl.innerHTML = `Your expected rent of <strong>${sym}${userRent.toLocaleString()}/mo</strong> is <strong>${diffPct}% below</strong> the market average (${sym}${d.avg.toLocaleString()}/mo). There may be upside potential.`;
-    badgeEl.className = 'market-badge-pos'; badgeEl.textContent = '↑ Room to grow';
+  // Per-sqm comparison
+  const sqm = window._niPropertySqm;
+  if (sqm && d.rentPerSqm) {
+    const mktRentForSqm = Math.round(sqm * d.rentPerSqm);
+    const userRentPerSqm = Math.round(userRent / sqm);
+    const diff = userRentPerSqm - d.rentPerSqm;
+    const diffPct = Math.abs(Math.round((diff / d.rentPerSqm) * 100));
+    if (diff > d.rentPerSqm * 0.15) {
+      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, which is <strong>${diffPct}% above</strong> the market average of ${sym}${d.rentPerSqm}/m²/mo. For a ${sqm}m² property, market rent would be ~<strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong>. Verify that a premium is justified.`;
+      badgeEl.className = 'market-badge-neg'; badgeEl.textContent = '⚠ Above market rate';
+    } else if (diff < -d.rentPerSqm * 0.10) {
+      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, which is <strong>${diffPct}% below</strong> the area average of ${sym}${d.rentPerSqm}/m²/mo. For ${sqm}m² at market rate, rent could reach ~<strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong> — potential upside.`;
+      badgeEl.className = 'market-badge-pos'; badgeEl.textContent = '↑ Below market — upside';
+    } else {
+      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, in line with the area average of ${sym}${d.rentPerSqm}/m²/mo. For ${sqm}m², the market rent benchmark is ~<strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong>.`;
+      badgeEl.className = 'market-badge-neu'; badgeEl.textContent = '✓ At market rate';
+    }
   } else {
-    compEl.innerHTML = `Your expected rent of <strong>${sym}${userRent.toLocaleString()}/mo</strong> is in line with the local market average of ${sym}${d.avg.toLocaleString()}/mo. The rent assumption appears realistic.`;
-    badgeEl.className = 'market-badge-neu'; badgeEl.textContent = '✓ At market rate';
+    // Fallback: compare implied rent/sqm from price
+    const impliedMonthlyFromYield = d.pricePerSqm ? Math.round(window._niAnalysisData?._price * (d.grossYield/100) / 12) : null;
+    if (impliedMonthlyFromYield) {
+      const diff = userRent - impliedMonthlyFromYield;
+      const diffPct = Math.abs(Math.round((diff / impliedMonthlyFromYield) * 100));
+      if (diff > impliedMonthlyFromYield * 0.15) {
+        compEl.innerHTML = `Based on area yield of <strong>${d.grossYield}%</strong>, the implied market rent for this property is ~<strong>${sym}${impliedMonthlyFromYield.toLocaleString()}/mo</strong>. Your estimate of ${sym}${userRent.toLocaleString()}/mo is <strong>${diffPct}% above</strong> that — verify demand at this level.`;
+        badgeEl.className = 'market-badge-neg'; badgeEl.textContent = '⚠ Above yield-implied rate';
+      } else if (diff < -impliedMonthlyFromYield * 0.10) {
+        compEl.innerHTML = `Based on area yield of <strong>${d.grossYield}%</strong>, implied market rent is ~<strong>${sym}${impliedMonthlyFromYield.toLocaleString()}/mo</strong>. Your estimate of ${sym}${userRent.toLocaleString()}/mo is <strong>${diffPct}% below</strong> — there may be upside if you add the property's size.`;
+        badgeEl.className = 'market-badge-pos'; badgeEl.textContent = '↑ Room to grow';
+      } else {
+        compEl.innerHTML = `Your expected rent of <strong>${sym}${userRent.toLocaleString()}/mo</strong> aligns with the area's gross yield of <strong>${d.grossYield}%</strong>. The rental assumption appears realistic for this market.`;
+        badgeEl.className = 'market-badge-neu'; badgeEl.textContent = '✓ Yield-consistent';
+      }
+    } else {
+      compEl.innerHTML = `Market average rent per m² in ${marketInfo.displayName}: <strong>${sym}${d.rentPerSqm}/m²/mo</strong>. Add the property's size (m²) to see a direct comparison.`;
+      badgeEl.className = 'market-badge-neu'; badgeEl.textContent = '→ Add size for comparison';
+    }
   }
 
   // Classification
@@ -1864,6 +1883,7 @@ function animateCounter(el, target, dur = 1100) {
 
 // ── TAB SWITCHING ─────────────────────────────
 function switchFormTab(tab) {
+  if (tab === 'manual') window._niPropertySqm = null;
   ['url','manual'].forEach(t => {
     document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
     document.getElementById('tab-' + t).classList.toggle('active', t === tab);
@@ -1932,6 +1952,7 @@ async function _acFetch(query, dropdown, input) {
 
 // ── URL EXTRACTION ────────────────────────────
 const SCRAPE_API = '/api/scrape';
+const MARKET_API  = '/api/market';
 
 const FX_RATES = { NOK: 0.0882, SEK: 0.0870, DKK: 0.134, GBP: 1.17, USD: 0.92, EUR: 1, CHF: 1.08, AUD: 0.60, CAD: 0.68 };
 
@@ -2081,6 +2102,7 @@ async function extractPropertyData() {
 
     if (parsed.currency) setCurrency(parsed.currency);
     if (parsed.location) document.getElementById('ext-location').value = parsed.location;
+    if (parsed.squareMeters) window._niPropertySqm = parsed.squareMeters;
     if (parsed.price) {
       document.getElementById('ext-price').value = parsed.price;
       document.getElementById('ext-price-note').textContent = '';
@@ -2175,6 +2197,7 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   btn.classList.remove('loading');
   btnTextEl.textContent = originalText;
   data._rate = rate; data._rent = rent; data._expenses = expenses;
+  // sqm persists from scraper extraction — reset on new manual analysis if not from URL
   showPage('analysis');
 
   setTimeout(() => {
@@ -2192,7 +2215,23 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   }, 300);
 
   marketPromise.then(marketInfo => showMarketResults(marketInfo, rent))
-    .catch(() => showMarketResults({ data: lookupCity(location) || COUNTRY_TIERS.default, displayName: location }, rent));
+    .catch(() => {
+      // Market API failed — fall back to curated local data
+      const fallback = lookupCity(location) || COUNTRY_TIERS.default;
+      const sym = CURRENCY_SYMBOLS[activeCurrency] || activeCurrency;
+      showMarketResults({
+        data: {
+          pricePerSqm: fallback.avg * 200, // rough estimate
+          rentPerSqm: fallback.avg,
+          grossYield: fallback.yield,
+          appreciation: fallback.appreciation || 3.5,
+          marketType: fallback.marketType || 'balanced',
+          currency: activeCurrency,
+          source: 'Estimated — market API unavailable',
+        },
+        displayName: location
+      }, rent);
+    });
 }
 
 // ── SUBMIT ANALYSIS (manual form) ─────────────
