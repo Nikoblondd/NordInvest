@@ -5,7 +5,7 @@ date: 2026-01-15
 description: A practical framework for evaluating whether a property in Denmark, Norway, or Sweden is worth buying — covering yield, cash flow, appreciation, and market context.
 tags: [investment-strategy, denmark, norway, sweden, beginner-guide]
 author: NordInvest
-image: /images/blog/nordic-property-analysis.jpg
+image: https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&auto=format&fit=crop&q=80
 ---
 
 ## Introduction

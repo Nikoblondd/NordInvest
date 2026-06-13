@@ -354,11 +354,28 @@
     return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
+  // Tag → Unsplash image fallback map
+  const TAG_IMAGES = {
+    'denmark':            'https://images.unsplash.com/photo-1552560880-2482cef14240?w=800&auto=format&fit=crop&q=75',
+    'norway':             'https://images.unsplash.com/photo-1534067058742-a4585f7d4ff4?w=800&auto=format&fit=crop&q=75',
+    'sweden':             'https://images.unsplash.com/photo-1719305352456-d9e9b93f4e84?w=800&auto=format&fit=crop&q=75',
+    'investment-strategy':'https://images.unsplash.com/photo-1609495059028-7336a644dbca?w=800&auto=format&fit=crop&q=75',
+    'beginner-guide':     'https://images.unsplash.com/photo-1611110128271-bfb86aae0dc2?w=800&auto=format&fit=crop&q=75',
+    'default':            'https://images.unsplash.com/photo-1552560880-2482cef14240?w=800&auto=format&fit=crop&q=75',
+  };
+
+  function getPostImage(post) {
+    if (post.image && post.image.startsWith('http')) return post.image;
+    for (const tag of (post.tags || [])) {
+      if (TAG_IMAGES[tag]) return TAG_IMAGES[tag];
+    }
+    return TAG_IMAGES['default'];
+  }
+
   function renderCard(post, index) {
     const isFeatured = index === 0;
-    const imgHtml = post.image
-      ? `<div class="post-card-img"><img src="${post.image}" alt="${escHtml(post.title)}" loading="${index < 3 ? 'eager' : 'lazy'}"></div>`
-      : `<div class="post-card-img">📊</div>`;
+    const imgSrc = getPostImage(post);
+    const imgHtml = `<div class="post-card-img"><img src="${imgSrc}" alt="${escHtml(post.title)}" loading="${index < 3 ? 'eager' : 'lazy'}" onerror="this.parentElement.style.background='var(--surface-2)'"></div>`;
 
     const tags = (post.tags || []).slice(0, 3)
       .map(t => `<span class="tag-pill">${escHtml(formatTag(t))}</span>`).join('');

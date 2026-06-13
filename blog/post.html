@@ -731,7 +731,8 @@
     document.getElementById('og-url').content = postUrl;
     document.getElementById('og-title').content = meta.title;
     document.getElementById('og-desc').content = meta.description || '';
-    if (meta.image) document.getElementById('og-image').content = 'https://nordinvest.vercel.app' + meta.image;
+    const heroImg = getHeroImage(meta);
+    document.getElementById('og-image').content = heroImg;
     document.getElementById('tw-title').content = meta.title;
     document.getElementById('tw-desc').content = meta.description || '';
 
@@ -750,7 +751,7 @@
             "@type": "Organization", "name": "NordInvest", "url": "https://nordinvest.vercel.app",
             "logo": { "@type": "ImageObject", "url": "https://nordinvest.vercel.app/N%20(4).png" }
           },
-          ...(meta.image ? { "image": { "@type": "ImageObject", "url": "https://nordinvest.vercel.app" + meta.image } } : {})
+          "image": { "@type": "ImageObject", "url": heroImg }
         },
         {
           "@type": "BreadcrumbList",
@@ -763,6 +764,24 @@
       ]
     };
     document.getElementById('json-ld').textContent = JSON.stringify(ld);
+  }
+
+  // ── Tag → image fallback map (mirrors blog/index.html) ───────────────────
+  const TAG_IMAGES = {
+    'denmark':            'https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&auto=format&fit=crop&q=80',
+    'norway':             'https://images.unsplash.com/photo-1534067058742-a4585f7d4ff4?w=1200&auto=format&fit=crop&q=80',
+    'sweden':             'https://images.unsplash.com/photo-1719305352456-d9e9b93f4e84?w=1200&auto=format&fit=crop&q=80',
+    'investment-strategy':'https://images.unsplash.com/photo-1609495059028-7336a644dbca?w=1200&auto=format&fit=crop&q=80',
+    'beginner-guide':     'https://images.unsplash.com/photo-1611110128271-bfb86aae0dc2?w=1200&auto=format&fit=crop&q=80',
+    'default':            'https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&auto=format&fit=crop&q=80',
+  };
+
+  function getHeroImage(meta) {
+    if (meta.image && meta.image.startsWith('http')) return meta.image;
+    for (const tag of (Array.isArray(meta.tags) ? meta.tags : [])) {
+      if (TAG_IMAGES[tag]) return TAG_IMAGES[tag];
+    }
+    return TAG_IMAGES['default'];
   }
 
   // ── Main loader (static CDN fetch, no Lambda) ─────────────────────────────
@@ -783,10 +802,11 @@
 
       document.getElementById('breadcrumb-title').textContent = meta.title;
 
-      if (meta.image) {
-        const img = document.getElementById('hero-img');
-        img.src = meta.image; img.alt = meta.title; img.style.display = 'block';
-      }
+      const heroEl = document.getElementById('hero-img');
+      heroEl.src = heroImg;
+      heroEl.alt = meta.title;
+      heroEl.style.display = 'block';
+      heroEl.onerror = () => { heroEl.style.display = 'none'; };
 
       document.getElementById('post-tags').innerHTML =
         (meta.tags || []).map(t => `<span class="tag-pill">${escHtml(formatTag(t))}</span>`).join('');
