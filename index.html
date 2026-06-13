@@ -681,6 +681,92 @@
     background-repeat: no-repeat; background-position: right 8px center;
   }
   .currency-select:focus { border-color: var(--navy); }
+
+  /* ── INVESTMENT CLASSIFICATION CARD ─────────────────── */
+  .classification-card {
+    background: #fff; border: 1px solid var(--border); border-radius: 14px;
+    padding: 28px 28px 24px; margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
+  }
+  .classification-loading {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; color: var(--text-muted);
+  }
+  .classification-top {
+    display: flex; align-items: flex-start; gap: 20px;
+    margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .classification-badge {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 8px 18px 8px 14px; border-radius: 100px;
+    border: 1.5px solid; flex-shrink: 0;
+  }
+  .cls-icon { width: 16px; height: 16px; stroke: currentColor; }
+  .classification-label {
+    font-size: 15px; font-weight: 700; letter-spacing: -0.2px;
+  }
+  .classification-engine-text {
+    font-size: 14px; color: var(--text-muted); line-height: 1.7;
+    flex: 1; min-width: 180px;
+  }
+  /* Engine Score Bars */
+  .engine-scores { display: flex; flex-direction: column; gap: 13px; }
+  .engine-row {
+    display: grid; grid-template-columns: 160px 1fr 60px;
+    align-items: center; gap: 14px;
+  }
+  .engine-name { font-size: 13px; font-weight: 500; color: var(--text-muted); white-space: nowrap; }
+  .engine-bar-track {
+    height: 7px; background: var(--surface); border-radius: 99px; overflow: hidden;
+  }
+  .engine-bar-fill {
+    height: 100%; border-radius: 99px; width: 0%;
+    transition: width 0.8s cubic-bezier(.22,1,.36,1), background 0.3s;
+  }
+  .engine-score { font-size: 12px; font-weight: 600; text-align: right; }
+
+  /* ── PROJECTION CARD ─────────────────────────────────── */
+  .projection-card { }
+  .proj-rate-badge {
+    margin-left: auto; font-size: 12px; font-weight: 600;
+    color: var(--green); background: #10b98115; border-radius: 99px;
+    padding: 3px 10px;
+  }
+  .proj-header-row {
+    display: grid; grid-template-columns: 80px 1fr 1fr;
+    font-size: 11.5px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 0 0 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+  }
+  .proj-row {
+    display: grid; grid-template-columns: 80px 1fr 1fr;
+    align-items: center; padding: 9px 0;
+    border-bottom: 1px solid var(--surface); font-size: 14px;
+  }
+  .proj-row:last-child { border-bottom: none; }
+  .proj-year { color: var(--text-muted); font-weight: 500; }
+  .proj-val  { font-weight: 600; color: var(--text); }
+  .proj-gain { font-weight: 600; }
+  .proj-disclaimer { font-size: 11.5px; color: var(--text-muted); margin-top: 12px; }
+
+  /* ── STRESS TEST CARD ────────────────────────────────── */
+  .stress-card { }
+  .stress-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 0; border-bottom: 1px solid var(--surface);
+    font-size: 14px; gap: 20px;
+  }
+  .stress-row:last-child { border-bottom: none; }
+  .stress-label { color: var(--text-muted); flex: 1; }
+  .stress-val { font-weight: 700; font-size: 14.5px; white-space: nowrap; }
+
+  @media (max-width: 640px) {
+    .engine-row { grid-template-columns: 130px 1fr 55px; gap: 10px; }
+    .engine-name { font-size: 12px; }
+    .classification-top { flex-direction: column; gap: 12px; }
+    .proj-header-row, .proj-row { grid-template-columns: 65px 1fr 1fr; font-size: 13px; }
+  }
+
 </style>
 </head>
 <body>
@@ -1134,6 +1220,45 @@
         </div>
       </div>
 
+      <!-- INVESTMENT CLASSIFICATION -->
+      <div class="classification-card" id="classification-card">
+        <div class="classification-loading" id="classification-loading">
+          <div class="market-loading-spinner"></div>
+          <span>Classifying investment type…</span>
+        </div>
+        <div class="classification-result" id="classification-result" style="display:none">
+          <div class="classification-top">
+            <div class="classification-badge" id="classification-badge">
+              <svg class="cls-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span class="classification-label" id="classification-label">Analyzing…</span>
+            </div>
+            <div class="classification-engine-text" id="classification-engine-text"></div>
+          </div>
+          <div class="engine-scores">
+            <div class="engine-row">
+              <div class="engine-name">A · Cashflow Engine</div>
+              <div class="engine-bar-track"><div class="engine-bar-fill" id="eng-cashflow-fill" style="width:0%"></div></div>
+              <div class="engine-score" id="eng-cashflow-score">—</div>
+            </div>
+            <div class="engine-row">
+              <div class="engine-name">B · Appreciation Engine</div>
+              <div class="engine-bar-track"><div class="engine-bar-fill" id="eng-appreciation-fill" style="width:0%"></div></div>
+              <div class="engine-score" id="eng-appreciation-score">—</div>
+            </div>
+            <div class="engine-row">
+              <div class="engine-name">C · Leverage Effect</div>
+              <div class="engine-bar-track"><div class="engine-bar-fill" id="eng-leverage-fill" style="width:0%"></div></div>
+              <div class="engine-score" id="eng-leverage-score">—</div>
+            </div>
+            <div class="engine-row">
+              <div class="engine-name">D · Market Context</div>
+              <div class="engine-bar-track"><div class="engine-bar-fill" id="eng-market-fill" style="width:0%"></div></div>
+              <div class="engine-score" id="eng-market-score">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- MARKET DATA CARD -->
       <div class="market-data-card" id="market-data-card">
         <div class="market-data-title">
@@ -1210,6 +1335,29 @@
             <span class="cf-net-value" id="cf-net-val">—</span>
           </div>
         </div>
+      </div>
+
+      <!-- 5-Year Appreciation Projection -->
+      <div class="projection-card analysis-card" id="projection-card" style="display:none">
+        <div class="analysis-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
+          5-Year Capital Growth Projection
+          <span class="proj-rate-badge" id="proj-rate">—</span>
+        </div>
+        <div class="proj-header-row">
+          <span>Year</span><span>Projected Value</span><span>Capital Gain</span>
+        </div>
+        <div id="projection-rows"></div>
+        <div class="proj-disclaimer">Based on historical market appreciation. Past performance does not guarantee future results.</div>
+      </div>
+
+      <!-- Stress Test -->
+      <div class="stress-card analysis-card" id="stress-card" style="display:none">
+        <div class="analysis-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Risk &amp; Stress Test
+        </div>
+        <div id="stress-grid"></div>
       </div>
 
       <!-- AI Summary -->
@@ -1354,56 +1502,56 @@ function calculate(price, rent, downPct, rate, expenses) {
 // ── MARKET RESEARCH ───────────────────────────
 // City market data (€/month for comparable 2-bedroom rental)
 const CITY_DATA = {
-  // Nordic
-  oslo:       { avg: 2200, low: 1700, high: 2900, yield: 4.2, tier: 'premium' },
-  bergen:     { avg: 1700, low: 1300, high: 2200, yield: 4.8, tier: 'high' },
-  trondheim:  { avg: 1500, low: 1100, high: 1900, yield: 5.1, tier: 'high' },
-  stavanger:  { avg: 1600, low: 1200, high: 2100, yield: 4.9, tier: 'high' },
-  stockholm:  { avg: 1900, low: 1500, high: 2600, yield: 3.8, tier: 'premium' },
-  gothenburg: { avg: 1500, low: 1100, high: 2000, yield: 4.5, tier: 'high' },
-  malmö:      { avg: 1300, low: 950,  high: 1750, yield: 4.9, tier: 'mid' },
-  malmo:      { avg: 1300, low: 950,  high: 1750, yield: 4.9, tier: 'mid' },
-  copenhagen: { avg: 2000, low: 1600, high: 2700, yield: 3.9, tier: 'premium' },
-  aarhus:     { avg: 1400, low: 1050, high: 1850, yield: 5.0, tier: 'mid' },
-  helsinki:   { avg: 1500, low: 1100, high: 2000, yield: 4.3, tier: 'high' },
-  // Major EU
-  london:     { avg: 2700, low: 2100, high: 3800, yield: 3.5, tier: 'premium' },
-  amsterdam:  { avg: 2100, low: 1700, high: 2900, yield: 3.7, tier: 'premium' },
-  berlin:     { avg: 1500, low: 1100, high: 2100, yield: 4.1, tier: 'high' },
-  paris:      { avg: 2300, low: 1800, high: 3200, yield: 3.4, tier: 'premium' },
-  munich:     { avg: 2200, low: 1700, high: 3000, yield: 3.3, tier: 'premium' },
-  frankfurt:  { avg: 1800, low: 1400, high: 2500, yield: 3.9, tier: 'high' },
-  hamburg:    { avg: 1700, low: 1300, high: 2300, yield: 4.0, tier: 'high' },
-  vienna:     { avg: 1600, low: 1200, high: 2200, yield: 3.8, tier: 'high' },
-  zurich:     { avg: 2800, low: 2200, high: 3800, yield: 3.0, tier: 'premium' },
-  madrid:     { avg: 1600, low: 1200, high: 2300, yield: 5.2, tier: 'high' },
-  barcelona:  { avg: 1700, low: 1300, high: 2500, yield: 4.8, tier: 'high' },
-  lisbon:     { avg: 1600, low: 1200, high: 2200, yield: 5.0, tier: 'high' },
-  rome:       { avg: 1400, low: 1000, high: 2000, yield: 4.5, tier: 'mid' },
-  milan:      { avg: 2000, low: 1500, high: 2800, yield: 4.2, tier: 'high' },
-  brussels:   { avg: 1400, low: 1050, high: 1900, yield: 4.7, tier: 'mid' },
-  dublin:     { avg: 2200, low: 1700, high: 3000, yield: 4.4, tier: 'premium' },
-  warsaw:     { avg: 900,  low: 650,  high: 1250, yield: 5.8, tier: 'mid' },
-  prague:     { avg: 1100, low: 800,  high: 1500, yield: 5.5, tier: 'mid' },
-  budapest:   { avg: 800,  low: 600,  high: 1100, yield: 6.0, tier: 'mid' },
-  dubai:      { avg: 2500, low: 1800, high: 3500, yield: 6.8, tier: 'premium' },
-  singapore:  { avg: 2800, low: 2000, high: 4000, yield: 3.5, tier: 'premium' },
-  new_york:   { avg: 3200, low: 2500, high: 5000, yield: 3.2, tier: 'premium' },
+  // Nordic — high-price / low-yield, appreciation-driven
+  oslo:       { avg: 2200, low: 1700, high: 2900, yield: 4.2, tier: 'premium', appreciation: 4.5, marketType: 'high-price' },
+  bergen:     { avg: 1700, low: 1300, high: 2200, yield: 4.8, tier: 'high',    appreciation: 4.0, marketType: 'high-price' },
+  trondheim:  { avg: 1500, low: 1100, high: 1900, yield: 5.1, tier: 'high',    appreciation: 3.8, marketType: 'balanced'   },
+  stavanger:  { avg: 1600, low: 1200, high: 2100, yield: 4.9, tier: 'high',    appreciation: 3.5, marketType: 'balanced'   },
+  stockholm:  { avg: 1900, low: 1500, high: 2600, yield: 3.8, tier: 'premium', appreciation: 3.2, marketType: 'high-price' },
+  gothenburg: { avg: 1500, low: 1100, high: 2000, yield: 4.5, tier: 'high',    appreciation: 3.5, marketType: 'balanced'   },
+  malmö:      { avg: 1300, low: 950,  high: 1750, yield: 4.9, tier: 'mid',     appreciation: 4.0, marketType: 'balanced'   },
+  malmo:      { avg: 1300, low: 950,  high: 1750, yield: 4.9, tier: 'mid',     appreciation: 4.0, marketType: 'balanced'   },
+  copenhagen: { avg: 2000, low: 1600, high: 2700, yield: 3.9, tier: 'premium', appreciation: 4.8, marketType: 'high-price' },
+  aarhus:     { avg: 1400, low: 1050, high: 1850, yield: 5.0, tier: 'mid',     appreciation: 5.2, marketType: 'balanced'   },
+  helsinki:   { avg: 1500, low: 1100, high: 2000, yield: 4.3, tier: 'high',    appreciation: 1.5, marketType: 'high-price' },
+  // Major EU / UK
+  london:     { avg: 2700, low: 2100, high: 3800, yield: 3.5, tier: 'premium', appreciation: 3.5, marketType: 'high-price' },
+  amsterdam:  { avg: 2100, low: 1700, high: 2900, yield: 3.7, tier: 'premium', appreciation: 4.2, marketType: 'high-price' },
+  berlin:     { avg: 1500, low: 1100, high: 2100, yield: 4.1, tier: 'high',    appreciation: 4.5, marketType: 'balanced'   },
+  paris:      { avg: 2300, low: 1800, high: 3200, yield: 3.4, tier: 'premium', appreciation: 2.8, marketType: 'high-price' },
+  munich:     { avg: 2200, low: 1700, high: 3000, yield: 3.3, tier: 'premium', appreciation: 3.8, marketType: 'high-price' },
+  frankfurt:  { avg: 1800, low: 1400, high: 2500, yield: 3.9, tier: 'high',    appreciation: 4.0, marketType: 'balanced'   },
+  hamburg:    { avg: 1700, low: 1300, high: 2300, yield: 4.0, tier: 'high',    appreciation: 4.2, marketType: 'balanced'   },
+  vienna:     { avg: 1600, low: 1200, high: 2200, yield: 3.8, tier: 'high',    appreciation: 3.5, marketType: 'high-price' },
+  zurich:     { avg: 2800, low: 2200, high: 3800, yield: 3.0, tier: 'premium', appreciation: 3.2, marketType: 'high-price' },
+  madrid:     { avg: 1600, low: 1200, high: 2300, yield: 5.2, tier: 'high',    appreciation: 6.5, marketType: 'balanced'   },
+  barcelona:  { avg: 1700, low: 1300, high: 2500, yield: 4.8, tier: 'high',    appreciation: 7.2, marketType: 'balanced'   },
+  lisbon:     { avg: 1600, low: 1200, high: 2200, yield: 5.0, tier: 'high',    appreciation: 8.5, marketType: 'high-yield' },
+  rome:       { avg: 1400, low: 1000, high: 2000, yield: 4.5, tier: 'mid',     appreciation: 2.5, marketType: 'balanced'   },
+  milan:      { avg: 2000, low: 1500, high: 2800, yield: 4.2, tier: 'high',    appreciation: 4.8, marketType: 'balanced'   },
+  brussels:   { avg: 1400, low: 1050, high: 1900, yield: 4.7, tier: 'mid',     appreciation: 3.0, marketType: 'balanced'   },
+  dublin:     { avg: 2200, low: 1700, high: 3000, yield: 4.4, tier: 'premium', appreciation: 5.5, marketType: 'balanced'   },
+  warsaw:     { avg: 900,  low: 650,  high: 1250, yield: 5.8, tier: 'mid',     appreciation: 8.0, marketType: 'high-yield' },
+  prague:     { avg: 1100, low: 800,  high: 1500, yield: 5.5, tier: 'mid',     appreciation: 6.5, marketType: 'high-yield' },
+  budapest:   { avg: 800,  low: 600,  high: 1100, yield: 6.0, tier: 'mid',     appreciation: 7.5, marketType: 'high-yield' },
+  dubai:      { avg: 2500, low: 1800, high: 3500, yield: 6.8, tier: 'premium', appreciation: 9.0, marketType: 'high-yield' },
+  singapore:  { avg: 2800, low: 2000, high: 4000, yield: 3.5, tier: 'premium', appreciation: 4.5, marketType: 'high-price' },
+  new_york:   { avg: 3200, low: 2500, high: 5000, yield: 3.2, tier: 'premium', appreciation: 3.5, marketType: 'high-price' },
 };
 
 // Country fallback tiers
 const COUNTRY_TIERS = {
-  norway: { avg: 1400, low: 900, high: 1900, yield: 5.0 },
-  sweden: { avg: 1200, low: 800, high: 1700, yield: 5.2 },
-  denmark:{ avg: 1300, low: 900, high: 1800, yield: 5.1 },
-  finland:{ avg: 1100, low: 750, high: 1550, yield: 5.3 },
-  germany:{ avg: 1300, low: 900, high: 1800, yield: 4.5 },
-  uk:     { avg: 1600, low: 1100, high: 2200, yield: 4.2 },
-  netherlands:{ avg: 1400, low: 1000, high: 2000, yield: 4.4 },
-  france: { avg: 1200, low: 800, high: 1800, yield: 4.6 },
-  spain:  { avg: 1100, low: 750, high: 1600, yield: 5.5 },
-  italy:  { avg: 1000, low: 700, high: 1500, yield: 4.8 },
-  default:{ avg: 1100, low: 750, high: 1600, yield: 5.2 },
+  norway:      { avg: 1400, low: 900,  high: 1900, yield: 5.0, appreciation: 4.0, marketType: 'high-price' },
+  sweden:      { avg: 1200, low: 800,  high: 1700, yield: 5.2, appreciation: 3.0, marketType: 'high-price' },
+  denmark:     { avg: 1300, low: 900,  high: 1800, yield: 5.1, appreciation: 4.5, marketType: 'high-price' },
+  finland:     { avg: 1100, low: 750,  high: 1550, yield: 5.3, appreciation: 1.5, marketType: 'high-price' },
+  germany:     { avg: 1300, low: 900,  high: 1800, yield: 4.5, appreciation: 4.0, marketType: 'balanced'   },
+  uk:          { avg: 1600, low: 1100, high: 2200, yield: 4.2, appreciation: 3.5, marketType: 'high-price' },
+  netherlands: { avg: 1400, low: 1000, high: 2000, yield: 4.4, appreciation: 3.8, marketType: 'high-price' },
+  france:      { avg: 1200, low: 800,  high: 1800, yield: 4.6, appreciation: 2.5, marketType: 'high-price' },
+  spain:       { avg: 1100, low: 750,  high: 1600, yield: 5.5, appreciation: 6.0, marketType: 'balanced'   },
+  italy:       { avg: 1000, low: 700,  high: 1500, yield: 4.8, appreciation: 2.5, marketType: 'balanced'   },
+  default:     { avg: 1100, low: 750,  high: 1600, yield: 5.2, appreciation: 3.5, marketType: 'balanced'   },
 };
 
 function lookupCity(name) {
@@ -1470,57 +1618,228 @@ async function researchMarket(locationInput) {
 
 function showMarketResults(marketInfo, userRent) {
   const d = marketInfo.data;
+  _lastMarketData = d;
   document.getElementById('market-loading').style.display = 'none';
   document.getElementById('market-results').style.display = 'block';
   document.getElementById('market-location-text').textContent = marketInfo.displayName;
-  document.getElementById('market-avg').textContent = '€' + d.avg.toLocaleString();
-  document.getElementById('market-range').textContent = '€' + d.low.toLocaleString() + ' – €' + d.high.toLocaleString();
+
+  const sym = CURRENCY_SYMBOLS[activeCurrency] || activeCurrency;
+  document.getElementById('market-avg').textContent   = sym + d.avg.toLocaleString();
+  document.getElementById('market-range').textContent = sym + d.low.toLocaleString() + ' – ' + sym + d.high.toLocaleString();
   document.getElementById('market-yield').textContent = d.yield.toFixed(1) + '%';
 
   const diff = userRent - d.avg;
   const diffPct = Math.abs(Math.round((diff / d.avg) * 100));
-  const compEl = document.getElementById('market-comparison-text');
+  const compEl  = document.getElementById('market-comparison-text');
   const badgeEl = document.getElementById('market-comparison-badge');
 
   if (diff > d.avg * 0.15) {
-    compEl.innerHTML = `Your expected rent of <strong>€${userRent.toLocaleString()}/mo</strong> is <strong>${diffPct}% above</strong> the market average for this area (€${d.avg.toLocaleString()}/mo). Verify demand supports this rate.`;
-    badgeEl.className = 'market-badge-neg';
-    badgeEl.textContent = '⚠ Above market';
+    compEl.innerHTML = `Your expected rent of <strong>${sym}${userRent.toLocaleString()}/mo</strong> is <strong>${diffPct}% above</strong> the market average for this area (${sym}${d.avg.toLocaleString()}/mo). Verify demand supports this rate.`;
+    badgeEl.className = 'market-badge-neg'; badgeEl.textContent = '⚠ Above market';
   } else if (diff < -d.avg * 0.1) {
-    compEl.innerHTML = `Your expected rent of <strong>€${userRent.toLocaleString()}/mo</strong> is <strong>${diffPct}% below</strong> the market average (€${d.avg.toLocaleString()}/mo). There may be upside potential.`;
-    badgeEl.className = 'market-badge-pos';
-    badgeEl.textContent = '↑ Room to grow';
+    compEl.innerHTML = `Your expected rent of <strong>${sym}${userRent.toLocaleString()}/mo</strong> is <strong>${diffPct}% below</strong> the market average (${sym}${d.avg.toLocaleString()}/mo). There may be upside potential.`;
+    badgeEl.className = 'market-badge-pos'; badgeEl.textContent = '↑ Room to grow';
   } else {
-    compEl.innerHTML = `Your expected rent of <strong>€${userRent.toLocaleString()}/mo</strong> is in line with the local market average of €${d.avg.toLocaleString()}/mo. The rent assumption appears realistic.`;
-    badgeEl.className = 'market-badge-neu';
-    badgeEl.textContent = '✓ At market rate';
+    compEl.innerHTML = `Your expected rent of <strong>${sym}${userRent.toLocaleString()}/mo</strong> is in line with the local market average of ${sym}${d.avg.toLocaleString()}/mo. The rent assumption appears realistic.`;
+    badgeEl.className = 'market-badge-neu'; badgeEl.textContent = '✓ At market rate';
+  }
+
+  // Classification
+  const data = window._niAnalysisData;
+  if (data) {
+    const cls = classifyInvestment(data, d);
+    document.getElementById('classification-loading').style.display = 'none';
+    document.getElementById('classification-result').style.display = 'block';
+    const badge = document.getElementById('classification-badge');
+    badge.style.background = cls.color + '18';
+    badge.style.borderColor = cls.color + '40';
+    document.getElementById('classification-label').textContent = cls.label;
+    document.getElementById('classification-label').style.color = cls.color;
+    document.getElementById('classification-engine-text').textContent = cls.wealthEngine;
+
+    // Engine score bars (animated)
+    const engines = [
+      { id: 'eng-cashflow',     val: cls.engineScores.cashflow,     label: 'Cashflow Engine' },
+      { id: 'eng-appreciation', val: cls.engineScores.appreciation, label: 'Appreciation Engine' },
+      { id: 'eng-leverage',     val: cls.engineScores.leverage,     label: 'Leverage Effect' },
+      { id: 'eng-market',       val: cls.engineScores.market,       label: 'Market Context' },
+    ];
+    engines.forEach((e, i) => {
+      const fill  = document.getElementById(e.id + '-fill');
+      const score = document.getElementById(e.id + '-score');
+      if (!fill || !score) return;
+      const color = e.val >= 65 ? 'var(--green)' : e.val >= 40 ? 'var(--amber)' : 'var(--red)';
+      fill.style.background = color;
+      score.textContent = e.val + '/100';
+      score.style.color = color;
+      setTimeout(() => { fill.style.width = e.val + '%'; }, 200 + i * 80);
+    });
+
+    // Update AI summary now that we have market data
+    document.getElementById('ai-summary-text').innerHTML = generateSummary(data, marketInfo.displayName, d);
+
+    // 5-Year Appreciation Projection
+    const appreciation = d.appreciation || 3.5;
+    const price = data._price;
+    if (price) {
+      let rows = '';
+      for (let yr = 1; yr <= 5; yr++) {
+        const val = Math.round(price * Math.pow(1 + appreciation/100, yr));
+        const gain = val - price;
+        rows += `<div class="proj-row">
+          <div class="proj-year">Year ${yr}</div>
+          <div class="proj-val">${fmt(val)}</div>
+          <div class="proj-gain positive">+${fmt(gain)}</div>
+        </div>`;
+      }
+      document.getElementById('projection-rows').innerHTML = rows;
+      document.getElementById('proj-rate').textContent = appreciation.toFixed(1) + '% p.a.';
+      document.getElementById('projection-card').style.display = 'block';
+    }
+
+    // Stress Test
+    const r = data._rate || 4.5;
+    const stressRate1 = r + 1;
+    const stressRate2 = r + 2;
+    const loan = data.loanAmount;
+    const expenses = data._expenses || 0;
+    const rent = data._rent || 0;
+    function calcMortgage(rate, loan) {
+      const mr = rate/100/12; const n = 360;
+      return mr === 0 ? loan/n : loan * (mr * Math.pow(1+mr,n)) / (Math.pow(1+mr,n)-1);
+    }
+    const m1 = calcMortgage(stressRate1, loan);
+    const m2 = calcMortgage(stressRate2, loan);
+    const cf1 = rent - m1 - expenses;
+    const cf2 = rent - m2 - expenses;
+    const breakEven = Math.ceil(data.monthlyMortgage + expenses);
+    const vacancyCost = Math.round(rent / 12);
+
+    document.getElementById('stress-grid').innerHTML = `
+      <div class="stress-row">
+        <div class="stress-label">Break-even rent (covers all costs)</div>
+        <div class="stress-val">${fmt(breakEven)}/mo</div>
+      </div>
+      <div class="stress-row">
+        <div class="stress-label">Cash flow if rate rises +1% (to ${stressRate1.toFixed(1)}%)</div>
+        <div class="stress-val ${cf1 >= 0 ? 'positive' : 'negative'}">${cf1 >= 0 ? '+' : ''}${fmt(cf1)}/mo</div>
+      </div>
+      <div class="stress-row">
+        <div class="stress-label">Cash flow if rate rises +2% (to ${stressRate2.toFixed(1)}%)</div>
+        <div class="stress-val ${cf2 >= 0 ? 'positive' : 'negative'}">${cf2 >= 0 ? '+' : ''}${fmt(cf2)}/mo</div>
+      </div>
+      <div class="stress-row">
+        <div class="stress-label">Cost of 1-month vacancy per year</div>
+        <div class="stress-val negative">−${fmt(vacancyCost)}/mo avg</div>
+      </div>
+    `;
+    document.getElementById('stress-card').style.display = 'block';
   }
 }
 
+// ── INVESTMENT CLASSIFICATION ─────────────────
+let _lastMarketData = null;
+
+function classifyInvestment(data, marketData) {
+  const { rentalYield, monthlyCashFlow, roi } = data;
+  const appreciation = marketData?.appreciation || 3.5;
+  const marketType   = marketData?.marketType   || 'balanced';
+  const mktYield     = marketData?.yield         || 4.5;
+
+  // Engine scores 0–100
+  const eCashflow = monthlyCashFlow > 500 ? 95
+    : monthlyCashFlow > 200 ? 80 : monthlyCashFlow > 0 ? 60
+    : monthlyCashFlow > -200 ? 38 : monthlyCashFlow > -500 ? 18 : 5;
+
+  const eAppreciation = appreciation >= 8 ? 95
+    : appreciation >= 6 ? 80 : appreciation >= 4.5 ? 62
+    : appreciation >= 3 ? 45 : appreciation >= 2 ? 28 : 12;
+
+  const eLeverage = roi > 15 ? 95 : roi > 10 ? 82 : roi > 6 ? 65
+    : roi > 2 ? 48 : roi > 0 ? 35 : roi > -5 ? 20 : 5;
+
+  const eMarket = marketType === 'high-yield' ? 88
+    : marketType === 'balanced' ? 65 : 44; // high-price = low income engine
+
+  const engineScores = { cashflow: eCashflow, appreciation: eAppreciation, leverage: eLeverage, market: eMarket };
+
+  const strongCF   = monthlyCashFlow > 0 && rentalYield > 5.5;
+  const decentCF   = monthlyCashFlow > -200 && rentalYield > 4;
+  const strongAppr = appreciation >= 5.5;
+  const decentAppr = appreciation >= 3.5;
+  const aboveAvgYield = rentalYield > mktYield + 0.5;
+
+  let type, label, color, wealthEngine;
+
+  if (strongCF && strongAppr) {
+    type = 'hybrid'; label = 'Hybrid Investment'; color = '#2563EB';
+    wealthEngine = 'Both engines active — monthly income AND long-term capital growth. Rare in high-price markets.';
+  } else if (strongCF && !strongAppr) {
+    type = 'cashflow'; label = 'Cashflow Asset'; color = '#10B981';
+    wealthEngine = 'Income engine. The property pays you monthly. Strategy: hold, collect rent, refinance when rates drop.';
+  } else if (strongAppr && !strongCF) {
+    type = 'appreciation'; label = 'Appreciation Asset'; color = '#F59E0B';
+    wealthEngine = 'Capital growth engine. Monthly cashflow is secondary — the real return comes from price appreciation over 5–10 years. Common in high-price Nordic, UK and core EU markets.';
+  } else if (decentCF && strongAppr) {
+    type = 'hybrid'; label = 'Hybrid Investment'; color = '#2563EB';
+    wealthEngine = 'Balanced engines — decent income with strong market appreciation. A solid hold-and-grow strategy.';
+  } else if (aboveAvgYield && !strongAppr) {
+    type = 'cashflow'; label = 'Cashflow Asset'; color = '#10B981';
+    wealthEngine = 'Above-market yield drives the return. Monitor expenses carefully to protect the income margin.';
+  } else if (rentalYield < 3 && !decentAppr) {
+    type = 'poor'; label = 'Poor Investment'; color = '#EF4444';
+    wealthEngine = 'No strong engine identified at current numbers. Neither the rent nor the market growth justifies the price. Negotiate harder or find a different property.';
+  } else {
+    type = 'value-add'; label = 'Value-Add Opportunity'; color = '#8B5CF6';
+    wealthEngine = 'Return must be engineered — through renovation to boost rent, smarter financing to cut costs, or a below-market purchase. The numbers work if you create the edge.';
+  }
+
+  return { type, label, color, wealthEngine, engineScores };
+}
+
 // ── AI SUMMARY ────────────────────────────────
-function generateSummary(data, locationName) {
-  const { rentalYield, monthlyCashFlow, roi, score } = data;
-  let overall, yieldNote, cashNote, reco;
+function generateSummary(data, locationName, marketData) {
+  const { rentalYield, monthlyCashFlow, roi, score, loanAmount, monthlyMortgage } = data;
+  const cls = classifyInvestment(data, marketData);
+  const appreciation = marketData?.appreciation || 3.5;
+  const breakEvenRent = Math.ceil(monthlyMortgage + (data.annualProfit < 0 ? Math.abs(data.monthlyCashFlow - monthlyCashFlow) : 0));
+  const projectedValue5yr = data._price ? Math.round(data._price * Math.pow(1 + appreciation/100, 5)) : null;
 
-  if (score >= 75) overall = `This property demonstrates <strong>strong investment fundamentals</strong> with an Investment Score of ${score}/100.`;
-  else if (score >= 55) overall = `This property presents <strong>moderate investment potential</strong> with an Investment Score of ${score}/100, with both clear strengths and areas to consider.`;
-  else if (score >= 35) overall = `This property shows <strong>below-average investment metrics</strong> at a score of ${score}/100. Careful consideration is advised before proceeding.`;
-  else overall = `The numbers indicate <strong>weak investment viability</strong> at ${score}/100. The property may not meet standard investor criteria at this price and rent combination.`;
+  // Classification headline
+  let classLine = `This property is classified as a <strong>${cls.label}</strong>. ${cls.wealthEngine}`;
 
-  if (rentalYield > 7) yieldNote = `The gross rental yield of <strong>${rentalYield.toFixed(2)}%</strong> is excellent — well above the 5–6% benchmark, indicating strong income relative to purchase price.`;
-  else if (rentalYield > 5) yieldNote = `A rental yield of <strong>${rentalYield.toFixed(2)}%</strong> is solid and in line with typical buy-to-let targets for the ${locationName} area.`;
-  else if (rentalYield > 3) yieldNote = `The rental yield of <strong>${rentalYield.toFixed(2)}%</strong> is below the 5% threshold many investors require, suggesting the income may not adequately justify the purchase price.`;
-  else yieldNote = `At <strong>${rentalYield.toFixed(2)}%</strong>, the rental yield is low. This property would rely heavily on capital appreciation rather than rental income to justify the investment.`;
+  // Cashflow verdict
+  let cfLine;
+  if (monthlyCashFlow > 400)
+    cfLine = `The monthly cash flow of <strong>+${fmt(monthlyCashFlow)}</strong> is strong — rent more than covers all costs, giving you a real income buffer.`;
+  else if (monthlyCashFlow > 0)
+    cfLine = `Monthly cash flow is <strong>+${fmt(monthlyCashFlow)}</strong> — positive but slim. A single vacancy month or rate hike could flip it negative, so maintain a reserve fund.`;
+  else if (monthlyCashFlow > -400)
+    cfLine = `Monthly cash flow is <strong>${fmt(monthlyCashFlow)}</strong>. You'd top up <strong>${fmt(Math.abs(monthlyCashFlow))}/month</strong> from other income. This is acceptable <em>only if</em> the appreciation story holds.`;
+  else
+    cfLine = `A monthly shortfall of <strong>${fmt(Math.abs(monthlyCashFlow))}</strong> is significant. At ${rentalYield.toFixed(1)}% yield, the rent does not come close to covering costs at these financing terms.`;
 
-  if (monthlyCashFlow > 300) cashNote = `Monthly cash flow of <strong>+${fmt(monthlyCashFlow)}</strong> is meaningfully positive, providing a buffer against vacancies and unexpected costs.`;
-  else if (monthlyCashFlow > 0) cashNote = `The property generates a small positive cash flow of <strong>+${fmt(monthlyCashFlow)}/month</strong>. While it covers costs, the margin for vacancies or rate increases is limited.`;
-  else cashNote = `With a <strong>negative cash flow of ${fmt(monthlyCashFlow)}/month</strong>, you would need to supplement costs from other income — increasing risk, particularly during vacancy periods.`;
+  // Appreciation & yield context
+  let mktLine;
+  if (appreciation >= 6)
+    mktLine = `The ${locationName} market has historically appreciated at <strong>~${appreciation}%/year</strong>. At that rate, a ${fmt(data._price || 0)} property could be worth approximately <strong>${projectedValue5yr ? fmt(projectedValue5yr) : '—'}</strong> in 5 years — a compelling capital growth story independent of rental income.`;
+  else if (appreciation >= 4)
+    mktLine = `${locationName} shows steady appreciation of <strong>~${appreciation}%/year</strong>. This supports a long-term hold strategy even if monthly cashflow is thin.`;
+  else
+    mktLine = `Market appreciation in ${locationName} is moderate at <strong>~${appreciation}%/year</strong>. The investment relies more heavily on rental income to justify the capital deployed.`;
 
-  if (score >= 65) reco = `Overall, this appears to be a viable investment opportunity. We recommend consulting a financing specialist to optimise your mortgage structure and maximise returns.`;
-  else if (score >= 45) reco = `Consider whether you can negotiate the purchase price or improve rental income before proceeding. A financing advisor may identify terms that improve the cash flow position.`;
-  else reco = `At current figures, this property does not meet standard investment criteria. We recommend exploring alternative financing structures or looking for properties with stronger yield potential.`;
+  // Risk & recommendation
+  let recoLine;
+  if (cls.type === 'cashflow' || cls.type === 'hybrid')
+    recoLine = `Recommendation: <strong>viable investment</strong> with clear income upside. Stress-test your numbers at a rate +2% higher and ensure you can carry 1–2 months vacancy. Consult a mortgage advisor to optimise your financing structure.`;
+  else if (cls.type === 'appreciation')
+    recoLine = `Recommendation: <strong>viable long-term hold</strong>, but this is not an income play. You need staying power — plan for at least a 5–7 year horizon and ensure the shortfall is manageable within your budget. Do not rely on this property for monthly cash.`;
+  else if (cls.type === 'value-add')
+    recoLine = `Recommendation: <strong>conditional opportunity</strong>. Before committing, identify the specific value-add angle — can you increase rent through renovation? Buy below market? Restructure financing? Without a clear edge, the returns are insufficient.`;
+  else
+    recoLine = `Recommendation: <strong>do not proceed at current terms</strong>. Explore renegotiating the price, increasing rent assumptions, or finding a property with stronger fundamentals in this or an adjacent market.`;
 
-  return `${overall} ${yieldNote} ${cashNote} ${reco}`;
+  return `${classLine}<br><br>${cfLine}<br><br>${mktLine}<br><br>${recoLine}`;
 }
 
 // ── SCORE HELPERS ─────────────────────────────
@@ -1799,6 +2118,8 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
 
   const marketPromise = researchMarket(location);
   const data = calculate(price, rent, down, rate, expenses);
+  data._price = price;
+  window._niAnalysisData = data;
 
   document.getElementById('analysis-subtitle').textContent = `€${price.toLocaleString()} property · €${rent.toLocaleString()}/mo rent · ${location}`;
   document.getElementById('analysis-date').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
@@ -1839,16 +2160,21 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   cfNet.className = 'cf-net ' + (data.monthlyCashFlow >= 0 ? 'positive' : 'negative');
   document.getElementById('cf-net-val').textContent = (data.monthlyCashFlow >= 0 ? '+' : '-') + fmt(data.monthlyCashFlow) + '/mo';
 
-  document.getElementById('ai-summary-text').innerHTML = generateSummary(data, location);
+  document.getElementById('ai-summary-text').innerHTML = generateSummary(data, location, null);
   document.getElementById('market-loading').style.display = 'flex';
   document.getElementById('market-results').style.display = 'none';
   document.getElementById('market-location-text').textContent = location;
   document.getElementById('market-loading-text').textContent = `Researching rental market in ${location}…`;
   document.getElementById('lead-form-wrap').style.display = 'block';
+  document.getElementById('classification-loading').style.display = 'flex';
+  document.getElementById('classification-result').style.display = 'none';
+  document.getElementById('projection-card').style.display = 'none';
+  document.getElementById('stress-card').style.display = 'none';
   document.getElementById('lead-success').classList.remove('show');
 
   btn.classList.remove('loading');
   btnTextEl.textContent = originalText;
+  data._rate = rate; data._rent = rent; data._expenses = expenses;
   showPage('analysis');
 
   setTimeout(() => {
