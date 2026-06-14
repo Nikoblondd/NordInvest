@@ -826,6 +826,17 @@
     padding-top: 10px; border-top: 1px solid var(--border);
   }
 
+  /* FAQ */
+  .faq-section { background: var(--grey-50); }
+  .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .faq-item { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: box-shadow 0.2s; }
+  .faq-item[open] { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .faq-q { list-style: none; cursor: pointer; padding: 20px 24px; font-size: 16px; font-weight: 700; color: var(--navy); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-q::after { content: "+"; font-size: 24px; font-weight: 400; color: var(--blue); line-height: 1; transition: transform 0.2s; flex-shrink: 0; }
+  .faq-item[open] .faq-q::after { transform: rotate(45deg); }
+  .faq-a { padding: 0 24px 22px; color: var(--text-muted, #6B7280); font-size: 15px; line-height: 1.7; }
+  .faq-a a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
 </style>
 <!-- JSON-LD: FAQPage (targets common search questions) -->
 <script type="application/ld+json">
@@ -881,6 +892,7 @@
     <div class="nav-links">
       <a href="#" class="nav-link" onclick="showPage('landing'); scrollToSection('features-section'); return false;">Features</a>
       <a href="#" class="nav-link" onclick="showPage('landing'); scrollToSection('how-section'); return false;">How It Works</a>
+      <a href="#" class="nav-link" onclick="showPage('landing'); scrollToSection('faq-section'); return false;">FAQ</a>
       <a href="/blog" class="nav-link">Blog</a>
       <a href="#" class="btn-nav" onclick="showPage('landing'); scrollToSection('analyze-section'); return false;">Analyze Now</a>
     </div>
@@ -891,6 +903,7 @@
   <div class="mobile-menu" id="mobile-menu">
     <a href="#" class="nav-link" onclick="closeMobileMenu(); showPage('landing'); scrollToSection('features-section'); return false;">Features</a>
     <a href="#" class="nav-link" onclick="closeMobileMenu(); showPage('landing'); scrollToSection('how-section'); return false;">How It Works</a>
+    <a href="#" class="nav-link" onclick="closeMobileMenu(); showPage('landing'); scrollToSection('faq-section'); return false;">FAQ</a>
     <a href="/blog" class="nav-link" onclick="closeMobileMenu();">Blog</a>
     <a href="#" class="btn-nav" onclick="closeMobileMenu(); showPage('landing'); scrollToSection('analyze-section'); return false;">Analyze Now</a>
   </div>
@@ -1224,6 +1237,36 @@
           <div class="feature-title">AI Summary</div>
           <p class="feature-desc">A plain-English summary of the property's strengths, weaknesses, and risks — written by AI, based on the numbers.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FAQ -->
+  <section class="section faq-section" id="faq-section">
+    <div class="container">
+      <div class="section-header center">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">Frequently asked questions</h2>
+        <p class="section-sub">Everything you need to know about analyzing property investments with NordInvest.</p>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary class="faq-q">How do I know if a property is a good investment?</summary>
+          <div class="faq-a">Evaluate it across four wealth engines: rental cash flow, long-term price appreciation, value-add potential, and financing leverage. A good investment has at least one strong engine and survives an interest-rate stress test. NordInvest analyzes all four and classifies the property automatically in under 60 seconds.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">What is a good rental yield in Denmark, Norway, or Sweden?</summary>
+          <div class="faq-a">In major Nordic cities, gross rental yields typically range from about 3% to 4.5%. These are appreciation-driven markets, so a lower yield is normal and not automatically bad. Yields above roughly 5.5% usually indicate a cash-flow-focused property in a secondary market. <a href="/blog/how-to-calculate-rental-yield">Learn how to calculate rental yield →</a></div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Is negative monthly cash flow always a bad sign?</summary>
+          <div class="faq-a">No. In low-yield, high-appreciation markets like Copenhagen, a slightly negative monthly cash flow can still be an excellent long-term investment if the area appreciates steadily and you can hold for several years. What matters is whether the cash flow is fundable and survives a higher-interest-rate scenario.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Is NordInvest free to use?</summary>
+          <div class="faq-a">Yes. NordInvest is completely free and requires no sign-up. Paste a property listing URL or enter the numbers manually to get rental yield, cash flow, ROI, a 5-year appreciation projection, and an investment classification instantly.</div>
+        </details>
       </div>
     </div>
   </section>

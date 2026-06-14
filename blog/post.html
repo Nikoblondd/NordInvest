@@ -811,6 +811,7 @@
       document.getElementById('breadcrumb-title').textContent = meta.title;
 
       const heroEl = document.getElementById('hero-img');
+      const heroImg = getHeroImage(meta);
       heroEl.src = heroImg;
       heroEl.alt = meta.title;
       heroEl.style.display = 'block';
