@@ -1,0 +1,24 @@
+# NordInvest
+
+> NordInvest is a free, AI-powered property investment analyzer for Nordic and European real estate markets. Paste a property listing URL (or enter the numbers manually) and get an instant investment verdict: rental yield, monthly cash flow, ROI, a 5-year appreciation projection, a financing/leverage breakdown, and an overall investment classification.
+
+NordInvest helps prospective buyers and investors decide whether a specific property is worth buying. It evaluates a property across four "wealth engines" — cash flow, appreciation, value-add potential, and financing leverage — rather than judging on monthly profit alone. It classifies each property as a Cashflow Asset, Appreciation Asset, Value-Add Opportunity, Hybrid Investment, or Poor Investment, and explains which engine drives the value.
+
+Key facts:
+- Free to use, no sign-up required.
+- Markets covered: Denmark, Norway, Sweden, Finland, and broader EU/UK markets.
+- Local market data is drawn from official sources (Statistics Denmark, Statistics Norway/SSB, Statistics Sweden/SCB, ONS) on a per-square-metre basis.
+- Core outputs: gross & net rental yield, monthly cash flow, cash-on-cash ROI, mortgage/financing estimate, 5-year price appreciation projection, interest-rate stress test, and an AI investment classification.
+
+## Core pages
+- [Property Analyzer (home)](https://nordinvest.io/): The free tool — analyze any Nordic or European property in under 60 seconds.
+- [Blog — Nordic Property Insights](https://nordinvest.io/blog): Guides on rental yield, cash flow, market research, and investment strategy for Denmark, Norway, and Sweden.
+
+## Key concepts NordInvest explains
+- How to calculate rental yield (gross vs net) on Nordic property.
+- Why negative monthly cash flow is not automatically a bad investment in low-yield, high-appreciation markets like Copenhagen.
+- How to stress-test a property against higher interest rates before buying.
+- How to research a local market using official per-square-metre price and rent data.
+
+## Contact
+- Website: https://nordinvest.io

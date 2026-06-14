@@ -1,4 +1,4 @@
-const BASE_URL = 'https://nordinvest.vercel.app';
+const BASE_URL = 'https://nordinvest.io';
 
 function parseMeta(content) {
   const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
   // Fetch manifest + posts from static CDN files — no filesystem needed
   let blogEntries = [];
   try {
-    const origin = `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host || 'nordinvest.vercel.app'}`;
+    const origin = `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host || 'nordinvest.io'}`;
     const manifestRes = await fetch(`${origin}/content/blog/manifest.json`);
     if (manifestRes.ok) {
       const { posts: slugs } = await manifestRes.json();

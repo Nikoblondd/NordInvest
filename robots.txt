@@ -1,4 +1,31 @@
+# NordInvest — robots.txt
+# Allow all standard search engines full access
 User-agent: *
 Allow: /
 
-Sitemap: https://nordinvest.vercel.app/sitemap.xml
+# Explicitly welcome AI / answer-engine crawlers (citations drive referral traffic)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://nordinvest.io/sitemap.xml

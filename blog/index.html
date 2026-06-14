@@ -13,12 +13,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog — NordInvest</title>
   <meta name="description" content="Expert guides on Nordic property investment — rental yields, cash flow analysis, market research, and investment strategies for Denmark, Norway, and Sweden.">
-  <link rel="canonical" href="https://nordinvest.vercel.app/blog">
+  <link rel="canonical" href="https://nordinvest.io/blog">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://nordinvest.vercel.app/blog">
+  <meta property="og:url" content="https://nordinvest.io/blog">
   <meta property="og:title" content="Blog — NordInvest">
   <meta property="og:description" content="Expert guides on Nordic property investment — rental yields, cash flow analysis, market research, and investment strategies for Denmark, Norway, and Sweden.">
-  <meta property="og:image" content="https://nordinvest.vercel.app/images/og-default.jpg">
+  <meta property="og:image" content="https://nordinvest.io/images/og-default.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Blog — NordInvest">
   <meta name="twitter:description" content="Expert guides on Nordic property investment.">
@@ -506,17 +506,17 @@
       "@graph": [
         {
           "@type": "Blog",
-          "@id": "https://nordinvest.vercel.app/blog",
+          "@id": "https://nordinvest.io/blog",
           "name": "NordInvest — Nordic Property Insights",
           "description": "Expert guides on investing in Denmark, Norway, and Sweden.",
-          "url": "https://nordinvest.vercel.app/blog",
-          "publisher": { "@type": "Organization", "name": "NordInvest", "url": "https://nordinvest.vercel.app" }
+          "url": "https://nordinvest.io/blog",
+          "publisher": { "@type": "Organization", "name": "NordInvest", "url": "https://nordinvest.io" }
         },
         {
           "@type": "BreadcrumbList",
           "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://nordinvest.vercel.app/" },
-            { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://nordinvest.vercel.app/blog" }
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://nordinvest.io/" },
+            { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://nordinvest.io/blog" }
           ]
         },
         {
@@ -524,7 +524,7 @@
           "itemListElement": posts.slice(0,10).map((p,i) => ({
             "@type": "ListItem",
             "position": i+1,
-            "url": `https://nordinvest.vercel.app/blog/${p.slug}`,
+            "url": `https://nordinvest.io/blog/${p.slug}`,
             "name": p.title
           }))
         }
