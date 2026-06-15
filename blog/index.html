@@ -14,6 +14,9 @@
   <title>Blog — NordInvest</title>
   <meta name="description" content="Expert guides on Nordic property investment — rental yields, cash flow analysis, market research, and investment strategies for Denmark, Norway, and Sweden.">
   <link rel="canonical" href="https://nordinvest.io/blog">
+  <link rel="alternate" hreflang="en" href="https://nordinvest.io/blog">
+  <link rel="alternate" hreflang="da" href="https://nordinvest.io/blog?lang=da">
+  <link rel="alternate" hreflang="x-default" href="https://nordinvest.io/blog">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://nordinvest.io/blog">
   <meta property="og:title" content="Blog — NordInvest">
@@ -305,6 +308,40 @@
       .featured-card .post-card-img { height: 200px; }
       .nav-links .nav-link:not(.nav-cta) { display: none; }
     }
+
+    /* Language switcher */
+    .lang-switch {
+      display: inline-flex;
+      gap: 2px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      margin-left: 14px;
+    }
+    .lang-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 180ms ease;
+      line-height: 1;
+    }
+    .lang-btn .lang-flag { font-size: 14px; }
+    .lang-btn:hover { color: var(--navy); }
+    .lang-btn.active {
+      background: var(--bg);
+      color: var(--navy);
+      box-shadow: 0 1px 2px rgba(15,31,61,0.06);
+    }
   </style>
 </head>
 <body>
@@ -316,10 +353,14 @@
       NordInvest
     </a>
     <div class="nav-links">
-      <a href="/#features" class="nav-link">Features</a>
-      <a href="/#how-it-works" class="nav-link">How It Works</a>
-      <a href="/blog" class="nav-link active">Blog</a>
-      <a href="/#analyze-section" class="nav-cta">Analyze Now</a>
+      <a href="/#features" class="nav-link" data-i18n="nav.features">Features</a>
+      <a href="/#how-it-works" class="nav-link" data-i18n="nav.howItWorks">How It Works</a>
+      <a href="/blog" class="nav-link active" data-i18n="nav.blog">Blog</a>
+      <a href="/#analyze-section" class="nav-cta" data-i18n="nav.analyzeNow">Analyze Now</a>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" class="lang-btn active" data-lang="en" onclick="setLang('en')" aria-label="English"><span class="lang-flag">🇬🇧</span><span class="lang-code">EN</span></button>
+        <button type="button" class="lang-btn" data-lang="da" onclick="setLang('da')" aria-label="Dansk"><span class="lang-flag">🇩🇰</span><span class="lang-code">DA</span></button>
+      </div>
     </div>
   </div>
 </nav>
@@ -539,6 +580,16 @@
   }
 
   loadPosts();
+</script>
+
+<script src="/i18n.js"></script>
+<script>
+document.addEventListener('i18n:ready', (e) => {
+  const lang = e.detail.lang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+});
 </script>
 </body>
 </html>
