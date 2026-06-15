@@ -1673,6 +1673,83 @@
     .report-stamp { display: none; }
     .calc-formula { font-size: 12px; }
   }
+
+  /* ── HONEST MARKET METRICS — source attribution + confidence badges ── */
+  .conf-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 99px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    vertical-align: middle;
+  }
+  .conf-high { background: var(--green-pale); color: #0c905c; }
+  .conf-medium { background: var(--amber-pale); color: #92590e; }
+  .conf-low { background: var(--red-pale); color: #b91c1c; }
+  .conf-unavailable, .conf-unknown { background: var(--grey-100); color: var(--text-muted); }
+
+  .market-stat-source {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .market-stat-source a {
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .market-stat-source a:hover { text-decoration: underline; }
+  .market-stat-updated {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+  .market-stat-na {
+    color: var(--text-muted) !important;
+    font-style: italic;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+  }
+  .market-stat-unavail-reason {
+    margin-top: 6px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .market-unavailable {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 18px 20px;
+    background: var(--grey-50);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    grid-column: 1 / -1;
+  }
+  .market-unavailable svg {
+    flex-shrink: 0;
+    color: var(--amber);
+    margin-top: 2px;
+  }
+  .market-unavailable-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .market-unavailable-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .market-unavailable-sub a {
+    color: var(--blue);
+    font-weight: 500;
+  }
 </style>
 <!-- JSON-LD: FAQPage (targets common search questions) -->
 <script type="application/ld+json">
@@ -2946,7 +3023,6 @@ async function researchMarket(locationInput) {
   const sqm = window._niPropertySqm || null;
   const params = new URLSearchParams({
     location: locationInput,
-    currency: activeCurrency,
     ...(sqm ? { sqm } : {}),
   });
   const res = await fetch(`${MARKET_API}?${params}`, {
@@ -2955,178 +3031,274 @@ async function researchMarket(locationInput) {
   if (!res.ok) throw new Error('market API error');
   const d = await res.json();
   if (!d.success) throw new Error(d.error || 'market API failed');
-  return { data: d, displayName: d.regionName || locationInput };
+
+  // Normalize for downstream code (classification + AI summary still read
+  // `appreciation`, `marketType`, `yield` from the legacy view).
+  const legacy = {
+    pricePerSqm: d.metrics?.avg_sale_per_m2?.value ?? null,
+    rentPerSqm: d.metrics?.avg_rent_per_m2_monthly?.value ?? null,
+    appreciation: d.metrics?.appreciation_pct_yr?.value ?? null,
+    grossYield: null, // never invented anymore
+    marketType: 'balanced',
+    source: d.metrics?.avg_sale_per_m2?.source ?? null,
+    currency: d.currency,
+  };
+  // Inherit market type from appreciation rate (defensible categorization, not invented data)
+  if (legacy.appreciation != null) {
+    legacy.marketType = legacy.appreciation >= 5 ? 'high-yield' : legacy.appreciation >= 3.5 ? 'balanced' : 'high-price';
+  }
+  return {
+    data: { ...d, ...legacy },
+    raw: d,
+    displayName: d.region?.name || locationInput,
+  };
 }
 
 function showMarketResults(marketInfo, userRent) {
   const d = marketInfo.data;
+  const raw = marketInfo.raw || {};
   _lastMarketData = d;
   document.getElementById('market-loading').style.display = 'none';
   document.getElementById('market-results').style.display = 'block';
   document.getElementById('market-location-text').textContent = marketInfo.displayName;
 
-  const sym = CURRENCY_SYMBOLS[d.currency || activeCurrency] || (d.currency || activeCurrency);
-  document.getElementById('market-avg').textContent   = sym + (d.pricePerSqm || '—').toLocaleString() + '/m²';
-  document.getElementById('market-range').textContent = sym + (d.rentPerSqm  || '—').toLocaleString() + '/m²/mo';
-  document.getElementById('market-yield').textContent = (d.grossYield || '—') + '%';
+  const grid = document.querySelector('.report-section .market-grid') || document.querySelector('.market-grid');
+
+  // Case 1: no data available for this area — show honest unavailable state.
+  if (raw.data_available === false) {
+    if (grid) {
+      grid.innerHTML = `
+        <div class="market-unavailable">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <div>
+            <div class="market-unavailable-title">${raw.message || 'Reliable local market data unavailable for this area.'}</div>
+            <div class="market-unavailable-sub">We only display per-m² figures that trace to a named, public source (Statistics Denmark, SCB, SSB). <a href="/methodology" target="_blank">How we source data →</a></div>
+          </div>
+        </div>`;
+    }
+    const compEl = document.getElementById('market-comparison-text');
+    const badgeEl = document.getElementById('market-comparison-badge');
+    const srcEl = document.getElementById('market-source');
+    if (compEl) compEl.textContent = '';
+    if (badgeEl) { badgeEl.textContent = ''; badgeEl.className = ''; }
+    if (srcEl) srcEl.style.display = 'none';
+    // Still run classification with null market data so Layer 1 + 2 finish loading.
+    runClassificationWithMarket(null, marketInfo.displayName);
+    return;
+  }
+
+  // Case 2: real data — render the metric grid with source attribution.
+  const metrics = raw.metrics || {};
+  const currency = raw.currency || activeCurrency;
+  const sym = CURRENCY_SYMBOLS[currency] || currency;
+
+  if (grid) {
+    grid.innerHTML = `
+      ${renderMetric({
+        label: window.t ? window.t('analysis.marketAvgSale') : 'Avg. Sale Price',
+        metric: metrics.avg_sale_per_m2,
+        format: (v) => sym + Number(v).toLocaleString() + '/m²',
+        unavailLabel: window.t ? window.t('analysis.marketAvgSale') : 'Sale price',
+      })}
+      ${renderMetric({
+        label: window.t ? window.t('analysis.marketAvgRent') : 'Avg. Rent per m²',
+        metric: metrics.avg_rent_per_m2_monthly,
+        format: (v) => sym + Number(v).toLocaleString() + '/m²/mo',
+        unavailLabel: window.t ? window.t('analysis.marketAvgRent') : 'Rent per m²',
+      })}
+      ${renderMetric({
+        label: window.t ? window.t('analysis.marketAppreciation') || 'Annual Appreciation' : 'Annual Appreciation',
+        metric: metrics.appreciation_pct_yr,
+        format: (v) => Number(v).toFixed(1) + '%/yr',
+        unavailLabel: 'Appreciation',
+      })}`;
+  }
 
   const compEl  = document.getElementById('market-comparison-text');
   const badgeEl = document.getElementById('market-comparison-badge');
   const srcEl   = document.getElementById('market-source');
-  if (srcEl && d.source) {
-    srcEl.textContent = '↗ Source: ' + d.source;
-    srcEl.style.display = 'block';
-  }
+  if (srcEl) srcEl.style.display = 'none';
 
-  // Per-sqm comparison
+  // Honest rent comparison: only run when we have a real per-m² rent figure.
   const sqm = window._niPropertySqm;
-  if (sqm && d.rentPerSqm) {
-    const mktRentForSqm = Math.round(sqm * d.rentPerSqm);
+  const rentMetric = metrics.avg_rent_per_m2_monthly;
+  if (sqm && rentMetric && rentMetric.value != null) {
+    const mktRent = rentMetric.value;
+    const mktRentForSqm = Math.round(sqm * mktRent);
     const userRentPerSqm = Math.round(userRent / sqm);
-    const diff = userRentPerSqm - d.rentPerSqm;
-    const diffPct = Math.abs(Math.round((diff / d.rentPerSqm) * 100));
-    if (diff > d.rentPerSqm * 0.15) {
-      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, which is <strong>${diffPct}% above</strong> the market average of ${sym}${d.rentPerSqm}/m²/mo. For a ${sqm}m² property, market rent would be ~<strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong>. Verify that a premium is justified.`;
+    const diff = userRentPerSqm - mktRent;
+    const diffPct = Math.abs(Math.round((diff / mktRent) * 100));
+    if (diff > mktRent * 0.15) {
+      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, <strong>${diffPct}% above</strong> the area average of ${sym}${mktRent}/m²/mo. Market rent for ${sqm}m² ≈ <strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong>.`;
       badgeEl.className = 'market-badge-neg'; badgeEl.textContent = '⚠ Above market rate';
-    } else if (diff < -d.rentPerSqm * 0.10) {
-      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, which is <strong>${diffPct}% below</strong> the area average of ${sym}${d.rentPerSqm}/m²/mo. For ${sqm}m² at market rate, rent could reach ~<strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong> — potential upside.`;
+    } else if (diff < -mktRent * 0.10) {
+      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, <strong>${diffPct}% below</strong> the area average of ${sym}${mktRent}/m²/mo. Market rent for ${sqm}m² ≈ <strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong>.`;
       badgeEl.className = 'market-badge-pos'; badgeEl.textContent = '↑ Below market — upside';
     } else {
-      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, in line with the area average of ${sym}${d.rentPerSqm}/m²/mo. For ${sqm}m², the market rent benchmark is ~<strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong>.`;
+      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, in line with the area average of ${sym}${mktRent}/m²/mo.`;
       badgeEl.className = 'market-badge-neu'; badgeEl.textContent = '✓ At market rate';
     }
+  } else if (rentMetric && rentMetric.value == null) {
+    // Rent data unavailable — be explicit. Do NOT invent a comparison.
+    compEl.innerHTML = `<em>We don't have an authoritative rent-per-m² figure for this area, so we can't benchmark your expected rent. <a href="/methodology" target="_blank">Why →</a></em>`;
+    badgeEl.className = ''; badgeEl.textContent = '';
   } else {
-    // Fallback: compare implied rent/sqm from price
-    const impliedMonthlyFromYield = d.pricePerSqm ? Math.round(window._niAnalysisData?._price * (d.grossYield/100) / 12) : null;
-    if (impliedMonthlyFromYield) {
-      const diff = userRent - impliedMonthlyFromYield;
-      const diffPct = Math.abs(Math.round((diff / impliedMonthlyFromYield) * 100));
-      if (diff > impliedMonthlyFromYield * 0.15) {
-        compEl.innerHTML = `Based on area yield of <strong>${d.grossYield}%</strong>, the implied market rent for this property is ~<strong>${sym}${impliedMonthlyFromYield.toLocaleString()}/mo</strong>. Your estimate of ${sym}${userRent.toLocaleString()}/mo is <strong>${diffPct}% above</strong> that — verify demand at this level.`;
-        badgeEl.className = 'market-badge-neg'; badgeEl.textContent = '⚠ Above yield-implied rate';
-      } else if (diff < -impliedMonthlyFromYield * 0.10) {
-        compEl.innerHTML = `Based on area yield of <strong>${d.grossYield}%</strong>, implied market rent is ~<strong>${sym}${impliedMonthlyFromYield.toLocaleString()}/mo</strong>. Your estimate of ${sym}${userRent.toLocaleString()}/mo is <strong>${diffPct}% below</strong> — there may be upside if you add the property's size.`;
-        badgeEl.className = 'market-badge-pos'; badgeEl.textContent = '↑ Room to grow';
-      } else {
-        compEl.innerHTML = `Your expected rent of <strong>${sym}${userRent.toLocaleString()}/mo</strong> aligns with the area's gross yield of <strong>${d.grossYield}%</strong>. The rental assumption appears realistic for this market.`;
-        badgeEl.className = 'market-badge-neu'; badgeEl.textContent = '✓ Yield-consistent';
-      }
-    } else {
-      compEl.innerHTML = `Market average rent per m² in ${marketInfo.displayName}: <strong>${sym}${d.rentPerSqm}/m²/mo</strong>. Add the property's size (m²) to see a direct comparison.`;
-      badgeEl.className = 'market-badge-neu'; badgeEl.textContent = '→ Add size for comparison';
-    }
+    compEl.innerHTML = '';
+    badgeEl.className = ''; badgeEl.textContent = '';
   }
 
-  // Classification
+  // Classification (also runs when data_available=false, via runClassificationWithMarket(null))
+  runClassificationWithMarket(d, marketInfo.displayName);
+}
+
+function runClassificationWithMarket(d, displayName) {
   const data = window._niAnalysisData;
-  if (data) {
-    const cls = classifyInvestment(data, d);
-    document.getElementById('classification-loading').style.display = 'none';
-    document.getElementById('classification-result').style.display = 'block';
-    const badge = document.getElementById('classification-badge');
-    badge.style.background = cls.color + '18';
-    badge.style.borderColor = cls.color + '40';
-    document.getElementById('classification-label').textContent = cls.label;
-    document.getElementById('classification-label').style.color = cls.color;
-    document.getElementById('classification-engine-text').textContent = cls.wealthEngine;
+  if (!data) return;
+  const cls = classifyInvestment(data, d);
+  document.getElementById('classification-loading').style.display = 'none';
+  document.getElementById('classification-result').style.display = 'block';
+  const badge = document.getElementById('classification-badge');
+  badge.style.background = cls.color + '18';
+  badge.style.borderColor = cls.color + '40';
+  document.getElementById('classification-label').textContent = cls.label;
+  document.getElementById('classification-label').style.color = cls.color;
+  document.getElementById('classification-engine-text').textContent = cls.wealthEngine;
 
-    // ── LAYER 1: refresh hero with full classification data ──
-    const heroBadge = document.getElementById('hero-type-badge');
-    const heroDot = document.getElementById('hero-type-dot');
-    if (heroBadge) {
-      heroBadge.style.background = cls.color + '14';
-      heroBadge.style.borderColor = cls.color + '40';
-    }
-    if (heroDot) heroDot.style.background = cls.color;
-    const heroRiskEl2 = document.getElementById('hero-risk-text');
-    if (heroRiskEl2) heroRiskEl2.textContent = deriveBiggestRisk(data, d, cls);
-    const heroVerdictEl2 = document.getElementById('hero-verdict-text');
-    if (heroVerdictEl2) heroVerdictEl2.textContent = deriveOneLineVerdict(data, d, cls);
-
-    // Engine score bars (animated)
-    const engines = [
-      { id: 'eng-cashflow',     val: cls.engineScores.cashflow,     label: 'Cashflow Engine' },
-      { id: 'eng-appreciation', val: cls.engineScores.appreciation, label: 'Appreciation Engine' },
-      { id: 'eng-leverage',     val: cls.engineScores.leverage,     label: 'Leverage Effect' },
-      { id: 'eng-market',       val: cls.engineScores.market,       label: 'Market Context' },
-    ];
-    engines.forEach((e, i) => {
-      const fill  = document.getElementById(e.id + '-fill');
-      const score = document.getElementById(e.id + '-score');
-      if (!fill || !score) return;
-      const color = e.val >= 65 ? 'var(--green)' : e.val >= 40 ? 'var(--amber)' : 'var(--red)';
-      fill.style.background = color;
-      score.textContent = e.val + '/100';
-      score.style.color = color;
-      setTimeout(() => { fill.style.width = e.val + '%'; }, 200 + i * 80);
-    });
-
-    // Update AI summary now that we have market data
-    document.getElementById('ai-summary-text').innerHTML = generateSummary(data, marketInfo.displayName, d);
-
-    // 5-Year Appreciation Projection
-    const appreciation = d.appreciation || 3.5;
-    const price = data._price;
-    if (price) {
-      let rows = '';
-      for (let yr = 1; yr <= 5; yr++) {
-        const val = Math.round(price * Math.pow(1 + appreciation/100, yr));
-        const gain = val - price;
-        rows += `<div class="proj-row">
-          <div class="proj-year">Year ${yr}</div>
-          <div class="proj-val">${fmt(val)}</div>
-          <div class="proj-gain positive">+${fmt(gain)}</div>
-        </div>`;
-      }
-      document.getElementById('projection-rows').innerHTML = rows;
-      document.getElementById('proj-rate').textContent = appreciation.toFixed(1) + '% p.a.';
-      document.getElementById('projection-card').style.display = 'block';
-    }
-
-    // Stress Test
-    const r = data._rate || 4.5;
-    const stressRate1 = r + 1;
-    const stressRate2 = r + 2;
-    const loan = data.loanAmount;
-    const expenses = data._expenses || 0;
-    const rent = data._rent || 0;
-    function calcMortgage(rate, loan) {
-      const mr = rate/100/12; const n = 360;
-      return mr === 0 ? loan/n : loan * (mr * Math.pow(1+mr,n)) / (Math.pow(1+mr,n)-1);
-    }
-    const m1 = calcMortgage(stressRate1, loan);
-    const m2 = calcMortgage(stressRate2, loan);
-    const cf1 = rent - m1 - expenses;
-    const cf2 = rent - m2 - expenses;
-    const breakEven = Math.ceil(data.monthlyMortgage + expenses);
-    const vacancyCost = Math.round(rent / 12);
-
-    document.getElementById('stress-grid').innerHTML = `
-      <div class="stress-row">
-        <div class="stress-label">Break-even rent (covers all costs)</div>
-        <div class="stress-val">${fmt(breakEven)}/mo</div>
-      </div>
-      <div class="stress-row">
-        <div class="stress-label">Cash flow if rate rises +1% (to ${stressRate1.toFixed(1)}%)</div>
-        <div class="stress-val ${cf1 >= 0 ? 'positive' : 'negative'}">${cf1 >= 0 ? '+' : ''}${fmt(cf1)}/mo</div>
-      </div>
-      <div class="stress-row">
-        <div class="stress-label">Cash flow if rate rises +2% (to ${stressRate2.toFixed(1)}%)</div>
-        <div class="stress-val ${cf2 >= 0 ? 'positive' : 'negative'}">${cf2 >= 0 ? '+' : ''}${fmt(cf2)}/mo</div>
-      </div>
-      <div class="stress-row">
-        <div class="stress-label">Cost of 1-month vacancy per year</div>
-        <div class="stress-val negative">−${fmt(vacancyCost)}/mo avg</div>
-      </div>
-    `;
-    document.getElementById('stress-card').style.display = 'block';
+  // ── LAYER 1: refresh hero with full classification data ──
+  const heroBadge = document.getElementById('hero-type-badge');
+  const heroDot = document.getElementById('hero-type-dot');
+  if (heroBadge) {
+    heroBadge.style.background = cls.color + '14';
+    heroBadge.style.borderColor = cls.color + '40';
   }
+  if (heroDot) heroDot.style.background = cls.color;
+  const heroRiskEl2 = document.getElementById('hero-risk-text');
+  if (heroRiskEl2) heroRiskEl2.textContent = deriveBiggestRisk(data, d, cls);
+  const heroVerdictEl2 = document.getElementById('hero-verdict-text');
+  if (heroVerdictEl2) heroVerdictEl2.textContent = deriveOneLineVerdict(data, d, cls);
+
+  // Engine score bars (animated)
+  const engines = [
+    { id: 'eng-cashflow',     val: cls.engineScores.cashflow,     label: 'Cashflow Engine' },
+    { id: 'eng-appreciation', val: cls.engineScores.appreciation, label: 'Appreciation Engine' },
+    { id: 'eng-leverage',     val: cls.engineScores.leverage,     label: 'Leverage Effect' },
+    { id: 'eng-market',       val: cls.engineScores.market,       label: 'Market Context' },
+  ];
+  engines.forEach((e, i) => {
+    const fill  = document.getElementById(e.id + '-fill');
+    const score = document.getElementById(e.id + '-score');
+    if (!fill || !score) return;
+    const color = e.val >= 65 ? 'var(--green)' : e.val >= 40 ? 'var(--amber)' : 'var(--red)';
+    fill.style.background = color;
+    score.textContent = e.val + '/100';
+    score.style.color = color;
+    setTimeout(() => { fill.style.width = e.val + '%'; }, 200 + i * 80);
+  });
+
+  // Update AI summary now that we have market data
+  document.getElementById('ai-summary-text').innerHTML = generateSummary(data, displayName, d);
+
+  // 5-Year Appreciation Projection
+  const appreciation = (d && d.appreciation) || 3.5;
+  const price = data._price;
+  if (price) {
+    let rows = '';
+    for (let yr = 1; yr <= 5; yr++) {
+      const val = Math.round(price * Math.pow(1 + appreciation/100, yr));
+      const gain = val - price;
+      rows += `<div class="proj-row">
+        <div class="proj-year">Year ${yr}</div>
+        <div class="proj-val">${fmt(val)}</div>
+        <div class="proj-gain positive">+${fmt(gain)}</div>
+      </div>`;
+    }
+    document.getElementById('projection-rows').innerHTML = rows;
+    document.getElementById('proj-rate').textContent = appreciation.toFixed(1) + '% p.a.';
+    document.getElementById('projection-card').style.display = 'block';
+  }
+
+  // Stress Test
+  const r = data._rate || 4.5;
+  const stressRate1 = r + 1;
+  const stressRate2 = r + 2;
+  const loan = data.loanAmount;
+  const expenses = data._expenses || 0;
+  const rent = data._rent || 0;
+  function calcMortgage(rate, loan) {
+    const mr = rate/100/12; const n = 360;
+    return mr === 0 ? loan/n : loan * (mr * Math.pow(1+mr,n)) / (Math.pow(1+mr,n)-1);
+  }
+  const m1 = calcMortgage(stressRate1, loan);
+  const m2 = calcMortgage(stressRate2, loan);
+  const cf1 = rent - m1 - expenses;
+  const cf2 = rent - m2 - expenses;
+  const breakEven = Math.ceil(data.monthlyMortgage + expenses);
+  const vacancyCost = Math.round(rent / 12);
+
+  document.getElementById('stress-grid').innerHTML = `
+    <div class="stress-row">
+      <div class="stress-label">Break-even rent (covers all costs)</div>
+      <div class="stress-val">${fmt(breakEven)}/mo</div>
+    </div>
+    <div class="stress-row">
+      <div class="stress-label">Cash flow if rate rises +1% (to ${stressRate1.toFixed(1)}%)</div>
+      <div class="stress-val ${cf1 >= 0 ? 'positive' : 'negative'}">${cf1 >= 0 ? '+' : ''}${fmt(cf1)}/mo</div>
+    </div>
+    <div class="stress-row">
+      <div class="stress-label">Cash flow if rate rises +2% (to ${stressRate2.toFixed(1)}%)</div>
+      <div class="stress-val ${cf2 >= 0 ? 'positive' : 'negative'}">${cf2 >= 0 ? '+' : ''}${fmt(cf2)}/mo</div>
+    </div>
+    <div class="stress-row">
+      <div class="stress-label">Cost of 1-month vacancy per year</div>
+      <div class="stress-val negative">−${fmt(vacancyCost)}/mo avg</div>
+    </div>
+  `;
+  document.getElementById('stress-card').style.display = 'block';
 }
 
 // ── INVESTMENT CLASSIFICATION ─────────────────
 let _lastMarketData = null;
 
 // ── BIGGEST RISK & ONE-LINE VERDICT (Layer 1 derivations) ──
+// ── HONEST MARKET METRIC RENDERING ──
+function renderMetric({ label, metric, format, unavailLabel }) {
+  if (!metric) {
+    return `
+      <div class="market-stat market-stat-unavail">
+        <div class="market-stat-label">${escapeHtml(label)}</div>
+        <div class="market-stat-value market-stat-na">Not available</div>
+      </div>`;
+  }
+  if (metric.value == null) {
+    return `
+      <div class="market-stat market-stat-unavail">
+        <div class="market-stat-label">${escapeHtml(label)}</div>
+        <div class="market-stat-value market-stat-na">Not available</div>
+        <div class="market-stat-sub market-stat-unavail-reason">${escapeHtml(metric.unavailable_reason || 'No authoritative source bundled yet.')}</div>
+      </div>`;
+  }
+  const conf = (metric.confidence || 'unknown').toLowerCase();
+  return `
+    <div class="market-stat">
+      <div class="market-stat-label">
+        ${escapeHtml(label)}
+        <span class="conf-badge conf-${conf}" title="Confidence: ${escapeHtml(conf)}">${escapeHtml(conf)}</span>
+      </div>
+      <div class="market-stat-value mono">${format(metric.value)}</div>
+      <div class="market-stat-source">
+        <a href="${escapeAttr(metric.source_url)}" target="_blank" rel="noopener" title="Open source">
+          ${escapeHtml(metric.source)} ↗
+        </a>
+        <span class="market-stat-updated">· ${escapeHtml(metric.last_updated)}</span>
+      </div>
+    </div>`;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s) { return escapeHtml(s).replace(/`/g, '&#96;'); }
+
 function deriveBiggestRisk(data, marketData, cls) {
   const _t = (k, v) => (window.t ? window.t(k, v) : k);
   const { rentalYield, monthlyCashFlow, monthlyMortgage } = data;
@@ -3662,20 +3834,17 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
 
   marketPromise.then(marketInfo => showMarketResults(marketInfo, rent))
     .catch(() => {
-      // Market API failed — fall back to curated local data
-      const fallback = lookupCity(location) || COUNTRY_TIERS.default;
-      const sym = CURRENCY_SYMBOLS[activeCurrency] || activeCurrency;
+      // Market API failed — show honest unavailable state, do NOT fabricate.
       showMarketResults({
-        data: {
-          pricePerSqm: fallback.avg * 200, // rough estimate
-          rentPerSqm: fallback.avg,
-          grossYield: fallback.yield,
-          appreciation: fallback.appreciation || 3.5,
-          marketType: fallback.marketType || 'balanced',
-          currency: activeCurrency,
-          source: (window.t ? window.t('errors.marketApiUnavailable') : 'Estimated — market API unavailable'),
+        data: {},
+        raw: {
+          success: true,
+          data_available: false,
+          location,
+          message: 'Reliable local market data unavailable — our data service is temporarily unreachable.',
+          methodology_url: '/methodology',
         },
-        displayName: location
+        displayName: location,
       }, rent);
     });
 }

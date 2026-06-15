@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/methodology", "destination": "/methodology.html" },
     { "source": "/blog/:slug+", "destination": "/blog/post.html" }
   ]
 }

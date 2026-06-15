@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3PQK8QS0JF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3PQK8QS0JF');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How we source data — NordInvest</title>
+<meta name="description" content="How NordInvest sources market data for property investment analysis. Direct citations from Statistics Denmark, Statistics Sweden, and Statistics Norway. No scraping. Confidence badges on every figure.">
+<link rel="canonical" href="https://nordinvest.io/methodology">
+<link rel="alternate" hreflang="en" href="https://nordinvest.io/methodology">
+<link rel="alternate" hreflang="da" href="https://nordinvest.io/methodology?lang=da">
+<link rel="alternate" hreflang="x-default" href="https://nordinvest.io/methodology">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0F1F3D;
+    --navy-light: #1a3360;
+    --blue: #2563EB;
+    --blue-pale: #EFF6FF;
+    --green: #10B981;
+    --green-pale: #ECFDF5;
+    --amber: #F59E0B;
+    --amber-pale: #FFFBEB;
+    --red: #EF4444;
+    --red-pale: #FEF2F2;
+    --grey-50: #F8F9FA;
+    --grey-100: #F1F5F9;
+    --text: #111827;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+  }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    color: var(--text);
+    background: var(--grey-50);
+    line-height: 1.65;
+  }
+  .nav {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+  }
+  .nav a.logo {
+    color: var(--navy); text-decoration: none; font-weight: 800;
+    font-size: 18px; letter-spacing: -0.4px;
+  }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    transition: color 180ms ease;
+  }
+  .nav-links a:hover { color: var(--navy); }
+
+  main {
+    max-width: 760px;
+    margin: 48px auto 100px;
+    padding: 0 24px;
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--blue);
+    background: var(--blue-pale);
+    padding: 5px 12px; border-radius: 6px;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .lede {
+    font-size: 18px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+    margin-top: 44px;
+    margin-bottom: 14px;
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-top: 24px;
+    margin-bottom: 8px;
+  }
+  p { margin-bottom: 14px; color: var(--text); }
+  a { color: var(--blue); }
+
+  .principle {
+    background: var(--blue-pale);
+    border-left: 4px solid var(--blue);
+    padding: 16px 20px;
+    border-radius: 0 10px 10px 0;
+    margin: 20px 0;
+    font-size: 15px;
+    color: var(--navy);
+  }
+  .principle strong { font-weight: 700; }
+
+  .conf-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0 30px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .conf-table th, .conf-table td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .conf-table tr:last-child td { border-bottom: none; }
+  .conf-table th {
+    background: var(--grey-50);
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .conf-badge {
+    display: inline-block; padding: 2px 9px; border-radius: 99px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px;
+  }
+  .conf-high { background: var(--green-pale); color: #0c905c; }
+  .conf-medium { background: var(--amber-pale); color: #92590e; }
+  .conf-low { background: var(--red-pale); color: #b91c1c; }
+  .conf-unavailable { background: var(--grey-100); color: var(--text-muted); }
+
+  .source-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 14px;
+  }
+  .source-card h3 { margin-top: 0; margin-bottom: 4px; }
+  .source-card-meta {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+  }
+  .source-card p { font-size: 14px; color: var(--text); margin-bottom: 10px; }
+  .source-card a {
+    font-size: 13px; font-weight: 500;
+    word-break: break-all;
+  }
+
+  .never-list {
+    background: var(--red-pale);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin: 18px 0;
+  }
+  .never-list h3 { color: #b91c1c; }
+  .never-list ul { padding-left: 20px; margin-top: 8px; }
+  .never-list li { font-size: 14px; margin-bottom: 6px; color: var(--text); }
+
+  .last-updated {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">NordInvest</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/blog">Blog</a>
+      <a href="/#analyze-section">Analyze a property</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <span class="eyebrow">Data methodology</span>
+  <h1>How we source market data</h1>
+  <p class="lede">
+    Every per-square-metre figure NordInvest displays must trace to a named, publicly-citable
+    source. When we don't have a defensible source for a given area, we say so — we do not
+    fabricate numbers to fill the gap.
+  </p>
+
+  <div class="principle">
+    <strong>The rule:</strong> if a metric can't link to a real dataset, the UI shows
+    <em>"Reliable local market data unavailable for this area"</em>. Never an invented number,
+    never a guess dressed up as a benchmark.
+  </div>
+
+  <h2>Where the numbers come from</h2>
+
+  <div class="source-card">
+    <h3>🇩🇰 Denmark — Danmarks Statistik (DST)</h3>
+    <div class="source-card-meta">Table EJ55 · refreshed quarterly via the official statbank API</div>
+    <p>
+      Average realised sale price per m² by municipality (kommunenummer), for owner-occupied
+      apartments. National appreciation rates derived from the same series.
+    </p>
+    <a href="https://www.statbank.dk/EJ55" target="_blank" rel="noopener">
+      statbank.dk/EJ55 ↗
+    </a>
+  </div>
+
+  <div class="source-card">
+    <h3>🇸🇪 Sweden — Statistics Sweden (SCB)</h3>
+    <div class="source-card-meta">Table BO0501 (Fastighetspriser) · refreshed quarterly via SCB PXWeb API</div>
+    <p>
+      Average sale price per m² by län and major municipalities. Sweden's free per-m²
+      rental series at municipality level is limited, so rent figures may be unavailable
+      in many regions.
+    </p>
+    <a href="https://www.scb.se/en/finding-statistics/statistics-by-subject-area/housing-construction-and-building/real-estate-prices-and-registrations-of-title/real-estate-prices-and-registrations-of-title/" target="_blank" rel="noopener">
+      scb.se/en/...real-estate-prices ↗
+    </a>
+  </div>
+
+  <div class="source-card">
+    <h3>🇳🇴 Norway — Statistics Norway (SSB)</h3>
+    <div class="source-card-meta">Table 06035 (Boligpriser) · refreshed quarterly via SSB PXWeb API</div>
+    <p>
+      Average sale price per m² by municipality (kommune). Appreciation rates derived
+      from SSB's published housing price index.
+    </p>
+    <a href="https://www.ssb.no/en/statbank/table/06035" target="_blank" rel="noopener">
+      ssb.no/en/statbank/table/06035 ↗
+    </a>
+  </div>
+
+  <h2>Confidence levels</h2>
+  <p>Every metric displayed in NordInvest carries a confidence badge:</p>
+
+  <table class="conf-table">
+    <thead>
+      <tr><th>Badge</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="conf-badge conf-high">High</span></td>
+        <td>Sourced directly from a national statistics agency, refreshed within the last 18 months.</td>
+      </tr>
+      <tr>
+        <td><span class="conf-badge conf-medium">Medium</span></td>
+        <td>Either (a) a national average used as a fallback because we don't have a municipality-level figure, or (b) authoritative data that is older than 18 months.</td>
+      </tr>
+      <tr>
+        <td><span class="conf-badge conf-low">Low</span></td>
+        <td>Reserved for derived or estimated data. <strong>We never ship "Low" — if the only source is an estimate, the field is set to "Not available" instead.</strong></td>
+      </tr>
+      <tr>
+        <td><span class="conf-badge conf-unavailable">Unavailable</span></td>
+        <td>We don't have a citable source for this metric in this area. The UI is explicit about why.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Why rent-per-m² is often unavailable</h2>
+  <p>
+    Sale-price data per municipality is well-published across the Nordics. Direct rent
+    figures per m² are not. Denmark's BL11 rental series is an <em>index</em>, not a price
+    level. Sweden and Norway publish similar indices. Private rent data from Boligportal,
+    Hemnet, or Boligsiden is collected from listings — useful but commercial and not
+    something we license today.
+  </p>
+  <p>
+    Rather than synthesize rent figures from yield assumptions (which is what many real
+    estate tools do), we show <strong>"Not available"</strong> with the underlying reason.
+    If you need a rent benchmark for a specific neighbourhood, we recommend pulling 5–10
+    comparable listings manually.
+  </p>
+
+  <div class="never-list">
+    <h3>What we will not do</h3>
+    <ul>
+      <li>Scrape Boliga, Hemnet, Finn.no, or any other listings portal — those datasets are scraped against the terms of service and break frequently.</li>
+      <li>Invent rent-per-m² by deriving it from "typical area yield × sale price".</li>
+      <li>Cite a source without a working link.</li>
+      <li>Show a number without a confidence badge.</li>
+    </ul>
+  </div>
+
+  <h2>How to refresh the dataset</h2>
+  <p>
+    The bundled dataset lives at <code>/data/market-stats.json</code>. A script at
+    <code>/scripts/update-market-data.mjs</code> refetches the latest figures from
+    DST, SCB, and SSB.
+  </p>
+  <pre style="background:var(--navy); color:#fff; padding:14px 18px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">node scripts/update-market-data.mjs</pre>
+  <p>
+    Run this once a quarter. The script reports which entries were updated, which were
+    kept (no remote feed configured), and which failed — so the data file always reflects
+    the freshest signal we can pull.
+  </p>
+
+  <h2>Found a wrong figure?</h2>
+  <p>
+    If a published statistic in our dataset doesn't match the underlying source, please
+    file an issue or email us — we'll fix it the same day. Our credibility depends on it.
+  </p>
+
+  <p class="last-updated">Last updated: 2026-06-15</p>
+</main>
+
+<script src="/i18n.js"></script>
+</body>
+</html>
