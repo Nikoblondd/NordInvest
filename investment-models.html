@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3PQK8QS0JF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3PQK8QS0JF');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investment Models — NordInvest</title>
+<meta name="description" content="Every investment model NordInvest supports: Cashflow, BRRRR, Appreciation, Value-Add. Which strategy fits which property — and which numbers each model relies on.">
+<link rel="canonical" href="https://nordinvest.io/investment-models">
+<link rel="alternate" hreflang="en" href="https://nordinvest.io/investment-models">
+<link rel="alternate" hreflang="da" href="https://nordinvest.io/investment-models?lang=da">
+<link rel="alternate" hreflang="x-default" href="https://nordinvest.io/investment-models">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0F1F3D;
+    --navy-light: #1a3360;
+    --blue: #2563EB;
+    --blue-pale: #EFF6FF;
+    --green: #10B981;
+    --green-pale: #ECFDF5;
+    --amber: #F59E0B;
+    --amber-pale: #FFFBEB;
+    --red: #EF4444;
+    --grey-50: #F8F9FA;
+    --grey-100: #F1F5F9;
+    --text: #111827;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+  }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    color: var(--text);
+    background: var(--grey-50);
+    line-height: 1.65;
+  }
+  .nav {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+  }
+  .nav a.logo {
+    color: var(--navy); text-decoration: none; font-weight: 800;
+    font-size: 18px; letter-spacing: -0.4px;
+  }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    transition: color 180ms ease;
+  }
+  .nav-links a:hover { color: var(--navy); }
+
+  main {
+    max-width: 880px;
+    margin: 56px auto 100px;
+    padding: 0 24px;
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--blue);
+    background: var(--blue-pale);
+    padding: 5px 12px; border-radius: 6px;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: clamp(32px, 4.5vw, 48px);
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 18px;
+  }
+  .lede {
+    font-size: 19px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 56px;
+  }
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.4px;
+    margin-top: 32px;
+    margin-bottom: 18px;
+  }
+  p { color: var(--text); margin-bottom: 14px; }
+  a { color: var(--blue); }
+
+  .model-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 2px rgba(15,31,61,0.04), 0 10px 30px rgba(15,31,61,0.04);
+    transition: box-shadow 240ms ease;
+  }
+  .model-card:hover {
+    box-shadow: 0 1px 2px rgba(15,31,61,0.06), 0 18px 50px rgba(15,31,61,0.08);
+  }
+  .model-header {
+    display: flex; align-items: center; gap: 18px;
+    margin-bottom: 22px;
+  }
+  .model-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .model-icon svg { width: 28px; height: 28px; }
+  .icon-cashflow { background: var(--green-pale); color: var(--green); }
+  .icon-appreciation { background: var(--blue-pale); color: var(--blue); }
+  .icon-brrrr { background: linear-gradient(135deg, var(--blue-pale), #f0e9ff); color: var(--blue); }
+  .icon-valueadd { background: var(--amber-pale); color: var(--amber); }
+  .model-title-wrap { flex: 1; min-width: 0; }
+  .model-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+    margin-bottom: 2px;
+  }
+  .model-tagline {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .model-section { margin-top: 16px; }
+  .model-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .model-section-body {
+    font-size: 14.5px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .model-formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--grey-50);
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin: 8px 0;
+    color: var(--navy);
+    font-weight: 500;
+  }
+  .best-for {
+    background: var(--blue-pale);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 18px;
+    border-left: 3px solid var(--blue);
+  }
+  .best-for-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--blue); margin-bottom: 4px;
+  }
+  .best-for-body { font-size: 14px; color: var(--navy); line-height: 1.55; }
+
+  .source-line {
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.55;
+  }
+  .source-line a { color: var(--blue); }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  .status-live { background: var(--green-pale); color: #0c905c; }
+  .status-roadmap { background: var(--grey-100); color: var(--text-muted); }
+  .status-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .cta-card {
+    background: var(--navy);
+    color: white;
+    border-radius: 18px;
+    padding: 40px 44px;
+    margin-top: 56px;
+    text-align: center;
+  }
+  .cta-card h3 {
+    font-size: 24px; font-weight: 700; margin-bottom: 8px;
+    letter-spacing: -0.4px;
+  }
+  .cta-card p { color: rgba(255,255,255,0.78); margin-bottom: 22px; font-size: 15px; }
+  .cta-btn {
+    display: inline-block;
+    background: white;
+    color: var(--navy);
+    padding: 13px 26px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14.5px;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+
+  @media (max-width: 600px) {
+    .model-card { padding: 24px 22px; }
+    .model-header { gap: 14px; }
+    .model-icon { width: 46px; height: 46px; }
+    .model-icon svg { width: 22px; height: 22px; }
+    .model-title { font-size: 18px; }
+    .cta-card { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">NordInvest</a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/blog">Blog</a>
+      <a href="/methodology">Methodology</a>
+      <a href="/#analyze-section">Analyze a property</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <span class="eyebrow">Investment Models</span>
+  <h1>Four ways to make money on a property</h1>
+  <p class="lede">
+    Every property investment lives or dies on which wealth engine you're running. The right
+    model depends on your capital, your timeline, and the property itself. Here's every model
+    NordInvest supports — and which kind of deal each one was built for.
+  </p>
+
+  <!-- Cashflow Model -->
+  <div class="model-card">
+    <div class="model-header">
+      <div class="model-icon icon-cashflow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+      </div>
+      <div class="model-title-wrap">
+        <div class="model-title">Cashflow Model<span class="status-pill status-live"><span class="dot"></span>Live</span></div>
+        <div class="model-tagline">Monthly rent minus mortgage minus expenses = income</div>
+      </div>
+    </div>
+
+    <p>
+      The foundational model — and the default for any rental property analysis. Rent comes in,
+      mortgage and operating costs go out, what's left is your monthly income. Cashflow investors
+      hold for the long term, refinance when rates drop, and treat each property as a yielding asset.
+    </p>
+
+    <div class="model-section">
+      <div class="model-section-label">Core formulas</div>
+      <code class="model-formula">Monthly Cash Flow = Rent − Mortgage − Expenses</code>
+      <code class="model-formula">Annual ROI = (Annual Cash Flow ÷ Cash Invested) × 100</code>
+      <code class="model-formula">Gross Rental Yield = (Annual Rent ÷ Property Price) × 100</code>
+    </div>
+
+    <div class="best-for">
+      <div class="best-for-label">Best suited for</div>
+      <div class="best-for-body">
+        Mid-yield markets (5–8% gross yields). Secondary Danish cities like Esbjerg or Aalborg,
+        Manchester, Berlin outer rings. Properties where rent comfortably exceeds the mortgage
+        without depending on appreciation. Avoid in compressed-yield central markets where
+        cash flow runs negative from day one.
+      </div>
+    </div>
+
+    <p class="source-line">
+      Methodology: standard residential rental analysis used in Brandon Turner,
+      <em>The Book on Rental Property Investing</em> (BiggerPockets, 2015).
+      <a href="/blog/how-to-calculate-rental-yield">How to calculate rental yield →</a>
+    </p>
+  </div>
+
+  <!-- BRRRR -->
+  <div class="model-card">
+    <div class="model-header">
+      <div class="model-icon icon-brrrr">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M21 12c0-4-4-7-9-7"/><polyline points="14 2 21 9 14 16"/></svg>
+      </div>
+      <div class="model-title-wrap">
+        <div class="model-title">BRRRR Model<span class="status-pill status-live"><span class="dot"></span>Live</span></div>
+        <div class="model-tagline">Buy · Rehab · Rent · Refinance · Repeat</div>
+      </div>
+    </div>
+
+    <p>
+      The capital-recycling strategy. Buy a distressed or under-priced property, rehabilitate it,
+      rent it out, then refinance at the new (higher) appraised value to pull most of your
+      original capital back out. If the math works, you end up holding a cash-flowing rental
+      with little or none of your own money still in the deal — and you redeploy the recovered
+      capital into the next acquisition.
+    </p>
+
+    <div class="model-section">
+      <div class="model-section-label">Core formulas</div>
+      <code class="model-formula">Refinance Loan = ARV × LTV%  (industry std: 75%)</code>
+      <code class="model-formula">Cash Recovered = Refinance Loan − Original Mortgage Balance</code>
+      <code class="model-formula">Effective Cash-in-Deal = Down + Rehab − Cash Recovered</code>
+      <code class="model-formula">Cash-on-Cash Return = (Annual Cash Flow ÷ Cash-in-Deal) × 100</code>
+    </div>
+
+    <div class="best-for">
+      <div class="best-for-label">Best suited for</div>
+      <div class="best-for-body">
+        Older properties priced below market because of condition. Secondary city centres where
+        the rehab can lift the appraisal materially. Investors with access to short-term
+        renovation financing (bridge / construction loans) who want to scale a portfolio
+        without locking 25% down on every deal. Avoid in markets where contractor costs
+        outpace ARV uplift.
+      </div>
+    </div>
+
+    <p class="source-line">
+      Methodology: David Greene, <em>Buy, Rehab, Rent, Refinance, Repeat</em>
+      (BiggerPockets Publishing, 2019). 75% ARV is the standard refi LTV.
+    </p>
+  </div>
+
+  <!-- Appreciation Model -->
+  <div class="model-card">
+    <div class="model-header">
+      <div class="model-icon icon-appreciation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
+      </div>
+      <div class="model-title-wrap">
+        <div class="model-title">Appreciation Model<span class="status-pill status-live"><span class="dot"></span>Live</span></div>
+        <div class="model-tagline">Return comes from long-term price growth, not monthly rent</div>
+      </div>
+    </div>
+
+    <p>
+      In high-price, supply-constrained markets — central Copenhagen, Oslo, Stockholm, London
+      Zone 1, Munich — gross yields compress to 3–4% and a leveraged property often runs
+      slightly negative on cash flow. The investment case rests entirely on long-term
+      appreciation: the property's value grows faster than your carry cost.
+    </p>
+
+    <div class="model-section">
+      <div class="model-section-label">Core formulas</div>
+      <code class="model-formula">Projected Value (yr N) = Price × (1 + appreciation rate)^N</code>
+      <code class="model-formula">Equity Return = (Capital Gain ÷ Down Payment) × 100</code>
+    </div>
+
+    <div class="best-for">
+      <div class="best-for-label">Best suited for</div>
+      <div class="best-for-body">
+        Tier-1 Nordic and European cities with constrained supply and strong long-term price
+        trends. Buyers with stable income who can absorb 5–10 years of break-even or slightly
+        negative cash flow. Long horizons (7+ years) are essential — transaction costs eat
+        short-term gains.
+      </div>
+    </div>
+
+    <p class="source-line">
+      Appreciation rates come from <a href="/methodology">Statistics Denmark / SCB / SSB</a>.
+      We never extrapolate beyond what the published series support.
+    </p>
+  </div>
+
+  <!-- Value-Add Model -->
+  <div class="model-card">
+    <div class="model-header">
+      <div class="model-icon icon-valueadd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </div>
+      <div class="model-title-wrap">
+        <div class="model-title">Value-Add Model<span class="status-pill status-live"><span class="dot"></span>Live</span></div>
+        <div class="model-tagline">Forced appreciation through renovation, rezoning, or repositioning</div>
+      </div>
+    </div>
+
+    <p>
+      Distinct from BRRRR because you don't necessarily refinance — you create value through a
+      specific lever: renovate to raise rent, convert a single-family into a duplex, change use,
+      split a large unit, or buy a problem and solve it. Returns come from <em>your</em> work,
+      not market wind.
+    </p>
+
+    <div class="model-section">
+      <div class="model-section-label">Core formulas</div>
+      <code class="model-formula">Forced Value = New Rent × 12 ÷ Target Yield</code>
+      <code class="model-formula">Project Profit = Forced Value − (Purchase + Renovation + Carry)</code>
+    </div>
+
+    <div class="best-for">
+      <div class="best-for-label">Best suited for</div>
+      <div class="best-for-body">
+        Experienced operators who can execute renovations on budget. Properties with a clear
+        underutilization — wrong tenant mix, dated layout, missed conversion potential.
+        Avoid for first-time investors: the execution risk is real and gets hidden in
+        spreadsheets.
+      </div>
+    </div>
+
+    <p class="source-line">
+      Underpinning theory: commercial real-estate forced-appreciation playbook, adapted for
+      residential. See Ken McElroy, <em>The ABCs of Real Estate Investing</em>.
+    </p>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <h3>Not sure which model fits your deal?</h3>
+    <p>Run the property through our analyzer — we classify the wealth engine automatically.</p>
+    <a href="/#analyze-section" class="cta-btn">Analyze a property →</a>
+  </div>
+
+</main>
+
+<script src="/i18n.js"></script>
+</body>
+</html>

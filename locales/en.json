@@ -195,7 +195,9 @@
       "stressTests": "Stress Tests",
       "stressTestsSub": "What breaks the investment",
       "marketContext": "Local Market Context",
-      "marketContextSub": "Area benchmarks and comparisons"
+      "marketContextSub": "Area benchmarks and comparisons",
+      "brrrr": "BRRRR Analysis",
+      "brrrrSub": "Buy · Rehab · Rent · Refinance · Repeat"
     },
     "layer3": {
       "showDetails": "Show calculation details",
@@ -234,6 +236,32 @@
       "conditional": "Conditional opportunity — the numbers only work if you find a value-add angle (renovation, better financing, below-market entry).",
       "reject": "Do not proceed at these terms — neither the rent nor the appreciation justifies the price."
     }
+  },
+  "brrrr": {
+    "intro": "The BRRRR strategy recycles capital into the next deal by refinancing the property at its post-renovation value. Enter your rehab budget and projected After Repair Value (ARV) — we'll compute how much cash you recover, the effective cash left in the deal, and the post-refinance cash-on-cash return.",
+    "rehabLabel": "Estimated Rehab Cost",
+    "rehabHint": "All-in renovation + materials + permits.",
+    "arvLabel": "After Repair Value (ARV)",
+    "arvHint": "Appraised market value after the rehab is complete.",
+    "ltvLabel": "Refinance LTV",
+    "ltvHint": "Industry standard is 75% of ARV.",
+    "calcBtn": "Run BRRRR Calculation",
+    "refiLoan": "Refinance Loan",
+    "refiLoanSub": "LTV × ARV",
+    "cashRecovered": "Cash Recovered",
+    "cashRecoveredSub": "Refi loan − original loan",
+    "cashInDeal": "Effective Cash-in-Deal",
+    "cashInDealSub": "Down + rehab − cash recovered",
+    "coc": "Cash-on-Cash Return",
+    "cocSub": "Annual cash flow ÷ cash-in-deal",
+    "assump": "Refinance happens after the rehab is complete and the property is rented. Refinance fees and seasoning periods (typically 6–12 months) are not modeled. When Effective Cash-in-Deal ≤ 0 (i.e. you pulled all your capital back out), the return is \"infinite\" by convention and we show ∞.",
+    "modelsLink": "See all investment models we support →",
+    "errArv": "Enter a valid ARV and rehab cost to run the BRRRR calculation.",
+    "verdictInfinite": "Textbook BRRRR — you recover 100% of your capital and your cash-on-cash return is effectively infinite. This is the strategy's ideal outcome.",
+    "verdictStrong": "Strong BRRRR deal — {coc}% cash-on-cash with only {cash} left in the property. The refinance unlocks most of your capital for the next deal.",
+    "verdictModerate": "Workable BRRRR — {coc}% cash-on-cash with {cash} left in. Acceptable, but the refinance doesn't fully recycle your capital.",
+    "verdictWeak": "Weak BRRRR — {coc}% cash-on-cash with {cash} stuck in the deal. The strategy only makes sense if you can push the ARV higher.",
+    "verdictBad": "Negative cash-on-cash after refinance with {cash} stuck in. The numbers don't support the BRRRR strategy here — reconsider the rehab budget or ARV assumption."
   },
   "leadCapture": {
     "title": "Speak to a Financing Expert",

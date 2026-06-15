@@ -195,7 +195,9 @@
       "stressTests": "Stresstests",
       "stressTestsSub": "Hvad får investeringen til at bryde sammen",
       "marketContext": "Lokal markedskontekst",
-      "marketContextSub": "Områdets benchmarks og sammenligninger"
+      "marketContextSub": "Områdets benchmarks og sammenligninger",
+      "brrrr": "BRRRR-analyse",
+      "brrrrSub": "Køb · Renover · Udlej · Omlæg · Gentag"
     },
     "layer3": {
       "showDetails": "Vis beregningsdetaljer",
@@ -234,6 +236,32 @@
       "conditional": "Betinget mulighed — tallene fungerer kun, hvis du finder en værditilvækstvinkel (renovering, bedre finansiering, køb under markedet).",
       "reject": "Gå ikke videre på disse vilkår — hverken lejen eller prisstigningen retfærdiggør prisen."
     }
+  },
+  "brrrr": {
+    "intro": "BRRRR-strategien genbruger din kapital til den næste handel ved at omlægge lånet til ejendommens værdi efter renoveringen. Indtast dit renoveringsbudget og forventede værdi efter renovering (ARV) — vi beregner, hvor meget kapital du får tilbage, det effektive beløb tilbage i handlen og afkastet efter omlægningen.",
+    "rehabLabel": "Estimerede renoveringsomkostninger",
+    "rehabHint": "Alt-i-en renovering + materialer + tilladelser.",
+    "arvLabel": "Værdi efter renovering (ARV)",
+    "arvHint": "Vurderet markedsværdi efter renoveringen er færdig.",
+    "ltvLabel": "Belåningsgrad ved omlægning",
+    "ltvHint": "Branchestandard er 75 % af ARV.",
+    "calcBtn": "Kør BRRRR-beregning",
+    "refiLoan": "Omlagt lån",
+    "refiLoanSub": "Belåningsgrad × ARV",
+    "cashRecovered": "Kapital tilbage",
+    "cashRecoveredSub": "Omlagt lån − oprindeligt lån",
+    "cashInDeal": "Effektiv kapital i handlen",
+    "cashInDealSub": "Udbetaling + renovering − kapital tilbage",
+    "coc": "Cash-on-cash afkast",
+    "cocSub": "Årligt cash flow ÷ kapital i handlen",
+    "assump": "Omlægningen sker efter renoveringen er færdig, og ejendommen er udlejet. Omkostninger ved omlægning og ventetid (typisk 6–12 måneder) er ikke modelleret. Når den effektive kapital i handlen ≤ 0 (dvs. du har trukket al din kapital ud), er afkastet \"uendeligt\" pr. konvention, og vi viser ∞.",
+    "modelsLink": "Se alle investeringsmodeller, vi understøtter →",
+    "errArv": "Indtast en gyldig ARV og renoveringsomkostning for at køre BRRRR-beregningen.",
+    "verdictInfinite": "Lærebogs-BRRRR — du får 100 % af din kapital tilbage, og dit cash-on-cash afkast er effektivt uendeligt. Det er strategiens ideelle resultat.",
+    "verdictStrong": "Stærk BRRRR-handel — {coc} % cash-on-cash med kun {cash} tilbage i ejendommen. Omlægningen frigør det meste af din kapital til næste handel.",
+    "verdictModerate": "Brugbar BRRRR — {coc} % cash-on-cash med {cash} tilbage. Acceptabelt, men omlægningen genbruger ikke fuldt ud din kapital.",
+    "verdictWeak": "Svag BRRRR — {coc} % cash-on-cash med {cash} bundet i handlen. Strategien giver kun mening, hvis du kan presse ARV højere.",
+    "verdictBad": "Negativt cash-on-cash efter omlægning med {cash} bundet i. Tallene understøtter ikke BRRRR-strategien her — genovervej renoveringsbudgettet eller ARV-antagelsen."
   },
   "leadCapture": {
     "title": "Tal med en finansieringsrådgiver",

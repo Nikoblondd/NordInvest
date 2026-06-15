@@ -1750,6 +1750,165 @@
     color: var(--blue);
     font-weight: 500;
   }
+
+  /* ── BRRRR SECTION ── */
+  .rs-icon-brrrr {
+    background: linear-gradient(135deg, var(--blue-pale), #f0e9ff);
+    color: var(--blue);
+  }
+  .brrrr-intro {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+  .brrrr-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .brrrr-input { display: flex; flex-direction: column; gap: 6px; }
+  .brrrr-input label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 0.2px;
+  }
+  .brrrr-input-wrap {
+    position: relative;
+    display: flex; align-items: center;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .brrrr-input-wrap:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  }
+  .brrrr-prefix, .brrrr-suffix {
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .brrrr-input-wrap input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px 14px 12px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    outline: none;
+    width: 100%;
+    min-width: 0;
+  }
+  .brrrr-input-wrap input::placeholder { color: var(--text-muted); font-weight: 400; }
+  .brrrr-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    padding-left: 2px;
+  }
+  .brrrr-calc-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 22px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 200ms ease;
+    margin-bottom: 18px;
+  }
+  .brrrr-calc-btn:hover {
+    background: var(--navy-light);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(15,31,61,0.18);
+  }
+  .brrrr-calc-btn svg {
+    transition: transform 200ms ease;
+  }
+  .brrrr-calc-btn:hover svg { transform: translateX(2px); }
+
+  .brrrr-results {
+    background: var(--grey-50);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .brrrr-result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .brrrr-stat {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .brrrr-stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .brrrr-stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.6px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .brrrr-stat-value.positive { color: var(--green); }
+  .brrrr-stat-value.negative { color: var(--red); }
+  .brrrr-stat-value.infinite { color: var(--blue); font-size: 28px; }
+  .brrrr-stat-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .brrrr-stat-highlight {
+    background: linear-gradient(135deg, var(--blue-pale) 0%, var(--white) 100%);
+    border-color: rgba(37,99,235,0.25);
+  }
+  .brrrr-stat-highlight .brrrr-stat-value { color: var(--blue); }
+  .brrrr-stat-highlight .brrrr-stat-value.positive { color: var(--green); }
+  .brrrr-stat-highlight .brrrr-stat-value.negative { color: var(--red); }
+
+  .brrrr-verdict {
+    padding: 14px 16px;
+    background: var(--white);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .brrrr-verdict.strong { border-left-color: var(--green); background: var(--green-pale); color: #0c905c; }
+  .brrrr-verdict.weak { border-left-color: var(--amber); background: var(--amber-pale); color: #92590e; }
+  .brrrr-verdict.bad { border-left-color: var(--red); background: var(--red-pale); color: #b91c1c; }
+
+  @media (max-width: 760px) {
+    .brrrr-input-grid { grid-template-columns: 1fr; }
+    .brrrr-result-grid { grid-template-columns: 1fr; }
+  }
 </style>
 <!-- JSON-LD: FAQPage (targets common search questions) -->
 <script type="application/ld+json">
@@ -2725,7 +2884,113 @@
           </div>
         </details>
 
-        <!-- 5. Local Market Context -->
+        <!-- 5. BRRRR Analysis (extends Cashflow Model — does not replace it) -->
+        <details class="report-section" id="brrrr-section">
+          <summary class="report-section-summary">
+            <span class="rs-icon rs-icon-brrrr">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M21 12c0-4-4-7-9-7"/><polyline points="14 2 21 9 14 16"/></svg>
+            </span>
+            <span class="rs-title-wrap">
+              <span class="rs-title" data-i18n="analysis.layer2.brrrr">BRRRR Analysis</span>
+              <span class="rs-subtitle" data-i18n="analysis.layer2.brrrrSub">Buy · Rehab · Rent · Refinance · Repeat</span>
+            </span>
+            <span class="rs-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </summary>
+          <div class="report-section-body">
+            <p class="brrrr-intro" data-i18n="brrrr.intro">
+              The BRRRR strategy recycles capital into the next deal by refinancing the property at its post-renovation value. Enter your rehab budget and projected After Repair Value (ARV) — we'll compute how much cash you recover, the effective cash left in the deal, and the post-refinance cash-on-cash return.
+            </p>
+
+            <div class="brrrr-input-grid">
+              <div class="brrrr-input">
+                <label for="brrrr-rehab" data-i18n="brrrr.rehabLabel">Estimated Rehab Cost</label>
+                <div class="brrrr-input-wrap">
+                  <span class="brrrr-prefix currency-sym">€</span>
+                  <input type="number" id="brrrr-rehab" placeholder="25,000" min="0" inputmode="numeric">
+                </div>
+                <div class="brrrr-hint" data-i18n="brrrr.rehabHint">All-in renovation + materials + permits.</div>
+              </div>
+              <div class="brrrr-input">
+                <label for="brrrr-arv" data-i18n="brrrr.arvLabel">After Repair Value (ARV)</label>
+                <div class="brrrr-input-wrap">
+                  <span class="brrrr-prefix currency-sym">€</span>
+                  <input type="number" id="brrrr-arv" placeholder="500,000" min="0" inputmode="numeric">
+                </div>
+                <div class="brrrr-hint" data-i18n="brrrr.arvHint">Appraised market value after the rehab is complete.</div>
+              </div>
+              <div class="brrrr-input">
+                <label for="brrrr-ltv" data-i18n="brrrr.ltvLabel">Refinance LTV</label>
+                <div class="brrrr-input-wrap">
+                  <input type="number" id="brrrr-ltv" value="75" min="50" max="85" step="1" inputmode="numeric">
+                  <span class="brrrr-suffix">%</span>
+                </div>
+                <div class="brrrr-hint" data-i18n="brrrr.ltvHint">Industry standard is 75% of ARV.</div>
+              </div>
+            </div>
+
+            <button type="button" id="brrrr-calc-btn" class="brrrr-calc-btn" onclick="calculateBRRRR()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+              <span data-i18n="brrrr.calcBtn">Run BRRRR Calculation</span>
+            </button>
+
+            <div id="brrrr-results" class="brrrr-results" style="display:none">
+              <div class="brrrr-result-grid">
+                <div class="brrrr-stat">
+                  <div class="brrrr-stat-label" data-i18n="brrrr.refiLoan">Refinance Loan</div>
+                  <div class="brrrr-stat-value mono" id="brrrr-refi-loan">—</div>
+                  <div class="brrrr-stat-sub" data-i18n="brrrr.refiLoanSub">LTV × ARV</div>
+                </div>
+                <div class="brrrr-stat">
+                  <div class="brrrr-stat-label" data-i18n="brrrr.cashRecovered">Cash Recovered</div>
+                  <div class="brrrr-stat-value mono" id="brrrr-cash-recovered">—</div>
+                  <div class="brrrr-stat-sub" data-i18n="brrrr.cashRecoveredSub">Refi loan − original loan</div>
+                </div>
+                <div class="brrrr-stat">
+                  <div class="brrrr-stat-label" data-i18n="brrrr.cashInDeal">Effective Cash-in-Deal</div>
+                  <div class="brrrr-stat-value mono" id="brrrr-cash-in-deal">—</div>
+                  <div class="brrrr-stat-sub" data-i18n="brrrr.cashInDealSub">Down + rehab − cash recovered</div>
+                </div>
+                <div class="brrrr-stat brrrr-stat-highlight">
+                  <div class="brrrr-stat-label" data-i18n="brrrr.coc">Cash-on-Cash Return</div>
+                  <div class="brrrr-stat-value mono" id="brrrr-coc">—</div>
+                  <div class="brrrr-stat-sub" data-i18n="brrrr.cocSub">Annual cash flow ÷ cash-in-deal</div>
+                </div>
+              </div>
+              <div class="brrrr-verdict" id="brrrr-verdict">—</div>
+            </div>
+
+            <details class="calc-details">
+              <summary class="calc-details-summary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
+              </summary>
+              <div class="calc-details-body">
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
+                  <code class="calc-formula">Refinance Loan = ARV × LTV%</code>
+                  <code class="calc-formula">Cash Recovered = Refinance Loan − Original Mortgage Balance</code>
+                  <code class="calc-formula">Total Cash Invested = Down Payment + Rehab Cost</code>
+                  <code class="calc-formula">Effective Cash-in-Deal = Total Cash Invested − Cash Recovered</code>
+                  <code class="calc-formula">Cash-on-Cash Return = (Annual Cash Flow ÷ Effective Cash-in-Deal) × 100</code>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
+                  <p class="calc-text" data-i18n="brrrr.assump">Refinance happens after the rehab is complete and the property is rented. Refinance fees and seasoning periods (typically 6–12 months) are not modeled. When Effective Cash-in-Deal ≤ 0 (i.e. you pulled all your capital back out), the return is "infinite" by convention and we show ∞.</p>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.sources">Sources</div>
+                  <p class="calc-text">
+                    Methodology: David Greene, <em>Buy, Rehab, Rent, Refinance, Repeat</em> (BiggerPockets Publishing, 2019).
+                    Industry standard 75% ARV refinance LTV.
+                    <a href="/investment-models" target="_blank" data-i18n="brrrr.modelsLink">See all investment models we support →</a>
+                  </p>
+                </div>
+              </div>
+            </details>
+          </div>
+        </details>
+
+        <!-- 6. Local Market Context -->
         <details class="report-section">
           <summary class="report-section-summary">
             <span class="rs-icon rs-icon-mkt">
@@ -3149,6 +3414,87 @@ function showMarketResults(marketInfo, userRent) {
 
   // Classification (also runs when data_available=false, via runClassificationWithMarket(null))
   runClassificationWithMarket(d, marketInfo.displayName);
+}
+
+// ── BRRRR CALCULATION (Buy, Rehab, Rent, Refinance, Repeat) ──
+// Methodology: David Greene, "Buy, Rehab, Rent, Refinance, Repeat"
+// (BiggerPockets Publishing, 2019). Industry standard 75% ARV refi LTV.
+function calculateBRRRR() {
+  const data = window._niAnalysisData;
+  if (!data) return;
+  const rehab = parseFloat(document.getElementById('brrrr-rehab').value) || 0;
+  const arv = parseFloat(document.getElementById('brrrr-arv').value) || 0;
+  let ltvPct = parseFloat(document.getElementById('brrrr-ltv').value);
+  if (isNaN(ltvPct) || ltvPct < 50 || ltvPct > 85) ltvPct = 75;
+
+  const _t = (k, v) => (window.t ? window.t(k, v) : k);
+
+  if (arv <= 0 || rehab < 0) {
+    document.getElementById('brrrr-results').style.display = 'block';
+    document.getElementById('brrrr-verdict').className = 'brrrr-verdict bad';
+    document.getElementById('brrrr-verdict').textContent = _t('brrrr.errArv');
+    ['brrrr-refi-loan','brrrr-cash-recovered','brrrr-cash-in-deal','brrrr-coc']
+      .forEach(id => { document.getElementById(id).textContent = '—'; });
+    return;
+  }
+
+  const refiLoan = arv * (ltvPct / 100);
+  const originalLoan = data.loanAmount || 0;
+  const cashRecovered = refiLoan - originalLoan;
+  const downPayment = data.downAmount || 0;
+  const totalCashInvested = downPayment + rehab;
+  const effectiveCashInDeal = totalCashInvested - cashRecovered;
+  const annualCashFlow = (data.monthlyCashFlow || 0) * 12;
+  let cocReturn;
+  let cocIsInfinite = false;
+  if (effectiveCashInDeal <= 0) {
+    // All capital recovered — BRRRR ideal outcome
+    cocIsInfinite = true;
+    cocReturn = Infinity;
+  } else {
+    cocReturn = (annualCashFlow / effectiveCashInDeal) * 100;
+  }
+
+  // Render
+  document.getElementById('brrrr-results').style.display = 'block';
+  document.getElementById('brrrr-refi-loan').textContent = fmt(refiLoan);
+  const cashRecEl = document.getElementById('brrrr-cash-recovered');
+  cashRecEl.textContent = (cashRecovered >= 0 ? '+' : '−') + fmt(Math.abs(cashRecovered));
+  cashRecEl.className = 'brrrr-stat-value mono ' + (cashRecovered >= 0 ? 'positive' : 'negative');
+
+  const cashInDealEl = document.getElementById('brrrr-cash-in-deal');
+  cashInDealEl.textContent = effectiveCashInDeal <= 0
+    ? '0 ' + (window.t ? '✓' : '(recovered)')
+    : fmt(effectiveCashInDeal);
+  cashInDealEl.className = 'brrrr-stat-value mono ' + (effectiveCashInDeal <= 0 ? 'positive' : '');
+
+  const cocEl = document.getElementById('brrrr-coc');
+  if (cocIsInfinite) {
+    cocEl.textContent = '∞';
+    cocEl.className = 'brrrr-stat-value mono infinite';
+  } else {
+    cocEl.textContent = (cocReturn >= 0 ? '+' : '') + cocReturn.toFixed(1) + '%';
+    cocEl.className = 'brrrr-stat-value mono ' + (cocReturn >= 12 ? 'positive' : cocReturn < 0 ? 'negative' : '');
+  }
+
+  // Verdict
+  const verdictEl = document.getElementById('brrrr-verdict');
+  if (cocIsInfinite) {
+    verdictEl.className = 'brrrr-verdict strong';
+    verdictEl.textContent = _t('brrrr.verdictInfinite');
+  } else if (cocReturn >= 12) {
+    verdictEl.className = 'brrrr-verdict strong';
+    verdictEl.textContent = _t('brrrr.verdictStrong', { coc: cocReturn.toFixed(1), cash: fmt(effectiveCashInDeal) });
+  } else if (cocReturn >= 6) {
+    verdictEl.className = 'brrrr-verdict';
+    verdictEl.textContent = _t('brrrr.verdictModerate', { coc: cocReturn.toFixed(1), cash: fmt(effectiveCashInDeal) });
+  } else if (cocReturn >= 0) {
+    verdictEl.className = 'brrrr-verdict weak';
+    verdictEl.textContent = _t('brrrr.verdictWeak', { coc: cocReturn.toFixed(1), cash: fmt(effectiveCashInDeal) });
+  } else {
+    verdictEl.className = 'brrrr-verdict bad';
+    verdictEl.textContent = _t('brrrr.verdictBad', { cash: fmt(effectiveCashInDeal) });
+  }
 }
 
 function runClassificationWithMarket(d, displayName) {
