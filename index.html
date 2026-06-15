@@ -1082,6 +1082,597 @@
   @media (max-width: 640px) {
     .lang-switch:not(.lang-switch-mobile) { display: none; }
   }
+
+  /* ═══════════════════════════════════════════════════════════ */
+  /* ════════════ REDESIGNED REPORT PAGE (3-LAYER) ═══════════ */
+  /* ═══════════════════════════════════════════════════════════ */
+
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  .mono {
+    font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── REPORT HEADER ── */
+  .report-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 0;
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(8px);
+    background: rgba(255,255,255,0.92);
+  }
+  .report-header-inner {
+    display: flex; align-items: center; gap: 24px;
+  }
+  .report-title-wrap {
+    flex: 1;
+  }
+  .report-title-wrap h2 {
+    font-size: 19px; font-weight: 700; color: var(--navy);
+    letter-spacing: -0.4px; line-height: 1.2;
+  }
+  .report-title-wrap p {
+    font-size: 13px; color: var(--text-muted); margin-top: 2px;
+  }
+  .report-stamp {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--grey-50);
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .report-page {
+    background: linear-gradient(180deg, var(--grey-50) 0%, var(--white) 100%);
+    min-height: calc(100vh - 80px);
+    padding: 36px 0 100px;
+  }
+  .container-narrow {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  /* ═══════ LAYER 1: HERO SNAPSHOT ═══════ */
+  .report-hero {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 44px 44px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+    box-shadow:
+      0 1px 2px rgba(15,31,61,0.04),
+      0 20px 50px rgba(15,31,61,0.06);
+    margin-bottom: 28px;
+  }
+  .hero-score-side {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 18px;
+  }
+  .hero-score-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .hero-score-gauge {
+    position: relative;
+    width: 220px; height: 220px;
+  }
+  .hero-score-svg {
+    width: 100%; height: 100%;
+    transform: rotate(0deg);
+  }
+  .hero-score-track {
+    fill: none; stroke: var(--grey-100);
+    stroke-width: 14;
+  }
+  .hero-score-fill {
+    fill: none; stroke-width: 14;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1400ms cubic-bezier(0.25, 1, 0.5, 1),
+                stroke 600ms ease;
+  }
+  .hero-score-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 6px;
+  }
+  .hero-score-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -2px;
+    display: flex;
+    align-items: baseline;
+  }
+  .hero-score-num > span:first-child {
+    font-size: 64px;
+    line-height: 1;
+  }
+  .hero-score-max {
+    font-size: 22px;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    margin-left: 2px;
+  }
+  .hero-score-rating {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .hero-meta-side {
+    display: flex; flex-direction: column;
+    gap: 24px; justify-content: center;
+  }
+  .hero-meta-row {
+    display: flex; flex-direction: column;
+    gap: 8px;
+  }
+  .hero-meta-label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .hero-meta-label svg { width: 13px; height: 13px; }
+  .hero-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--grey-50);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    width: fit-content;
+    transition: all 200ms ease;
+  }
+  .hero-type-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .hero-cashflow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .hero-cashflow.positive { color: var(--green); }
+  .hero-cashflow.negative { color: var(--red); }
+  .hero-risk-text {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+  .hero-verdict {
+    background: var(--blue-pale);
+    border: 1px solid rgba(37,99,235,0.18);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-top: 4px;
+  }
+  .hero-verdict-icon {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--blue);
+    color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-verdict-icon svg { width: 16px; height: 16px; }
+  .hero-verdict-text {
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.55;
+    font-weight: 500;
+  }
+
+  .report-cta-bar {
+    text-align: center;
+    margin: 12px 0 24px;
+  }
+  .report-cta-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 6px 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    box-shadow: 0 1px 3px rgba(15,31,61,0.04);
+  }
+
+  /* ═══════ LAYER 2: ACCORDION ═══════ */
+  .report-accordion {
+    display: flex; flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .report-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(15,31,61,0.03);
+    overflow: hidden;
+    transition: box-shadow 200ms ease;
+  }
+  .report-section[open] {
+    box-shadow:
+      0 1px 2px rgba(15,31,61,0.04),
+      0 8px 24px rgba(15,31,61,0.05);
+  }
+  .report-section-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 22px;
+    cursor: pointer;
+    list-style: none;
+    transition: background 180ms ease;
+  }
+  .report-section-summary::-webkit-details-marker { display: none; }
+  .report-section-summary:hover { background: var(--grey-50); }
+  .rs-icon {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--grey-50);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--navy);
+  }
+  .rs-icon svg { width: 19px; height: 19px; }
+  .rs-icon-cf    { background: var(--green-pale); color: var(--green); }
+  .rs-icon-appr  { background: var(--blue-pale);  color: var(--blue);  }
+  .rs-icon-fin   { background: var(--grey-100);   color: var(--navy);  }
+  .rs-icon-stress { background: var(--amber-pale); color: var(--amber); }
+  .rs-icon-mkt   { background: var(--blue-pale);  color: var(--blue);  }
+
+  .rs-title-wrap {
+    flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0;
+  }
+  .rs-title {
+    font-size: 16px; font-weight: 600; color: var(--navy);
+    letter-spacing: -0.2px;
+  }
+  .rs-subtitle {
+    font-size: 13px; color: var(--text-muted);
+  }
+  .rs-chevron {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--grey-50);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1),
+                background 180ms ease;
+  }
+  .rs-chevron svg { width: 14px; height: 14px; }
+  .report-section[open] .rs-chevron {
+    transform: rotate(180deg);
+    background: var(--navy);
+    color: var(--white);
+  }
+  .report-section-body {
+    padding: 4px 22px 24px;
+    border-top: 1px solid var(--border);
+    margin-top: -1px;
+  }
+  .report-section[open] .report-section-body {
+    padding-top: 22px;
+  }
+
+  /* Metric cards inside sections */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .metric-card {
+    background: var(--grey-50);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .metric-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-size: 28px; font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .metric-value.positive { color: var(--green); }
+  .metric-value.negative { color: var(--red); }
+  .metric-sub {
+    font-size: 12px; color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* Cash flow breakdown */
+  .cf-breakdown { margin-bottom: 12px; }
+  .cf-breakdown-title {
+    font-size: 13px; font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Financing rows */
+  .fin-list {
+    background: var(--grey-50);
+    border-radius: 12px;
+    padding: 6px 18px;
+  }
+  .fin-row {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .fin-row:last-child { border-bottom: none; }
+  .fin-label {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .fin-value {
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  /* Projection summary */
+  .proj-summary { margin-bottom: 14px; }
+  .proj-summary-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--blue-pale);
+    border-radius: 10px;
+  }
+  .proj-summary-label {
+    font-size: 13px; font-weight: 600; color: var(--navy);
+  }
+  .proj-rate-badge {
+    background: var(--blue);
+    color: var(--white);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .proj-header-row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    padding: 10px 16px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  #projection-rows .proj-row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  #projection-rows .proj-row:last-child { border-bottom: none; }
+  .proj-year {
+    font-size: 13px; color: var(--text-muted);
+    font-weight: 500;
+  }
+  .proj-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+  }
+  .proj-gain {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    letter-spacing: -0.2px;
+  }
+  .proj-disclaimer {
+    font-size: 12px; color: var(--text-muted);
+    line-height: 1.5; margin-top: 14px;
+    font-style: italic;
+  }
+
+  /* Stress test rows */
+  #stress-grid {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  #stress-grid .stress-row {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--grey-50);
+    border-radius: 10px;
+    font-size: 13px;
+  }
+  #stress-grid .stress-label {
+    color: var(--text);
+    font-weight: 500;
+    line-height: 1.4;
+    padding-right: 14px;
+  }
+  #stress-grid .stress-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 14px;
+    letter-spacing: -0.2px;
+    flex-shrink: 0;
+  }
+  #stress-grid .stress-val.positive { color: var(--green); }
+  #stress-grid .stress-val.negative { color: var(--red); }
+
+  /* Market grid override (inside accordion) */
+  .report-section .market-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .report-section .market-stat {
+    background: var(--grey-50);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .report-section .market-stat-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .report-section .market-stat-value {
+    font-size: 18px; font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .report-section .market-stat-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .report-section .market-comparison {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--blue-pale);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+
+  /* ═══════ LAYER 3: CALCULATION DETAILS ═══════ */
+  .calc-details {
+    margin-top: 20px;
+    border-top: 1px dashed var(--border);
+    padding-top: 16px;
+  }
+  .calc-details-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    background: var(--grey-50);
+    border-radius: 8px;
+    transition: all 180ms ease;
+  }
+  .calc-details-summary::-webkit-details-marker { display: none; }
+  .calc-details-summary:hover {
+    color: var(--navy);
+    background: var(--grey-100);
+  }
+  .calc-details-summary svg { width: 14px; height: 14px; opacity: 0.7; }
+  .calc-details[open] .calc-details-summary {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .calc-details[open] .calc-details-summary svg { opacity: 1; }
+  .calc-details-body {
+    margin-top: 16px;
+    padding: 18px;
+    background: var(--grey-50);
+    border-radius: 10px;
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .calc-block { display: flex; flex-direction: column; gap: 6px; }
+  .calc-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .calc-formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+    background: var(--white);
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .calc-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  /* Score color states (sync with classifyInvestment colors) */
+  .score-fill.score-green, .hero-score-fill.score-green { stroke: var(--green); }
+  .score-fill.score-amber, .hero-score-fill.score-amber { stroke: var(--amber); }
+  .score-fill.score-red,   .hero-score-fill.score-red   { stroke: var(--red);   }
+
+  /* Mobile responsive */
+  @media (max-width: 760px) {
+    .report-hero {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 32px 24px;
+      border-radius: 16px;
+    }
+    .hero-score-gauge { width: 180px; height: 180px; }
+    .hero-score-num > span:first-child { font-size: 52px; }
+    .hero-meta-side { gap: 22px; }
+    .hero-cashflow { font-size: 32px; }
+    .report-section-summary { padding: 18px; gap: 14px; }
+    .rs-title { font-size: 15px; }
+    .rs-subtitle { font-size: 12px; }
+    .rs-icon { width: 36px; height: 36px; }
+    .report-section-body { padding: 4px 18px 20px; }
+    .metric-grid { grid-template-columns: 1fr; }
+    .report-section .market-grid { grid-template-columns: 1fr; }
+    .container-narrow { padding: 0 16px; }
+    .report-page { padding: 24px 0 80px; }
+  }
+  @media (max-width: 480px) {
+    .hero-meta-label { font-size: 10px; }
+    .hero-cashflow { font-size: 28px; }
+    .hero-type-badge { font-size: 14px; padding: 8px 14px; }
+    .report-stamp { display: none; }
+    .calc-formula { font-size: 12px; }
+  }
 </style>
 <!-- JSON-LD: FAQPage (targets common search questions) -->
 <script type="application/ld+json">
@@ -1794,231 +2385,352 @@
 </div><!-- /landing -->
 
 
-<!-- ════════ ANALYSIS PAGE ════════ -->
+<!-- ════════ ANALYSIS PAGE (3-LAYER REDESIGN) ════════ -->
 <div id="page-analysis" class="page">
-  <div class="analysis-header">
+  <div class="report-header">
     <div class="container">
-      <div class="analysis-header-inner">
+      <div class="report-header-inner">
         <button class="btn-back" onclick="showPage('landing')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           <span data-i18n="analysis.newAnalysis">New Analysis</span>
         </button>
-        <div class="analysis-title-wrap">
+        <div class="report-title-wrap">
           <h2 data-i18n="analysis.reportTitle">Investment Report</h2>
           <p id="analysis-subtitle" data-i18n="analysis.subtitle">Property analysis results</p>
         </div>
-        <span class="analysis-stamp" id="analysis-date"></span>
+        <span class="report-stamp" id="analysis-date"></span>
       </div>
     </div>
   </div>
 
-  <div class="analysis-page">
-    <div class="container">
+  <div class="report-page">
+    <div class="container container-narrow">
 
-      <!-- Score + KPIs -->
-      <div class="analysis-top">
-        <div class="score-card">
-          <div class="score-label" data-i18n="analysis.scoreLabel">Investment Score</div>
-          <div class="score-gauge-wrap">
-            <svg class="score-svg" viewBox="0 0 148 148">
-              <circle class="score-track" cx="74" cy="74" r="61"/>
-              <circle class="score-fill" id="score-fill-circle" cx="74" cy="74" r="61" stroke-dasharray="383.27" stroke-dashoffset="383.27"/>
+      <!-- ═════ LAYER 1: HERO SNAPSHOT ═════ -->
+      <section class="report-hero" id="report-hero">
+        <div class="hero-score-side">
+          <div class="hero-score-label" data-i18n="analysis.scoreLabel">Investment Score</div>
+          <div class="hero-score-gauge">
+            <svg class="hero-score-svg" viewBox="0 0 200 200">
+              <circle class="hero-score-track" cx="100" cy="100" r="84"/>
+              <circle class="hero-score-fill" id="score-fill-circle" cx="100" cy="100" r="84" stroke-dasharray="527.79" stroke-dashoffset="527.79" transform="rotate(-90 100 100)"/>
             </svg>
-            <div class="score-center">
-              <div class="score-number" id="score-display">0</div>
-              <div class="score-max" data-i18n="analysis.scoreOf">/100</div>
+            <div class="hero-score-center">
+              <div class="hero-score-num"><span id="score-display">0</span><span class="hero-score-max" data-i18n="analysis.scoreOf">/100</span></div>
+              <div class="hero-score-rating" id="score-rating">—</div>
             </div>
-          </div>
-          <div class="score-rating" id="score-rating">—</div>
-          <div class="score-desc" id="score-desc" data-i18n="analysis.analyzing">Analyzing...</div>
-        </div>
-        <div class="kpi-grid">
-          <div class="kpi-card" id="kpi-yield">
-            <div class="kpi-card-label">
-              <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 9l-5 5-3-3-4 4"/></svg>
-              <span data-i18n="analysis.rentalYield">Rental Yield</span>
-            </div>
-            <div class="kpi-value" id="kpi-yield-val">—</div>
-            <div class="kpi-sub" id="kpi-yield-sub" data-i18n="analysis.rentalYieldSub">Annual rental income / property price</div>
-          </div>
-          <div class="kpi-card" id="kpi-cashflow">
-            <div class="kpi-card-label">
-              <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
-              <span data-i18n="analysis.monthlyCashFlow">Monthly Cash Flow</span>
-            </div>
-            <div class="kpi-value" id="kpi-cashflow-val">—</div>
-            <div class="kpi-sub" data-i18n="analysis.monthlyCashFlowSub">Rent minus mortgage and expenses</div>
-          </div>
-          <div class="kpi-card" id="kpi-roi">
-            <div class="kpi-card-label">
-              <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-              <span data-i18n="analysis.annualROI">Annual ROI</span>
-            </div>
-            <div class="kpi-value" id="kpi-roi-val">—</div>
-            <div class="kpi-sub" data-i18n="analysis.annualROISub">Annual profit / cash invested</div>
-          </div>
-          <div class="kpi-card" id="kpi-downpay">
-            <div class="kpi-card-label">
-              <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-              <span data-i18n="analysis.downPayment">Down Payment</span>
-            </div>
-            <div class="kpi-value" id="kpi-downpay-val">—</div>
-            <div class="kpi-sub" id="kpi-downpay-sub" data-i18n="analysis.downPaymentSub">Capital required upfront</div>
           </div>
         </div>
+        <div class="hero-meta-side">
+          <div class="hero-meta-row">
+            <div class="hero-meta-label" data-i18n="analysis.layer1.investmentType">Investment Type</div>
+            <div class="hero-type-badge" id="hero-type-badge">
+              <span class="hero-type-dot" id="hero-type-dot"></span>
+              <span class="hero-type-label" id="classification-label" data-i18n="analysis.classifyAnalyzing">Analyzing…</span>
+            </div>
+          </div>
+          <div class="hero-meta-row">
+            <div class="hero-meta-label" data-i18n="analysis.layer1.monthlyCashflow">Monthly Cash Flow</div>
+            <div class="hero-cashflow" id="hero-cashflow">—</div>
+          </div>
+          <div class="hero-meta-row">
+            <div class="hero-meta-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span data-i18n="analysis.layer1.biggestRisk">Biggest Risk</span>
+            </div>
+            <div class="hero-risk-text" id="hero-risk-text">—</div>
+          </div>
+          <div class="hero-verdict" id="hero-verdict">
+            <div class="hero-verdict-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            </div>
+            <div class="hero-verdict-text" id="hero-verdict-text" data-i18n="analysis.aiGenerating">Generating analysis...</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="report-cta-bar">
+        <span class="report-cta-text" data-i18n="analysis.layer1.expandDetails">Explore the full analysis below ↓</span>
       </div>
 
-      <!-- INVESTMENT CLASSIFICATION -->
-      <div class="classification-card" id="classification-card">
-        <div class="classification-loading" id="classification-loading">
-          <div class="market-loading-spinner"></div>
-          <span data-i18n="analysis.classifyLoading">Classifying investment type…</span>
-        </div>
-        <div class="classification-result" id="classification-result" style="display:none">
-          <div class="classification-top">
-            <div class="classification-badge" id="classification-badge">
-              <svg class="cls-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span class="classification-label" id="classification-label" data-i18n="analysis.classifyAnalyzing">Analyzing…</span>
+      <!-- ═════ LAYER 2: COLLAPSIBLE SECTIONS ═════ -->
+      <div class="report-accordion">
+
+        <!-- 1. Cashflow Model -->
+        <details class="report-section">
+          <summary class="report-section-summary">
+            <span class="rs-icon rs-icon-cf">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+            </span>
+            <span class="rs-title-wrap">
+              <span class="rs-title" data-i18n="analysis.layer2.cashflowModel">Cashflow Model</span>
+              <span class="rs-subtitle" data-i18n="analysis.layer2.cashflowModelSub">How the property performs as an income asset</span>
+            </span>
+            <span class="rs-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </summary>
+          <div class="report-section-body">
+            <div class="metric-grid">
+              <div class="metric-card">
+                <div class="metric-label" data-i18n="analysis.rentalYield">Rental Yield</div>
+                <div class="metric-value mono" id="kpi-yield-val">—</div>
+                <div class="metric-sub" id="kpi-yield-sub" data-i18n="analysis.rentalYieldSub">Annual rental income / property price</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label" data-i18n="analysis.annualROI">Annual ROI</div>
+                <div class="metric-value mono" id="kpi-roi-val">—</div>
+                <div class="metric-sub" data-i18n="analysis.annualROISub">Annual profit / cash invested</div>
+              </div>
             </div>
-            <div class="classification-engine-text" id="classification-engine-text"></div>
+            <div class="cf-breakdown">
+              <div class="cf-breakdown-title" data-i18n="analysis.cfBreakdown">Monthly Cash Flow Breakdown</div>
+              <div class="cf-bar-group">
+                <div class="cf-bar-item cf-bar-income">
+                  <div class="cf-bar-header"><span class="cf-bar-label" data-i18n="analysis.rentalIncome">Rental Income</span><span class="cf-bar-amount mono" id="cf-income-val">—</span></div>
+                  <div class="cf-bar-track"><div class="cf-bar-fill" id="cf-income-bar"></div></div>
+                </div>
+                <div class="cf-bar-item cf-bar-mortgage">
+                  <div class="cf-bar-header"><span class="cf-bar-label" data-i18n="analysis.mortgagePayment">Mortgage Payment</span><span class="cf-bar-amount mono" id="cf-mortgage-val">—</span></div>
+                  <div class="cf-bar-track"><div class="cf-bar-fill" id="cf-mortgage-bar"></div></div>
+                </div>
+                <div class="cf-bar-item cf-bar-expenses">
+                  <div class="cf-bar-header"><span class="cf-bar-label" data-i18n="analysis.otherExpenses">Other Expenses</span><span class="cf-bar-amount mono" id="cf-expenses-val">—</span></div>
+                  <div class="cf-bar-track"><div class="cf-bar-fill" id="cf-expenses-bar"></div></div>
+                </div>
+              </div>
+              <div class="cf-net" id="cf-net-row">
+                <span class="cf-net-label" data-i18n="analysis.netMonthly">Net Monthly Cash Flow</span>
+                <span class="cf-net-value mono" id="cf-net-val">—</span>
+              </div>
+            </div>
+            <details class="calc-details">
+              <summary class="calc-details-summary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
+              </summary>
+              <div class="calc-details-body">
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
+                  <code class="calc-formula" data-i18n="analysis.layer3.yieldFormula">Annual Rent ÷ Property Price × 100</code>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
+                  <code class="calc-formula" data-i18n="analysis.layer3.cashflowFormula">Monthly Rent − Monthly Mortgage − Monthly Expenses</code>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
+                  <code class="calc-formula" data-i18n="analysis.layer3.roiFormula">(Annual Cash Flow ÷ Cash Invested) × 100</code>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
+                  <p class="calc-text" data-i18n="analysis.layer3.cashflowAssump">30-year amortization. Expenses include maintenance, taxes, and association fees if entered.</p>
+                </div>
+              </div>
+            </details>
           </div>
-          <div class="engine-scores">
-            <div class="engine-row">
-              <div class="engine-name" data-i18n="analysis.engineCashflow">A · Cashflow Engine</div>
-              <div class="engine-bar-track"><div class="engine-bar-fill" id="eng-cashflow-fill" style="width:0%"></div></div>
-              <div class="engine-score" id="eng-cashflow-score">—</div>
+        </details>
+
+        <!-- 2. Appreciation Model -->
+        <details class="report-section" id="appreciation-section">
+          <summary class="report-section-summary">
+            <span class="rs-icon rs-icon-appr">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
+            </span>
+            <span class="rs-title-wrap">
+              <span class="rs-title" data-i18n="analysis.layer2.appreciationModel">Appreciation Model</span>
+              <span class="rs-subtitle" data-i18n="analysis.layer2.appreciationModelSub">5-year capital growth projection</span>
+            </span>
+            <span class="rs-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </summary>
+          <div class="report-section-body">
+            <div class="proj-summary">
+              <div class="proj-summary-item">
+                <div class="proj-summary-label" data-i18n="analysis.projectionTitle">5-Year Capital Growth Projection</div>
+                <span class="proj-rate-badge mono" id="proj-rate">—</span>
+              </div>
             </div>
-            <div class="engine-row">
-              <div class="engine-name" data-i18n="analysis.engineAppreciation">B · Appreciation Engine</div>
-              <div class="engine-bar-track"><div class="engine-bar-fill" id="eng-appreciation-fill" style="width:0%"></div></div>
-              <div class="engine-score" id="eng-appreciation-score">—</div>
+            <div class="proj-header-row">
+              <span data-i18n="analysis.projYear">Year</span><span data-i18n="analysis.projValue">Projected Value</span><span data-i18n="analysis.projGain">Capital Gain</span>
             </div>
-            <div class="engine-row">
-              <div class="engine-name" data-i18n="analysis.engineLeverage">C · Leverage Effect</div>
-              <div class="engine-bar-track"><div class="engine-bar-fill" id="eng-leverage-fill" style="width:0%"></div></div>
-              <div class="engine-score" id="eng-leverage-score">—</div>
-            </div>
-            <div class="engine-row">
-              <div class="engine-name" data-i18n="analysis.engineMarket">D · Market Context</div>
-              <div class="engine-bar-track"><div class="engine-bar-fill" id="eng-market-fill" style="width:0%"></div></div>
-              <div class="engine-score" id="eng-market-score">—</div>
-            </div>
+            <div id="projection-rows"></div>
+            <p class="proj-disclaimer" data-i18n="analysis.projDisclaimer">Based on historical market appreciation. Past performance does not guarantee future results.</p>
+            <details class="calc-details">
+              <summary class="calc-details-summary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
+              </summary>
+              <div class="calc-details-body">
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
+                  <code class="calc-formula" data-i18n="analysis.layer3.apprFormula">Property Price × (1 + appreciation rate)^years</code>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
+                  <p class="calc-text" data-i18n="analysis.layer3.apprAssump">Historical area appreciation. Past performance does not guarantee future results.</p>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.sources">Sources</div>
+                  <p class="calc-text" data-i18n="analysis.layer3.marketSource">Per-square-metre data from local market sources</p>
+                </div>
+              </div>
+            </details>
           </div>
-        </div>
+        </details>
+
+        <!-- 3. Financing & Leverage -->
+        <details class="report-section">
+          <summary class="report-section-summary">
+            <span class="rs-icon rs-icon-fin">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </span>
+            <span class="rs-title-wrap">
+              <span class="rs-title" data-i18n="analysis.layer2.financingLeverage">Financing &amp; Leverage</span>
+              <span class="rs-subtitle" data-i18n="analysis.layer2.financingLeverageSub">Loan structure and monthly mortgage</span>
+            </span>
+            <span class="rs-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </summary>
+          <div class="report-section-body">
+            <div class="fin-list">
+              <div class="fin-row"><span class="fin-label" data-i18n="analysis.loanAmount">Loan Amount</span><span class="fin-value mono" id="fin-loan">—</span></div>
+              <div class="fin-row"><span class="fin-label" data-i18n="analysis.downPayment">Down Payment</span><span class="fin-value mono" id="fin-down">—</span></div>
+              <div class="fin-row"><span class="fin-label" data-i18n="analysis.monthlyMortgage">Monthly Mortgage</span><span class="fin-value mono" id="fin-mortgage">—</span></div>
+              <div class="fin-row"><span class="fin-label" data-i18n="analysis.interestRate">Interest Rate</span><span class="fin-value mono" id="fin-rate">—</span></div>
+              <div class="fin-row"><span class="fin-label" data-i18n="analysis.loanTerm">Loan Term</span><span class="fin-value mono" data-i18n="analysis.loanTerm30">30 years</span></div>
+            </div>
+            <details class="calc-details">
+              <summary class="calc-details-summary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
+              </summary>
+              <div class="calc-details-body">
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
+                  <code class="calc-formula" data-i18n="analysis.layer3.mortgageFormula">P × (r(1+r)^n) ÷ ((1+r)^n − 1)</code>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
+                  <p class="calc-text" data-i18n="analysis.layer3.mortgageAssump">P = loan, r = monthly rate, n = 360 months. Standard amortizing loan.</p>
+                </div>
+              </div>
+            </details>
+          </div>
+        </details>
+
+        <!-- 4. Stress Tests -->
+        <details class="report-section" id="stress-section">
+          <summary class="report-section-summary">
+            <span class="rs-icon rs-icon-stress">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </span>
+            <span class="rs-title-wrap">
+              <span class="rs-title" data-i18n="analysis.layer2.stressTests">Stress Tests</span>
+              <span class="rs-subtitle" data-i18n="analysis.layer2.stressTestsSub">What breaks the investment</span>
+            </span>
+            <span class="rs-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </summary>
+          <div class="report-section-body">
+            <div id="stress-grid"></div>
+            <details class="calc-details">
+              <summary class="calc-details-summary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
+              </summary>
+              <div class="calc-details-body">
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
+                  <code class="calc-formula" data-i18n="analysis.layer3.mortgageFormula">P × (r(1+r)^n) ÷ ((1+r)^n − 1)</code>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
+                  <p class="calc-text" data-i18n="analysis.layer3.stressAssump">Stress tests use the same loan amount and term but recalculate the monthly mortgage at higher rates.</p>
+                </div>
+              </div>
+            </details>
+          </div>
+        </details>
+
+        <!-- 5. Local Market Context -->
+        <details class="report-section">
+          <summary class="report-section-summary">
+            <span class="rs-icon rs-icon-mkt">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <span class="rs-title-wrap">
+              <span class="rs-title" data-i18n="analysis.layer2.marketContext">Local Market Context</span>
+              <span class="rs-subtitle"><span id="market-location-text">—</span></span>
+            </span>
+            <span class="rs-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </summary>
+          <div class="report-section-body">
+            <div id="market-loading" class="market-loading">
+              <div class="market-loading-spinner"></div>
+              <span id="market-loading-text" data-i18n="analysis.marketLoading">Researching rental market...</span>
+            </div>
+            <div id="market-results" style="display:none">
+              <div class="market-grid">
+                <div class="market-stat">
+                  <div class="market-stat-label" data-i18n="analysis.marketAvgSale">Avg. Sale Price</div>
+                  <div class="market-stat-value mono" id="market-avg">—</div>
+                  <div class="market-stat-sub" data-i18n="analysis.marketAvgSaleSub">per m², area average</div>
+                </div>
+                <div class="market-stat">
+                  <div class="market-stat-label" data-i18n="analysis.marketAvgRent">Avg. Rent per m²</div>
+                  <div class="market-stat-value mono" id="market-range">—</div>
+                  <div class="market-stat-sub" data-i18n="analysis.marketAvgRentSub">per month, gross estimate</div>
+                </div>
+                <div class="market-stat">
+                  <div class="market-stat-label" data-i18n="analysis.marketGrossYield">Avg. Gross Yield</div>
+                  <div class="market-stat-value mono" id="market-yield">—</div>
+                  <div class="market-stat-sub" data-i18n="analysis.marketGrossYieldSub">area benchmark, not guaranteed</div>
+                </div>
+              </div>
+              <div class="market-comparison">
+                <div class="market-comparison-text" id="market-comparison-text">—</div>
+                <span id="market-comparison-badge">—</span>
+              </div>
+              <div class="market-source" id="market-source" style="display:none"></div>
+            </div>
+            <details class="calc-details">
+              <summary class="calc-details-summary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
+              </summary>
+              <div class="calc-details-body">
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.sources">Sources</div>
+                  <p class="calc-text" data-i18n="analysis.layer3.marketSource">Per-square-metre data from local market sources</p>
+                  <p class="calc-text" data-i18n="analysis.layer3.comparableSource">Comparable rental properties in the area</p>
+                </div>
+              </div>
+            </details>
+          </div>
+        </details>
+
       </div>
 
-      <!-- MARKET DATA CARD -->
-      <div class="market-data-card" id="market-data-card">
-        <div class="market-data-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span data-i18n="analysis.marketResearch">Local Market Research</span>
-          <span class="market-location-badge" id="market-location-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/></svg>
-            <span id="market-location-text">—</span>
-          </span>
-        </div>
-        <div id="market-loading" class="market-loading">
-          <div class="market-loading-spinner"></div>
-          <span id="market-loading-text" data-i18n="analysis.marketLoading">Researching rental market...</span>
-        </div>
-        <div id="market-results" style="display:none">
-          <div class="market-grid">
-            <div class="market-stat">
-              <div class="market-stat-label" data-i18n="analysis.marketAvgSale">Avg. Sale Price</div>
-              <div class="market-stat-value" id="market-avg">—</div>
-              <div class="market-stat-sub" data-i18n="analysis.marketAvgSaleSub">per m², area average</div>
-            </div>
-            <div class="market-stat">
-              <div class="market-stat-label" data-i18n="analysis.marketAvgRent">Avg. Rent per m²</div>
-              <div class="market-stat-value" id="market-range">—</div>
-              <div class="market-stat-sub" data-i18n="analysis.marketAvgRentSub">per month, gross estimate</div>
-            </div>
-            <div class="market-stat">
-              <div class="market-stat-label" data-i18n="analysis.marketGrossYield">Avg. Gross Yield</div>
-              <div class="market-stat-value" id="market-yield">—</div>
-              <div class="market-stat-sub" data-i18n="analysis.marketGrossYieldSub">area benchmark, not guaranteed</div>
-            </div>
-          </div>
-          <div class="market-comparison">
-            <div class="market-comparison-text" id="market-comparison-text">—</div>
-            <span id="market-comparison-badge">—</span>
-          </div>
-          <div class="market-source" id="market-source" style="display:none"></div>
-        </div>
-      </div>
-
-      <!-- Lower: Financing + Cash Flow -->
-      <div class="analysis-lower">
-        <div class="analysis-card">
-          <div class="analysis-card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-            <span data-i18n="analysis.financingDetails">Financing Details</span>
-          </div>
-          <div class="fin-row"><span class="fin-label" data-i18n="analysis.loanAmount">Loan Amount</span><span class="fin-value" id="fin-loan">—</span></div>
-          <div class="fin-row"><span class="fin-label" data-i18n="analysis.downPayment">Down Payment</span><span class="fin-value" id="fin-down">—</span></div>
-          <div class="fin-row"><span class="fin-label" data-i18n="analysis.monthlyMortgage">Monthly Mortgage</span><span class="fin-value" id="fin-mortgage">—</span></div>
-          <div class="fin-row"><span class="fin-label" data-i18n="analysis.interestRate">Interest Rate</span><span class="fin-value" id="fin-rate">—</span></div>
-          <div class="fin-row"><span class="fin-label" data-i18n="analysis.loanTerm">Loan Term</span><span class="fin-value" data-i18n="analysis.loanTerm30">30 years</span></div>
-        </div>
-        <div class="analysis-card">
-          <div class="analysis-card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="13" y="5" width="3" height="13"/></svg>
-            <span data-i18n="analysis.cfBreakdown">Monthly Cash Flow Breakdown</span>
-          </div>
-          <div class="cf-bar-group">
-            <div class="cf-bar-item cf-bar-income">
-              <div class="cf-bar-header"><span class="cf-bar-label" data-i18n="analysis.rentalIncome">Rental Income</span><span class="cf-bar-amount" id="cf-income-val">—</span></div>
-              <div class="cf-bar-track"><div class="cf-bar-fill" id="cf-income-bar"></div></div>
-            </div>
-            <div class="cf-bar-item cf-bar-mortgage">
-              <div class="cf-bar-header"><span class="cf-bar-label" data-i18n="analysis.mortgagePayment">Mortgage Payment</span><span class="cf-bar-amount" id="cf-mortgage-val">—</span></div>
-              <div class="cf-bar-track"><div class="cf-bar-fill" id="cf-mortgage-bar"></div></div>
-            </div>
-            <div class="cf-bar-item cf-bar-expenses">
-              <div class="cf-bar-header"><span class="cf-bar-label" data-i18n="analysis.otherExpenses">Other Expenses</span><span class="cf-bar-amount" id="cf-expenses-val">—</span></div>
-              <div class="cf-bar-track"><div class="cf-bar-fill" id="cf-expenses-bar"></div></div>
-            </div>
-          </div>
-          <div class="cf-net" id="cf-net-row">
-            <span class="cf-net-label" data-i18n="analysis.netMonthly">Net Monthly Cash Flow</span>
-            <span class="cf-net-value" id="cf-net-val">—</span>
+      <!-- Hidden legacy elements (kept for JS that sets text on them) -->
+      <div style="display:none">
+        <span id="kpi-downpay-val"></span>
+        <span id="kpi-downpay-sub"></span>
+        <span id="kpi-yield"></span>
+        <span id="kpi-cashflow"></span>
+        <span id="kpi-cashflow-val"></span>
+        <span id="kpi-roi"></span>
+        <span id="kpi-downpay"></span>
+        <span id="score-desc"></span>
+        <div id="classification-card">
+          <div id="classification-loading"></div>
+          <div id="classification-result">
+            <div id="classification-badge"></div>
+            <div id="classification-engine-text"></div>
+            <div><div id="eng-cashflow-fill"></div><div id="eng-cashflow-score"></div></div>
+            <div><div id="eng-appreciation-fill"></div><div id="eng-appreciation-score"></div></div>
+            <div><div id="eng-leverage-fill"></div><div id="eng-leverage-score"></div></div>
+            <div><div id="eng-market-fill"></div><div id="eng-market-score"></div></div>
           </div>
         </div>
-      </div>
-
-      <!-- 5-Year Appreciation Projection -->
-      <div class="projection-card analysis-card" id="projection-card" style="display:none">
-        <div class="analysis-card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
-          <span data-i18n="analysis.projectionTitle">5-Year Capital Growth Projection</span>
-          <span class="proj-rate-badge" id="proj-rate">—</span>
-        </div>
-        <div class="proj-header-row">
-          <span data-i18n="analysis.projYear">Year</span><span data-i18n="analysis.projValue">Projected Value</span><span data-i18n="analysis.projGain">Capital Gain</span>
-        </div>
-        <div id="projection-rows"></div>
-        <div class="proj-disclaimer" data-i18n="analysis.projDisclaimer">Based on historical market appreciation. Past performance does not guarantee future results.</div>
-      </div>
-
-      <!-- Stress Test -->
-      <div class="stress-card analysis-card" id="stress-card" style="display:none">
-        <div class="analysis-card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span data-i18n="analysis.stressTitle">Risk &amp; Stress Test</span>
-        </div>
-        <div id="stress-grid"></div>
-      </div>
-
-      <!-- AI Summary -->
-      <div class="ai-summary-card">
-        <div class="ai-summary-header">
-          <div class="ai-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-            <span data-i18n="analysis.aiBadge">AI Analysis</span>
-          </div>
-          <div class="ai-summary-title" data-i18n="analysis.aiTitle">Investment Summary</div>
-        </div>
-        <div class="ai-summary-text" id="ai-summary-text" data-i18n="analysis.aiGenerating">Generating analysis...</div>
+        <div id="ai-summary-text"></div>
+        <div id="projection-card"></div>
+        <div id="stress-card"></div>
       </div>
 
       <!-- Lead Capture -->
@@ -2318,6 +3030,19 @@ function showMarketResults(marketInfo, userRent) {
     document.getElementById('classification-label').style.color = cls.color;
     document.getElementById('classification-engine-text').textContent = cls.wealthEngine;
 
+    // ── LAYER 1: refresh hero with full classification data ──
+    const heroBadge = document.getElementById('hero-type-badge');
+    const heroDot = document.getElementById('hero-type-dot');
+    if (heroBadge) {
+      heroBadge.style.background = cls.color + '14';
+      heroBadge.style.borderColor = cls.color + '40';
+    }
+    if (heroDot) heroDot.style.background = cls.color;
+    const heroRiskEl2 = document.getElementById('hero-risk-text');
+    if (heroRiskEl2) heroRiskEl2.textContent = deriveBiggestRisk(data, d, cls);
+    const heroVerdictEl2 = document.getElementById('hero-verdict-text');
+    if (heroVerdictEl2) heroVerdictEl2.textContent = deriveOneLineVerdict(data, d, cls);
+
     // Engine score bars (animated)
     const engines = [
       { id: 'eng-cashflow',     val: cls.engineScores.cashflow,     label: 'Cashflow Engine' },
@@ -2400,6 +3125,55 @@ function showMarketResults(marketInfo, userRent) {
 
 // ── INVESTMENT CLASSIFICATION ─────────────────
 let _lastMarketData = null;
+
+// ── BIGGEST RISK & ONE-LINE VERDICT (Layer 1 derivations) ──
+function deriveBiggestRisk(data, marketData, cls) {
+  const _t = (k, v) => (window.t ? window.t(k, v) : k);
+  const { rentalYield, monthlyCashFlow, monthlyMortgage } = data;
+  const rate = data._rate || 4.5;
+  const expenses = data._expenses || 0;
+  const rent = data._rent || 0;
+  const loan = data.loanAmount;
+
+  // Test: would +1% rate flip cash flow negative?
+  if (loan && monthlyCashFlow > 0) {
+    const mr = (rate + 1) / 100 / 12;
+    const newMort = mr === 0 ? loan / 360 : loan * (mr * Math.pow(1+mr, 360)) / (Math.pow(1+mr, 360) - 1);
+    const cfAtPlus1 = rent - newMort - expenses;
+    if (cfAtPlus1 < 0) return _t('analysis.risks.rateSensitive');
+  }
+  // Deeply negative cash flow
+  if (monthlyCashFlow < -400) return _t('analysis.risks.deepNegativeCf', { amount: fmt(Math.abs(monthlyCashFlow)) });
+  // No strong engine
+  if (cls && cls.type === 'poor') return _t('analysis.risks.noStrongEngine');
+  // Low yield, relies on appreciation
+  if (rentalYield < 3.5) return _t('analysis.risks.lowYieldRelies', { yield: rentalYield.toFixed(1) });
+  // Vacancy exposure if cash flow is positive but margin is thin
+  if (monthlyCashFlow > 0 && monthlyCashFlow < 200) return _t('analysis.risks.thinMargin');
+  // Flat market
+  if (marketData && marketData.appreciation && marketData.appreciation < 3) {
+    return _t('analysis.risks.marketFlat', { rate: marketData.appreciation });
+  }
+  // Default: vacancy exposure
+  return _t('analysis.risks.vacancyExposure', { amount: fmt(Math.round(rent)) });
+}
+
+function deriveOneLineVerdict(data, marketData, cls) {
+  const _t = (k) => (window.t ? window.t(k) : k);
+  if (cls) {
+    if (cls.type === 'hybrid')        return _t('analysis.verdicts.strongBuy');
+    if (cls.type === 'cashflow')      return _t('analysis.verdicts.incomePlay');
+    if (cls.type === 'appreciation')  return _t('analysis.verdicts.growthPlay');
+    if (cls.type === 'value-add')     return _t('analysis.verdicts.conditional');
+    if (cls.type === 'poor')          return _t('analysis.verdicts.reject');
+  }
+  // Pre-classification fallback based on score
+  const s = data.score;
+  if (s >= 75) return _t('analysis.verdicts.strongBuy');
+  if (s >= 60) return _t('analysis.verdicts.balanced');
+  if (s >= 45) return _t('analysis.verdicts.conditional');
+  return _t('analysis.verdicts.reject');
+}
 
 function classifyInvestment(data, marketData) {
   const { rentalYield, monthlyCashFlow, roi } = data;
@@ -2797,7 +3571,7 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   document.getElementById('analysis-subtitle').textContent = `€${price.toLocaleString()} property · €${rent.toLocaleString()}/mo rent · ${location}`;
   document.getElementById('analysis-date').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
 
-  const circumference = 383.27;
+  const circumference = 527.79; // 2π × 84 (new larger gauge radius)
   const scoreFill = document.getElementById('score-fill-circle');
   const scoreEl   = document.getElementById('score-display');
   const color = scoreColor(data.score);
@@ -2806,6 +3580,19 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   document.getElementById('score-rating').textContent = scoreRating(data.score);
   document.getElementById('score-rating').style.color = color;
   document.getElementById('score-desc').textContent = scoreDesc(data.score);
+
+  // ── LAYER 1: Hero cashflow ──
+  const heroCfEl = document.getElementById('hero-cashflow');
+  if (heroCfEl) {
+    heroCfEl.textContent = (data.monthlyCashFlow >= 0 ? '+' : '−') + fmt(Math.abs(data.monthlyCashFlow)) + '/mo';
+    heroCfEl.className = 'hero-cashflow ' + (data.monthlyCashFlow >= 0 ? 'positive' : 'negative');
+  }
+  // Provisional risk (will be replaced once market data arrives)
+  const heroRiskEl = document.getElementById('hero-risk-text');
+  if (heroRiskEl) heroRiskEl.textContent = deriveBiggestRisk(data, null, null);
+  // Provisional verdict (will be replaced once classification runs)
+  const heroVerdictEl = document.getElementById('hero-verdict-text');
+  if (heroVerdictEl) heroVerdictEl.textContent = deriveOneLineVerdict(data, null, null);
 
   document.getElementById('kpi-yield-val').textContent = fmtPct(data.rentalYield);
   const yt = data.rentalYield > 5 ? 'trend-up' : data.rentalYield > 3 ? 'trend-neutral' : 'trend-down';
@@ -2860,6 +3647,8 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   setTimeout(() => {
     scoreFill.style.strokeDashoffset = circumference - (data.score / 100) * circumference;
     animateCounter(scoreEl, data.score);
+    // Safety net: ensure final value lands even if rAF was throttled
+    setTimeout(() => { if (scoreEl) scoreEl.textContent = data.score; }, 1600);
     document.querySelectorAll('.kpi-card').forEach((card, i) => {
       card.classList.remove('visible');
       setTimeout(() => card.classList.add('visible'), 180 + i * 90);

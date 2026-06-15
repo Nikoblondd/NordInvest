@@ -176,7 +176,64 @@
     "aiBadge": "AI-analyse",
     "aiTitle": "Investeringsresumé",
     "aiGenerating": "Genererer analyse...",
-    "perMonth": "/md"
+    "perMonth": "/md",
+
+    "layer1": {
+      "investmentType": "Investeringstype",
+      "monthlyCashflow": "Månedlig cash flow",
+      "biggestRisk": "Største risiko",
+      "verdict": "Vurdering",
+      "expandDetails": "Udforsk hele analysen nedenfor ↓"
+    },
+    "layer2": {
+      "cashflowModel": "Cashflow-model",
+      "cashflowModelSub": "Hvordan ejendommen klarer sig som indtægtsaktiv",
+      "appreciationModel": "Prisstigningsmodel",
+      "appreciationModelSub": "5-årig prognose for kapitaltilvækst",
+      "financingLeverage": "Finansiering og gearing",
+      "financingLeverageSub": "Lånestruktur og månedlig ydelse",
+      "stressTests": "Stresstests",
+      "stressTestsSub": "Hvad får investeringen til at bryde sammen",
+      "marketContext": "Lokal markedskontekst",
+      "marketContextSub": "Områdets benchmarks og sammenligninger"
+    },
+    "layer3": {
+      "showDetails": "Vis beregningsdetaljer",
+      "hideDetails": "Skjul beregningsdetaljer",
+      "formula": "Formel",
+      "assumptions": "Antagelser",
+      "sources": "Kilder",
+      "yieldFormula": "Årlig leje ÷ Ejendomspris × 100",
+      "yieldAssump": "Bruger bruttoleje (før udgifter). Inkluderer 12 måneder × månedlig leje.",
+      "cashflowFormula": "Månedlig leje − Månedlig ydelse − Månedlige udgifter",
+      "cashflowAssump": "30-årig amortisering. Udgifter inkluderer vedligehold, skatter og foreningsbetalinger, hvis indtastet.",
+      "roiFormula": "(Årligt cash flow ÷ Investeret kapital) × 100",
+      "roiAssump": "Investeret kapital = udbetalingsbeløb. Eksklusive transaktionsomkostninger.",
+      "apprFormula": "Ejendomspris × (1 + prisstigningsrate)^år",
+      "apprAssump": "Historisk områdestigning. Tidligere resultater garanterer ikke fremtidige resultater.",
+      "mortgageFormula": "P × (r(1+r)^n) ÷ ((1+r)^n − 1)",
+      "mortgageAssump": "P = lån, r = månedlig rente, n = 360 måneder. Standard amortiserende lån.",
+      "stressAssump": "Stresstests bruger samme lånebeløb og løbetid, men genberegner den månedlige ydelse ved højere renter.",
+      "marketSource": "Pris pr. m² fra lokale markedsdata",
+      "comparableSource": "Sammenlignelige lejeejendomme i området"
+    },
+    "risks": {
+      "rateSensitive": "Cash flow bliver negativ, hvis renten stiger bare 1 %.",
+      "deepNegativeCf": "Det månedlige underskud er betydeligt — du skal bruge {amount}/md fra anden indkomst for at bære ejendommen.",
+      "lowYieldRelies": "Med {yield} % afkast afhænger gevinsten næsten udelukkende af, at priserne fortsætter med at stige.",
+      "vacancyExposure": "Én måned uden lejer ville fjerne {amount} fra det årlige cash flow.",
+      "thinMargin": "Cash flow er positivt, men tyndt — én ledig måned eller en reparationsregning kan vende det negativt.",
+      "marketFlat": "Markedsstigningen er moderat på ~{rate} %/år — begrænset upside fra prisvækst alene.",
+      "noStrongEngine": "Hverken leje eller prisstigning retfærdiggør prisen med de nuværende tal."
+    },
+    "verdicts": {
+      "strongBuy": "Stærke fundamentaler på tværs af linjen — denne ejendom giver både månedlig indtægt og langsigtet vækst.",
+      "incomePlay": "Solidt indtægtsaktiv — lejen dækker komfortabelt boliglånet og giver dig kontanter hver måned.",
+      "growthPlay": "Langsigtet kapitaltilvækst — accepter tyndt cash flow nu, høst prisstigning senere.",
+      "balanced": "En balanceret investering — beskeden indtægt med stabilt prisstigningspotentiale.",
+      "conditional": "Betinget mulighed — tallene fungerer kun, hvis du finder en værditilvækstvinkel (renovering, bedre finansiering, køb under markedet).",
+      "reject": "Gå ikke videre på disse vilkår — hverken lejen eller prisstigningen retfærdiggør prisen."
+    }
   },
   "leadCapture": {
     "title": "Tal med en finansieringsrådgiver",

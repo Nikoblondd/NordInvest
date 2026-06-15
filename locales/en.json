@@ -176,7 +176,64 @@
     "aiBadge": "AI Analysis",
     "aiTitle": "Investment Summary",
     "aiGenerating": "Generating analysis...",
-    "perMonth": "/mo"
+    "perMonth": "/mo",
+
+    "layer1": {
+      "investmentType": "Investment Type",
+      "monthlyCashflow": "Monthly Cash Flow",
+      "biggestRisk": "Biggest Risk",
+      "verdict": "Verdict",
+      "expandDetails": "Explore the full analysis below ↓"
+    },
+    "layer2": {
+      "cashflowModel": "Cashflow Model",
+      "cashflowModelSub": "How the property performs as an income asset",
+      "appreciationModel": "Appreciation Model",
+      "appreciationModelSub": "5-year capital growth projection",
+      "financingLeverage": "Financing & Leverage",
+      "financingLeverageSub": "Loan structure and monthly mortgage",
+      "stressTests": "Stress Tests",
+      "stressTestsSub": "What breaks the investment",
+      "marketContext": "Local Market Context",
+      "marketContextSub": "Area benchmarks and comparisons"
+    },
+    "layer3": {
+      "showDetails": "Show calculation details",
+      "hideDetails": "Hide calculation details",
+      "formula": "Formula",
+      "assumptions": "Assumptions",
+      "sources": "Sources",
+      "yieldFormula": "Annual Rent ÷ Property Price × 100",
+      "yieldAssump": "Uses gross rent (before expenses). Includes 12 months × monthly rent.",
+      "cashflowFormula": "Monthly Rent − Monthly Mortgage − Monthly Expenses",
+      "cashflowAssump": "30-year amortization. Expenses include maintenance, taxes, and association fees if entered.",
+      "roiFormula": "(Annual Cash Flow ÷ Cash Invested) × 100",
+      "roiAssump": "Cash invested = down payment amount. Excludes transaction costs.",
+      "apprFormula": "Property Price × (1 + appreciation rate)^years",
+      "apprAssump": "Historical area appreciation. Past performance does not guarantee future results.",
+      "mortgageFormula": "P × (r(1+r)^n) ÷ ((1+r)^n − 1)",
+      "mortgageAssump": "P = loan, r = monthly rate, n = 360 months. Standard amortizing loan.",
+      "stressAssump": "Stress tests use the same loan amount and term but recalculate the monthly mortgage at higher rates.",
+      "marketSource": "Per-square-metre data from local market sources",
+      "comparableSource": "Comparable rental properties in the area"
+    },
+    "risks": {
+      "rateSensitive": "Cash flow turns negative if mortgage rate rises by just 1%.",
+      "deepNegativeCf": "Monthly shortfall is significant — you'd need {amount}/mo from other income to carry the property.",
+      "lowYieldRelies": "At {yield}% yield, returns depend almost entirely on price appreciation continuing.",
+      "vacancyExposure": "A single month of vacancy would erase {amount} from annual cash flow.",
+      "thinMargin": "Cash flow is positive but thin — a vacancy or repair bill could flip it negative.",
+      "marketFlat": "Market appreciation is moderate at ~{rate}%/year — limited upside from price growth alone.",
+      "noStrongEngine": "Neither rent nor appreciation justifies the price at current numbers."
+    },
+    "verdicts": {
+      "strongBuy": "Strong fundamentals across the board — this property delivers both monthly income and long-term growth.",
+      "incomePlay": "Solid income asset — the rent comfortably covers the mortgage and gives you cash each month.",
+      "growthPlay": "Long-term capital growth story — accept thin cash flow now, reap appreciation later.",
+      "balanced": "A balanced investment — modest income with steady appreciation potential.",
+      "conditional": "Conditional opportunity — the numbers only work if you find a value-add angle (renovation, better financing, below-market entry).",
+      "reject": "Do not proceed at these terms — neither the rent nor the appreciation justifies the price."
+    }
   },
   "leadCapture": {
     "title": "Speak to a Financing Expert",
