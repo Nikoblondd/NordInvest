@@ -5,9 +5,14 @@
 // Methodology and source list: /methodology
 // Update the bundled file by running: node scripts/update-market-data.mjs
 
-import marketStats from '../data/market-stats.json' with { type: 'json' };
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
-export const config = { runtime: 'edge' };
+// Load the bundled dataset once at cold-start. Using fs.readFileSync (instead
+// of a JSON import attribute) keeps us compatible with Vercel's Node runtime
+// without depending on the `with { type: 'json' }` syntax some bundlers reject.
+const DATA_PATH = join(process.cwd(), 'data', 'market-stats.json');
+const marketStats = JSON.parse(readFileSync(DATA_PATH, 'utf8'));
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
