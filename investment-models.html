@@ -11,8 +11,10 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Investment Models — NordInvest</title>
-<meta name="description" content="Every investment model NordInvest supports: Cashflow, BRRRR, Appreciation, Value-Add. Which strategy fits which property — and which numbers each model relies on.">
+<title>Investment Models — Cashflow, BRRRR, Appreciation, Value-Add | NordInvest</title>
+<meta name="description" content="Every property investment model NordInvest supports: Cashflow, BRRRR, Appreciation, Value-Add. Formulas, citations, and which strategy fits which property type.">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="theme-color" content="#0F1F3D">
 <link rel="canonical" href="https://nordinvest.io/investment-models">
 <link rel="alternate" hreflang="en" href="https://nordinvest.io/investment-models">
 <link rel="alternate" hreflang="da" href="https://nordinvest.io/investment-models?lang=da">
@@ -20,6 +22,51 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<!-- Open Graph -->
+<meta property="og:type"        content="article">
+<meta property="og:site_name"   content="NordInvest">
+<meta property="og:url"         content="https://nordinvest.io/investment-models">
+<meta property="og:title"       content="Investment Models — Cashflow, BRRRR, Appreciation, Value-Add | NordInvest">
+<meta property="og:description" content="Every property investment model NordInvest supports: Cashflow, BRRRR, Appreciation, Value-Add. Formulas, citations, and best-suited property types for each.">
+<meta property="og:image"       content="https://nordinvest.io/nordinvest-logo.png">
+<meta property="og:locale"      content="en_GB">
+<meta property="og:locale:alternate" content="da_DK">
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="Investment Models — NordInvest">
+<meta name="twitter:description" content="Cashflow · BRRRR · Appreciation · Value-Add. Formulas, citations, best-suited property types.">
+<meta name="twitter:image"       content="https://nordinvest.io/nordinvest-logo.png">
+
+<!-- JSON-LD: BreadcrumbList -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home",              "item": "https://nordinvest.io/" },
+    { "@type": "ListItem", "position": 2, "name": "Investment Models", "item": "https://nordinvest.io/investment-models" }
+  ]
+}
+</script>
+
+<!-- JSON-LD: Article -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Four ways to make money on a property",
+  "description": "Every investment model NordInvest supports: Cashflow, BRRRR, Appreciation, Value-Add. Formulas, citations, and best-suited property types.",
+  "url": "https://nordinvest.io/investment-models",
+  "datePublished": "2026-06-15",
+  "dateModified": "2026-06-16",
+  "author": { "@type": "Organization", "name": "NordInvest", "url": "https://nordinvest.io" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "NordInvest",
+    "logo": { "@type": "ImageObject", "url": "https://nordinvest.io/nordinvest-logo.png" }
+  }
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -74,6 +121,33 @@
     max-width: 880px;
     margin: 56px auto 100px;
     padding: 0 24px;
+  }
+  .breadcrumb-nav { margin-bottom: 24px; }
+  .breadcrumb-list {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .breadcrumb-list li { display: inline-flex; align-items: center; gap: 6px; }
+  .breadcrumb-list li:not(:first-child)::before {
+    content: "/";
+    color: var(--text-muted);
+    opacity: 0.5;
+    margin-right: 2px;
+  }
+  .breadcrumb-list a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 180ms ease;
+  }
+  .breadcrumb-list a:hover { color: var(--navy); text-decoration: underline; }
+  .breadcrumb-list li[aria-current="page"] {
+    color: var(--navy);
+    font-weight: 600;
   }
   .eyebrow {
     display: inline-block;
@@ -269,6 +343,13 @@
 </nav>
 
 <main>
+  <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+    <ol class="breadcrumb-list">
+      <li><a href="/">Home</a></li>
+      <li aria-current="page">Investment Models</li>
+    </ol>
+  </nav>
+
   <span class="eyebrow">Investment Models</span>
   <h1>Four ways to make money on a property</h1>
   <p class="lede">

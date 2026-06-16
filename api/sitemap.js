@@ -17,8 +17,10 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=300');
 
   const staticPages = [
-    { url: '/',     changefreq: 'weekly',  priority: '1.0' },
-    { url: '/blog', changefreq: 'weekly',  priority: '0.9' },
+    { url: '/',                   changefreq: 'weekly',  priority: '1.0' },
+    { url: '/blog',               changefreq: 'weekly',  priority: '0.9' },
+    { url: '/investment-models',  changefreq: 'monthly', priority: '0.7' },
+    { url: '/methodology',        changefreq: 'monthly', priority: '0.6' },
   ];
 
   // Fetch manifest + posts from static CDN files — no filesystem needed
