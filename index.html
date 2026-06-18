@@ -40,6 +40,15 @@
 <meta name="twitter:title"       content="Nordic Property Investment Calculator & Yield Analyzer">
 <meta name="twitter:description" content="Free AI-powered property analysis for Nordic & European markets. Yield, cash flow, appreciation, risk — in 60 seconds.">
 <meta name="twitter:image"       content="https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&h=630&fit=crop&q=80">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt"    content="NordInvest — Nordic Property Investment Analyzer">
+
+<!-- Performance: warm up external origins early (per Google PageSpeed guidance) -->
+<link rel="dns-prefetch" href="https://images.unsplash.com">
+<link rel="preconnect"   href="https://images.unsplash.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="https://script.google.com">
 
 <!-- JSON-LD: Organization -->
 <script type="application/ld+json">
@@ -47,6 +56,7 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "NordInvest",
+  "alternateName": "NordInvest Property Analyzer",
   "url": "https://nordinvest.io",
   "logo": {
     "@type": "ImageObject",
@@ -56,20 +66,83 @@
   },
   "description": "AI-powered property investment analysis platform for Nordic and European real estate markets.",
   "areaServed": ["DK","NO","SE","FI","DE","NL","GB","FR","ES","PT","PL","CZ","HU"],
-  "knowsAbout": ["Property Investment","Rental Yield","Real Estate Analysis","Nordic Property Markets"]
+  "knowsAbout": ["Property Investment","Rental Yield","Real Estate Analysis","Nordic Property Markets","BRRRR Strategy","Cashflow Investing"],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "availableLanguage": ["English", "Danish"],
+    "areaServed": ["DK","NO","SE","FI","DE","NL","GB"]
+  }
 }
 </script>
-<!-- JSON-LD: WebApplication -->
+<!-- JSON-LD: WebSite + SearchAction (enables Google Sitelinks Searchbox in SERPs) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "NordInvest",
+  "url": "https://nordinvest.io",
+  "inLanguage": ["en", "da"],
+  "publisher": { "@type": "Organization", "name": "NordInvest", "url": "https://nordinvest.io" },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://nordinvest.io/blog?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<!-- JSON-LD: WebApplication (enriched with featureList + screenshot + aggregateRating eligibility) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "NordInvest Property Analyzer",
+  "alternateName": "NordInvest",
   "url": "https://nordinvest.io",
   "applicationCategory": "FinanceApplication",
+  "applicationSubCategory": "Real Estate Investment Analysis",
   "operatingSystem": "All",
+  "browserRequirements": "Requires JavaScript. Modern browser.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR", "availability": "https://schema.org/InStock" },
+  "description": "Free AI-powered property investment analyzer for Nordic and European markets. Yield, cash flow, ROI, BRRRR analysis, 5-year appreciation projection, and investment classification — in under 60 seconds.",
+  "featureList": [
+    "Rental yield calculation (gross + net)",
+    "Monthly cash flow analysis",
+    "5-year appreciation projection",
+    "BRRRR (Buy, Rehab, Rent, Refinance, Repeat) analysis",
+    "Cash-on-cash return after refinance",
+    "Interest rate stress test (+1%, +2%)",
+    "Investment classification (Cashflow / Appreciation / Hybrid / Value-Add)",
+    "Local market data per square metre (DST, SCB, SSB)",
+    "AI-written investment summary"
+  ],
+  "screenshot": "https://nordinvest.io/nordinvest-logo.png",
+  "softwareVersion": "2026.06",
+  "datePublished": "2026-06-12"
+}
+</script>
+<!-- JSON-LD: Service (the analyzer as a discrete service offering) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Property Investment Analysis",
+  "provider": { "@type": "Organization", "name": "NordInvest", "url": "https://nordinvest.io" },
+  "areaServed": [
+    { "@type": "Country", "name": "Denmark" },
+    { "@type": "Country", "name": "Norway" },
+    { "@type": "Country", "name": "Sweden" },
+    { "@type": "Country", "name": "Finland" },
+    { "@type": "Country", "name": "Germany" },
+    { "@type": "Country", "name": "Netherlands" },
+    { "@type": "Country", "name": "United Kingdom" }
+  ],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
-  "description": "Free AI-powered property investment analyzer for Nordic and European markets."
+  "url": "https://nordinvest.io",
+  "description": "Free instant analysis of any Nordic or European property investment opportunity — yield, cash flow, ROI, BRRRR, appreciation projection, and AI classification."
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2612,6 +2685,7 @@
         <span class="footer-copy" data-i18n="footer.copyright">© 2026 NordInvest. All rights reserved.</span>
         <div class="footer-links">
           <a href="/investment-models" data-i18n="footer.investmentModels">Investment Models</a>
+          <a href="/glossary" data-i18n="footer.glossary">Glossary</a>
           <a href="/methodology" data-i18n="footer.methodology">Methodology</a>
           <a href="/blog" data-i18n="nav.blog">Blog</a>
           <a href="#" data-i18n="footer.privacy">Privacy</a>

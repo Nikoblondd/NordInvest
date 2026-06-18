@@ -3,6 +3,7 @@
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/methodology", "destination": "/methodology.html" },
     { "source": "/investment-models", "destination": "/investment-models.html" },
+    { "source": "/glossary", "destination": "/glossary.html" },
     { "source": "/blog/:slug+", "destination": "/blog/post.html" }
   ]
 }

@@ -803,12 +803,20 @@
           "url": postUrl,
           "datePublished": meta.date || '',
           "dateModified": meta.date || '',
+          "inLanguage": "en",
+          "wordCount": (document.querySelector('.post-body')?.innerText?.split(/\s+/).length) || undefined,
           "author": { "@type": "Organization", "name": meta.author || "NordInvest", "url": "https://nordinvest.io" },
           "publisher": {
             "@type": "Organization", "name": "NordInvest", "url": "https://nordinvest.io",
             "logo": { "@type": "ImageObject", "url": "https://nordinvest.io/nordinvest-logo.png", "width": 2000, "height": 2000 }
           },
-          "image": { "@type": "ImageObject", "url": heroImg }
+          "image": { "@type": "ImageObject", "url": heroImg },
+          "mainEntityOfPage": { "@type": "WebPage", "@id": postUrl },
+          "keywords": (meta.tags || []).join(', ') || undefined,
+          "speakable": {
+            "@type": "SpeakableSpecification",
+            "cssSelector": [".post-title", ".post-body h2", ".post-body p"]
+          }
         },
         {
           "@type": "BreadcrumbList",

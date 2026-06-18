@@ -58,13 +58,67 @@
   "description": "How NordInvest sources market data — direct citations from Danmarks Statistik (DST), Statistics Sweden (SCB), and Statistics Norway (SSB). Every figure traceable; no fabricated numbers.",
   "url": "https://nordinvest.io/methodology",
   "datePublished": "2026-06-15",
-  "dateModified": "2026-06-16",
+  "dateModified": "2026-06-18",
   "author": { "@type": "Organization", "name": "NordInvest", "url": "https://nordinvest.io" },
   "publisher": {
     "@type": "Organization",
     "name": "NordInvest",
     "logo": { "@type": "ImageObject", "url": "https://nordinvest.io/nordinvest-logo.png" }
+  },
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": ["h1", ".lede", ".principle", ".source-card p"]
   }
+}
+</script>
+
+<!-- JSON-LD: FAQPage — eligible for "What sources does NordInvest use?" rich results -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Where does NordInvest get its property market data?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Directly from national statistics agencies: Danmarks Statistik (DST) table EJ55 for Denmark, Statistics Sweden (SCB) table BO0501 for Sweden, and Statistics Norway (SSB) table 06035 for Norway. Every figure is linked to its source and tagged with the last-updated date and a confidence badge."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does NordInvest scrape Boligsiden, Hemnet, or Finn.no?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Scraping listings portals breaks against terms of service and the data isn't worth the maintenance cost. NordInvest only uses publicly cited statistics agencies."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is rent per m² often listed as Not available?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "None of the Nordic national statistics agencies publish a unified per-m² monthly rent series at the municipality level. Denmark's BL11, Sweden's BO0405, and Norway's 07241 are rental indices (relative), not price levels. Rather than synthesize rent from yield assumptions, we mark it Not available and surface the underlying reason."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do the confidence badges mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "High: sourced directly from a national statistics agency, refreshed within 18 months. Medium: either a national average used as fallback for an unknown municipality, or data older than 18 months. Low: reserved for derived/estimated data — we never ship Low; if a metric is only estimable, we mark it Not available instead."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often is the data refreshed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The bundled dataset at /data/market-stats.json is refreshed quarterly by running scripts/update-market-data.mjs, which refetches DST, SCB, and SSB live. If a specific entry can't be refreshed, the old value is kept and flagged with last_attempted so the gap is visible."
+      }
+    }
+  ]
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">

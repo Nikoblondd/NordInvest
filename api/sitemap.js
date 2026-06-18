@@ -20,6 +20,7 @@ export default async function handler(req, res) {
     { url: '/',                   changefreq: 'weekly',  priority: '1.0' },
     { url: '/blog',               changefreq: 'weekly',  priority: '0.9' },
     { url: '/investment-models',  changefreq: 'monthly', priority: '0.7' },
+    { url: '/glossary',           changefreq: 'monthly', priority: '0.7' },
     { url: '/methodology',        changefreq: 'monthly', priority: '0.6' },
   ];
 
