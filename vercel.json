@@ -4,6 +4,7 @@
     { "source": "/methodology", "destination": "/methodology.html" },
     { "source": "/investment-models", "destination": "/investment-models.html" },
     { "source": "/glossary", "destination": "/glossary.html" },
+    { "source": "/portfolio", "destination": "/portfolio.html" },
     { "source": "/blog/:slug+", "destination": "/blog/post.html" }
   ]
 }

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3PQK8QS0JF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3PQK8QS0JF');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your portfolio — NordInvest</title>
+<meta name="description" content="Your saved property analyses — every Nordic and European investment you've run through the NordInvest analyzer, in one place.">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#0F1F3D">
+<link rel="canonical" href="https://nordinvest.io/portfolio">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0F1F3D;
+    --navy-light: #1a3360;
+    --blue: #2563EB;
+    --blue-light: #3B82F6;
+    --blue-pale: #EFF6FF;
+    --green: #10B981;
+    --green-pale: #ECFDF5;
+    --amber: #F59E0B;
+    --amber-pale: #FFFBEB;
+    --red: #EF4444;
+    --red-pale: #FEF2F2;
+    --grey-50: #F8F9FA;
+    --grey-100: #F1F5F9;
+    --grey-200: #E2E8F0;
+    --text: #111827;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+  }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    color: var(--text);
+    background: var(--grey-50);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* Top nav */
+  .nav {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+  }
+  .nav a.logo {
+    color: var(--navy); text-decoration: none;
+    font-weight: 800; font-size: 18px;
+    letter-spacing: -0.4px;
+  }
+  .nav-links { display: flex; gap: 20px; align-items: center; }
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    transition: color 180ms ease;
+  }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-cta {
+    background: var(--navy);
+    color: #fff !important;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600 !important;
+    font-size: 13.5px !important;
+  }
+  .nav-cta:hover { background: var(--navy-light); }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 24px 100px;
+  }
+
+  /* ═══════════ HERO PROFILE CARD ═══════════ */
+  .profile-hero {
+    background: linear-gradient(135deg, #0F1F3D 0%, #1a3360 60%, #2563EB 130%);
+    border-radius: 22px;
+    padding: 36px 40px;
+    color: #fff;
+    box-shadow:
+      0 1px 2px rgba(15,31,61,0.06),
+      0 30px 60px rgba(15,31,61,0.15);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .profile-hero::before {
+    content: '';
+    position: absolute;
+    top: -30%; right: -10%;
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, rgba(96,165,250,0.35) 0%, rgba(37,99,235,0) 70%);
+    pointer-events: none;
+  }
+  .profile-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -50%; left: -10%;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(16,185,129,0.18) 0%, rgba(16,185,129,0) 70%);
+    pointer-events: none;
+  }
+  .profile-hero-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 28px;
+  }
+  .avatar-xl {
+    width: 84px; height: 84px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #2563EB 0%, #60a5fa 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 30px;
+    color: #fff;
+    letter-spacing: -1px;
+    border: 3px solid rgba(255,255,255,0.18);
+    box-shadow: 0 12px 32px rgba(37,99,235,0.35);
+    flex-shrink: 0;
+  }
+  .profile-info-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.6px;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .profile-info-meta {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+  }
+  .profile-info-meta span {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .profile-info-meta svg {
+    width: 13px; height: 13px;
+    opacity: 0.7;
+  }
+  .profile-actions { display: flex; gap: 10px; flex-shrink: 0; }
+  .profile-btn-ghost {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.18);
+    transition: all 200ms ease;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .profile-btn-ghost:hover {
+    background: rgba(255,255,255,0.18);
+  }
+  .profile-btn-primary {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: #fff;
+    color: var(--navy);
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: all 200ms ease;
+  }
+  .profile-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+  }
+
+  /* ═══════════ STATS STRIP ═══════════ */
+  .stats-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    transition: all 220ms ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(15,31,61,0.06);
+  }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.6px;
+    line-height: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-value.positive { color: var(--green); }
+  .stat-value.negative { color: var(--red); }
+  .stat-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* ═══════════ SECTION HEADER ═══════════ */
+  .section-header {
+    display: flex; align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+  }
+  .section-count {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ═══════════ PROPERTY GRID ═══════════ */
+  .property-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .property-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    position: relative;
+    transition: all 240ms cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: default;
+    overflow: hidden;
+  }
+  .property-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(37,99,235,0.35);
+    box-shadow:
+      0 1px 2px rgba(15,31,61,0.04),
+      0 16px 40px rgba(15,31,61,0.08);
+  }
+  .property-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue) 0%, var(--blue-light) 100%);
+    opacity: 0;
+    transition: opacity 240ms ease;
+  }
+  .property-card:hover::after { opacity: 1; }
+
+  .pc-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .pc-location {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.35;
+    flex: 1;
+    word-break: break-word;
+  }
+  .pc-score {
+    flex-shrink: 0;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--grey-50);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    position: relative;
+  }
+  .pc-score.green { border-color: var(--green); color: var(--green); background: var(--green-pale); }
+  .pc-score.amber { border-color: var(--amber); color: var(--amber); background: var(--amber-pale); }
+  .pc-score.red   { border-color: var(--red);   color: var(--red);   background: var(--red-pale); }
+
+  .pc-classification {
+    display: inline-flex;
+    align-items: center; gap: 6px;
+    background: var(--blue-pale);
+    color: var(--blue);
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-bottom: 14px;
+  }
+  .pc-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+  .pc-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .pc-metric { display: flex; flex-direction: column; gap: 3px; }
+  .pc-metric-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .pc-metric-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.2px;
+  }
+  .pc-metric-value.positive { color: var(--green); }
+  .pc-metric-value.negative { color: var(--red); }
+
+  .pc-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .pc-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .pc-remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 180ms ease;
+  }
+  .pc-remove:hover { background: var(--red-pale); color: var(--red); }
+
+  /* ═══════════ EMPTY / NOT-SIGNED-IN STATES ═══════════ */
+  .empty-state {
+    text-align: center;
+    padding: 80px 24px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+  }
+  .empty-icon {
+    width: 64px; height: 64px;
+    margin: 0 auto 18px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--blue-pale) 0%, #fff 100%);
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+  }
+  .empty-icon svg { width: 28px; height: 28px; color: var(--blue); }
+  .empty-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .empty-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 380px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+  .empty-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--navy);
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 220ms ease;
+  }
+  .empty-cta:hover {
+    background: var(--navy-light);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(15,31,61,0.18);
+  }
+
+  /* Skeletons */
+  .skeleton {
+    background: linear-gradient(90deg, var(--grey-50) 25%, var(--grey-100) 50%, var(--grey-50) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+    border-radius: 6px;
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* Mobile */
+  @media (max-width: 760px) {
+    .profile-hero { padding: 28px 22px; border-radius: 18px; }
+    .profile-hero-inner {
+      grid-template-columns: 1fr;
+      gap: 18px; text-align: center;
+    }
+    .avatar-xl { margin: 0 auto; width: 72px; height: 72px; font-size: 24px; border-radius: 18px; }
+    .profile-info-meta { justify-content: center; }
+    .profile-actions { justify-content: center; }
+    .profile-info-name { font-size: 22px; }
+    .stats-strip { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat-value { font-size: 22px; }
+    .property-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 420px) {
+    .stats-strip { grid-template-columns: 1fr; }
+    .nav-links a:not(.nav-cta) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">NordInvest</a>
+    <div class="nav-links">
+      <a href="/blog">Blog</a>
+      <a href="/investment-models">Models</a>
+      <a href="/glossary">Glossary</a>
+      <a href="/#analyze-section" class="nav-cta">Analyze a property</a>
+    </div>
+  </div>
+</nav>
+
+<main id="portfolio-main">
+  <!-- Populated by JS — content swaps between signed-in profile / not-signed-in CTA -->
+</main>
+
+<script>
+const NI_USER_KEY = 'ni_user';
+const NI_PORTFOLIO_KEY = 'ni_portfolio';
+
+function niGetUser() { try { return JSON.parse(localStorage.getItem(NI_USER_KEY) || 'null'); } catch (_) { return null; } }
+function niGetPortfolio() { try { return JSON.parse(localStorage.getItem(NI_PORTFOLIO_KEY) || '[]'); } catch (_) { return []; } }
+function niSetPortfolio(arr) { localStorage.setItem(NI_PORTFOLIO_KEY, JSON.stringify(arr)); }
+function niInitials(n) {
+  if (!n) return '?';
+  return n.trim().split(/\s+/).slice(0,2).map(s => s[0]?.toUpperCase() || '').join('') || '?';
+}
+function fmtCurrency(n, c) {
+  const sym = { DKK:'kr', SEK:'kr', NOK:'kr', EUR:'€', GBP:'£', USD:'$', CHF:'Fr' }[c] || c;
+  if (n == null || isNaN(n)) return '—';
+  return sym + Math.round(n).toLocaleString();
+}
+function scoreColor(s) {
+  if (s == null) return '';
+  return s >= 65 ? 'green' : s >= 40 ? 'amber' : 'red';
+}
+function t(k, v) { return (window.t ? window.t(k, v) : k); }
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function render() {
+  const main = document.getElementById('portfolio-main');
+  const user = niGetUser();
+
+  if (!user) {
+    main.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/></svg>
+        </div>
+        <div class="empty-title">${t('portfolio.notSignedIn')}</div>
+        <div class="empty-desc">${t('portfolio.notSignedInDesc')}</div>
+        <a href="/#analyze-section" class="empty-cta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          ${t('portfolio.notSignedInCta')}
+        </a>
+      </div>`;
+    return;
+  }
+
+  const portfolio = niGetPortfolio();
+  const total = portfolio.length;
+  const scores = portfolio.map(p => p.score).filter(s => typeof s === 'number');
+  const avgScore = scores.length ? Math.round(scores.reduce((a,b) => a+b, 0) / scores.length) : null;
+  const countries = new Set(portfolio.map(p => (p.location || '').split(',').pop()?.trim()).filter(Boolean));
+  const totalCashflow = portfolio.reduce((sum, p) => sum + (p.monthlyCashFlow || 0), 0);
+  const primaryCurrency = portfolio[0]?.currency || 'EUR';
+
+  const propertiesHtml = portfolio.length === 0
+    ? `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </div>
+        <div class="empty-title">${t('portfolio.empty')}</div>
+        <div class="empty-desc">${t('portfolio.emptyDesc')}</div>
+        <a href="/#analyze-section" class="empty-cta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          ${t('portfolio.emptyCta')}
+        </a>
+      </div>`
+    : `
+      <div class="property-grid">
+        ${portfolio.map(p => `
+          <article class="property-card">
+            <div class="pc-top">
+              <div class="pc-location">${escapeHtml(p.location)}</div>
+              ${p.score != null ? `<div class="pc-score ${scoreColor(p.score)}">${p.score}</div>` : ''}
+            </div>
+            ${p.classification && p.classification !== '—' ? `
+              <div class="pc-classification"><span class="pc-dot"></span>${escapeHtml(p.classification)}</div>
+            ` : ''}
+            <div class="pc-metrics">
+              <div class="pc-metric">
+                <div class="pc-metric-label">Price</div>
+                <div class="pc-metric-value">${fmtCurrency(p.price, p.currency)}</div>
+              </div>
+              <div class="pc-metric">
+                <div class="pc-metric-label">Rent / mo</div>
+                <div class="pc-metric-value">${fmtCurrency(p.rent, p.currency)}</div>
+              </div>
+              <div class="pc-metric">
+                <div class="pc-metric-label">Yield</div>
+                <div class="pc-metric-value">${p.rentalYield != null ? p.rentalYield.toFixed(2) + '%' : '—'}</div>
+              </div>
+              <div class="pc-metric">
+                <div class="pc-metric-label">Cash flow</div>
+                <div class="pc-metric-value ${p.monthlyCashFlow >= 0 ? 'positive' : 'negative'}">${p.monthlyCashFlow != null ? (p.monthlyCashFlow >= 0 ? '+' : '−') + fmtCurrency(Math.abs(p.monthlyCashFlow), p.currency).replace(/^[^\d−\-+]+/, m => m) : '—'}</div>
+              </div>
+            </div>
+            <div class="pc-footer">
+              <span class="pc-date">${t('portfolio.savedOn')} ${fmtDate(p.savedAt)}</span>
+              <button type="button" class="pc-remove" data-id="${p.id}">${t('portfolio.removeBtn')}</button>
+            </div>
+          </article>
+        `).join('')}
+      </div>`;
+
+  main.innerHTML = `
+    <section class="profile-hero">
+      <div class="profile-hero-inner">
+        <div class="avatar-xl">${niInitials(user.name)}</div>
+        <div>
+          <div class="profile-info-name">${escapeHtml(user.name)}</div>
+          <div class="profile-info-meta">
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+              ${escapeHtml(user.email)}
+            </span>
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${escapeHtml(user.country)}
+            </span>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <a href="/#analyze-section" class="profile-btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Analyze
+          </a>
+          <button type="button" class="profile-btn-ghost" id="logout-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            ${t('portfolio.logout')}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-strip">
+      <div class="stat-card">
+        <div class="stat-label">${t('portfolio.statsTotal')}</div>
+        <div class="stat-value">${total}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">${t('portfolio.statsAvgScore')}</div>
+        <div class="stat-value">${avgScore != null ? avgScore : '—'}<span style="font-size:14px; color: var(--text-muted); margin-left: 4px;">/100</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">${t('portfolio.statsCountries')}</div>
+        <div class="stat-value">${countries.size}</div>
+        <div class="stat-sub">${Array.from(countries).slice(0,3).join(' · ') || '—'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">${t('portfolio.statsTotalCashflow')}</div>
+        <div class="stat-value ${totalCashflow >= 0 ? 'positive' : 'negative'}">${totalCashflow >= 0 ? '+' : '−'}${fmtCurrency(Math.abs(totalCashflow), primaryCurrency)}</div>
+      </div>
+    </section>
+
+    <div class="section-header">
+      <div class="section-title">${t('portfolio.saved')} ${t('analyze.feature5').toLowerCase().includes('summary') ? 'analyses' : ''}</div>
+      ${total > 0 ? `<div class="section-count">${total} ${total === 1 ? 'property' : 'properties'}</div>` : ''}
+    </div>
+    ${propertiesHtml}
+  `;
+
+  // Wire up removes + logout
+  document.getElementById('logout-btn')?.addEventListener('click', () => {
+    localStorage.removeItem(NI_USER_KEY);
+    render();
+  });
+  main.querySelectorAll('.pc-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!confirm(t('portfolio.removeConfirm'))) return;
+      const id = btn.getAttribute('data-id');
+      niSetPortfolio(niGetPortfolio().filter(p => p.id !== id));
+      render();
+    });
+  });
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+document.addEventListener('DOMContentLoaded', render);
+document.addEventListener('i18n:ready', render);
+window.addEventListener('storage', render);
+</script>
+<script src="/i18n.js"></script>
+</body>
+</html>
