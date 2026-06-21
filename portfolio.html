@@ -481,6 +481,7 @@
       <a href="/investment-models">Models</a>
       <a href="/glossary">Glossary</a>
       <a href="/#analyze-section" class="nav-cta">Analyze a property</a>
+      <a href="/portfolio" class="nav-profile" id="nav-profile" style="display:none" title="View your portfolio" aria-label="Profile"><span class="nav-profile-avatar" id="nav-profile-avatar">?</span></a>
     </div>
   </div>
 </nav>
@@ -675,5 +676,21 @@ document.addEventListener('i18n:ready', render);
 window.addEventListener('storage', render);
 </script>
 <script src="/i18n.js"></script>
+
+<script>
+(function(){
+  try {
+    const u = JSON.parse(localStorage.getItem('ni_user') || 'null');
+    const np = document.getElementById('nav-profile');
+    if (!np) return;
+    if (u) {
+      np.style.display = 'inline-flex';
+      const av = document.getElementById('nav-profile-avatar');
+      if (av) av.textContent = (u.name || '?').trim().split(/\s+/).slice(0,2).map(s => s[0]?.toUpperCase() || '').join('') || '?';
+      np.setAttribute('title', `${u.name} · View portfolio`);
+    }
+  } catch (_) {}
+})();
+</script>
 </body>
 </html>

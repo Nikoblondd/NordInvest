@@ -240,6 +240,11 @@
       "reject": "Gå ikke videre på disse vilkår — hverken lejen eller prisstigningen retfærdiggør prisen."
     }
   },
+  "ticker": {
+    "eyebrow": "Browse · Find · Analyser",
+    "title": "Anbefalede boligportaler",
+    "sub": "Browse en boligannonce, kopiér URL'en, og indsæt den i analysatoren."
+  },
   "portfolio": {
     "ctaTitle": "Gem denne analyse i din portefølje",
     "ctaSub": "Log ind (uden adgangskode) for at følge hver ejendom, du analyserer, se din statistik og besøge handler igen senere.",

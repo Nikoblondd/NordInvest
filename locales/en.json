@@ -240,6 +240,11 @@
       "reject": "Do not proceed at these terms — neither the rent nor the appreciation justifies the price."
     }
   },
+  "ticker": {
+    "eyebrow": "Browse · Find · Analyze",
+    "title": "Recommended property websites",
+    "sub": "Browse a listing, copy the URL, paste it into the analyzer."
+  },
   "portfolio": {
     "ctaTitle": "Save this analysis to your portfolio",
     "ctaSub": "Sign in (no password) to track every property you analyze, see your stats, and revisit deals later.",

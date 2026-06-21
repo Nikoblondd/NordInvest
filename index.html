@@ -2255,6 +2255,167 @@
     line-height: 1.5;
     margin-top: 12px;
   }
+
+  /* ── PROFILE BUTTON IN NAV ── */
+  .nav-profile {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    margin-left: 10px;
+    background: linear-gradient(135deg, #2563EB 0%, #60a5fa 100%);
+    color: #fff;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.28);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+    position: relative;
+  }
+  .nav-profile:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(37,99,235,0.36);
+  }
+  .nav-profile-avatar {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: -0.4px;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .nav-profile::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+    border: 2px solid #fff;
+  }
+  @media (max-width: 640px) {
+    .nav-profile { width: 32px; height: 32px; margin-left: 6px; }
+    .nav-profile-avatar { font-size: 11px; }
+  }
+
+  /* ── RECOMMENDED PROPERTY WEBSITES — auto-scrolling marquee ── */
+  .ticker-section {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 0 36px;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticker-header {
+    text-align: center;
+    margin-bottom: 22px;
+    padding: 0 20px;
+  }
+  .ticker-eyebrow {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--blue);
+    background: var(--blue-pale);
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .ticker-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .ticker-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+
+  .ticker-track {
+    position: relative;
+    overflow: hidden;
+    /* Gradient fade on the edges so cards disappear smoothly */
+    mask-image: linear-gradient(to right, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
+  }
+  .ticker-inner {
+    display: inline-flex;
+    gap: 12px;
+    padding: 4px 0;
+    animation: ticker-scroll 48s linear infinite;
+    will-change: transform;
+  }
+  .ticker-section:hover .ticker-inner,
+  .ticker-section:focus-within .ticker-inner {
+    animation-play-state: paused;
+  }
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  .ticker-card {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px 11px 12px;
+    background: var(--grey-50);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 220ms ease;
+    white-space: nowrap;
+  }
+  .ticker-card:hover {
+    background: var(--white);
+    border-color: var(--blue);
+    box-shadow: 0 8px 20px rgba(37,99,235,0.12);
+    transform: translateY(-1px);
+  }
+  .ticker-flag {
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .ticker-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.1px;
+  }
+  .ticker-tag {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+    border-left: 1px solid var(--border);
+    padding-left: 10px;
+    margin-left: 2px;
+  }
+  @media (max-width: 640px) {
+    .ticker-section { padding: 24px 0 28px; }
+    .ticker-title { font-size: 18px; }
+    .ticker-sub { font-size: 12px; }
+    .ticker-card { padding: 9px 14px 9px 11px; gap: 8px; }
+    .ticker-name { font-size: 12.5px; }
+    .ticker-tag { font-size: 10.5px; padding-left: 8px; }
+    .ticker-inner { animation-duration: 38s; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-inner { animation: none; transform: translateX(0); }
+    .ticker-track {
+      overflow-x: auto;
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+  }
 </style>
 <!-- JSON-LD: FAQPage (targets common search questions) -->
 <script type="application/ld+json">
@@ -2317,6 +2478,9 @@
         <button type="button" class="lang-btn active" data-lang="en" onclick="setLang('en')" aria-label="English"><span class="lang-flag">🇬🇧</span><span class="lang-code">EN</span></button>
         <button type="button" class="lang-btn" data-lang="da" onclick="setLang('da')" aria-label="Dansk"><span class="lang-flag">🇩🇰</span><span class="lang-code">DA</span></button>
       </div>
+      <a href="/portfolio" class="nav-profile" id="nav-profile" style="display:none" title="View your portfolio" aria-label="Profile">
+        <span class="nav-profile-avatar" id="nav-profile-avatar">?</span>
+      </a>
     </div>
     <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -2378,6 +2542,132 @@
           </div>
           <span data-i18n="hero.trust3">100% Free</span>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ RECOMMENDED PROPERTY WEBSITES (auto-scrolling marquee) ═══ -->
+  <section class="ticker-section" aria-label="Recommended property websites">
+    <div class="ticker-header">
+      <span class="ticker-eyebrow" data-i18n="ticker.eyebrow">Browse · Find · Analyze</span>
+      <h2 class="ticker-title" data-i18n="ticker.title">Recommended property websites</h2>
+      <p class="ticker-sub" data-i18n="ticker.sub">Browse a listing, copy the URL, paste it into the analyzer.</p>
+    </div>
+    <div class="ticker-track" role="list">
+      <div class="ticker-inner">
+        <!-- Set A -->
+        <a class="ticker-card" href="https://www.ejendomstorvet.dk" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">Ejendomstorvet</span>
+          <span class="ticker-tag">Investment marketplace</span>
+        </a>
+        <a class="ticker-card" href="https://www.boligsiden.dk" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">Boligsiden</span>
+          <span class="ticker-tag">All-listings portal</span>
+        </a>
+        <a class="ticker-card" href="https://www.edc.dk" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">EDC</span>
+          <span class="ticker-tag">Largest DK chain</span>
+        </a>
+        <a class="ticker-card" href="https://home.dk" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">Home</span>
+          <span class="ticker-tag">National franchise</span>
+        </a>
+        <a class="ticker-card" href="https://www.nybolig.dk" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">Nybolig</span>
+          <span class="ticker-tag">Major DK brand</span>
+        </a>
+        <a class="ticker-card" href="https://www.finn.no/realestate" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇳🇴</span>
+          <span class="ticker-name">Finn.no</span>
+          <span class="ticker-tag">#1 Norway portal</span>
+        </a>
+        <a class="ticker-card" href="https://www.em1.no" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇳🇴</span>
+          <span class="ticker-name">EiendomsMegler 1</span>
+          <span class="ticker-tag">National network</span>
+        </a>
+        <a class="ticker-card" href="https://krogsveen.no" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇳🇴</span>
+          <span class="ticker-name">Krogsveen</span>
+          <span class="ticker-tag">Premium agency</span>
+        </a>
+        <a class="ticker-card" href="https://www.hemnet.se" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇸🇪</span>
+          <span class="ticker-name">Hemnet</span>
+          <span class="ticker-tag">#1 Sweden portal</span>
+        </a>
+        <a class="ticker-card" href="https://www.bovision.se" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇸🇪</span>
+          <span class="ticker-name">Bovision</span>
+          <span class="ticker-tag">Aggregator</span>
+        </a>
+        <a class="ticker-card" href="https://www.booli.se" target="_blank" rel="noopener nofollow" role="listitem">
+          <span class="ticker-flag">🇸🇪</span>
+          <span class="ticker-name">Booli</span>
+          <span class="ticker-tag">Price + data</span>
+        </a>
+
+        <!-- Set B (duplicate for seamless loop — aria-hidden so screen readers ignore) -->
+        <a class="ticker-card" href="https://www.ejendomstorvet.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">Ejendomstorvet</span>
+          <span class="ticker-tag">Investment marketplace</span>
+        </a>
+        <a class="ticker-card" href="https://www.boligsiden.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">Boligsiden</span>
+          <span class="ticker-tag">All-listings portal</span>
+        </a>
+        <a class="ticker-card" href="https://www.edc.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">EDC</span>
+          <span class="ticker-tag">Largest DK chain</span>
+        </a>
+        <a class="ticker-card" href="https://home.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">Home</span>
+          <span class="ticker-tag">National franchise</span>
+        </a>
+        <a class="ticker-card" href="https://www.nybolig.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇩🇰</span>
+          <span class="ticker-name">Nybolig</span>
+          <span class="ticker-tag">Major DK brand</span>
+        </a>
+        <a class="ticker-card" href="https://www.finn.no/realestate" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇳🇴</span>
+          <span class="ticker-name">Finn.no</span>
+          <span class="ticker-tag">#1 Norway portal</span>
+        </a>
+        <a class="ticker-card" href="https://www.em1.no" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇳🇴</span>
+          <span class="ticker-name">EiendomsMegler 1</span>
+          <span class="ticker-tag">National network</span>
+        </a>
+        <a class="ticker-card" href="https://krogsveen.no" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇳🇴</span>
+          <span class="ticker-name">Krogsveen</span>
+          <span class="ticker-tag">Premium agency</span>
+        </a>
+        <a class="ticker-card" href="https://www.hemnet.se" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇸🇪</span>
+          <span class="ticker-name">Hemnet</span>
+          <span class="ticker-tag">#1 Sweden portal</span>
+        </a>
+        <a class="ticker-card" href="https://www.bovision.se" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇸🇪</span>
+          <span class="ticker-name">Bovision</span>
+          <span class="ticker-tag">Aggregator</span>
+        </a>
+        <a class="ticker-card" href="https://www.booli.se" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1">
+          <span class="ticker-flag">🇸🇪</span>
+          <span class="ticker-name">Booli</span>
+          <span class="ticker-tag">Price + data</span>
+        </a>
       </div>
     </div>
   </section>
@@ -4822,6 +5112,20 @@ function savePropertyToPortfolio() {
 
 function renderPortfolioCTA() {
   const u = niGetUser();
+  // Nav profile button (visible on every page when signed in)
+  const navProfile = document.getElementById('nav-profile');
+  if (navProfile) {
+    if (u) {
+      navProfile.style.display = 'inline-flex';
+      const avatar = document.getElementById('nav-profile-avatar');
+      if (avatar) avatar.textContent = niInitials(u.name);
+      navProfile.setAttribute('title', `${u.name} · View portfolio`);
+      navProfile.setAttribute('aria-label', `${u.name} · View portfolio`);
+    } else {
+      navProfile.style.display = 'none';
+    }
+  }
+  // Save-portfolio CTA on the analysis page
   const signedOut = document.getElementById('spc-signed-out');
   const signedIn = document.getElementById('spc-signed-in');
   if (!signedOut || !signedIn) return;

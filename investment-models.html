@@ -599,5 +599,21 @@
 </main>
 
 <script src="/i18n.js"></script>
+
+<script>
+(function(){
+  try {
+    const u = JSON.parse(localStorage.getItem('ni_user') || 'null');
+    const np = document.getElementById('nav-profile');
+    if (!np) return;
+    if (u) {
+      np.style.display = 'inline-flex';
+      const av = document.getElementById('nav-profile-avatar');
+      if (av) av.textContent = (u.name || '?').trim().split(/\s+/).slice(0,2).map(s => s[0]?.toUpperCase() || '').join('') || '?';
+      np.setAttribute('title', `${u.name} · View portfolio`);
+    }
+  } catch (_) {}
+})();
+</script>
 </body>
 </html>
