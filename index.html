@@ -747,6 +747,122 @@
   }
 
   /* ══════════════════════════════════
+     STEP 1 — STRATEGY CHOOSER
+  ══════════════════════════════════ */
+  .strategy-chooser {
+    margin: 0 0 18px;
+    background: var(--grey-50);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px 4px;
+  }
+  .strategy-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .strategy-step {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px;
+    background: var(--navy); color: #fff;
+    border-radius: 50%;
+    font-size: 11px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0;
+  }
+  .strategy-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .strategy-card {
+    display: flex; align-items: center; gap: 10px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 220ms ease;
+    text-align: left;
+    font-family: inherit;
+    min-width: 0;
+  }
+  .strategy-card:hover {
+    border-color: rgba(37,99,235,0.4);
+    transform: translateY(-1px);
+  }
+  .strategy-card.active {
+    border-color: var(--blue);
+    background: var(--blue-pale);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.12);
+  }
+  .strategy-icon {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .strategy-icon svg { width: 16px; height: 16px; }
+  .strategy-icon-cf   { background: var(--green-pale); color: var(--green); }
+  .strategy-icon-appr { background: var(--blue-pale);  color: var(--blue);  }
+  .strategy-icon-va   { background: var(--amber-pale); color: var(--amber); }
+  .strategy-text { flex: 1; min-width: 0; }
+  .strategy-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .strategy-desc {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }
+  .strategy-step-divider {
+    display: flex; align-items: center; gap: 8px;
+    margin: 14px -16px 0;
+    padding: 10px 16px 8px;
+    border-top: 1px dashed var(--border);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  @media (max-width: 640px) {
+    .strategy-cards { grid-template-columns: 1fr; gap: 6px; }
+    .strategy-card { padding: 9px 11px; }
+    .strategy-name { white-space: normal; }
+  }
+
+  /* Strategy badge on the report page */
+  .report-strategy-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .report-strategy-badge .rsb-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .report-strategy-badge.s-cashflow    { background: var(--green-pale); color: #047857; }
+  .report-strategy-badge.s-appreciation { background: var(--blue-pale);  color: var(--blue); }
+  .report-strategy-badge.s-valueadd    { background: var(--amber-pale); color: #b45309; }
+
+  /* ══════════════════════════════════
      FORM TABS
   ══════════════════════════════════ */
   .form-tabs {
@@ -2654,6 +2770,44 @@
             </div>
             <p class="form-sub" data-i18n="analyze.formSub">Paste a listing URL to auto-fill, or enter details manually.</p>
 
+            <!-- STEP 1 — STRATEGY -->
+            <div class="strategy-chooser" role="group" aria-label="Investment strategy">
+              <div class="strategy-label">
+                <span class="strategy-step">1</span>
+                <span data-i18n="strategy.label">Pick your strategy</span>
+              </div>
+              <div class="strategy-cards">
+                <button type="button" class="strategy-card active" data-strategy="cashflow" onclick="setStrategy('cashflow')">
+                  <div class="strategy-icon strategy-icon-cf">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+                  </div>
+                  <div class="strategy-text">
+                    <div class="strategy-name" data-i18n="strategy.cashflow.name">Cashflow focus</div>
+                    <div class="strategy-desc" data-i18n="strategy.cashflow.desc">Monthly rental income</div>
+                  </div>
+                </button>
+                <button type="button" class="strategy-card" data-strategy="appreciation" onclick="setStrategy('appreciation')">
+                  <div class="strategy-icon strategy-icon-appr">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
+                  </div>
+                  <div class="strategy-text">
+                    <div class="strategy-name" data-i18n="strategy.appreciation.name">Appreciation focus</div>
+                    <div class="strategy-desc" data-i18n="strategy.appreciation.desc">Long-term price growth</div>
+                  </div>
+                </button>
+                <button type="button" class="strategy-card" data-strategy="valueadd" onclick="setStrategy('valueadd')">
+                  <div class="strategy-icon strategy-icon-va">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  </div>
+                  <div class="strategy-text">
+                    <div class="strategy-name" data-i18n="strategy.valueadd.name">Value-add / Renovation</div>
+                    <div class="strategy-desc" data-i18n="strategy.valueadd.desc">Force value via rehab</div>
+                  </div>
+                </button>
+              </div>
+              <div class="strategy-step-divider"><span class="strategy-step">2</span><span data-i18n="strategy.step2">Enter the property</span></div>
+            </div>
+
             <!-- TABS -->
             <div class="form-tabs">
               <button class="form-tab active" id="tab-btn-url" type="button" onclick="switchFormTab('url')">
@@ -3209,6 +3363,10 @@
           <h2 data-i18n="analysis.reportTitle">Investment Report</h2>
           <p id="analysis-subtitle" data-i18n="analysis.subtitle">Property analysis results</p>
         </div>
+        <span class="report-strategy-badge s-cashflow" id="report-strategy-badge" style="display:none">
+          <span class="rsb-dot"></span>
+          <span id="report-strategy-label">Cashflow</span>
+        </span>
         <span class="report-stamp" id="analysis-date"></span>
       </div>
     </div>
@@ -3748,6 +3906,25 @@
 
 
 <script>
+// ── STRATEGY (Step 1) ─────────────────────────
+const NI_STRATEGY_KEY = 'ni_strategy';
+window._niStrategy = (() => {
+  try {
+    const s = localStorage.getItem(NI_STRATEGY_KEY);
+    return ['cashflow','appreciation','valueadd'].includes(s) ? s : 'cashflow';
+  } catch (_) { return 'cashflow'; }
+})();
+function setStrategy(name) {
+  if (!['cashflow','appreciation','valueadd'].includes(name)) return;
+  window._niStrategy = name;
+  try { localStorage.setItem(NI_STRATEGY_KEY, name); } catch (_) {}
+  document.querySelectorAll('.strategy-card').forEach(c => {
+    c.classList.toggle('active', c.getAttribute('data-strategy') === name);
+  });
+}
+// Restore saved strategy on first load
+document.addEventListener('DOMContentLoaded', () => setStrategy(window._niStrategy || 'cashflow'));
+
 // ── PAGE ROUTING ──────────────────────────────
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => { p.classList.remove('active','visible'); });
@@ -4114,6 +4291,34 @@ function calculateBRRRR() {
 function runClassificationWithMarket(d, displayName) {
   const data = window._niAnalysisData;
   if (!data) return;
+
+  // ─ Strategy badge in the report header
+  const strategy = data._strategy || window._niStrategy || 'cashflow';
+  const sbadge = document.getElementById('report-strategy-badge');
+  const slabel = document.getElementById('report-strategy-label');
+  if (sbadge && slabel) {
+    sbadge.style.display = 'inline-flex';
+    sbadge.className = 'report-strategy-badge s-' + strategy;
+    const tStrat = (k) => (window.t ? window.t(k) : k);
+    slabel.textContent = tStrat('strategy.' + strategy + '.name');
+  }
+
+  // ─ Auto-open the Layer 2 section that matches the strategy.
+  // Only once per analysis — respect the user closing it afterwards.
+  if (!data._autoOpenedSection) {
+    const sectionMap = {
+      cashflow:     0,  // Cashflow Model
+      appreciation: 1,  // Appreciation Model
+      valueadd:     4,  // BRRRR Analysis
+    };
+    const idx = sectionMap[strategy];
+    const sections = document.querySelectorAll('.report-accordion .report-section');
+    if (typeof idx === 'number' && sections[idx]) {
+      sections[idx].open = true;
+      data._autoOpenedSection = true;
+    }
+  }
+
   const cls = classifyInvestment(data, d);
   document.getElementById('classification-loading').style.display = 'none';
   document.getElementById('classification-result').style.display = 'block';
@@ -4266,40 +4471,75 @@ function deriveBiggestRisk(data, marketData, cls) {
   const expenses = data._expenses || 0;
   const rent = data._rent || 0;
   const loan = data.loanAmount;
+  const strategy = data._strategy || window._niStrategy || 'cashflow';
 
-  // Test: would +1% rate flip cash flow negative?
-  if (loan && monthlyCashFlow > 0) {
-    const mr = (rate + 1) / 100 / 12;
-    const newMort = mr === 0 ? loan / 360 : loan * (mr * Math.pow(1+mr, 360)) / (Math.pow(1+mr, 360) - 1);
-    const cfAtPlus1 = rent - newMort - expenses;
-    if (cfAtPlus1 < 0) return _t('analysis.risks.rateSensitive');
+  // Strategy-specific risk prioritization — each strategy worries about different things
+  if (strategy === 'cashflow') {
+    // Cashflow investors fear: rate sensitivity → deep negative → thin margin → vacancy
+    if (loan && monthlyCashFlow > 0) {
+      const mr = (rate + 1) / 100 / 12;
+      const newMort = mr === 0 ? loan / 360 : loan * (mr * Math.pow(1+mr, 360)) / (Math.pow(1+mr, 360) - 1);
+      const cfAtPlus1 = rent - newMort - expenses;
+      if (cfAtPlus1 < 0) return _t('analysis.risks.rateSensitive');
+    }
+    if (monthlyCashFlow < -400) return _t('analysis.risks.deepNegativeCf', { amount: fmt(Math.abs(monthlyCashFlow)) });
+    if (monthlyCashFlow > 0 && monthlyCashFlow < 200) return _t('analysis.risks.thinMargin');
+    if (rentalYield < 4) return _t('analysis.risks.lowYieldRelies', { yield: rentalYield.toFixed(1) });
+    return _t('analysis.risks.vacancyExposure', { amount: fmt(Math.round(rent)) });
   }
-  // Deeply negative cash flow
+  if (strategy === 'appreciation') {
+    // Appreciation investors fear: flat market → no engine → deeply negative CF (can't carry)
+    if (marketData && marketData.appreciation != null && marketData.appreciation < 3) {
+      return _t('analysis.risks.marketFlat', { rate: marketData.appreciation });
+    }
+    if (cls && cls.type === 'poor') return _t('analysis.risks.noStrongEngine');
+    if (monthlyCashFlow < -600) return _t('analysis.risks.deepNegativeCf', { amount: fmt(Math.abs(monthlyCashFlow)) });
+    if (rentalYield < 3) return _t('analysis.risks.lowYieldRelies', { yield: rentalYield.toFixed(1) });
+    return _t('analysis.risks.vacancyExposure', { amount: fmt(Math.round(rent)) });
+  }
+  if (strategy === 'valueadd') {
+    // Value-add investors fear: execution capital + flat market + no fundamentals
+    if (monthlyCashFlow < -800) return _t('analysis.risks.deepNegativeCf', { amount: fmt(Math.abs(monthlyCashFlow)) });
+    if (cls && cls.type === 'poor') return _t('analysis.risks.noStrongEngine');
+    if (marketData && marketData.appreciation != null && marketData.appreciation < 2.5) {
+      return _t('analysis.risks.marketFlat', { rate: marketData.appreciation });
+    }
+    if (rentalYield < 3) return _t('analysis.risks.lowYieldRelies', { yield: rentalYield.toFixed(1) });
+    return _t('analysis.risks.thinMargin');
+  }
+
+  // Default (no strategy)
   if (monthlyCashFlow < -400) return _t('analysis.risks.deepNegativeCf', { amount: fmt(Math.abs(monthlyCashFlow)) });
-  // No strong engine
   if (cls && cls.type === 'poor') return _t('analysis.risks.noStrongEngine');
-  // Low yield, relies on appreciation
   if (rentalYield < 3.5) return _t('analysis.risks.lowYieldRelies', { yield: rentalYield.toFixed(1) });
-  // Vacancy exposure if cash flow is positive but margin is thin
-  if (monthlyCashFlow > 0 && monthlyCashFlow < 200) return _t('analysis.risks.thinMargin');
-  // Flat market
-  if (marketData && marketData.appreciation && marketData.appreciation < 3) {
-    return _t('analysis.risks.marketFlat', { rate: marketData.appreciation });
-  }
-  // Default: vacancy exposure
   return _t('analysis.risks.vacancyExposure', { amount: fmt(Math.round(rent)) });
 }
 
 function deriveOneLineVerdict(data, marketData, cls) {
   const _t = (k) => (window.t ? window.t(k) : k);
-  if (cls) {
-    if (cls.type === 'hybrid')        return _t('analysis.verdicts.strongBuy');
-    if (cls.type === 'cashflow')      return _t('analysis.verdicts.incomePlay');
-    if (cls.type === 'appreciation')  return _t('analysis.verdicts.growthPlay');
-    if (cls.type === 'value-add')     return _t('analysis.verdicts.conditional');
-    if (cls.type === 'poor')          return _t('analysis.verdicts.reject');
+  const strategy = data._strategy || window._niStrategy || 'cashflow';
+  const t = cls ? cls.type : null;
+
+  // Strategy-aware verdict — same property gets a different reading
+  // depending on what the investor cares about.
+  if (strategy === 'cashflow') {
+    if (t === 'cashflow' || t === 'hybrid')         return _t('analysis.verdicts.cf.fit');
+    if (t === 'appreciation')                       return _t('analysis.verdicts.cf.appreciationMismatch');
+    if (t === 'value-add')                          return _t('analysis.verdicts.cf.needsWork');
+    if (t === 'poor')                               return _t('analysis.verdicts.cf.reject');
+  } else if (strategy === 'appreciation') {
+    if (t === 'appreciation' || t === 'hybrid')     return _t('analysis.verdicts.appr.fit');
+    if (t === 'cashflow')                           return _t('analysis.verdicts.appr.cashflowMismatch');
+    if (t === 'value-add')                          return _t('analysis.verdicts.appr.needsWork');
+    if (t === 'poor')                               return _t('analysis.verdicts.appr.reject');
+  } else if (strategy === 'valueadd') {
+    if (t === 'value-add')                          return _t('analysis.verdicts.va.fit');
+    if (t === 'hybrid' || t === 'appreciation')     return _t('analysis.verdicts.va.alreadyValued');
+    if (t === 'cashflow')                           return _t('analysis.verdicts.va.alreadyCashflowing');
+    if (t === 'poor')                               return _t('analysis.verdicts.va.opportunity');
   }
-  // Pre-classification fallback based on score
+
+  // Pre-classification fallback (score-based, generic)
   const s = data.score;
   if (s >= 75) return _t('analysis.verdicts.strongBuy');
   if (s >= 60) return _t('analysis.verdicts.balanced');
@@ -4767,7 +5007,8 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
 
   btn.classList.remove('loading');
   btnTextEl.textContent = originalText;
-  data._rate = rate; data._rent = rent; data._expenses = expenses;
+  data._rate = rate; data._rent = rent; data._expenses = expenses; data._down = down;
+  data._strategy = window._niStrategy || 'cashflow';
   // sqm persists from scraper extraction — reset on new manual analysis if not from URL
   // Track this analysis for newsletter context (count + country)
   try {

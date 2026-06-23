@@ -237,7 +237,25 @@
       "growthPlay": "Langsigtet kapitaltilvækst — accepter tyndt cash flow nu, høst prisstigning senere.",
       "balanced": "En balanceret investering — beskeden indtægt med stabilt prisstigningspotentiale.",
       "conditional": "Betinget mulighed — tallene fungerer kun, hvis du finder en værditilvækstvinkel (renovering, bedre finansiering, køb under markedet).",
-      "reject": "Gå ikke videre på disse vilkår — hverken lejen eller prisstigningen retfærdiggør prisen."
+      "reject": "Gå ikke videre på disse vilkår — hverken lejen eller prisstigningen retfærdiggør prisen.",
+      "cf": {
+        "fit": "Passer til din cashflow-strategi — lejen dækker omkostningerne og efterlader rigtig månedlig indtægt på bordet.",
+        "appreciationMismatch": "Mismatch med din cashflow-strategi — det her er et prisstigningsspil. Cash flow vil sandsynligvis være tyndt eller negativt; overvej, om du kan vente på egenkapitalen i stedet.",
+        "needsWork": "Passer endnu ikke til din cashflow-strategi — ved nuværende leje er det en værditilvækst-kandidat. Cash flow opstår først, når du hæver lejen gennem renovering.",
+        "reject": "Passer ikke til din cashflow-strategi — hverken lejen eller finansieringsvilkårene understøtter et fungerende indtægtsaktiv her."
+      },
+      "appr": {
+        "fit": "Passer til din prisstigningsstrategi — stærk markedsvækst, accepter det tynde cash flow som prisen for at holde på upside.",
+        "cashflowMismatch": "Mismatch med din prisstigningsstrategi — det her er et afkast-spil i et område med lavere vækst. Gevinst kommer fra leje, ikke prisstigning.",
+        "needsWork": "Passer endnu ikke til din prisstigningsstrategi — området er fornuftigt, men ejendommen kræver arbejde for først at løfte sin værdi.",
+        "reject": "Passer ikke til din prisstigningsstrategi — både markedet og ejendommen mangler de vækstsignaler, du leder efter."
+      },
+      "va": {
+        "fit": "Lærebogs værditilvækst-target — den nuværende pris afspejler et problem, du kan løse gennem renovering, repositionering eller en bedre lejer-mix.",
+        "alreadyValued": "Markedet har allerede prissat det meste af upsiden — der er begrænset hovedrum til værditilvækst, medmindre du har en konkret kant.",
+        "alreadyCashflowing": "Den fungerer allerede som indtægtsaktiv — værditilvækst løfter afkastet yderligere, men den nemmere strategi her er at holde og opkræve.",
+        "opportunity": "Distresset nok til at være en reel mulighed for en værditilvækst-operatør — men eksekveringsrisikoen er reel. Regn renoveringsbudgettet grundigt igennem."
+      }
     }
   },
   "ticker": {
@@ -285,6 +303,13 @@
     "notSignedIn": "Du er ikke logget ind",
     "notSignedInDesc": "Log ind for at få adgang til din portefølje. Analyser en ejendom, og klik på Log ind for at gemme.",
     "notSignedInCta": "Start med at analysere en ejendom"
+  },
+  "strategy": {
+    "label": "Vælg din strategi",
+    "step2": "Indtast ejendommen",
+    "cashflow":     { "name": "Cashflow-fokus",       "desc": "Månedlig lejeindtægt" },
+    "appreciation": { "name": "Værdistigning-fokus",  "desc": "Langsigtet prisvækst" },
+    "valueadd":     { "name": "Værditilvækst / Renovering", "desc": "Skab værdi via renovering" }
   },
   "brrrr": {
     "intro": "BRRRR-strategien genbruger din kapital til den næste handel ved at omlægge lånet til ejendommens værdi efter renoveringen. Indtast dit renoveringsbudget og forventede værdi efter renovering (ARV) — vi beregner, hvor meget kapital du får tilbage, det effektive beløb tilbage i handlen og afkastet efter omlægningen.",

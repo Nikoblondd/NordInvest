@@ -237,7 +237,25 @@
       "growthPlay": "Long-term capital growth story — accept thin cash flow now, reap appreciation later.",
       "balanced": "A balanced investment — modest income with steady appreciation potential.",
       "conditional": "Conditional opportunity — the numbers only work if you find a value-add angle (renovation, better financing, below-market entry).",
-      "reject": "Do not proceed at these terms — neither the rent nor the appreciation justifies the price."
+      "reject": "Do not proceed at these terms — neither the rent nor the appreciation justifies the price.",
+      "cf": {
+        "fit": "Fits your cashflow strategy — rent covers carrying costs and leaves real monthly income on the table.",
+        "appreciationMismatch": "Mismatch with your cashflow strategy — this is an appreciation play. Cash flow will likely be thin or negative; consider whether you can wait for the equity instead.",
+        "needsWork": "Doesn't yet fit your cashflow strategy — at current rent it's a value-add candidate. Cashflow only emerges after you raise the rent through renovation.",
+        "reject": "Does not fit your cashflow strategy — neither the rent nor the financing terms support a working income asset here."
+      },
+      "appr": {
+        "fit": "Fits your appreciation strategy — strong market growth, accept the thin cash flow as the cost of holding for the upside.",
+        "cashflowMismatch": "Mismatch with your appreciation strategy — this is a yield play in a slower-growth area. Returns will come from rent, not price growth.",
+        "needsWork": "Doesn't yet fit your appreciation strategy — the area is decent but the property needs work to lift its value first.",
+        "reject": "Does not fit your appreciation strategy — the market and the property both lack the growth signals you're looking for."
+      },
+      "va": {
+        "fit": "Textbook value-add target — current pricing reflects a problem you can solve through renovation, repositioning, or a better tenant mix.",
+        "alreadyValued": "The market has already priced in much of the upside — there's limited value-add headroom unless you can find a specific edge.",
+        "alreadyCashflowing": "This already works as an income asset — value-add lifts the yield further but the easier strategy here is to hold and collect.",
+        "opportunity": "Distressed enough to be a real opportunity for a value-add operator — but the execution risk is real. Pencil out a renovation budget carefully."
+      }
     }
   },
   "ticker": {
@@ -285,6 +303,13 @@
     "notSignedIn": "You're not signed in",
     "notSignedInDesc": "Sign in to access your portfolio. Analyze any property and click Sign in to save.",
     "notSignedInCta": "Start by analyzing a property"
+  },
+  "strategy": {
+    "label": "Pick your strategy",
+    "step2": "Enter the property",
+    "cashflow":     { "name": "Cashflow focus",        "desc": "Monthly rental income" },
+    "appreciation": { "name": "Appreciation focus",    "desc": "Long-term price growth" },
+    "valueadd":     { "name": "Value-add / Renovation","desc": "Force value via rehab" }
   },
   "brrrr": {
     "intro": "The BRRRR strategy recycles capital into the next deal by refinancing the property at its post-renovation value. Enter your rehab budget and projected After Repair Value (ARV) — we'll compute how much cash you recover, the effective cash left in the deal, and the post-refinance cash-on-cash return.",
