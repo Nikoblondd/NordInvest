@@ -1945,6 +1945,165 @@
   }
 
   /* ── BRRRR SECTION ── */
+  /* ── RENT RESERVE SECTION ── */
+  .rs-icon-rr {
+    background: linear-gradient(135deg, var(--amber-pale), var(--green-pale));
+    color: #b45309;
+  }
+  .rr-intro {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+  .rr-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .rr-input { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .rr-input label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: 0.2px;
+  }
+  .rr-input-wrap {
+    position: relative;
+    display: flex; align-items: center;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .rr-input-wrap:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  }
+  .rr-input-readonly .rr-input-wrap { background: var(--grey-50); }
+  .rr-prefix {
+    padding: 0 10px 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .rr-input-wrap input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 11px 14px 11px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--navy);
+    outline: none;
+    width: 100%;
+    min-width: 0;
+  }
+  .rr-input-wrap input[readonly] { color: var(--text-muted); cursor: not-allowed; }
+  .rr-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    padding-left: 2px;
+  }
+  .rr-suggest-row {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .rr-chip {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 180ms ease;
+  }
+  .rr-chip:hover {
+    border-color: var(--amber);
+    background: var(--amber-pale);
+  }
+  .rr-chip-ghost {
+    color: var(--text-muted);
+    background: transparent;
+  }
+  .rr-chip-ghost:hover {
+    background: var(--grey-100);
+    border-color: var(--border);
+    color: var(--navy);
+  }
+  .rr-results {
+    background: var(--grey-50);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .rr-result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .rr-stat {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 15px;
+  }
+  .rr-stat-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+  .rr-stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+  .rr-stat-value.positive { color: var(--green); }
+  .rr-stat-value.negative { color: var(--red); }
+  .rr-stat-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .rr-stat-highlight {
+    background: linear-gradient(135deg, #fff7ed 0%, #fefce8 100%);
+    border-color: rgba(245,158,11,0.35);
+  }
+  .rr-stat-highlight .rr-stat-value { color: #b45309; font-size: 26px; }
+  .rr-stat-highlight .rr-stat-value.positive { color: var(--green); }
+  .rr-stat-highlight .rr-stat-value.negative { color: var(--red); }
+  .rr-verdict {
+    padding: 12px 14px;
+    background: var(--white);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .rr-verdict.positive { border-left-color: var(--green); background: var(--green-pale); color: #047857; }
+  .rr-verdict.negative { border-left-color: var(--red); background: var(--red-pale); color: #b91c1c; }
+  .rr-verdict.neutral  { border-left-color: var(--text-muted); background: var(--grey-50); color: var(--text-muted); }
+  @media (max-width: 760px) {
+    .rr-input-grid { grid-template-columns: 1fr; }
+    .rr-result-grid { grid-template-columns: 1fr; }
+    .rr-stat-highlight .rr-stat-value { font-size: 22px; }
+  }
+
   .rs-icon-brrrr {
     background: linear-gradient(135deg, var(--blue-pale), #f0e9ff);
     color: var(--blue);
@@ -3498,7 +3657,94 @@
           </div>
         </details>
 
-        <!-- 2. Appreciation Model -->
+        <!-- 2. Rent Reserve / Lejereserve — value-add killer metric -->
+        <details class="report-section" id="rent-reserve-section">
+          <summary class="report-section-summary">
+            <span class="rs-icon rs-icon-rr">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h12"/><path d="M19 16v6M22 19h-6"/></svg>
+            </span>
+            <span class="rs-title-wrap">
+              <span class="rs-title" data-i18n="rentReserve.title">Rent Reserve</span>
+              <span class="rs-subtitle" data-i18n="rentReserve.sub">Hidden value between current and market rent</span>
+            </span>
+            <span class="rs-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </summary>
+          <div class="report-section-body">
+            <p class="rr-intro" data-i18n="rentReserve.intro">
+              If the current rent is below market, that gap is a hidden asset — every €1 of monthly rent uplift adds the area's rent multiplier to the property's value. Adjust the estimated market rent below to see the implied lift.
+            </p>
+
+            <div class="rr-input-grid">
+              <div class="rr-input rr-input-readonly">
+                <label data-i18n="rentReserve.currentRent">Current monthly rent</label>
+                <div class="rr-input-wrap">
+                  <span class="rr-prefix currency-sym">€</span>
+                  <input type="text" id="rr-current-rent" value="—" readonly>
+                </div>
+                <div class="rr-hint" data-i18n="rentReserve.currentRentHint">From your analysis.</div>
+              </div>
+              <div class="rr-input">
+                <label for="rr-market-rent" data-i18n="rentReserve.marketRent">Estimated market rent (post-renovation)</label>
+                <div class="rr-input-wrap">
+                  <span class="rr-prefix currency-sym">€</span>
+                  <input type="number" id="rr-market-rent" min="0" placeholder="e.g. 16,000" inputmode="numeric" oninput="calculateRentReserve()">
+                </div>
+                <div class="rr-hint" data-i18n="rentReserve.marketRentHint">What you could charge after renovation, or what comparable units in the area earn today.</div>
+              </div>
+            </div>
+
+            <div class="rr-suggest-row">
+              <button type="button" class="rr-chip" onclick="rrSuggest(1.05)">+5%</button>
+              <button type="button" class="rr-chip" onclick="rrSuggest(1.10)">+10%</button>
+              <button type="button" class="rr-chip" onclick="rrSuggest(1.15)">+15%</button>
+              <button type="button" class="rr-chip" onclick="rrSuggest(1.20)">+20%</button>
+              <button type="button" class="rr-chip rr-chip-ghost" onclick="rrSuggest(1)" data-i18n="rentReserve.reset">Reset</button>
+            </div>
+
+            <div id="rr-results" class="rr-results" style="display:none">
+              <div class="rr-result-grid">
+                <div class="rr-stat">
+                  <div class="rr-stat-label" data-i18n="rentReserve.monthlyReserve">Monthly Reserve</div>
+                  <div class="rr-stat-value mono" id="rr-monthly">—</div>
+                  <div class="rr-stat-sub" data-i18n="rentReserve.monthlyReserveSub">Market − current rent</div>
+                </div>
+                <div class="rr-stat">
+                  <div class="rr-stat-label" data-i18n="rentReserve.annualUplift">Annual Uplift</div>
+                  <div class="rr-stat-value mono" id="rr-annual">—</div>
+                  <div class="rr-stat-sub" data-i18n="rentReserve.annualUpliftSub">Monthly reserve × 12</div>
+                </div>
+                <div class="rr-stat rr-stat-highlight">
+                  <div class="rr-stat-label" data-i18n="rentReserve.impliedValue">Implied Property Value Lift</div>
+                  <div class="rr-stat-value mono" id="rr-value">—</div>
+                  <div class="rr-stat-sub" id="rr-value-sub" data-i18n="rentReserve.impliedValueSub">At the area's current rent multiplier (GRM).</div>
+                </div>
+              </div>
+              <div class="rr-verdict" id="rr-verdict">—</div>
+            </div>
+
+            <details class="calc-details">
+              <summary class="calc-details-summary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
+              </summary>
+              <div class="calc-details-body">
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
+                  <code class="calc-formula">Monthly Reserve = Market Rent − Current Rent</code>
+                  <code class="calc-formula">Annual Uplift = Monthly Reserve × 12</code>
+                  <code class="calc-formula">GRM = Property Price ÷ Annual Current Rent</code>
+                  <code class="calc-formula">Implied Value Lift = Annual Uplift × GRM</code>
+                </div>
+                <div class="calc-block">
+                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
+                  <p class="calc-text" data-i18n="rentReserve.assump">The implied value lift assumes the area's existing gross rent multiplier holds after the rent uplift. That is, the market values rent linearly — what investors pay today for €1 of annual rent is what they'll pay for the additional €1 you create through renovation. Renovation costs, vacancy during works, and tenant changeover are NOT modeled here — pencil those separately.</p>
+                </div>
+              </div>
+            </details>
+          </div>
+        </details>
+
+        <!-- 3. Appreciation Model -->
         <details class="report-section" id="appreciation-section">
           <summary class="report-section-summary">
             <span class="rs-icon rs-icon-appr">
@@ -4210,6 +4456,79 @@ function showMarketResults(marketInfo, userRent) {
 // ── BRRRR CALCULATION (Buy, Rehab, Rent, Refinance, Repeat) ──
 // Methodology: David Greene, "Buy, Rehab, Rent, Refinance, Repeat"
 // (BiggerPockets Publishing, 2019). Industry standard 75% ARV refi LTV.
+// ── RENT RESERVE / LEJERESERVE ──
+// Shows the gap between current rent and what the area's market rent
+// could be. Every €1 of monthly rent uplift adds (12 × GRM) to the
+// property's implied value. The numbers are honest: based on the
+// property's own existing price-to-rent ratio.
+function rrSuggest(mult) {
+  const data = window._niAnalysisData;
+  if (!data || !data._rent) return;
+  const newVal = Math.round((data._rent || 0) * mult);
+  const input = document.getElementById('rr-market-rent');
+  if (input) {
+    input.value = newVal;
+    calculateRentReserve();
+  }
+}
+
+function calculateRentReserve() {
+  const data = window._niAnalysisData;
+  if (!data) return;
+  const currentRent = data._rent || 0;
+  const price = data._price || 0;
+  if (!currentRent || !price) return;
+  const marketRentInput = parseFloat(document.getElementById('rr-market-rent')?.value);
+  if (!isFinite(marketRentInput) || marketRentInput < 0) {
+    document.getElementById('rr-results').style.display = 'none';
+    return;
+  }
+  const monthlyReserve = marketRentInput - currentRent;
+  const annualUplift = monthlyReserve * 12;
+  const grm = price / (currentRent * 12); // honest: based on this property
+  const impliedValueLift = annualUplift * grm;
+
+  // Render
+  document.getElementById('rr-results').style.display = 'block';
+  const monEl = document.getElementById('rr-monthly');
+  monEl.textContent = (monthlyReserve >= 0 ? '+' : '−') + fmt(Math.abs(monthlyReserve)) + '/mo';
+  monEl.className = 'rr-stat-value mono ' + (monthlyReserve > 0 ? 'positive' : monthlyReserve < 0 ? 'negative' : '');
+
+  const annEl = document.getElementById('rr-annual');
+  annEl.textContent = (annualUplift >= 0 ? '+' : '−') + fmt(Math.abs(annualUplift)) + '/yr';
+  annEl.className = 'rr-stat-value mono ' + (annualUplift > 0 ? 'positive' : annualUplift < 0 ? 'negative' : '');
+
+  const valEl = document.getElementById('rr-value');
+  valEl.textContent = (impliedValueLift >= 0 ? '+' : '−') + fmt(Math.abs(impliedValueLift));
+  valEl.className = 'rr-stat-value mono ' + (impliedValueLift > 0 ? 'positive' : impliedValueLift < 0 ? 'negative' : '');
+
+  const valSubEl = document.getElementById('rr-value-sub');
+  const _t = (k, v) => (window.t ? window.t(k, v) : k);
+  if (valSubEl) valSubEl.textContent = _t('rentReserve.grmSub', { grm: grm.toFixed(1) });
+
+  // Verdict
+  const v = document.getElementById('rr-verdict');
+  if (monthlyReserve > 0) {
+    const pct = Math.round((monthlyReserve / currentRent) * 100);
+    if (impliedValueLift >= 200000) {
+      v.className = 'rr-verdict positive';
+      v.textContent = _t('rentReserve.verdictBig', { pct, value: fmt(Math.round(impliedValueLift)) });
+    } else if (impliedValueLift >= 50000) {
+      v.className = 'rr-verdict positive';
+      v.textContent = _t('rentReserve.verdictMid', { pct, value: fmt(Math.round(impliedValueLift)) });
+    } else {
+      v.className = 'rr-verdict';
+      v.textContent = _t('rentReserve.verdictSmall', { pct });
+    }
+  } else if (monthlyReserve < 0) {
+    v.className = 'rr-verdict negative';
+    v.textContent = _t('rentReserve.verdictOverRented', { amount: fmt(Math.abs(monthlyReserve)) });
+  } else {
+    v.className = 'rr-verdict neutral';
+    v.textContent = _t('rentReserve.verdictAtMarket');
+  }
+}
+
 function calculateBRRRR() {
   const data = window._niAnalysisData;
   if (!data) return;
@@ -4308,8 +4627,8 @@ function runClassificationWithMarket(d, displayName) {
   if (!data._autoOpenedSection) {
     const sectionMap = {
       cashflow:     0,  // Cashflow Model
-      appreciation: 1,  // Appreciation Model
-      valueadd:     4,  // BRRRR Analysis
+      appreciation: 2,  // Appreciation Model (shifted after Rent Reserve insert)
+      valueadd:     1,  // Rent Reserve — the killer metric for value-add
     };
     const idx = sectionMap[strategy];
     const sections = document.querySelectorAll('.report-accordion .report-section');
@@ -4317,6 +4636,17 @@ function runClassificationWithMarket(d, displayName) {
       sections[idx].open = true;
       data._autoOpenedSection = true;
     }
+  }
+
+  // ─ Seed the Rent Reserve inputs from the analysis data
+  const rrCurrent = document.getElementById('rr-current-rent');
+  const rrMarket = document.getElementById('rr-market-rent');
+  if (rrCurrent && data._rent != null) rrCurrent.value = fmt(data._rent);
+  if (rrMarket && data._rent != null) {
+    // Default the market rent to current rent so the gap starts at zero.
+    // User adjusts with the +5/10/15/20% chips or by typing.
+    rrMarket.value = Math.round(data._rent);
+    calculateRentReserve();
   }
 
   const cls = classifyInvestment(data, d);
