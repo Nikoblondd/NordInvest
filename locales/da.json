@@ -132,7 +132,10 @@
   "analysis": {
     "newAnalysis": "Ny analyse",
     "exportSheets": "Eksportér til Sheets",
-    "exportedSheets": "✓ Hentet",
+    "exportingSheets": "Opretter regneark…",
+    "exportedSheets": "✓ Åbnet i Sheets",
+    "exportFailed": "✗ Mislykkedes — prøv igen",
+    "exportNotConfigured": "⚠ Opsætning mangler — se konsollen",
     "reportTitle": "Investeringsrapport",
     "subtitle": "Resultater af ejendomsanalysen",
     "scoreLabel": "Investeringsscore",

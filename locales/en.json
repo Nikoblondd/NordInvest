@@ -132,7 +132,10 @@
   "analysis": {
     "newAnalysis": "New Analysis",
     "exportSheets": "Export to Sheets",
-    "exportedSheets": "✓ Downloaded",
+    "exportingSheets": "Creating spreadsheet…",
+    "exportedSheets": "✓ Opened in Sheets",
+    "exportFailed": "✗ Failed — try again",
+    "exportNotConfigured": "⚠ Setup needed — see console",
     "reportTitle": "Investment Report",
     "subtitle": "Property analysis results",
     "scoreLabel": "Investment Score",

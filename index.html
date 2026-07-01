@@ -688,7 +688,18 @@
   .btn-export.is-success {
     background: var(--green); animation: exportPulse 500ms ease;
   }
+  .btn-export.is-loading {
+    background: var(--navy-light); cursor: wait; opacity: 0.85;
+  }
+  .btn-export.is-loading svg {
+    animation: exportSpin 900ms linear infinite;
+  }
+  .btn-export.is-error {
+    background: var(--red);
+  }
+  .btn-export:disabled { pointer-events: none; }
   @keyframes exportPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+  @keyframes exportSpin { to { transform: rotate(360deg); } }
   .analysis-title-wrap h2 {
     font-size: 18px; font-weight: 800; color: var(--navy); letter-spacing: -0.3px;
   }
@@ -4763,108 +4774,95 @@ function calculateRentReserve() {
   }
 }
 
-// ── EXPORT TO SHEETS ──────────────────────────────────────
-// Downloads a clean CSV that opens instantly in Google Sheets, Excel, or Numbers.
-// The user drags the file into Sheets (or File > Import), and gets a fully
-// structured spreadsheet with the property inputs, computed metrics, market
-// benchmarks, and the strategy verdict — no manual copy-paste.
-function exportToSheets() {
+// ── EXPORT TO GOOGLE SHEETS ─────────────────────────────────────
+// POSTs the analysis payload to our Apps Script webhook, which creates a
+// formatted Google Sheet in the deployer's Drive and returns a shareable
+// URL. We open the URL in a new tab.
+//
+// Deploy the Apps Script (see sheets-export-apps-script.js) and paste the
+// resulting /exec URL below. Until it's set, the button falls back to a
+// helpful message so users aren't left staring at a broken flow.
+const SHEETS_EXPORT_ENDPOINT = ''; // ← paste your Apps Script /exec URL here
+
+async function exportToSheets() {
   const d = window._niAnalysisData;
   if (!d) return;
-  const _t = (k) => (window.t ? window.t(k) : k);
-  const fmtNum = (v) => (typeof v === 'number' && isFinite(v)) ? v.toFixed(2) : '';
-  const price   = d._price || 0;
-  const rent    = d._rent  || 0;
-  const rate    = d._rate  || 0;
-  const down    = d._down  || 0;
-  const exp     = d._expenses || 0;
-  const loc     = d._location || d.location || '';
-  const strategy = d._strategy || window._niStrategy || 'cashflow';
-  const strategyLabel = ({cashflow:'Cash Flow', appreciation:'Appreciation', valueadd:'Value-Add / Renovation'})[strategy] || strategy;
-  const dateStr = new Date().toISOString().slice(0, 10);
-
-  // Build rows: [label, value, note]
-  const rows = [
-    ['NordInvest — Property Investment Analysis'],
-    ['Generated', dateStr, 'nordinvest.io'],
-    [],
-    ['PROPERTY'],
-    ['Location', loc, ''],
-    ['Purchase Price', price, 'EUR / local currency'],
-    ['Strategy', strategyLabel, 'Investor intent'],
-    [],
-    ['INPUTS'],
-    ['Monthly Rent', rent, ''],
-    ['Down Payment %', down, ''],
-    ['Down Payment Amount', fmtNum(d.downAmount), ''],
-    ['Loan Amount', fmtNum(d.loanAmount), 'Price − Down Payment'],
-    ['Mortgage Rate %', rate, 'Annual'],
-    ['Monthly Expenses', exp, 'Insurance, tax, maintenance reserve'],
-    [],
-    ['CORE METRICS'],
-    ['Gross Rental Yield %', fmtNum(d.rentalYield), '(Annual Rent ÷ Price) × 100'],
-    ['Monthly Mortgage', fmtNum(d.monthlyMortgage), '30-year amortization'],
-    ['Monthly Cash Flow', fmtNum(d.monthlyCashFlow), 'Rent − Mortgage − Expenses'],
-    ['Annual Cash Flow', fmtNum((d.monthlyCashFlow || 0) * 12), 'Monthly × 12'],
-    ['Cash-on-Cash ROI %', fmtNum(d.roi), '(Annual CF ÷ Cash Invested) × 100'],
-    ['Investment Score (0–100)', d.score ?? '', 'Composite: yield + cash flow + ROI'],
-    [],
-    ['BREAK-EVEN'],
-    ['Break-Even Rent', fmtNum((d.monthlyMortgage || 0) + (d._expenses || 0)), 'Mortgage + Expenses'],
-    ['Margin vs. Current Rent', fmtNum(rent - ((d.monthlyMortgage || 0) + (d._expenses || 0))), 'How much room before losses'],
-    [],
-    ['MARKET CONTEXT'],
-    ['Area Avg Price per m²', d.marketAvgPrice ?? 'Not available', d.marketSource || ''],
-    ['Area Avg Rent per m²/mo', d.marketAvgRent  ?? 'Not available', d.marketSource || ''],
-    ['5-Year Appreciation (est. CAGR %)', d.appreciationRate ?? '', 'Historical trend'],
-    [],
-    ['VERDICT'],
-    ['One-Line Verdict', d.oneLineVerdict || '', ''],
-    ['Biggest Risk', d.biggestRisk || '', ''],
-    ['Classification', d.classification || '', ''],
-    [],
-    ['NOTES'],
-    ['', 'Free-form space for your own notes.', ''],
-    ['', '', ''],
-    ['', '', ''],
-    ['', '', ''],
-    ['Analyzed at', 'https://nordinvest.io/', 'Paste any listing URL. Free.']
-  ];
-
-  // Convert to CSV — escape quotes and commas
-  const escape = (cell) => {
-    if (cell === undefined || cell === null) return '';
-    const s = String(cell);
-    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
-    return s;
-  };
-  const csv = '﻿' + rows.map(r => r.map(escape).join(',')).join('\n');
-
-  // Filename: nordinvest-<location>-<date>.csv
-  const safeLoc = (loc || 'analysis').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'analysis';
-  const filename = `nordinvest-${safeLoc}-${dateStr}.csv`;
-
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-
-  // Micro-feedback so user knows it fired
   const btn = document.getElementById('btn-export-sheets');
-  if (btn) {
-    const label = btn.querySelector('span');
-    const original = label?.textContent;
-    btn.classList.add('is-success');
-    if (label) label.textContent = _t('analysis.exportedSheets') || '✓ Downloaded';
+  const label = btn?.querySelector('span');
+  const originalLabel = label?.textContent;
+  const _t = (k, fallback) => (window.t && window.t(k)) !== k ? window.t(k) : fallback;
+
+  const setLabel = (text, cls) => {
+    if (!btn) return;
+    btn.classList.remove('is-loading', 'is-success', 'is-error');
+    if (cls) btn.classList.add(cls);
+    if (label) label.textContent = text;
+  };
+  const restoreLabel = (delay) => {
     setTimeout(() => {
-      btn.classList.remove('is-success');
-      if (label && original) label.textContent = original;
-    }, 1600);
+      btn?.classList.remove('is-loading', 'is-success', 'is-error');
+      if (label && originalLabel) label.textContent = originalLabel;
+    }, delay);
+  };
+
+  if (!SHEETS_EXPORT_ENDPOINT) {
+    setLabel(_t('analysis.exportNotConfigured', '⚠ Not configured — see console'), 'is-error');
+    console.warn('[NordInvest] SHEETS_EXPORT_ENDPOINT is not set in index.html. Deploy the Apps Script (sheets-export-apps-script.js) and paste the URL.');
+    restoreLabel(3500);
+    return;
+  }
+
+  setLabel(_t('analysis.exportingSheets', 'Creating spreadsheet…'), 'is-loading');
+  btn.disabled = true;
+
+  // Build a payload the Apps Script understands. Names match its expectations.
+  const payload = {
+    location:          d._location || d.location || '',
+    strategy:          d._strategy || window._niStrategy || 'cashflow',
+    price:             d._price || 0,
+    rent:              d._rent  || 0,
+    rate:              d._rate  || 0,
+    downPct:           d._down  || 0,
+    downAmount:        d.downAmount ?? null,
+    loanAmount:        d.loanAmount ?? null,
+    expenses:          d._expenses || 0,
+    rentalYield:       d.rentalYield ?? null,
+    monthlyMortgage:   d.monthlyMortgage ?? null,
+    monthlyCashFlow:   d.monthlyCashFlow ?? null,
+    roi:               d.roi ?? null,
+    score:             d.score ?? null,
+    marketAvgPrice:    d.marketAvgPrice ?? null,
+    marketAvgRent:     d.marketAvgRent  ?? null,
+    marketSource:      d.marketSource   || null,
+    appreciationRate:  d.appreciationRate ?? null,
+    oneLineVerdict:    d.oneLineVerdict || '',
+    biggestRisk:       d.biggestRisk    || '',
+    classification:    d.classification || '',
+    lang:              (window.getLang && window.getLang()) || 'en'
+  };
+
+  try {
+    // Apps Script webhooks reject cross-origin JSON preflight; send as text/plain
+    // with a JSON body, which Apps Script parses correctly from e.postData.contents.
+    const res = await fetch(SHEETS_EXPORT_ENDPOINT, {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.ok || !data.url) throw new Error(data.error || 'No URL returned');
+
+    // Open the new sheet in a new tab — the user's browser handles the sign-in flow if needed.
+    window.open(data.url, '_blank', 'noopener');
+    setLabel(_t('analysis.exportedSheets', '✓ Opened in Sheets'), 'is-success');
+  } catch (err) {
+    console.error('[NordInvest] Export to Sheets failed:', err);
+    setLabel(_t('analysis.exportFailed', '✗ Failed — try again'), 'is-error');
+  } finally {
+    if (btn) btn.disabled = false;
+    restoreLabel(2400);
   }
 }
 
