@@ -428,5 +428,39 @@
     "recoLongHold": "Recommendation: <strong>viable long-term hold</strong>, but this is not an income play. You need staying power — plan for at least a 5–7 year horizon and ensure the shortfall is manageable within your budget. Do not rely on this property for monthly cash.",
     "recoValueAdd": "Recommendation: <strong>conditional opportunity</strong>. Before committing, identify the specific value-add angle — can you increase rent through renovation? Buy below market? Restructure financing? Without a clear edge, the returns are insufficient.",
     "recoReject": "Recommendation: <strong>do not proceed at current terms</strong>. Explore renegotiating the price, increasing rent assumptions, or finding a property with stronger fundamentals in this or an adjacent market."
+  },
+  "countries": {
+    "placeholder": "Where are you investing from?",
+    "groups": {
+      "nordics": "Nordics",
+      "europe": "Europe",
+      "northAmerica": "North America",
+      "other": "Other"
+    },
+    "list": {
+      "denmark": "Denmark",
+      "norway": "Norway",
+      "sweden": "Sweden",
+      "finland": "Finland",
+      "iceland": "Iceland",
+      "germany": "Germany",
+      "netherlands": "Netherlands",
+      "uk": "United Kingdom",
+      "france": "France",
+      "spain": "Spain",
+      "italy": "Italy",
+      "switzerland": "Switzerland",
+      "austria": "Austria",
+      "belgium": "Belgium",
+      "ireland": "Ireland",
+      "poland": "Poland",
+      "portugal": "Portugal",
+      "usa": "United States",
+      "canada": "Canada",
+      "australia": "Australia",
+      "uae": "United Arab Emirates",
+      "singapore": "Singapore",
+      "other": "Other"
+    }
   }
 }

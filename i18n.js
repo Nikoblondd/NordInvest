@@ -68,6 +68,11 @@
       const val = getByPath(dict, key);
       if (val !== undefined) el.setAttribute('title', val);
     });
+    scope.querySelectorAll('[data-i18n-label]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-label');
+      const val = getByPath(dict, key);
+      if (val !== undefined) el.setAttribute('label', val);
+    });
   }
 
   function updateHtmlLang() {

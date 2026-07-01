@@ -428,5 +428,39 @@
     "recoLongHold": "Anbefaling: <strong>levedygtig langsigtet hold</strong>, men det er ikke et indtægtsspil. Du har brug for staying power — planlæg mindst en horisont på 5–7 år og sørg for, at underskuddet er håndterbart i dit budget. Stol ikke på denne ejendom for månedlig indtægt.",
     "recoValueAdd": "Anbefaling: <strong>betinget mulighed</strong>. Inden du forpligter dig, identificér den specifikke værditilvækst — kan du øge lejen via renovering? Købe under markedet? Omstrukturere finansieringen? Uden en klar fordel er afkastet utilstrækkeligt.",
     "recoReject": "Anbefaling: <strong>gå ikke videre på de nuværende vilkår</strong>. Overvej at genforhandle prisen, øge lejeantagelser eller finde en ejendom med stærkere fundamentaler i dette eller et nabomarked."
+  },
+  "countries": {
+    "placeholder": "Hvor investerer du fra?",
+    "groups": {
+      "nordics": "Norden",
+      "europe": "Europa",
+      "northAmerica": "Nordamerika",
+      "other": "Andet"
+    },
+    "list": {
+      "denmark": "Danmark",
+      "norway": "Norge",
+      "sweden": "Sverige",
+      "finland": "Finland",
+      "iceland": "Island",
+      "germany": "Tyskland",
+      "netherlands": "Nederlandene",
+      "uk": "Storbritannien",
+      "france": "Frankrig",
+      "spain": "Spanien",
+      "italy": "Italien",
+      "switzerland": "Schweiz",
+      "austria": "Østrig",
+      "belgium": "Belgien",
+      "ireland": "Irland",
+      "poland": "Polen",
+      "portugal": "Portugal",
+      "usa": "USA",
+      "canada": "Canada",
+      "australia": "Australien",
+      "uae": "Forenede Arabiske Emirater",
+      "singapore": "Singapore",
+      "other": "Andet"
+    }
   }
 }
