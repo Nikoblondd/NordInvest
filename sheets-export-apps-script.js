@@ -43,6 +43,52 @@ function doGet() {
   return jsonResponse({ ok: true, message: 'NordInvest Sheets Export API. POST an analysis payload to create a sheet.' });
 }
 
+/**
+ * TEST HELPER — Run this ONCE from the Apps Script editor after first deploy.
+ * ─────────────────────────────────────────────────────────────────────
+ * Google won't grant Drive + Sheets scopes until a function actually uses
+ * them. The initial deploy dialog authorizes basic web app access only.
+ * Running this manually forces the full scope grant so doPost works when
+ * called from the website.
+ *
+ * HOW TO RUN:
+ *   1. In Apps Script editor, click the function dropdown (top toolbar).
+ *   2. Select "testCreate".
+ *   3. Click ▶ Run.
+ *   4. Approve any permission prompts (Drive access, Sheets access).
+ *   5. Check the Execution log for the URL — a test sheet will exist in
+ *      your Drive, safe to delete.
+ *   6. Now the doPost call from nordinvest.io will work.
+ */
+function testCreate() {
+  const result = createFormattedSheet({
+    location: 'Test Copenhagen 2200',
+    strategy: 'appreciation',
+    price: 500000,
+    rent: 1800,
+    rate: 4.5,
+    downPct: 20,
+    downAmount: 100000,
+    loanAmount: 400000,
+    expenses: 300,
+    rentalYield: 4.32,
+    monthlyMortgage: 2027,
+    monthlyCashFlow: -527,
+    roi: -5.5,
+    score: 42,
+    marketAvgPrice: 8500,
+    marketAvgRent: 210,
+    marketSource: 'DST EJ55',
+    appreciationRate: 5.0,
+    oneLineVerdict: 'Test verdict — appreciation play works long-term.',
+    biggestRisk: 'Rate sensitivity',
+    classification: 'Appreciation Asset',
+    lang: 'en'
+  });
+  Logger.log('Sheet created: ' + result.url);
+  return result;
+}
+
 function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
