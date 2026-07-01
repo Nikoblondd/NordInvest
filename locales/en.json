@@ -48,14 +48,18 @@
   },
   "howSection": {
     "label": "How It Works",
-    "title": "Three steps to smarter investing",
-    "sub": "From property details to investment decision in under a minute.",
-    "step1Title": "Enter property details",
-    "step1Desc": "Input the location, price, expected rent, down payment, interest rate, and expenses. Takes less than 60 seconds.",
-    "step2Title": "AI researches & calculates",
-    "step2Desc": "We research local market rents for similar properties in the area and apply proven investment formulas in real time.",
-    "step3Title": "Get your investment report",
-    "step3Desc": "Receive a complete analysis with an Investment Score, key metrics, market comparison, and an AI-written summary."
+    "title": "Four steps. Sixty seconds.",
+    "sub": "Paste a listing. Read the verdict. Export the numbers. Move on."
+  },
+  "flow": {
+    "step1Title": "Paste a listing",
+    "step1Hint": "Boligsiden, Hemnet, Finn.no — any URL.",
+    "step2Title": "We crunch the numbers",
+    "step2Hint": "Yield, cash flow, ROI, market data.",
+    "step3Title": "Get the verdict",
+    "step3Hint": "Score 0–100 + one-line answer.",
+    "step4Title": "Export to Sheets",
+    "step4Hint": "One click. Professional spreadsheet."
   },
   "features": {
     "label": "Features",
@@ -127,6 +131,8 @@
   },
   "analysis": {
     "newAnalysis": "New Analysis",
+    "exportSheets": "Export to Sheets",
+    "exportedSheets": "✓ Downloaded",
     "reportTitle": "Investment Report",
     "subtitle": "Property analysis results",
     "scoreLabel": "Investment Score",
@@ -307,7 +313,7 @@
   "rentReserve": {
     "title": "Rent Reserve",
     "sub": "Hidden value between current and market rent",
-    "intro": "If the current rent is below market, that gap is a hidden asset — every €1 of monthly rent uplift adds the area's rent multiplier to the property's value. Adjust the estimated market rent below to see the implied lift.",
+    "intro": "The gap between current rent and market rent is hidden value. Adjust the estimate below.",
     "currentRent": "Current monthly rent",
     "currentRentHint": "From your analysis.",
     "marketRent": "Estimated market rent (post-renovation)",
@@ -335,7 +341,7 @@
     "valueadd":     { "name": "Value-add / Renovation","desc": "Force value via rehab" }
   },
   "brrrr": {
-    "intro": "Renovation Mode answers one question: <strong>what if I renovate for X?</strong> Enter your rehab budget, the new monthly rent you could charge, and the new property value after the work. We recompute ROI, refinance proceeds, and the cash you'd have left in the deal — so you can see whether the renovation actually moves the needle.",
+    "intro": "<strong>What if I renovate for X?</strong> Enter your budget, new rent, and new value — we'll recompute the ROI.",
     "rehabLabel": "Renovation budget",
     "rehabHint": "All-in: materials, labour, permits, contingency.",
     "newRentLabel": "New monthly rent (post-reno)",

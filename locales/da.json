@@ -48,14 +48,18 @@
   },
   "howSection": {
     "label": "Sådan virker det",
-    "title": "Tre trin til smartere investering",
-    "sub": "Fra ejendomsdetaljer til investeringsbeslutning på under et minut.",
-    "step1Title": "Indtast ejendomsdetaljer",
-    "step1Desc": "Indtast beliggenhed, pris, forventet leje, udbetaling, rente og udgifter. Tager mindre end 60 sekunder.",
-    "step2Title": "AI undersøger og beregner",
-    "step2Desc": "Vi undersøger lokale markedslejer for tilsvarende ejendomme i området og anvender afprøvede investeringsformler i realtid.",
-    "step3Title": "Få din investeringsrapport",
-    "step3Desc": "Modtag en komplet analyse med en investeringsscore, nøgletal, markedssammenligning og et AI-skrevet resumé."
+    "title": "Fire trin. Tres sekunder.",
+    "sub": "Indsæt et boligopslag. Læs dommen. Eksportér tallene. Videre."
+  },
+  "flow": {
+    "step1Title": "Indsæt et boligopslag",
+    "step1Hint": "Boligsiden, Hemnet, Finn.no — enhver URL.",
+    "step2Title": "Vi kværner tallene",
+    "step2Hint": "Afkast, cash flow, ROI, markedsdata.",
+    "step3Title": "Få dommen",
+    "step3Hint": "Score 0–100 + en oneliner.",
+    "step4Title": "Eksportér til Sheets",
+    "step4Hint": "Et klik. Professionelt regneark."
   },
   "features": {
     "label": "Funktioner",
@@ -127,6 +131,8 @@
   },
   "analysis": {
     "newAnalysis": "Ny analyse",
+    "exportSheets": "Eksportér til Sheets",
+    "exportedSheets": "✓ Hentet",
     "reportTitle": "Investeringsrapport",
     "subtitle": "Resultater af ejendomsanalysen",
     "scoreLabel": "Investeringsscore",
@@ -307,7 +313,7 @@
   "rentReserve": {
     "title": "Lejereserve",
     "sub": "Skjult værdi mellem nuværende leje og markedsleje",
-    "intro": "Hvis den nuværende leje ligger under markedet, er forskellen et skjult aktiv — hver krones månedlig lejestigning tilfører områdets leje-multiplikator til ejendomsværdien. Justér den estimerede markedsleje nedenfor for at se det implicitte løft.",
+    "intro": "Forskellen mellem nuværende leje og markedsleje er skjult værdi. Justér estimatet nedenfor.",
     "currentRent": "Nuværende månedlig leje",
     "currentRentHint": "Fra din analyse.",
     "marketRent": "Estimeret markedsleje (efter renovering)",
@@ -335,7 +341,7 @@
     "valueadd":     { "name": "Værditilvækst / Renovering", "desc": "Skab værdi via renovering" }
   },
   "brrrr": {
-    "intro": "Renoveringsmode svarer på ét spørgsmål: <strong>hvad hvis jeg renoverer for X?</strong> Indtast dit renoveringsbudget, den nye månedlige leje du kan tage, og den nye ejendomsværdi efter renoveringen. Vi genberegner ROI, hvor meget kapital omlægningen frigør, og hvor meget kapital du har tilbage i handlen — så du kan se, om renoveringen reelt rykker noget.",
+    "intro": "<strong>Hvad hvis jeg renoverer for X?</strong> Indtast budget, ny leje og ny værdi — vi genberegner ROI.",
     "rehabLabel": "Renoveringsbudget",
     "rehabHint": "Alt-i-en: materialer, arbejdsløn, tilladelser, buffer.",
     "newRentLabel": "Ny månedlig leje (efter renovering)",

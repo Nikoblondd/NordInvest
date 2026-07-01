@@ -497,6 +497,108 @@
   ══════════════════════════════════ */
   .how-section { background: var(--grey-50); }
   .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+
+  /* ═════ ANIMATED FLOW ═════ */
+  .flow {
+    position: relative;
+    max-width: 980px;
+    margin: 20px auto 0;
+    padding: 20px 0 10px;
+  }
+  .flow-track {
+    position: absolute;
+    top: 62px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    pointer-events: none;
+  }
+  .flow-track-bg { stroke: var(--border); stroke-width: 2; }
+  .flow-track-fill {
+    stroke: var(--navy);
+    stroke-width: 2;
+    stroke-dasharray: 880;
+    stroke-dashoffset: 880;
+    transition: stroke-dashoffset 2400ms cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .flow.in-view .flow-track-fill { stroke-dashoffset: 0; }
+  .flow-steps {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 8px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 500ms ease, transform 500ms ease;
+  }
+  .flow.in-view .flow-step { opacity: 1; transform: translateY(0); }
+  .flow.in-view .flow-step[data-step="1"] { transition-delay: 200ms; }
+  .flow.in-view .flow-step[data-step="2"] { transition-delay: 900ms; }
+  .flow.in-view .flow-step[data-step="3"] { transition-delay: 1500ms; }
+  .flow.in-view .flow-step[data-step="4"] { transition-delay: 2100ms; }
+  .flow-node {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    box-shadow: 0 2px 6px rgba(15,31,61,0.04);
+    margin-bottom: 18px;
+    transition: border-color 400ms ease, color 400ms ease, transform 400ms ease, box-shadow 400ms ease;
+    position: relative;
+    z-index: 2;
+  }
+  .flow-node svg { width: 26px; height: 26px; }
+  .flow.in-view .flow-step[data-step="1"] .flow-node { border-color: var(--navy); color: var(--navy); transform: scale(1.05); transition-delay: 400ms; }
+  .flow.in-view .flow-step[data-step="2"] .flow-node { border-color: var(--navy); color: var(--navy); transform: scale(1.05); transition-delay: 1100ms; }
+  .flow.in-view .flow-step[data-step="3"] .flow-node { border-color: var(--navy); color: var(--navy); transform: scale(1.05); transition-delay: 1700ms; }
+  .flow.in-view .flow-step[data-step="4"] .flow-node {
+    border-color: var(--green);
+    color: var(--green);
+    transform: scale(1.05);
+    transition-delay: 2300ms;
+    box-shadow: 0 0 0 6px rgba(16,185,129,0.08);
+  }
+  .flow-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.2px;
+    margin-bottom: 6px;
+  }
+  .flow-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    max-width: 190px;
+  }
+  @media (max-width: 720px) {
+    .flow { padding-top: 8px; }
+    .flow-track { display: none; }
+    .flow-steps { grid-template-columns: 1fr; gap: 28px; }
+    .flow-step { flex-direction: row; text-align: left; gap: 16px; align-items: flex-start; padding: 0; }
+    .flow-node { margin-bottom: 0; flex-shrink: 0; width: 50px; height: 50px; }
+    .flow-node svg { width: 22px; height: 22px; }
+    .flow-label-wrap { display: flex; flex-direction: column; gap: 4px; }
+    .flow-step .flow-label { margin-bottom: 2px; }
+    .flow-hint { max-width: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flow-track-fill { stroke-dashoffset: 0; transition: none; }
+    .flow-step { opacity: 1; transform: none; transition: none; }
+    .flow-node { transition: none; }
+  }
   .step-card {
     background: white; border: 1px solid var(--border);
     border-radius: var(--radius); padding: 28px 24px;
@@ -574,6 +676,19 @@
     transition: border-color 0.18s, background 0.18s;
   }
   .btn-back:hover { border-color: var(--grey-300); background: var(--grey-50); }
+  .btn-export {
+    font-family: var(--font); font-size: 13.5px; font-weight: 700;
+    color: white; background: var(--navy); border: none;
+    border-radius: var(--radius-sm); padding: 9px 15px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
+  }
+  .btn-export:hover { background: var(--navy-light); box-shadow: 0 4px 14px rgba(15,31,61,0.22); }
+  .btn-export:active { transform: scale(0.98); }
+  .btn-export.is-success {
+    background: var(--green); animation: exportPulse 500ms ease;
+  }
+  @keyframes exportPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
   .analysis-title-wrap h2 {
     font-size: 18px; font-weight: 800; color: var(--navy); letter-spacing: -0.3px;
   }
@@ -3175,25 +3290,46 @@
     <div class="container">
       <div class="section-header center">
         <div class="section-label" data-i18n="howSection.label">How It Works</div>
-        <h2 class="section-title" data-i18n="howSection.title">Three steps to smarter investing</h2>
-        <p class="section-sub" data-i18n="howSection.sub">From property details to investment decision in under a minute.</p>
+        <h2 class="section-title" data-i18n="howSection.title">Four steps. Sixty seconds.</h2>
+        <p class="section-sub" data-i18n="howSection.sub">Paste a listing. Read the verdict. Export the numbers. Move on.</p>
       </div>
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-num">1</div>
-          <div class="step-title" data-i18n="howSection.step1Title">Enter property details</div>
-          <p class="step-desc" data-i18n="howSection.step1Desc">Input the location, price, expected rent, down payment, interest rate, and expenses. Takes less than 60 seconds.</p>
-        </div>
-        <div class="step-card">
-          <div class="step-num">2</div>
-          <div class="step-title" data-i18n="howSection.step2Title">AI researches &amp; calculates</div>
-          <p class="step-desc" data-i18n="howSection.step2Desc">We research local market rents for similar properties in the area and apply proven investment formulas in real time.</p>
-        </div>
-        <div class="step-card">
-          <div class="step-num">3</div>
-          <div class="step-title" data-i18n="howSection.step3Title">Get your investment report</div>
-          <p class="step-desc" data-i18n="howSection.step3Desc">Receive a complete analysis with an Investment Score, key metrics, market comparison, and an AI-written summary.</p>
-        </div>
+
+      <!-- Animated flow: horizontal on desktop, vertical on mobile -->
+      <div class="flow" id="flow">
+        <svg class="flow-track" viewBox="0 0 1000 4" preserveAspectRatio="none" aria-hidden="true">
+          <line class="flow-track-bg" x1="60" y1="2" x2="940" y2="2" stroke-linecap="round" />
+          <line class="flow-track-fill" x1="60" y1="2" x2="940" y2="2" stroke-linecap="round" />
+        </svg>
+        <ol class="flow-steps">
+          <li class="flow-step" data-step="1">
+            <div class="flow-node">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+            </div>
+            <div class="flow-label" data-i18n="flow.step1Title">Paste a listing</div>
+            <div class="flow-hint" data-i18n="flow.step1Hint">Boligsiden, Hemnet, Finn.no — any URL.</div>
+          </li>
+          <li class="flow-step" data-step="2">
+            <div class="flow-node">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-7"/></svg>
+            </div>
+            <div class="flow-label" data-i18n="flow.step2Title">We crunch the numbers</div>
+            <div class="flow-hint" data-i18n="flow.step2Hint">Yield, cash flow, ROI, market data.</div>
+          </li>
+          <li class="flow-step" data-step="3">
+            <div class="flow-node">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 015.9 15.9"/></svg>
+            </div>
+            <div class="flow-label" data-i18n="flow.step3Title">Get the verdict</div>
+            <div class="flow-hint" data-i18n="flow.step3Hint">Score 0–100 + one-line answer.</div>
+          </li>
+          <li class="flow-step" data-step="4">
+            <div class="flow-node">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </div>
+            <div class="flow-label" data-i18n="flow.step4Title">Export to Sheets</div>
+            <div class="flow-hint" data-i18n="flow.step4Hint">One click. Professional spreadsheet.</div>
+          </li>
+        </ol>
       </div>
     </div>
   </section>
@@ -3605,6 +3741,10 @@
           <span class="rsb-dot"></span>
           <span id="report-strategy-label">Cashflow</span>
         </span>
+        <button type="button" class="btn-export" id="btn-export-sheets" onclick="exportToSheets()" title="Download as spreadsheet — opens in Google Sheets, Excel, Numbers">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="analysis.exportSheets">Export to Sheets</span>
+        </button>
         <span class="report-stamp" id="analysis-date"></span>
       </div>
     </div>
@@ -4620,6 +4760,111 @@ function calculateRentReserve() {
   } else {
     v.className = 'rr-verdict neutral';
     v.textContent = _t('rentReserve.verdictAtMarket');
+  }
+}
+
+// ── EXPORT TO SHEETS ──────────────────────────────────────
+// Downloads a clean CSV that opens instantly in Google Sheets, Excel, or Numbers.
+// The user drags the file into Sheets (or File > Import), and gets a fully
+// structured spreadsheet with the property inputs, computed metrics, market
+// benchmarks, and the strategy verdict — no manual copy-paste.
+function exportToSheets() {
+  const d = window._niAnalysisData;
+  if (!d) return;
+  const _t = (k) => (window.t ? window.t(k) : k);
+  const fmtNum = (v) => (typeof v === 'number' && isFinite(v)) ? v.toFixed(2) : '';
+  const price   = d._price || 0;
+  const rent    = d._rent  || 0;
+  const rate    = d._rate  || 0;
+  const down    = d._down  || 0;
+  const exp     = d._expenses || 0;
+  const loc     = d._location || d.location || '';
+  const strategy = d._strategy || window._niStrategy || 'cashflow';
+  const strategyLabel = ({cashflow:'Cash Flow', appreciation:'Appreciation', valueadd:'Value-Add / Renovation'})[strategy] || strategy;
+  const dateStr = new Date().toISOString().slice(0, 10);
+
+  // Build rows: [label, value, note]
+  const rows = [
+    ['NordInvest — Property Investment Analysis'],
+    ['Generated', dateStr, 'nordinvest.io'],
+    [],
+    ['PROPERTY'],
+    ['Location', loc, ''],
+    ['Purchase Price', price, 'EUR / local currency'],
+    ['Strategy', strategyLabel, 'Investor intent'],
+    [],
+    ['INPUTS'],
+    ['Monthly Rent', rent, ''],
+    ['Down Payment %', down, ''],
+    ['Down Payment Amount', fmtNum(d.downAmount), ''],
+    ['Loan Amount', fmtNum(d.loanAmount), 'Price − Down Payment'],
+    ['Mortgage Rate %', rate, 'Annual'],
+    ['Monthly Expenses', exp, 'Insurance, tax, maintenance reserve'],
+    [],
+    ['CORE METRICS'],
+    ['Gross Rental Yield %', fmtNum(d.rentalYield), '(Annual Rent ÷ Price) × 100'],
+    ['Monthly Mortgage', fmtNum(d.monthlyMortgage), '30-year amortization'],
+    ['Monthly Cash Flow', fmtNum(d.monthlyCashFlow), 'Rent − Mortgage − Expenses'],
+    ['Annual Cash Flow', fmtNum((d.monthlyCashFlow || 0) * 12), 'Monthly × 12'],
+    ['Cash-on-Cash ROI %', fmtNum(d.roi), '(Annual CF ÷ Cash Invested) × 100'],
+    ['Investment Score (0–100)', d.score ?? '', 'Composite: yield + cash flow + ROI'],
+    [],
+    ['BREAK-EVEN'],
+    ['Break-Even Rent', fmtNum((d.monthlyMortgage || 0) + (d._expenses || 0)), 'Mortgage + Expenses'],
+    ['Margin vs. Current Rent', fmtNum(rent - ((d.monthlyMortgage || 0) + (d._expenses || 0))), 'How much room before losses'],
+    [],
+    ['MARKET CONTEXT'],
+    ['Area Avg Price per m²', d.marketAvgPrice ?? 'Not available', d.marketSource || ''],
+    ['Area Avg Rent per m²/mo', d.marketAvgRent  ?? 'Not available', d.marketSource || ''],
+    ['5-Year Appreciation (est. CAGR %)', d.appreciationRate ?? '', 'Historical trend'],
+    [],
+    ['VERDICT'],
+    ['One-Line Verdict', d.oneLineVerdict || '', ''],
+    ['Biggest Risk', d.biggestRisk || '', ''],
+    ['Classification', d.classification || '', ''],
+    [],
+    ['NOTES'],
+    ['', 'Free-form space for your own notes.', ''],
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
+    ['Analyzed at', 'https://nordinvest.io/', 'Paste any listing URL. Free.']
+  ];
+
+  // Convert to CSV — escape quotes and commas
+  const escape = (cell) => {
+    if (cell === undefined || cell === null) return '';
+    const s = String(cell);
+    if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  };
+  const csv = '﻿' + rows.map(r => r.map(escape).join(',')).join('\n');
+
+  // Filename: nordinvest-<location>-<date>.csv
+  const safeLoc = (loc || 'analysis').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'analysis';
+  const filename = `nordinvest-${safeLoc}-${dateStr}.csv`;
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  // Micro-feedback so user knows it fired
+  const btn = document.getElementById('btn-export-sheets');
+  if (btn) {
+    const label = btn.querySelector('span');
+    const original = label?.textContent;
+    btn.classList.add('is-success');
+    if (label) label.textContent = _t('analysis.exportedSheets') || '✓ Downloaded';
+    setTimeout(() => {
+      btn.classList.remove('is-success');
+      if (label && original) label.textContent = original;
+    }, 1600);
   }
 }
 
@@ -5862,6 +6107,26 @@ window.addEventListener('storage', renderPortfolioCTA);
   }
   // Start after a brief warm-up so the first visible bump feels organic
   setTimeout(tick, 14000 + Math.random() * 8000);
+})();
+
+// ── FLOW ANIMATION TRIGGER ─────────────────────
+// IntersectionObserver fires the CSS-driven line-draw + node reveal when the
+// flow section scrolls into view. One-shot: once triggered, stays visible.
+(function initFlow() {
+  const flow = document.getElementById('flow');
+  if (!flow || !('IntersectionObserver' in window)) {
+    if (flow) flow.classList.add('in-view');
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        flow.classList.add('in-view');
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.35 });
+  io.observe(flow);
 })();
 </script>
 
