@@ -9,14 +9,13 @@
     "language": "Language"
   },
   "hero": {
-    "badge": "AI-Powered Property Analysis",
     "headline": "Know if a property is worth buying in <em>under 60 seconds.</em>",
-    "sub": "AI-driven property investment insights for Nordic real estate. Instant rental yield, cash flow, ROI, BRRRR, and 5-year appreciation analysis — the smarter way to make real estate investment decisions, with no spreadsheets needed.",
+    "sub": "Paste any listing. Get yield, cash flow, ROI, and a verdict. Free.",
     "ctaPrimary": "Analyze a Property",
-    "ctaSecondary": "See How It Works",
-    "trust1": "Proven Investment Models",
-    "trust2": "Instant AI Analysis",
-    "trust3": "100% Free"
+    "microcopy": "No signup. No spreadsheets. 60 seconds."
+  },
+  "liveProof": {
+    "label": "investors analyzed a deal today"
   },
   "analyze": {
     "label": "Free Instant Analysis",
@@ -118,6 +117,7 @@
   },
   "footer": {
     "copyright": "© 2026 NordInvest. All rights reserved.",
+    "marketsLabel": "Markets we cover",
     "investmentModels": "Investment Models",
     "glossary": "Glossary",
     "methodology": "Methodology",
@@ -199,8 +199,8 @@
       "stressTestsSub": "What breaks the investment",
       "marketContext": "Local Market Context",
       "marketContextSub": "Area benchmarks and comparisons",
-      "brrrr": "BRRRR Analysis",
-      "brrrrSub": "Buy · Rehab · Rent · Refinance · Repeat"
+      "brrrr": "Renovation Mode (BRRRR)",
+      "brrrrSub": "\"What if I renovate for X?\" — recompute ROI"
     },
     "layer3": {
       "showDetails": "Show calculation details",
@@ -335,21 +335,25 @@
     "valueadd":     { "name": "Value-add / Renovation","desc": "Force value via rehab" }
   },
   "brrrr": {
-    "intro": "The BRRRR strategy recycles capital into the next deal by refinancing the property at its post-renovation value. Enter your rehab budget and projected After Repair Value (ARV) — we'll compute how much cash you recover, the effective cash left in the deal, and the post-refinance cash-on-cash return.",
-    "rehabLabel": "Estimated Rehab Cost",
-    "rehabHint": "All-in renovation + materials + permits.",
-    "arvLabel": "After Repair Value (ARV)",
-    "arvHint": "Appraised market value after the rehab is complete.",
+    "intro": "Renovation Mode answers one question: <strong>what if I renovate for X?</strong> Enter your rehab budget, the new monthly rent you could charge, and the new property value after the work. We recompute ROI, refinance proceeds, and the cash you'd have left in the deal — so you can see whether the renovation actually moves the needle.",
+    "rehabLabel": "Renovation budget",
+    "rehabHint": "All-in: materials, labour, permits, contingency.",
+    "newRentLabel": "New monthly rent (post-reno)",
+    "newRentHint": "What you can realistically charge after the renovation.",
+    "arvLabel": "New property value (ARV)",
+    "arvHint": "Appraised market value once the rehab is done.",
     "ltvLabel": "Refinance LTV",
     "ltvHint": "Industry standard is 75% of ARV.",
-    "calcBtn": "Run BRRRR Calculation",
+    "calcBtn": "Recalculate with renovation",
+    "roiUplift": "ROI Uplift vs. Original",
+    "roiUpliftSub": "Post-reno CoC − original ROI",
     "refiLoan": "Refinance Loan",
     "refiLoanSub": "LTV × ARV",
     "cashRecovered": "Cash Recovered",
     "cashRecoveredSub": "Refi loan − original loan",
     "cashInDeal": "Effective Cash-in-Deal",
     "cashInDealSub": "Down + rehab − cash recovered",
-    "coc": "Cash-on-Cash Return",
+    "coc": "Post-Reno Cash-on-Cash",
     "cocSub": "Annual cash flow ÷ cash-in-deal",
     "assump": "Refinance happens after the rehab is complete and the property is rented. Refinance fees and seasoning periods (typically 6–12 months) are not modeled. When Effective Cash-in-Deal ≤ 0 (i.e. you pulled all your capital back out), the return is \"infinite\" by convention and we show ∞.",
     "modelsLink": "See all investment models we support →",

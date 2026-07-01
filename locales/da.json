@@ -9,14 +9,13 @@
     "language": "Sprog"
   },
   "hero": {
-    "badge": "AI-drevet ejendomsanalyse",
     "headline": "Find ud af, om en ejendom er værd at købe på <em>under 60 sekunder.</em>",
-    "sub": "AI-drevne investeringsindsigter for nordisk ejendomsmarked. Øjeblikkelig analyse af lejeafkast, cash flow, ROI, BRRRR og 5-årig prisstigning — den smartere måde at træffe ejendomsinvesteringsbeslutninger på, uden regneark.",
+    "sub": "Indsæt et boligopslag. Få afkast, cash flow, ROI og en dom. Gratis.",
     "ctaPrimary": "Analyser en ejendom",
-    "ctaSecondary": "Se hvordan det virker",
-    "trust1": "Afprøvede investeringsmodeller",
-    "trust2": "Øjeblikkelig AI-analyse",
-    "trust3": "100 % gratis"
+    "microcopy": "Ingen tilmelding. Ingen regneark. 60 sekunder."
+  },
+  "liveProof": {
+    "label": "investorer analyserede en ejendom i dag"
   },
   "analyze": {
     "label": "Gratis øjeblikkelig analyse",
@@ -118,6 +117,7 @@
   },
   "footer": {
     "copyright": "© 2026 NordInvest. Alle rettigheder forbeholdes.",
+    "marketsLabel": "Markeder vi dækker",
     "investmentModels": "Investeringsmodeller",
     "glossary": "Ordliste",
     "methodology": "Metodologi",
@@ -199,8 +199,8 @@
       "stressTestsSub": "Hvad får investeringen til at bryde sammen",
       "marketContext": "Lokal markedskontekst",
       "marketContextSub": "Områdets benchmarks og sammenligninger",
-      "brrrr": "BRRRR-analyse",
-      "brrrrSub": "Køb · Renover · Udlej · Omlæg · Gentag"
+      "brrrr": "Renoveringsmode (BRRRR)",
+      "brrrrSub": "\"Hvad hvis jeg renoverer for X?\" — genberegn ROI"
     },
     "layer3": {
       "showDetails": "Vis beregningsdetaljer",
@@ -335,21 +335,25 @@
     "valueadd":     { "name": "Værditilvækst / Renovering", "desc": "Skab værdi via renovering" }
   },
   "brrrr": {
-    "intro": "BRRRR-strategien genbruger din kapital til den næste handel ved at omlægge lånet til ejendommens værdi efter renoveringen. Indtast dit renoveringsbudget og forventede værdi efter renovering (ARV) — vi beregner, hvor meget kapital du får tilbage, det effektive beløb tilbage i handlen og afkastet efter omlægningen.",
-    "rehabLabel": "Estimerede renoveringsomkostninger",
-    "rehabHint": "Alt-i-en renovering + materialer + tilladelser.",
-    "arvLabel": "Værdi efter renovering (ARV)",
-    "arvHint": "Vurderet markedsværdi efter renoveringen er færdig.",
+    "intro": "Renoveringsmode svarer på ét spørgsmål: <strong>hvad hvis jeg renoverer for X?</strong> Indtast dit renoveringsbudget, den nye månedlige leje du kan tage, og den nye ejendomsværdi efter renoveringen. Vi genberegner ROI, hvor meget kapital omlægningen frigør, og hvor meget kapital du har tilbage i handlen — så du kan se, om renoveringen reelt rykker noget.",
+    "rehabLabel": "Renoveringsbudget",
+    "rehabHint": "Alt-i-en: materialer, arbejdsløn, tilladelser, buffer.",
+    "newRentLabel": "Ny månedlig leje (efter renovering)",
+    "newRentHint": "Hvad du realistisk kan opkræve efter renoveringen.",
+    "arvLabel": "Ny ejendomsværdi (ARV)",
+    "arvHint": "Vurderet markedsværdi når renoveringen er færdig.",
     "ltvLabel": "Belåningsgrad ved omlægning",
     "ltvHint": "Branchestandard er 75 % af ARV.",
-    "calcBtn": "Kør BRRRR-beregning",
+    "calcBtn": "Genberegn med renovering",
+    "roiUplift": "ROI-løft vs. oprindelig",
+    "roiUpliftSub": "Cash-on-cash efter renovering − oprindelig ROI",
     "refiLoan": "Omlagt lån",
     "refiLoanSub": "Belåningsgrad × ARV",
     "cashRecovered": "Kapital tilbage",
     "cashRecoveredSub": "Omlagt lån − oprindeligt lån",
     "cashInDeal": "Effektiv kapital i handlen",
     "cashInDealSub": "Udbetaling + renovering − kapital tilbage",
-    "coc": "Cash-on-cash afkast",
+    "coc": "Cash-on-cash efter renovering",
     "cocSub": "Årligt cash flow ÷ kapital i handlen",
     "assump": "Omlægningen sker efter renoveringen er færdig, og ejendommen er udlejet. Omkostninger ved omlægning og ventetid (typisk 6–12 måneder) er ikke modelleret. Når den effektive kapital i handlen ≤ 0 (dvs. du har trukket al din kapital ud), er afkastet \"uendeligt\" pr. konvention, og vi viser ∞.",
     "modelsLink": "Se alle investeringsmodeller, vi understøtter →",

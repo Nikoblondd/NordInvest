@@ -22,6 +22,13 @@ export default async function handler(req, res) {
     { url: '/investment-models',  changefreq: 'monthly', priority: '0.7' },
     { url: '/glossary',           changefreq: 'monthly', priority: '0.7' },
     { url: '/methodology',        changefreq: 'monthly', priority: '0.6' },
+    { url: '/property-investment-copenhagen', changefreq: 'monthly', priority: '0.8' },
+    { url: '/property-investment-stockholm',  changefreq: 'monthly', priority: '0.8' },
+    { url: '/property-investment-oslo',       changefreq: 'monthly', priority: '0.8' },
+    { url: '/investering-i-ejendom-koebenhavn', changefreq: 'monthly', priority: '0.9' },
+    { url: '/investering-i-ejendom-aarhus',     changefreq: 'monthly', priority: '0.9' },
+    { url: '/investering-i-ejendom-fyn',        changefreq: 'monthly', priority: '0.9' },
+    { url: '/boligsiden-investering-guide',     changefreq: 'monthly', priority: '0.8' },
   ];
 
   // Fetch manifest + posts from static CDN files — no filesystem needed

@@ -5,6 +5,13 @@
     { "source": "/investment-models", "destination": "/investment-models.html" },
     { "source": "/glossary", "destination": "/glossary.html" },
     { "source": "/portfolio", "destination": "/portfolio.html" },
+    { "source": "/property-investment-copenhagen", "destination": "/property-investment-copenhagen.html" },
+    { "source": "/property-investment-stockholm", "destination": "/property-investment-stockholm.html" },
+    { "source": "/property-investment-oslo", "destination": "/property-investment-oslo.html" },
+    { "source": "/investering-i-ejendom-koebenhavn", "destination": "/investering-i-ejendom-koebenhavn.html" },
+    { "source": "/investering-i-ejendom-aarhus", "destination": "/investering-i-ejendom-aarhus.html" },
+    { "source": "/investering-i-ejendom-fyn", "destination": "/investering-i-ejendom-fyn.html" },
+    { "source": "/boligsiden-investering-guide", "destination": "/boligsiden-investering-guide.html" },
     { "source": "/blog/:slug+", "destination": "/blog/post.html" }
   ]
 }
