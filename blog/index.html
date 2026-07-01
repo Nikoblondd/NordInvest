@@ -572,11 +572,14 @@
             image:       meta.image       || null,
             author:      meta.author      || 'NordInvest',
             readingTime: Math.max(1, Math.round(words / 220)),
+            lang:        meta.lang        || 'en',
           };
         } catch { return null; }
       }))).filter(Boolean).sort((a,b) => b.date > a.date ? 1 : -1);
 
-      allPosts = posts;
+      const activeLang = (window.getLang && window.getLang()) || 'en';
+      const langMatched = posts.filter(p => p.lang === activeLang);
+      allPosts = langMatched.length ? langMatched : posts;
       buildFilters(allPosts);
       renderPosts(allPosts);
       injectBlogSchema(allPosts);
@@ -621,7 +624,10 @@
     document.head.appendChild(s);
   }
 
-  loadPosts();
+  // Defer initial render until i18n resolves so getLang() returns the right value.
+  // (i18n:ready fires on first load AND on every setLang switch — so this
+  // also handles re-rendering when the user toggles EN ↔ DA.)
+  document.addEventListener('i18n:ready', loadPosts);
 </script>
 
 <script src="/i18n.js"></script>

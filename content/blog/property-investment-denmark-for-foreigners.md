@@ -6,6 +6,8 @@ description: What international investors need to know before buying property in
 tags: [denmark, investment-strategy, beginner-guide]
 author: NordInvest
 image: https://images.unsplash.com/photo-1719305352456-d9e9b93f4e84?w=1200&auto=format&fit=crop&q=80
+lang: en
+translation: ejendomsinvestering-i-danmark-for-udlaendinge
 ---
 
 ## Can Foreigners Buy Property in Denmark?

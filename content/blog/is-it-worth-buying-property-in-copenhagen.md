@@ -6,6 +6,8 @@ description: A clear-eyed look at whether buying an investment property in Copen
 tags: [denmark, investment-strategy, rental-yield]
 author: NordInvest
 image: https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&auto=format&fit=crop&q=80
+lang: en
+translation: er-det-vaerd-at-koebe-ejendom-i-koebenhavn
 ---
 
 ## The Short Answer

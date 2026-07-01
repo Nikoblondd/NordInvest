@@ -6,6 +6,8 @@ description: Five fast checks that tell you whether a rental property is a good 
 tags: [rental-property, investment-analysis, cash-flow, beginner-guide]
 author: NordInvest
 image: https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&auto=format&fit=crop&q=80
+lang: en
+translation: er-denne-lejebolig-en-god-handel
 ---
 
 ## The 60-Second Answer

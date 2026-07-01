@@ -6,6 +6,8 @@ description: Learn how to calculate gross and net rental yield on property in De
 tags: [rental-yield, investment-strategy, denmark, beginner-guide]
 author: NordInvest
 image: https://images.unsplash.com/photo-1609495059028-7336a644dbca?w=1200&auto=format&fit=crop&q=80
+lang: en
+translation: sadan-beregner-du-lejeafkast
 ---
 
 ## What Is Rental Yield?

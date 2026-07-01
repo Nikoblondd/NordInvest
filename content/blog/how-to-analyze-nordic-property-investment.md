@@ -6,6 +6,8 @@ description: A practical framework for evaluating whether a property in Denmark,
 tags: [investment-strategy, denmark, norway, sweden, beginner-guide]
 author: NordInvest
 image: https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&auto=format&fit=crop&q=80
+lang: en
+translation: sadan-analyserer-du-en-nordisk-ejendomsinvestering
 ---
 
 ## Introduction

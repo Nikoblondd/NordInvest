@@ -182,6 +182,24 @@
     }
     .post-meta-item { display: flex; align-items: center; gap: 5px; }
     .post-meta svg { opacity: 0.6; }
+    .post-lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--grey-50, #F8F9FA);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .post-lang-switch a {
+      color: var(--navy, #0F1F3D);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .post-lang-switch a:hover { text-decoration: underline; }
 
     /* BODY */
     .post-body {
@@ -565,6 +583,7 @@
       <div class="post-tags" id="post-tags"></div>
       <h1 class="post-title" id="post-title"></h1>
       <div class="post-meta" id="post-meta"></div>
+      <div class="post-lang-switch" id="post-lang-switch" style="display:none"></div>
       <div class="post-body" id="post-body"></div>
 
       <div class="share-section">
@@ -818,6 +837,9 @@
   }
 
   function setMeta(meta, postUrl) {
+    // Cache so the i18n:ready listener can re-apply cross-lang hreflangs after
+    // i18n.js overwrites them on every language switch.
+    window._currentPostMeta = { ...meta, slug: meta.slug };
     document.getElementById('page-title').textContent = `${meta.title} — NordInvest Blog`;
     document.getElementById('meta-desc').content = meta.description || '';
     document.getElementById('canonical').href = postUrl;
@@ -829,6 +851,26 @@
     document.getElementById('tw-title').content = meta.title;
     document.getElementById('tw-desc').content = meta.description || '';
 
+    // ── hreflang: point search engines at the sibling-language translation ──
+    const postLang = meta.lang || 'en';
+    document.documentElement.lang = postLang;
+    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+    const addHreflang = (lang, href) => {
+      const l = document.createElement('link');
+      l.setAttribute('rel', 'alternate');
+      l.setAttribute('hreflang', lang);
+      l.setAttribute('href', href);
+      document.head.appendChild(l);
+    };
+    addHreflang(postLang, postUrl);
+    if (meta.translation) {
+      const otherLang = postLang === 'en' ? 'da' : 'en';
+      addHreflang(otherLang, `https://nordinvest.io/blog/${meta.translation}`);
+      addHreflang('x-default', postLang === 'en' ? postUrl : `https://nordinvest.io/blog/${meta.translation}`);
+    } else {
+      addHreflang('x-default', postUrl);
+    }
+
     const ld = {
       "@context": "https://schema.org",
       "@graph": [
@@ -839,7 +881,7 @@
           "url": postUrl,
           "datePublished": meta.date || '',
           "dateModified": meta.date || '',
-          "inLanguage": "en",
+          "inLanguage": postLang,
           "wordCount": (document.querySelector('.post-body')?.innerText?.split(/\s+/).length) || undefined,
           "author": { "@type": "Organization", "name": meta.author || "NordInvest", "url": "https://nordinvest.io" },
           "publisher": {
@@ -929,6 +971,18 @@
           ${escHtml(meta.author || 'NordInvest')}
         </span>`;
 
+      // ── Language switcher: link to the translated version if one exists ──
+      const switchEl = document.getElementById('post-lang-switch');
+      if (meta.translation) {
+        const isDa = (meta.lang || 'en') === 'da';
+        const label = isDa ? '🇬🇧 Read this article in English' : '🇩🇰 Læs denne artikel på dansk';
+        const href = `/blog/${meta.translation}`;
+        switchEl.innerHTML = `<a href="${href}">${label}</a>`;
+        switchEl.style.display = 'inline-flex';
+      } else {
+        switchEl.style.display = 'none';
+      }
+
       const html = markdownToHtml(body);
       document.getElementById('post-body').innerHTML = html;
 
@@ -954,6 +1008,34 @@
   }
 
   loadPost();
+
+  // i18n.js's updateHreflang() overwrites <link rel="alternate" hreflang> whenever
+  // a language load completes. On post pages we need CUSTOM cross-language hreflangs
+  // (pointing at the sibling translation, not the same URL in another language).
+  // So we listen for i18n:ready and re-apply the post-specific hreflang set from
+  // the cached meta.
+  document.addEventListener('i18n:ready', () => {
+    const meta = window._currentPostMeta;
+    if (!meta) return;
+    const postUrl = `https://nordinvest.io/blog/${meta.slug}`;
+    const postLang = meta.lang || 'en';
+    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+    const add = (lang, href) => {
+      const l = document.createElement('link');
+      l.setAttribute('rel', 'alternate');
+      l.setAttribute('hreflang', lang);
+      l.setAttribute('href', href);
+      document.head.appendChild(l);
+    };
+    add(postLang, postUrl);
+    if (meta.translation) {
+      const otherLang = postLang === 'en' ? 'da' : 'en';
+      add(otherLang, `https://nordinvest.io/blog/${meta.translation}`);
+      add('x-default', postLang === 'en' ? postUrl : `https://nordinvest.io/blog/${meta.translation}`);
+    } else {
+      add('x-default', postUrl);
+    }
+  });
 </script>
 
 <script src="/i18n.js"></script>
