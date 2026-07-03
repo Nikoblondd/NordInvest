@@ -501,16 +501,16 @@
   /* ══════════════════════════════════
      HOW IT WORKS
   ══════════════════════════════════ */
-  .how-section { background: var(--cream); }
+  .how-section { background: var(--grey-50); }
 
   /* ═════════════════════════════════════════════════════════
-   * PREMIUM SHOWCASE SECTIONS — inspired by editorial layouts
-   * Warm cream palette · numbered · split layout · elegant
+   * PREMIUM SHOWCASE SECTIONS
+   * White + navy + blue · numbered · split layout · minimal
    * ═════════════════════════════════════════════════════════ */
 
   /* ─── STAKES (stat) SECTION ─── */
   .stakes-section {
-    background: var(--cream);
+    background: #FFFFFF;
     padding: 90px 0 100px;
   }
   .stakes-header { max-width: 700px; margin: 0 auto 56px; text-align: center; }
@@ -518,7 +518,7 @@
     display: inline-block;
     font-size: 11px; font-weight: 700; letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--accent-warm);
+    color: var(--blue);
     margin-bottom: 18px;
     position: relative;
     padding-left: 42px;
@@ -527,8 +527,8 @@
     content: '';
     position: absolute; left: 0; top: 50%;
     width: 32px; height: 1px;
-    background: var(--accent-warm);
-    opacity: 0.6;
+    background: var(--blue);
+    opacity: 0.5;
   }
   .stakes-title {
     font-size: clamp(30px, 4vw, 42px);
@@ -551,11 +551,10 @@
     margin: 0 auto;
   }
   .stake-card {
-    background: var(--cream-card);
+    background: var(--grey-50);
     border-radius: 20px;
     padding: 40px 32px 34px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(15,31,61,0.03), 0 12px 40px rgba(15,31,61,0.04);
     display: flex; flex-direction: column; align-items: center;
   }
   .stake-num {
@@ -597,10 +596,10 @@
 
   /* ─── NUMBERED SHOWCASE SECTIONS ─── */
   .showcase {
-    background: var(--cream);
+    background: #FFFFFF;
     padding: 90px 0;
   }
-  .showcase-02 { background: var(--cream-dark); }
+  .showcase-02 { background: var(--grey-50); }
   .showcase-inner {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -619,19 +618,19 @@
   .showcase-num-digit {
     font-family: 'JetBrains Mono', monospace;
     font-size: 15px; font-weight: 700;
-    color: var(--accent-warm);
+    color: var(--blue);
     letter-spacing: 0;
   }
   .showcase-num-line {
     display: inline-block;
     width: 32px; height: 1px;
-    background: var(--accent-warm);
-    opacity: 0.55;
+    background: var(--blue);
+    opacity: 0.5;
   }
   .showcase-num-label {
     font-size: 11px; font-weight: 700; letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--accent-warm);
+    color: var(--blue);
   }
   .showcase-h2 {
     font-size: clamp(32px, 4.2vw, 46px);
@@ -663,8 +662,8 @@
     flex-shrink: 0;
     width: 40px; height: 40px;
     border-radius: 10px;
-    background: var(--accent-warm-pale);
-    color: var(--accent-warm);
+    background: var(--blue-pale);
+    color: var(--blue);
     display: flex; align-items: center; justify-content: center;
   }
   .sb-icon svg { width: 20px; height: 20px; }
@@ -732,7 +731,7 @@
     white-space: nowrap;
   }
   .mockup-extracted {
-    background: var(--cream);
+    background: var(--grey-50);
     border-radius: 14px;
     padding: 18px 20px;
   }
@@ -794,42 +793,46 @@
   }
   .mockup-score-ring {
     position: relative;
-    width: 150px; height: 150px;
+    width: 180px; height: 180px;
     display: flex; align-items: center; justify-content: center;
     flex-direction: column;
   }
   .mockup-score-ring svg {
     position: absolute; inset: 0;
+    width: 100%; height: 100%;
     transform: rotate(-90deg);
+    overflow: visible;
   }
   .mockup-score-ring .ring-bg {
     fill: none;
     stroke: var(--grey-100);
-    stroke-width: 10;
+    stroke-width: 8;
   }
   .mockup-score-ring .ring-fill {
     fill: none;
-    stroke: var(--green);
-    stroke-width: 10;
+    stroke: var(--blue);
+    stroke-width: 8;
     stroke-linecap: round;
     stroke-dasharray: 327;
     stroke-dashoffset: 92; /* 72% filled */
   }
   .ring-num {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 48px; font-weight: 800;
+    font-size: 44px; font-weight: 800;
     color: var(--navy);
-    letter-spacing: -1.5px;
+    letter-spacing: -1px;
     line-height: 1;
     position: relative; z-index: 1;
   }
   .ring-label {
-    font-size: 11px; font-weight: 700;
+    font-size: 10px; font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-top: 6px;
+    margin-top: 8px;
     position: relative; z-index: 1;
+    text-align: center;
+    max-width: 110px;
   }
   .mockup-report-metrics {
     display: grid; grid-template-columns: repeat(3, 1fr);
@@ -837,7 +840,8 @@
     margin-bottom: 20px;
   }
   .mrm {
-    background: var(--cream);
+    background: #FFFFFF;
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 14px 12px;
     text-align: center;
@@ -857,7 +861,7 @@
   .mrm-val.pos { color: var(--green); }
   .mrm-val.neg { color: var(--red, #EF4444); }
   .mockup-report-verdict {
-    background: var(--cream); border-left: 3px solid var(--navy);
+    background: var(--blue-pale); border-left: 3px solid var(--blue);
     border-radius: 8px;
     padding: 14px 16px;
   }
@@ -887,7 +891,7 @@
     margin-bottom: 22px;
   }
   .mri {
-    background: var(--cream);
+    background: var(--grey-50);
     border-radius: 12px;
     padding: 14px 16px;
     display: flex; justify-content: space-between; align-items: center;
@@ -926,69 +930,6 @@
     font-weight: 600;
   }
 
-  /* ─── DARK FULL-BLEED CTA ─── */
-  .dark-cta {
-    background: linear-gradient(180deg, #1a1f38 0%, #0F1F3D 60%, #14264a 100%);
-    color: white;
-    padding: 100px 24px 110px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .dark-cta::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center bottom, rgba(199,126,36,0.18) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .dark-cta-inner {
-    position: relative;
-    max-width: 640px;
-    margin: 0 auto;
-  }
-  .dark-cta-title {
-    display: flex; flex-direction: column;
-    font-size: clamp(48px, 7vw, 82px);
-    font-weight: 800;
-    letter-spacing: -2.5px;
-    line-height: 1.05;
-    margin-bottom: 22px;
-  }
-  .dark-cta-line-1 { color: white; }
-  .dark-cta-line-2 {
-    color: #F4C378;
-    font-style: italic;
-    font-weight: 700;
-  }
-  .dark-cta-sub {
-    font-size: 17px;
-    color: rgba(255,255,255,0.6);
-    margin-bottom: 36px;
-    line-height: 1.55;
-  }
-  .dark-cta-btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: #64F0AC;
-    color: var(--navy);
-    padding: 16px 32px;
-    border-radius: 999px;
-    text-decoration: none;
-    font-weight: 800; font-size: 16px;
-    letter-spacing: -0.2px;
-    box-shadow: 0 0 0 12px rgba(100,240,172,0.12);
-    transition: transform 200ms ease, box-shadow 200ms ease;
-  }
-  .dark-cta-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 0 16px rgba(100,240,172,0.18), 0 12px 40px rgba(100,240,172,0.25);
-  }
-  .dark-cta-microcopy {
-    margin-top: 18px;
-    font-size: 13px;
-    color: rgba(255,255,255,0.5);
-  }
-
   /* ─── MOBILE ADJUSTMENTS ─── */
   @media (max-width: 900px) {
     .showcase-inner { grid-template-columns: 1fr; gap: 48px; padding: 0 20px; }
@@ -1000,8 +941,6 @@
     .stake-card { padding: 32px 24px 28px; }
     .stake-num { font-size: 56px; margin-bottom: 16px; }
     .stake-icon { margin-bottom: 16px; }
-    .dark-cta { padding: 80px 20px 90px; }
-    .dark-cta-title { font-size: clamp(42px, 12vw, 62px); }
     .showcase-visual { min-height: auto; }
     .mockup { max-width: 100%; }
   }
@@ -3894,8 +3833,7 @@
             <span class="showcase-num-line"></span>
             <span class="showcase-num-label" data-i18n="showcase.s1.eyebrow">Your investment analyzer</span>
           </div>
-          <h2 class="showcase-h2" data-i18n="showcase.s1.title">Paste a listing. Get the full picture.</h2>
-          <p class="showcase-lede" data-i18n="showcase.s1.lede">From Boligsiden to a full investment analysis in 60 seconds. No spreadsheets. No signup.</p>
+          <h2 class="showcase-h2" data-i18n="showcase.s1.title">Paste a listing.</h2>
           <ul class="showcase-benefits">
             <li>
               <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.72-1.72"/></svg></span>
@@ -3919,10 +3857,6 @@
               </div>
             </li>
           </ul>
-          <a href="#" class="showcase-cta" onclick="scrollToSection('analyze-section'); return false;">
-            <span data-i18n="showcase.s1.cta">Analyze a property free</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
         </div>
         <div class="showcase-visual">
           <div class="mockup mockup-analyzer">
@@ -3973,7 +3907,6 @@
             <span class="showcase-num-label" data-i18n="showcase.s2.eyebrow">The investment report</span>
           </div>
           <h2 class="showcase-h2" data-i18n="showcase.s2.title">Understand the deal.</h2>
-          <p class="showcase-lede" data-i18n="showcase.s2.lede">Score, yield, cash flow, ROI, verdict — one clean screen. No 200-word summaries. Just the answer.</p>
           <ul class="showcase-benefits">
             <li>
               <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 015.9 15.9"/></svg></span>
@@ -4048,8 +3981,7 @@
             <span class="showcase-num-line"></span>
             <span class="showcase-num-label" data-i18n="showcase.s3.eyebrow">Renovation Mode</span>
           </div>
-          <h2 class="showcase-h2" data-i18n="showcase.s3.title">See what the property could become.</h2>
-          <p class="showcase-lede" data-i18n="showcase.s3.lede">Worried about spending thousands on renovations that might not pay off? Model it first. Get the numbers.</p>
+          <h2 class="showcase-h2" data-i18n="showcase.s3.title">What if you renovate?</h2>
           <ul class="showcase-benefits">
             <li>
               <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20l9-7-9-7-9 7 9 7z"/><path d="M3 13v6l9 7 9-7v-6"/></svg></span>
@@ -4099,22 +4031,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ═══ DARK FULL-BLEED CTA ═══ -->
-  <section class="dark-cta">
-    <div class="dark-cta-inner">
-      <h2 class="dark-cta-title">
-        <span class="dark-cta-line-1" data-i18n="darkCta.line1">Analyze it.</span>
-        <span class="dark-cta-line-2" data-i18n="darkCta.line2">It's free.</span>
-      </h2>
-      <p class="dark-cta-sub" data-i18n="darkCta.sub">No signup. No spreadsheets. 60 seconds.</p>
-      <a href="#" class="dark-cta-btn" onclick="scrollToSection('analyze-section'); return false;">
-        <span data-i18n="darkCta.btn">Analyze a property free</span>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <div class="dark-cta-microcopy" data-i18n="darkCta.micro">No card required.</div>
     </div>
   </section>
 
