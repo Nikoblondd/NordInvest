@@ -161,6 +161,12 @@
     --green-pale: #ECFDF5;
     --amber: #F59E0B;
     --amber-pale: #FFFBEB;
+    /* Warm cream palette — premium feel, inspired by editorial design */
+    --cream: #F5EFE4;
+    --cream-dark: #EDE6D8;
+    --cream-card: #FFFFFF;
+    --accent-warm: #C77E24;
+    --accent-warm-pale: #FDF4E7;
     --red: #EF4444;
     --red-pale: #FEF2F2;
     --white: #FFFFFF;
@@ -495,7 +501,510 @@
   /* ══════════════════════════════════
      HOW IT WORKS
   ══════════════════════════════════ */
-  .how-section { background: var(--grey-50); }
+  .how-section { background: var(--cream); }
+
+  /* ═════════════════════════════════════════════════════════
+   * PREMIUM SHOWCASE SECTIONS — inspired by editorial layouts
+   * Warm cream palette · numbered · split layout · elegant
+   * ═════════════════════════════════════════════════════════ */
+
+  /* ─── STAKES (stat) SECTION ─── */
+  .stakes-section {
+    background: var(--cream);
+    padding: 90px 0 100px;
+  }
+  .stakes-header { max-width: 700px; margin: 0 auto 56px; text-align: center; }
+  .stakes-eyebrow {
+    display: inline-block;
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    margin-bottom: 18px;
+    position: relative;
+    padding-left: 42px;
+  }
+  .stakes-eyebrow::before {
+    content: '';
+    position: absolute; left: 0; top: 50%;
+    width: 32px; height: 1px;
+    background: var(--accent-warm);
+    opacity: 0.6;
+  }
+  .stakes-title {
+    font-size: clamp(30px, 4vw, 42px);
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -1px;
+    line-height: 1.12;
+    margin-bottom: 14px;
+  }
+  .stakes-sub {
+    font-size: 18px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .stakes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1050px;
+    margin: 0 auto;
+  }
+  .stake-card {
+    background: var(--cream-card);
+    border-radius: 20px;
+    padding: 40px 32px 34px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(15,31,61,0.03), 0 12px 40px rgba(15,31,61,0.04);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .stake-num {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(56px, 6vw, 72px);
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -2.5px;
+    line-height: 1;
+    display: flex; align-items: baseline; gap: 6px;
+    margin-bottom: 20px;
+  }
+  .stake-pct {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+  }
+  .stake-of {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0;
+    margin: 0 4px;
+    align-self: center;
+    padding-top: 8px;
+  }
+  .stake-icon {
+    width: 42px; height: 42px;
+    color: var(--navy);
+    opacity: 0.85;
+    margin-bottom: 20px;
+  }
+  .stake-desc {
+    font-size: 14.5px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    max-width: 240px;
+  }
+
+  /* ─── NUMBERED SHOWCASE SECTIONS ─── */
+  .showcase {
+    background: var(--cream);
+    padding: 90px 0;
+  }
+  .showcase-02 { background: var(--cream-dark); }
+  .showcase-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .showcase-inner.reverse .showcase-text { order: 2; }
+  .showcase-inner.reverse .showcase-visual { order: 1; }
+  .showcase-num {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 22px;
+  }
+  .showcase-num-digit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px; font-weight: 700;
+    color: var(--accent-warm);
+    letter-spacing: 0;
+  }
+  .showcase-num-line {
+    display: inline-block;
+    width: 32px; height: 1px;
+    background: var(--accent-warm);
+    opacity: 0.55;
+  }
+  .showcase-num-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+  }
+  .showcase-h2 {
+    font-size: clamp(32px, 4.2vw, 46px);
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -1.2px;
+    line-height: 1.08;
+    margin-bottom: 20px;
+  }
+  .showcase-lede {
+    font-size: 17px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 480px;
+  }
+  .showcase-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .showcase-benefits li {
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .sb-icon {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--accent-warm-pale);
+    color: var(--accent-warm);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sb-icon svg { width: 20px; height: 20px; }
+  .sb-title {
+    font-size: 15.5px; font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.2px;
+    margin-bottom: 4px;
+  }
+  .sb-desc {
+    font-size: 14.5px; color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .showcase-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--navy); color: white;
+    padding: 14px 24px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700; font-size: 15px;
+    transition: all 200ms ease;
+  }
+  .showcase-cta:hover {
+    background: var(--navy-light);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(15,31,61,0.18);
+  }
+  .showcase-visual {
+    display: flex; justify-content: center; align-items: center;
+    min-height: 400px;
+  }
+
+  /* ─── MOCKUP: ANALYZER ─── */
+  .mockup {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 12px rgba(15,31,61,0.04), 0 24px 60px rgba(15,31,61,0.08);
+    padding: 26px 24px;
+    width: 100%;
+    max-width: 460px;
+  }
+  .mockup-url-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--grey-50);
+    border-radius: 12px;
+    padding: 10px 10px 10px 14px;
+    margin-bottom: 18px;
+  }
+  .mockup-url-icon { color: var(--text-muted); display: flex; }
+  .mockup-url-icon svg { width: 16px; height: 16px; }
+  .mockup-url-text {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--navy);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mockup-url-btn {
+    background: var(--navy); color: white;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12.5px; font-weight: 700;
+    white-space: nowrap;
+  }
+  .mockup-extracted {
+    background: var(--cream);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+  .mockup-ex-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11.5px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 14px;
+  }
+  .mockup-ex-dot {
+    width: 6px; height: 6px;
+    background: var(--green); border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
+  }
+  .mockup-ex-grid {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .mockup-ex-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(15,31,61,0.06);
+  }
+  .mockup-ex-row:last-child { border: 0; padding-bottom: 0; }
+  .mockup-ex-label {
+    font-size: 13px; color: var(--text-muted);
+  }
+  .mockup-ex-val {
+    font-size: 13.5px; font-weight: 700;
+    color: var(--navy);
+  }
+  .mockup-ex-cta {
+    background: var(--navy); color: white;
+    padding: 11px 16px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 13.5px; font-weight: 700;
+  }
+
+  /* ─── MOCKUP: REPORT ─── */
+  .mockup-report { padding: 28px 26px; }
+  .mockup-report-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 22px;
+  }
+  .mockup-report-badge {
+    background: var(--blue-pale); color: var(--blue);
+    padding: 5px 12px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .mockup-report-loc {
+    font-size: 13px; color: var(--text-muted);
+    font-weight: 600;
+  }
+  .mockup-report-score {
+    display: flex; justify-content: center; margin-bottom: 24px;
+  }
+  .mockup-score-ring {
+    position: relative;
+    width: 150px; height: 150px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  .mockup-score-ring svg {
+    position: absolute; inset: 0;
+    transform: rotate(-90deg);
+  }
+  .mockup-score-ring .ring-bg {
+    fill: none;
+    stroke: var(--grey-100);
+    stroke-width: 10;
+  }
+  .mockup-score-ring .ring-fill {
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: 327;
+    stroke-dashoffset: 92; /* 72% filled */
+  }
+  .ring-num {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 48px; font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -1.5px;
+    line-height: 1;
+    position: relative; z-index: 1;
+  }
+  .ring-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 6px;
+    position: relative; z-index: 1;
+  }
+  .mockup-report-metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .mrm {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  .mrm-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+  .mrm-val {
+    font-size: 17px; font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+  }
+  .mrm-val.pos { color: var(--green); }
+  .mrm-val.neg { color: var(--red, #EF4444); }
+  .mockup-report-verdict {
+    background: var(--cream); border-left: 3px solid var(--navy);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .mrv-label {
+    font-size: 10.5px; font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 6px;
+  }
+  .mrv-text {
+    font-size: 13.5px; color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ─── MOCKUP: RENOVATION ─── */
+  .mockup-reno { padding: 28px 26px; }
+  .mockup-reno-title {
+    font-size: 15px; font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+    margin-bottom: 20px;
+  }
+  .mockup-reno-inputs {
+    display: flex; flex-direction: column;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .mri {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .mri-label {
+    font-size: 13px; color: var(--text-muted);
+    font-weight: 600;
+  }
+  .mri-val {
+    font-size: 14.5px; font-weight: 700;
+    color: var(--navy);
+  }
+  .mockup-reno-result {
+    background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+    border-radius: 14px;
+    padding: 20px 22px;
+    text-align: center;
+  }
+  .mrr-label {
+    font-size: 11px; font-weight: 700;
+    color: #0c905c;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 8px;
+  }
+  .mrr-val {
+    font-size: 32px; font-weight: 800;
+    color: var(--green);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .mrr-val.pos { color: var(--green); }
+  .mrr-sub {
+    font-size: 13px; color: #0c905c;
+    font-weight: 600;
+  }
+
+  /* ─── DARK FULL-BLEED CTA ─── */
+  .dark-cta {
+    background: linear-gradient(180deg, #1a1f38 0%, #0F1F3D 60%, #14264a 100%);
+    color: white;
+    padding: 100px 24px 110px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .dark-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center bottom, rgba(199,126,36,0.18) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .dark-cta-inner {
+    position: relative;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .dark-cta-title {
+    display: flex; flex-direction: column;
+    font-size: clamp(48px, 7vw, 82px);
+    font-weight: 800;
+    letter-spacing: -2.5px;
+    line-height: 1.05;
+    margin-bottom: 22px;
+  }
+  .dark-cta-line-1 { color: white; }
+  .dark-cta-line-2 {
+    color: #F4C378;
+    font-style: italic;
+    font-weight: 700;
+  }
+  .dark-cta-sub {
+    font-size: 17px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 36px;
+    line-height: 1.55;
+  }
+  .dark-cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #64F0AC;
+    color: var(--navy);
+    padding: 16px 32px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 800; font-size: 16px;
+    letter-spacing: -0.2px;
+    box-shadow: 0 0 0 12px rgba(100,240,172,0.12);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  .dark-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 16px rgba(100,240,172,0.18), 0 12px 40px rgba(100,240,172,0.25);
+  }
+  .dark-cta-microcopy {
+    margin-top: 18px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ─── MOBILE ADJUSTMENTS ─── */
+  @media (max-width: 900px) {
+    .showcase-inner { grid-template-columns: 1fr; gap: 48px; padding: 0 20px; }
+    .showcase-inner.reverse .showcase-text { order: 1; }
+    .showcase-inner.reverse .showcase-visual { order: 2; }
+    .showcase { padding: 70px 0; }
+    .stakes-grid { grid-template-columns: 1fr; gap: 16px; max-width: 480px; }
+    .stakes-section { padding: 70px 0 80px; }
+    .stake-card { padding: 32px 24px 28px; }
+    .stake-num { font-size: 56px; margin-bottom: 16px; }
+    .stake-icon { margin-bottom: 16px; }
+    .dark-cta { padding: 80px 20px 90px; }
+    .dark-cta-title { font-size: clamp(42px, 12vw, 62px); }
+    .showcase-visual { min-height: auto; }
+    .mockup { max-width: 100%; }
+  }
   .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 
   /* ═════ ANIMATED FLOW ═════ */
@@ -3342,6 +3851,270 @@
           </li>
         </ol>
       </div>
+    </div>
+  </section>
+
+  <!-- ═══ STAT SHOWCASE — "What's at stake" ═══ -->
+  <section class="stakes-section">
+    <div class="container">
+      <div class="stakes-header">
+        <div class="stakes-eyebrow" data-i18n="stakes.eyebrow">What's at stake</div>
+        <h2 class="stakes-title" data-i18n="stakes.title">Buying a property is one of life's biggest decisions.</h2>
+        <p class="stakes-sub" data-i18n="stakes.sub">So why make it without the full picture?</p>
+      </div>
+      <div class="stakes-grid">
+        <div class="stake-card">
+          <div class="stake-num">82<span class="stake-pct">%</span></div>
+          <svg class="stake-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-7 9 7v9a2 2 0 01-2 2h-3v-6h-8v6H5a2 2 0 01-2-2z"/></svg>
+          <div class="stake-desc" data-i18n="stakes.stat1">of investors buy without running the real numbers first.</div>
+        </div>
+        <div class="stake-card">
+          <div class="stake-num">1<span class="stake-of">in</span>3</div>
+          <svg class="stake-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="17" cy="7" r="3"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>
+          <div class="stake-desc" data-i18n="stakes.stat2">get surprised by maintenance costs the listing never mentioned.</div>
+        </div>
+        <div class="stake-card">
+          <div class="stake-num">55<span class="stake-pct">%</span></div>
+          <svg class="stake-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-7"/></svg>
+          <div class="stake-desc" data-i18n="stakes.stat3">can't tell if the yield they're being offered is actually good.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ NUMBERED SHOWCASE SECTIONS — premium split-layout ═══ -->
+
+  <!-- 01 · Analyzer -->
+  <section class="showcase showcase-01">
+    <div class="container">
+      <div class="showcase-inner">
+        <div class="showcase-text">
+          <div class="showcase-num">
+            <span class="showcase-num-digit">01</span>
+            <span class="showcase-num-line"></span>
+            <span class="showcase-num-label" data-i18n="showcase.s1.eyebrow">Your investment analyzer</span>
+          </div>
+          <h2 class="showcase-h2" data-i18n="showcase.s1.title">Paste a listing. Get the full picture.</h2>
+          <p class="showcase-lede" data-i18n="showcase.s1.lede">From Boligsiden to a full investment analysis in 60 seconds. No spreadsheets. No signup.</p>
+          <ul class="showcase-benefits">
+            <li>
+              <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.72-1.72"/></svg></span>
+              <div>
+                <div class="sb-title" data-i18n="showcase.s1.b1t">Works on any platform</div>
+                <div class="sb-desc" data-i18n="showcase.s1.b1d">Boligsiden, EDC, Home, Nybolig, Hemnet, Finn.no — any URL.</div>
+              </div>
+            </li>
+            <li>
+              <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/></svg></span>
+              <div>
+                <div class="sb-title" data-i18n="showcase.s1.b2t">Extracts automatically</div>
+                <div class="sb-desc" data-i18n="showcase.s1.b2d">Price, m², owner fees, price per m² — pulled straight from the listing.</div>
+              </div>
+            </li>
+            <li>
+              <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></span>
+              <div>
+                <div class="sb-title" data-i18n="showcase.s1.b3t">Honest market data</div>
+                <div class="sb-desc" data-i18n="showcase.s1.b3d">DST, SCB, SSB — official sources only, never fabricated.</div>
+              </div>
+            </li>
+          </ul>
+          <a href="#" class="showcase-cta" onclick="scrollToSection('analyze-section'); return false;">
+            <span data-i18n="showcase.s1.cta">Analyze a property free</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="showcase-visual">
+          <div class="mockup mockup-analyzer">
+            <div class="mockup-url-bar">
+              <span class="mockup-url-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.72-1.72"/></svg></span>
+              <span class="mockup-url-text">boligsiden.dk/adresse/vesterbrogade-42-kbh</span>
+              <span class="mockup-url-btn" data-i18n="showcase.s1.mockExtract">Extract</span>
+            </div>
+            <div class="mockup-extracted">
+              <div class="mockup-ex-header">
+                <span class="mockup-ex-dot"></span>
+                <span data-i18n="showcase.s1.mockDetected">Data extracted</span>
+              </div>
+              <div class="mockup-ex-grid">
+                <div class="mockup-ex-row">
+                  <span class="mockup-ex-label" data-i18n="showcase.s1.mockPrice">Price</span>
+                  <span class="mockup-ex-val mono">4,500,000 kr.</span>
+                </div>
+                <div class="mockup-ex-row">
+                  <span class="mockup-ex-label" data-i18n="showcase.s1.mockSize">Size</span>
+                  <span class="mockup-ex-val mono">72 m²</span>
+                </div>
+                <div class="mockup-ex-row">
+                  <span class="mockup-ex-label" data-i18n="showcase.s1.mockPerSqm">Price / m²</span>
+                  <span class="mockup-ex-val mono">62,500 kr.</span>
+                </div>
+                <div class="mockup-ex-row">
+                  <span class="mockup-ex-label" data-i18n="showcase.s1.mockType">Type</span>
+                  <span class="mockup-ex-val">Ejerlejlighed</span>
+                </div>
+              </div>
+              <div class="mockup-ex-cta" data-i18n="showcase.s1.mockAnalyze">Run analysis →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Investment report -->
+  <section class="showcase showcase-02">
+    <div class="container">
+      <div class="showcase-inner reverse">
+        <div class="showcase-text">
+          <div class="showcase-num">
+            <span class="showcase-num-digit">02</span>
+            <span class="showcase-num-line"></span>
+            <span class="showcase-num-label" data-i18n="showcase.s2.eyebrow">The investment report</span>
+          </div>
+          <h2 class="showcase-h2" data-i18n="showcase.s2.title">Understand the deal.</h2>
+          <p class="showcase-lede" data-i18n="showcase.s2.lede">Score, yield, cash flow, ROI, verdict — one clean screen. No 200-word summaries. Just the answer.</p>
+          <ul class="showcase-benefits">
+            <li>
+              <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 015.9 15.9"/></svg></span>
+              <div>
+                <div class="sb-title" data-i18n="showcase.s2.b1t">Investment score 0–100</div>
+                <div class="sb-desc" data-i18n="showcase.s2.b1d">Composite: yield + cash flow + ROI. One number, no guessing.</div>
+              </div>
+            </li>
+            <li>
+              <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+              <div>
+                <div class="sb-title" data-i18n="showcase.s2.b2t">Strategy-aware verdict</div>
+                <div class="sb-desc" data-i18n="showcase.s2.b2d">Cashflow, appreciation, value-add — same property, different judgment.</div>
+              </div>
+            </li>
+            <li>
+              <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg></span>
+              <div>
+                <div class="sb-title" data-i18n="showcase.s2.b3t">One-line answer</div>
+                <div class="sb-desc" data-i18n="showcase.s2.b3d">The biggest risk, spelled out. And a verdict you can act on.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="showcase-visual">
+          <div class="mockup mockup-report">
+            <div class="mockup-report-header">
+              <div class="mockup-report-badge" data-i18n="showcase.s2.mockStrategy">Cashflow strategy</div>
+              <div class="mockup-report-loc" data-i18n="showcase.s2.mockLoc">Copenhagen · 2200</div>
+            </div>
+            <div class="mockup-report-score">
+              <div class="mockup-score-ring">
+                <svg viewBox="0 0 120 120">
+                  <circle class="ring-bg" cx="60" cy="60" r="52" />
+                  <circle class="ring-fill" cx="60" cy="60" r="52" />
+                </svg>
+                <div class="ring-num">72</div>
+                <div class="ring-label" data-i18n="showcase.s2.mockScoreLabel">Investment Score</div>
+              </div>
+            </div>
+            <div class="mockup-report-metrics">
+              <div class="mrm">
+                <div class="mrm-label" data-i18n="showcase.s2.mockYield">Yield</div>
+                <div class="mrm-val mono">4.8%</div>
+              </div>
+              <div class="mrm">
+                <div class="mrm-label" data-i18n="showcase.s2.mockCf">Cash flow</div>
+                <div class="mrm-val mono pos">+840 kr.</div>
+              </div>
+              <div class="mrm">
+                <div class="mrm-label" data-i18n="showcase.s2.mockRoi">ROI</div>
+                <div class="mrm-val mono pos">+9.2%</div>
+              </div>
+            </div>
+            <div class="mockup-report-verdict">
+              <div class="mrv-label" data-i18n="showcase.s2.mockVerdictLabel">Verdict</div>
+              <div class="mrv-text" data-i18n="showcase.s2.mockVerdict">Workable cashflow deal — margin thin at 4.5% rate. Stress-test survives +2%.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · Renovation Mode -->
+  <section class="showcase showcase-03">
+    <div class="container">
+      <div class="showcase-inner">
+        <div class="showcase-text">
+          <div class="showcase-num">
+            <span class="showcase-num-digit">03</span>
+            <span class="showcase-num-line"></span>
+            <span class="showcase-num-label" data-i18n="showcase.s3.eyebrow">Renovation Mode</span>
+          </div>
+          <h2 class="showcase-h2" data-i18n="showcase.s3.title">See what the property could become.</h2>
+          <p class="showcase-lede" data-i18n="showcase.s3.lede">Worried about spending thousands on renovations that might not pay off? Model it first. Get the numbers.</p>
+          <ul class="showcase-benefits">
+            <li>
+              <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20l9-7-9-7-9 7 9 7z"/><path d="M3 13v6l9 7 9-7v-6"/></svg></span>
+              <div>
+                <div class="sb-title" data-i18n="showcase.s3.b1t">New rent, new value</div>
+                <div class="sb-desc" data-i18n="showcase.s3.b1d">Enter your projections. We recompute yield, cash flow, ROI.</div>
+              </div>
+            </li>
+            <li>
+              <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
+              <div>
+                <div class="sb-title" data-i18n="showcase.s3.b2t">Post-refinance capital</div>
+                <div class="sb-desc" data-i18n="showcase.s3.b2d">See how much cash you'd recover after the renovation loan.</div>
+              </div>
+            </li>
+            <li>
+              <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+              <div>
+                <div class="sb-title" data-i18n="showcase.s3.b3t">ROI uplift, black on white</div>
+                <div class="sb-desc" data-i18n="showcase.s3.b3d">Does the renovation move the needle? The delta tells you.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="showcase-visual">
+          <div class="mockup mockup-reno">
+            <div class="mockup-reno-title" data-i18n="showcase.s3.mockTitle">Renovation scenario</div>
+            <div class="mockup-reno-inputs">
+              <div class="mri">
+                <div class="mri-label" data-i18n="showcase.s3.mockBudget">Renovation budget</div>
+                <div class="mri-val mono">250,000 kr.</div>
+              </div>
+              <div class="mri">
+                <div class="mri-label" data-i18n="showcase.s3.mockNewRent">New rent</div>
+                <div class="mri-val mono">18,500 kr./mo</div>
+              </div>
+              <div class="mri">
+                <div class="mri-label" data-i18n="showcase.s3.mockNewValue">New property value</div>
+                <div class="mri-val mono">5,200,000 kr.</div>
+              </div>
+            </div>
+            <div class="mockup-reno-result">
+              <div class="mrr-label" data-i18n="showcase.s3.mockUplift">ROI uplift vs. original</div>
+              <div class="mrr-val mono pos">+8.4 pp</div>
+              <div class="mrr-sub" data-i18n="showcase.s3.mockRec">Renovation moves the needle. Proceed.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DARK FULL-BLEED CTA ═══ -->
+  <section class="dark-cta">
+    <div class="dark-cta-inner">
+      <h2 class="dark-cta-title">
+        <span class="dark-cta-line-1" data-i18n="darkCta.line1">Analyze it.</span>
+        <span class="dark-cta-line-2" data-i18n="darkCta.line2">It's free.</span>
+      </h2>
+      <p class="dark-cta-sub" data-i18n="darkCta.sub">No signup. No spreadsheets. 60 seconds.</p>
+      <a href="#" class="dark-cta-btn" onclick="scrollToSection('analyze-section'); return false;">
+        <span data-i18n="darkCta.btn">Analyze a property free</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <div class="dark-cta-microcopy" data-i18n="darkCta.micro">No card required.</div>
     </div>
   </section>
 

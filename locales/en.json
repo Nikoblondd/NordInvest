@@ -51,6 +51,78 @@
     "title": "Four steps. Sixty seconds.",
     "sub": "Paste a listing. Read the verdict. Export the numbers. Move on."
   },
+  "stakes": {
+    "eyebrow": "What's at stake",
+    "title": "Buying a property is one of life's biggest decisions.",
+    "sub": "So why make it without the full picture?",
+    "stat1": "of investors buy without running the real numbers first.",
+    "stat2": "get surprised by maintenance costs the listing never mentioned.",
+    "stat3": "can't tell if the yield they're being offered is actually good."
+  },
+  "showcase": {
+    "s1": {
+      "eyebrow": "Your investment analyzer",
+      "title": "Paste a listing. Get the full picture.",
+      "lede": "From Boligsiden to a full investment analysis in 60 seconds. No spreadsheets. No signup.",
+      "b1t": "Works on any platform",
+      "b1d": "Boligsiden, EDC, Home, Nybolig, Hemnet, Finn.no — any URL.",
+      "b2t": "Extracts automatically",
+      "b2d": "Price, m², owner fees, price per m² — pulled straight from the listing.",
+      "b3t": "Honest market data",
+      "b3d": "DST, SCB, SSB — official sources only, never fabricated.",
+      "cta": "Analyze a property free",
+      "mockExtract": "Extract",
+      "mockDetected": "Data extracted",
+      "mockPrice": "Price",
+      "mockSize": "Size",
+      "mockPerSqm": "Price / m²",
+      "mockType": "Type",
+      "mockAnalyze": "Run analysis →"
+    },
+    "s2": {
+      "eyebrow": "The investment report",
+      "title": "Understand the deal.",
+      "lede": "Score, yield, cash flow, ROI, verdict — one clean screen. No 200-word summaries. Just the answer.",
+      "b1t": "Investment score 0–100",
+      "b1d": "Composite: yield + cash flow + ROI. One number, no guessing.",
+      "b2t": "Strategy-aware verdict",
+      "b2d": "Cashflow, appreciation, value-add — same property, different judgment.",
+      "b3t": "One-line answer",
+      "b3d": "The biggest risk, spelled out. And a verdict you can act on.",
+      "mockStrategy": "Cashflow strategy",
+      "mockLoc": "Copenhagen · 2200",
+      "mockScoreLabel": "Investment Score",
+      "mockYield": "Yield",
+      "mockCf": "Cash flow",
+      "mockRoi": "ROI",
+      "mockVerdictLabel": "Verdict",
+      "mockVerdict": "Workable cashflow deal — margin thin at 4.5% rate. Stress-test survives +2%."
+    },
+    "s3": {
+      "eyebrow": "Renovation Mode",
+      "title": "See what the property could become.",
+      "lede": "Worried about spending thousands on renovations that might not pay off? Model it first. Get the numbers.",
+      "b1t": "New rent, new value",
+      "b1d": "Enter your projections. We recompute yield, cash flow, ROI.",
+      "b2t": "Post-refinance capital",
+      "b2d": "See how much cash you'd recover after the renovation loan.",
+      "b3t": "ROI uplift, black on white",
+      "b3d": "Does the renovation move the needle? The delta tells you.",
+      "mockTitle": "Renovation scenario",
+      "mockBudget": "Renovation budget",
+      "mockNewRent": "New rent",
+      "mockNewValue": "New property value",
+      "mockUplift": "ROI uplift vs. original",
+      "mockRec": "Renovation moves the needle. Proceed."
+    }
+  },
+  "darkCta": {
+    "line1": "Analyze it.",
+    "line2": "It's free.",
+    "sub": "No signup. No spreadsheets. 60 seconds.",
+    "btn": "Analyze a property free",
+    "micro": "No card required."
+  },
   "flow": {
     "step1Title": "Paste a listing",
     "step1Hint": "Boligsiden, Hemnet, Finn.no — any URL.",
