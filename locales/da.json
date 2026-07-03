@@ -54,7 +54,8 @@
   "contact": {
     "eyebrow": "Kom i kontakt",
     "title": "Spørgsmål, feedback eller samarbejde?",
-    "sub": "Vi læser hver eneste besked."
+    "sub": "Vi læser hver eneste besked.",
+    "copied": "Email kopieret — indsæt den i din mail-app"
   },
   "stakes": {
     "eyebrow": "Det står på spil",

@@ -54,7 +54,8 @@
   "contact": {
     "eyebrow": "Get in touch",
     "title": "Questions, feedback, or partnership?",
-    "sub": "We read every message."
+    "sub": "We read every message.",
+    "copied": "Email copied — paste it into your mail app"
   },
   "stakes": {
     "eyebrow": "What's at stake",
