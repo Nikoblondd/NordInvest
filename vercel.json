@@ -12,6 +12,7 @@
     { "source": "/investering-i-ejendom-aarhus", "destination": "/investering-i-ejendom-aarhus.html" },
     { "source": "/investering-i-ejendom-fyn", "destination": "/investering-i-ejendom-fyn.html" },
     { "source": "/boligsiden-investering-guide", "destination": "/boligsiden-investering-guide.html" },
+    { "source": "/investere-i-ejendom-danmark-2026", "destination": "/investere-i-ejendom-danmark-2026.html" },
     { "source": "/blog/:slug+", "destination": "/blog/post.html" }
   ]
 }
