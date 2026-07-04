@@ -200,7 +200,11 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%; /* prevent iOS zoom on landscape */
+  }
   body {
     font-family: var(--font);
     background: var(--white);
@@ -208,6 +212,16 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     font-size: 15px;
+    overflow-x: hidden; /* safety net — no more horizontal slide bugs anywhere */
+    width: 100%;
+    position: relative;
+  }
+  /* Prevent zoom-on-focus on iOS Safari for input fields (min 16px font) */
+  @media (max-width: 480px) {
+    input[type="text"], input[type="number"], input[type="email"],
+    input[type="url"], select, textarea {
+      font-size: 16px !important;
+    }
   }
 
   .container { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
@@ -944,17 +958,65 @@
 
   /* ─── MOBILE ADJUSTMENTS ─── */
   @media (max-width: 900px) {
-    .showcase-inner { grid-template-columns: 1fr; gap: 48px; padding: 0 20px; }
+    .showcase-inner {
+      grid-template-columns: 1fr; gap: 48px; padding: 0 20px;
+      min-width: 0; /* grid child overflow safety */
+    }
     .showcase-inner.reverse .showcase-text { order: 1; }
     .showcase-inner.reverse .showcase-visual { order: 2; }
-    .showcase { padding: 70px 0; }
+    .showcase { padding: 70px 0; overflow-x: hidden; }
     .stakes-grid { grid-template-columns: 1fr; gap: 16px; max-width: 480px; }
-    .stakes-section { padding: 70px 0 80px; }
+    .stakes-section { padding: 70px 0 80px; overflow-x: hidden; }
     .stake-card { padding: 32px 24px 28px; }
     .stake-num { font-size: 56px; margin-bottom: 16px; }
     .stake-icon { margin-bottom: 16px; }
-    .showcase-visual { min-height: auto; }
-    .mockup { max-width: 100%; }
+    /* KEY FIX: grid children need min-width:0 to respect column width when
+       intrinsic content is wider — otherwise mockups burst out of viewport */
+    .showcase-visual {
+      min-height: auto;
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+    .mockup {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    /* Long URL in mockup should truncate cleanly, not push the row wider */
+    .mockup-url-bar { min-width: 0; }
+    .mockup-url-text {
+      min-width: 0;
+      flex: 1 1 0;
+      font-size: 11.5px; /* tighten so more URL fits */
+    }
+  }
+  /* Extra-tight for actual phones (<= 480) */
+  @media (max-width: 480px) {
+    .showcase { padding: 56px 0; }
+    .showcase-inner { padding: 0 18px; gap: 40px; }
+    .showcase-h2 { font-size: 30px; letter-spacing: -0.8px; }
+    .mockup { padding: 20px 18px; border-radius: 20px; }
+    .mockup-report { padding: 22px 18px; }
+    .mockup-reno { padding: 22px 18px; }
+    .mockup-url-text { font-size: 11px; }
+    .mockup-url-btn { padding: 6px 10px; font-size: 11.5px; }
+    .mockup-report-metrics { gap: 8px; }
+    .mrm { padding: 12px 8px; }
+    .mrm-val { font-size: 15px; }
+    .stakes-section { padding: 56px 0 64px; }
+    .stakes-header { margin-bottom: 36px; padding: 0 20px; }
+    .stake-card { padding: 28px 20px 24px; border-radius: 16px; }
+    .stake-num { font-size: 48px; }
+    .stake-pct { font-size: 32px; }
+    .contact-section { padding: 56px 18px; }
+    .contact-email {
+      font-size: 12.5px !important;
+      padding: 12px 18px !important;
+      max-width: 100%;
+      word-break: break-all;
+    }
   }
   .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 
