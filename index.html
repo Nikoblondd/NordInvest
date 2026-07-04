@@ -57,8 +57,10 @@
 {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "https://nordinvest.io/#organization",
   "name": "NordInvest",
-  "alternateName": "NordInvest Property Analyzer",
+  "legalName": "NordInvest",
+  "alternateName": ["Nord Invest", "NordInvest.io", "NordInvest Property Analyzer"],
   "url": "https://nordinvest.io",
   "logo": {
     "@type": "ImageObject",
@@ -66,12 +68,22 @@
     "width": 2000,
     "height": 2000
   },
-  "description": "AI-powered property investment analysis platform for Nordic and European real estate markets.",
+  "image": "https://nordinvest.io/nordinvest-logo.png",
+  "email": "contact@nordinvest.io",
+  "foundingDate": "2026",
+  "description": "NordInvest is a free AI-powered property investment analyzer for Nordic and European real estate. Paste any listing URL and get rental yield, cash flow, ROI, BRRRR analysis, and a strategy-aware verdict in under 60 seconds.",
+  "slogan": "Know if a property is worth buying in under 60 seconds.",
   "areaServed": ["DK","NO","SE","FI","DE","NL","GB","FR","ES","PT","PL","CZ","HU"],
-  "knowsAbout": ["Property Investment","Rental Yield","Real Estate Analysis","Nordic Property Markets","BRRRR Strategy","Cashflow Investing"],
+  "knowsAbout": ["Property Investment","Rental Yield","Real Estate Analysis","Nordic Property Markets","BRRRR Strategy","Cashflow Investing","Danish Housing Market","Copenhagen Real Estate","Boligsiden Analysis"],
+  "sameAs": [
+    "https://nordinvest.io",
+    "https://nordinvest.io/methodology",
+    "https://nordinvest.io/investment-models"
+  ],
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "customer support",
+    "email": "contact@nordinvest.io",
     "availableLanguage": ["English", "Danish"],
     "areaServed": ["DK","NO","SE","FI","DE","NL","GB"]
   }
@@ -1035,12 +1047,27 @@
     .flow { padding-top: 8px; }
     .flow-track { display: none; }
     .flow-steps { grid-template-columns: 1fr; gap: 28px; }
-    .flow-step { flex-direction: row; text-align: left; gap: 16px; align-items: flex-start; padding: 0; }
-    .flow-node { margin-bottom: 0; flex-shrink: 0; width: 50px; height: 50px; }
+    /* On mobile: use grid so node stays in col 1 and label + hint stack cleanly in col 2 */
+    .flow-step {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-areas: "node label" "node hint";
+      column-gap: 16px;
+      row-gap: 2px;
+      text-align: left;
+      padding: 0;
+      align-items: start;
+    }
+    .flow-node {
+      grid-area: node;
+      margin-bottom: 0;
+      flex-shrink: 0;
+      width: 48px; height: 48px;
+      align-self: start;
+    }
     .flow-node svg { width: 22px; height: 22px; }
-    .flow-label-wrap { display: flex; flex-direction: column; gap: 4px; }
-    .flow-step .flow-label { margin-bottom: 2px; }
-    .flow-hint { max-width: none; }
+    .flow-step .flow-label { grid-area: label; margin-bottom: 0; padding-top: 4px; }
+    .flow-hint { grid-area: hint; max-width: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     .flow-track-fill { stroke-dashoffset: 0; transition: none; }
