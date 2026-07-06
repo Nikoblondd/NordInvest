@@ -315,7 +315,42 @@
       .featured-card { grid-template-columns: 1fr; }
       .featured-card .post-card-img { height: 200px; }
       .nav-links .nav-link:not(.nav-cta) { display: none; }
+      .nav-links { gap: 10px; }
     }
+    /* Extra-tight for real phones: reduce CTA + shrink lang switcher so nothing bleeds outside nav */
+    @media (max-width: 480px) {
+      nav { padding: 0 12px; }
+      .nav-inner { height: 56px; }
+      /* Hide the text part of the logo — the mark alone reads as brand on mobile */
+      .nav-logo {
+        font-size: 0;
+        gap: 0;
+        flex-shrink: 0;
+        min-width: 0;
+      }
+      .logo-img { width: 30px; height: 30px; flex-shrink: 0; }
+      .nav-cta {
+        padding: 7px 11px;
+        font-size: 0.78rem;
+        border-radius: 7px;
+        white-space: nowrap;      /* CRITICAL: never wrap to 2 lines */
+        flex-shrink: 0;
+        line-height: 1;
+      }
+      .nav-links { gap: 8px; flex-wrap: nowrap; }
+      .lang-switch { margin-left: 4px; padding: 2px; flex-shrink: 0; }
+      .lang-switch .lang-flag { font-size: 11px; }
+      .lang-switch .lang-code { font-size: 10.5px; }
+      .lang-btn { padding: 4px 5px; }
+    }
+    /* Very narrow (< 360px, older/small phones): hide logo text, keep just the mark */
+    @media (max-width: 360px) {
+      .nav-logo { font-size: 0; }
+      .nav-logo .logo-img { width: 24px; height: 24px; }
+      .lang-switch .lang-flag { display: none; }
+    }
+    /* Safety net: prevent any horizontal overflow on the whole blog page */
+    html, body { overflow-x: hidden; max-width: 100%; }
 
     /* Language switcher */
     .lang-switch {
