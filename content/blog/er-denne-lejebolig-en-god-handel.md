@@ -3,9 +3,9 @@ title: Er denne lejebolig en god handel? Sådan ved du det på 60 sekunder
 slug: er-denne-lejebolig-en-god-handel
 date: 2026-06-29
 description: Fem hurtige tjek der fortæller dig, om en investeringsejendom er en god handel — afkast, cash flow, ROI, break-even-leje og det lokale benchmark — på under 60 sekunder. Med gennemgået eksempel.
-tags: [lejebolig, investeringsanalyse, cash-flow, begynderguide]
+tags: [analyse, guide]
 author: NordInvest
-image: https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&auto=format&fit=crop&q=80
+image: https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&auto=format&fit=crop&q=80
 lang: da
 translation: is-this-rental-a-good-deal
 ---

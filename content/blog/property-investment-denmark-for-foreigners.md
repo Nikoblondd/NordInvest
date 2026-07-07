@@ -3,7 +3,7 @@ title: Property Investment in Denmark for Foreigners — A Practical Guide
 slug: property-investment-denmark-for-foreigners
 date: 2026-06-10
 description: What international investors need to know before buying property in Denmark — residency rules, financing, yields, taxes, and the realistic strategy for the Danish market.
-tags: [denmark, investment-strategy, beginner-guide]
+tags: [denmark, guide]
 author: NordInvest
 image: https://images.unsplash.com/photo-1719305352456-d9e9b93f4e84?w=1200&auto=format&fit=crop&q=80
 lang: en

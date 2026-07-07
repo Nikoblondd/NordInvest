@@ -3,9 +3,9 @@ title: Ejendomsinvestering i Danmark for udlændinge — en praktisk guide
 slug: ejendomsinvestering-i-danmark-for-udlaendinge
 date: 2026-06-10
 description: Hvad internationale investorer skal vide, før de køber ejendom i Danmark — opholdsregler, finansiering, afkast, skat og den realistiske strategi for det danske marked.
-tags: [danmark, investeringsstrategi, begynderguide]
+tags: [danmark, guide]
 author: NordInvest
-image: https://images.unsplash.com/photo-1719305352456-d9e9b93f4e84?w=1200&auto=format&fit=crop&q=80
+image: https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&auto=format&fit=crop&q=80
 lang: da
 translation: property-investment-denmark-for-foreigners
 ---

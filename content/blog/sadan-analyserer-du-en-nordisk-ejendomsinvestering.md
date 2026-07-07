@@ -3,9 +3,9 @@ title: Sådan analyserer du en nordisk ejendomsinvestering (trin-for-trin guide)
 slug: sadan-analyserer-du-en-nordisk-ejendomsinvestering
 date: 2026-01-15
 description: En praktisk ramme til at vurdere om en ejendom i Danmark, Norge eller Sverige er værd at købe — dækker afkast, cash flow, værdistigning og markedskontekst.
-tags: [investeringsstrategi, danmark, norge, sverige, begynderguide]
+tags: [strategi, guide]
 author: NordInvest
-image: https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&auto=format&fit=crop&q=80
+image: https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=1200&auto=format&fit=crop&q=80
 lang: da
 translation: how-to-analyze-nordic-property-investment
 ---

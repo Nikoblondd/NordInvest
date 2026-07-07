@@ -443,8 +443,8 @@
 </nav>
 
 <header class="blog-header">
-  <h1>Nordic Property Insights</h1>
-  <p>In-depth guides on investing in Denmark, Norway, and Sweden — from yield analysis to market strategy.</p>
+  <h1 id="blog-h1">Nordic Property Insights</h1>
+  <p id="blog-sub">In-depth guides on investing in Denmark, Norway, and Sweden — from yield analysis to market strategy.</p>
 </header>
 
 <div class="filters-bar" id="filtersBar">
@@ -530,31 +530,77 @@
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  const TAG_LABELS = {
+    // English
+    guide: 'Guide', strategy: 'Strategy', analysis: 'Analysis', denmark: 'Denmark',
+    // Danish
+    strategi: 'Strategi', analyse: 'Analyse', danmark: 'Danmark'
+  };
   function formatTag(t) {
-    return t.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+    return TAG_LABELS[t] || t.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
   function renderPosts(posts) {
     if (!posts.length) {
-      grid.innerHTML = `<div class="posts-empty"><h3>No posts found</h3><p>Try a different filter.</p></div>`;
+      const lang = (window.getLang && window.getLang()) || 'en';
+      const t = (en, da) => lang === 'da' ? da : en;
+      grid.innerHTML = `<div class="posts-empty">
+        <h3>${t('No posts in this category', 'Ingen indlæg i denne kategori')}</h3>
+        <p>${t('Try a different filter above.', 'Prøv et andet filter ovenfor.')}</p>
+      </div>`;
       return;
     }
     grid.innerHTML = posts.map((p, i) => renderCard(p, i)).join('');
   }
 
+  // ── Fixed 4-category taxonomy per language ──────────────────────────────
+  // Always shows the SAME 4 categories in the SAME order, regardless of
+  // which posts happen to be filtered in right now. Clean, predictable UX.
+  const CATEGORY_ORDER = {
+    en: [
+      { tag: 'guide',    label: 'Guides' },
+      { tag: 'strategy', label: 'Strategy' },
+      { tag: 'analysis', label: 'Analysis' },
+      { tag: 'denmark',  label: 'Denmark' },
+    ],
+    da: [
+      { tag: 'guide',    label: 'Guides' },
+      { tag: 'strategi', label: 'Strategi' },
+      { tag: 'analyse',  label: 'Analyse' },
+      { tag: 'danmark',  label: 'Danmark' },
+    ],
+  };
+
   function buildFilters(posts) {
-    const tagCounts = {};
-    posts.forEach(p => (p.tags||[]).forEach(t => { tagCounts[t] = (tagCounts[t]||0)+1; }));
-    const topTags = Object.entries(tagCounts).sort((a,b)=>b[1]-a[1]).slice(0,8).map(e=>e[0]);
-    topTags.forEach(tag => {
+    // Only wipe once — re-runs on language switch call buildFilters again
+    filtersBar.innerHTML = '';
+    const activeLang = (window.getLang && window.getLang()) || 'en';
+    const t = (en, da) => activeLang === 'da' ? da : en;
+
+    const label = document.createElement('span');
+    label.className = 'filter-label';
+    label.textContent = t('Filter:', 'Filter:');
+    filtersBar.appendChild(label);
+
+    const allBtn = document.createElement('button');
+    allBtn.className = 'tag-filter active';
+    allBtn.dataset.tag = 'all';
+    allBtn.textContent = t('All Posts', 'Alle indlæg');
+    filtersBar.appendChild(allBtn);
+
+    (CATEGORY_ORDER[activeLang] || CATEGORY_ORDER.en).forEach(({ tag, label }) => {
+      // Only render categories that actually have posts
+      const count = posts.filter(p => (p.tags||[]).includes(tag)).length;
+      if (!count) return;
       const btn = document.createElement('button');
       btn.className = 'tag-filter';
       btn.dataset.tag = tag;
-      btn.textContent = formatTag(tag);
+      btn.textContent = `${label} (${count})`;
       filtersBar.appendChild(btn);
     });
 
-    filtersBar.addEventListener('click', e => {
+    activeTag = 'all';
+    filtersBar.onclick = e => {
       const btn = e.target.closest('.tag-filter');
       if (!btn) return;
       activeTag = btn.dataset.tag;
@@ -562,7 +608,7 @@
       btn.classList.add('active');
       const filtered = activeTag === 'all' ? allPosts : allPosts.filter(p => (p.tags||[]).includes(activeTag));
       renderPosts(filtered);
-    });
+    };
   }
 
   // ── Frontmatter parser (runs in browser) ─────────────────────────────────
@@ -615,6 +661,18 @@
       const activeLang = (window.getLang && window.getLang()) || 'en';
       const langMatched = posts.filter(p => p.lang === activeLang);
       allPosts = langMatched.length ? langMatched : posts;
+
+      // Translate header for Danish
+      const h1 = document.getElementById('blog-h1');
+      const sub = document.getElementById('blog-sub');
+      if (activeLang === 'da' && h1 && sub) {
+        h1.textContent = 'Nordisk ejendomsindsigt';
+        sub.textContent = 'Guides om ejendomsinvestering i Danmark, Norge og Sverige — afkast, cash flow, strategi og markedsdata.';
+      } else if (h1 && sub) {
+        h1.textContent = 'Nordic Property Insights';
+        sub.textContent = 'In-depth guides on investing in Denmark, Norway, and Sweden — from yield analysis to market strategy.';
+      }
+
       buildFilters(allPosts);
       renderPosts(allPosts);
       injectBlogSchema(allPosts);

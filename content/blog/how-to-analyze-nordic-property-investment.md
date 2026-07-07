@@ -3,9 +3,9 @@ title: How to Analyze a Nordic Property Investment (Step-by-Step Guide)
 slug: how-to-analyze-nordic-property-investment
 date: 2026-01-15
 description: A practical framework for evaluating whether a property in Denmark, Norway, or Sweden is worth buying — covering yield, cash flow, appreciation, and market context.
-tags: [investment-strategy, denmark, norway, sweden, beginner-guide]
+tags: [strategy, guide]
 author: NordInvest
-image: https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&auto=format&fit=crop&q=80
+image: https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&auto=format&fit=crop&q=80
 lang: en
 translation: sadan-analyserer-du-en-nordisk-ejendomsinvestering
 ---

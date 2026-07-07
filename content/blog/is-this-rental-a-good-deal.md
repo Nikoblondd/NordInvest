@@ -3,7 +3,7 @@ title: Is This Rental a Good Deal? How to Know in 60 Seconds
 slug: is-this-rental-a-good-deal
 date: 2026-06-29
 description: Five fast checks that tell you whether a rental property is a good deal — yield, cash flow, ROI, break-even rent, and the local benchmark — in under 60 seconds. With a worked example.
-tags: [rental-property, investment-analysis, cash-flow, beginner-guide]
+tags: [analysis, guide]
 author: NordInvest
 image: https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&auto=format&fit=crop&q=80
 lang: en

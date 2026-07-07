@@ -3,7 +3,7 @@ title: Ejendomsinvestering: Sådan køber du din første ejendom
 slug: koeb-af-investeringsejendom
 date: 2026-07-06
 description: Overvejer du ejendomsinvestering? Konkret guide til køb af investeringsejendom i Danmark — finansiering, afkastkrav, faldgruber og tal fra markedet 2026.
-tags: [danmark, ejendomsinvestering, begynderguide, investeringsstrategi]
+tags: [danmark, guide, strategi]
 author: NordInvest
 image: https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1200&auto=format&fit=crop&q=80
 lang: da

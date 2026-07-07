@@ -3,7 +3,7 @@ title: Is It Worth Buying Property in Copenhagen? An Investor's Guide
 slug: is-it-worth-buying-property-in-copenhagen
 date: 2026-06-12
 description: A clear-eyed look at whether buying an investment property in Copenhagen makes sense — the yields, the appreciation case, the risks, and how to tell a good deal from an expensive mistake.
-tags: [denmark, investment-strategy, rental-yield]
+tags: [denmark, strategy]
 author: NordInvest
 image: https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&auto=format&fit=crop&q=80
 lang: en

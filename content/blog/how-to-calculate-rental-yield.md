@@ -3,9 +3,9 @@ title: How to Calculate Rental Yield on a Nordic Property (With Examples)
 slug: how-to-calculate-rental-yield
 date: 2026-06-14
 description: Learn how to calculate gross and net rental yield on property in Denmark, Norway, and Sweden — with worked examples, a clear formula, and the yield benchmarks that actually matter.
-tags: [rental-yield, investment-strategy, denmark, beginner-guide]
+tags: [analysis, guide]
 author: NordInvest
-image: https://images.unsplash.com/photo-1609495059028-7336a644dbca?w=1200&auto=format&fit=crop&q=80
+image: https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&auto=format&fit=crop&q=80
 lang: en
 translation: sadan-beregner-du-lejeafkast
 ---

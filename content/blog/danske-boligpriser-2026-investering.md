@@ -3,9 +3,9 @@ title: Danske boligpriser 2026 — er det stadig værd at investere?
 slug: danske-boligpriser-2026-investering
 date: 2026-07-03
 description: De danske boligpriser stiger stadig i 2026. Er markedet oversolgt, eller er der stadig handler der giver mening? En ærlig gennemgang med DST-data, postnummer-benchmarks, og hvem markedet stadig virker for.
-tags: [danmark, boligmarkedet-2026, investeringsstrategi, lejeafkast]
+tags: [danmark, strategi]
 author: NordInvest
-image: https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&auto=format&fit=crop&q=80
+image: https://images.unsplash.com/photo-1494526585095-c41746248156?w=1200&auto=format&fit=crop&q=80
 lang: da
 ---
 

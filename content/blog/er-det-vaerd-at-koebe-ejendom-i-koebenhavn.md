@@ -3,9 +3,9 @@ title: Er det værd at købe ejendom i København? En investors guide
 slug: er-det-vaerd-at-koebe-ejendom-i-koebenhavn
 date: 2026-06-12
 description: Et klart syn på, om det giver mening at købe en investeringsejendom i København — afkastet, værdistigningsargumentet, risici, og hvordan du skelner en god handel fra en dyr fejl.
-tags: [danmark, investeringsstrategi, lejeafkast]
+tags: [danmark, strategi]
 author: NordInvest
-image: https://images.unsplash.com/photo-1552560880-2482cef14240?w=1200&auto=format&fit=crop&q=80
+image: https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=1200&auto=format&fit=crop&q=80
 lang: da
 translation: is-it-worth-buying-property-in-copenhagen
 ---

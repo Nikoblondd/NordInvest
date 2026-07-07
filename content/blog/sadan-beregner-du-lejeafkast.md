@@ -3,9 +3,9 @@ title: Sådan beregner du lejeafkast på en nordisk ejendom (med eksempler)
 slug: sadan-beregner-du-lejeafkast
 date: 2026-06-14
 description: Lær at beregne brutto- og nettolejeafkast på ejendom i Danmark, Norge og Sverige — med gennemgåede eksempler, en klar formel og de afkast-benchmarks der faktisk betyder noget.
-tags: [lejeafkast, investeringsstrategi, danmark, begynderguide]
+tags: [analyse, guide]
 author: NordInvest
-image: https://images.unsplash.com/photo-1609495059028-7336a644dbca?w=1200&auto=format&fit=crop&q=80
+image: https://images.unsplash.com/photo-1554224154-26032ffc0d07?w=1200&auto=format&fit=crop&q=80
 lang: da
 translation: how-to-calculate-rental-yield
 ---
