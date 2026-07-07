@@ -42,7 +42,7 @@ En ejerlejlighed i Odense til 2,1 mio. kr., der kan udlejes for 9.500 kr. om må
 - Årlig leje: 9.500 × 12 = 114.000 kr.
 - Bruttoafkast: 114.000 ÷ 2.100.000 = **5,4 %**
 
-Det tal siger ikke om handlen er god — det siger om den er i det rigtige boldområde. Under 4 % er du i rent værdistigningsterritorium. Over 6 % er du i cash flow-land. 5,4 % i Odense er solidt midtfelt.
+Det tal siger ikke om handlen er god — det siger om den er i det rigtige boldområde. Under 4 % er du i rent værdistigningsterritorium. Over 6 % er du i cash flow-land. 5,4 % i Odense er solidt midtfelt. Vil du dybere ned i forskellen på brutto- og nettoafkast, har vi en [komplet guide til at beregne lejeafkast](/blog/sadan-beregner-du-lejeafkast).
 
 ### Cash flow: kan ejendommen betale sig selv?
 
@@ -76,7 +76,7 @@ Bruttoafkastet varierer voldsomt mellem landsdele. Tallene her er intervaller ba
 
 Læg mærke til mønstret: jo højere afkast, jo mindre by — og jo færre købere den dag, du skal sælge. Et bruttoafkast på 8 % i en mindre fynsk by er kun bedre end 4 % i København, hvis du faktisk kan finde lejere løbende og komme ud af investeringen igen. Likviditet er den skjulte pris for højt afkast.
 
-For førstegangskøbere er den pragmatiske zone typisk **5-7 % brutto i en by med universitet eller sygehus** — Odense, Aalborg og Aarhus-forstæderne rammer den balance. Stor nok lejeefterspørgsel til at tomgang er kort, højt nok afkast til at regnestykket kan hænge sammen.
+For førstegangskøbere er den pragmatiske zone typisk **5-7 % brutto i en by med universitet eller sygehus** — Odense, Aalborg og Aarhus-forstæderne rammer den balance. Stor nok lejeefterspørgsel til at tomgang er kort, højt nok afkast til at regnestykket kan hænge sammen. Er du nysgerrig på landets stærkeste cash flow-marked, har vi gennemgået [boligmarkedet på Fyn postnummer for postnummer](/investering-i-ejendom-fyn) — og for det store billede af, om timingen overhovedet er rigtig, læs vores analyse af [om det stadig er værd at investere i Danmark i 2026](/investere-i-ejendom-danmark-2026).
 
 ## Finansieringen: her vindes og tabes handlen
 
@@ -108,7 +108,7 @@ Tommelfingerreglen: én ejendom med beskedent overskud → personligt regi eller
 
 ## Fem fejl der koster førstegangsinvestorer dyrt
 
-**1. At regne med annoncens tal.** Mæglerens "forventet leje" er et salgsargument, ikke en garanti. Tjek selv de faktiske lejeniveauer for tilsvarende boliger i samme postnummer, og træk 5-10 % fra som forsigtighed.
+**1. At regne med annoncens tal.** Mæglerens "forventet leje" er et salgsargument, ikke en garanti. Tjek selv de faktiske lejeniveauer for tilsvarende boliger i samme postnummer, og træk 5-10 % fra som forsigtighed. Vi har lavet en [trin-for-trin guide til at analysere en bolig direkte fra Boligsiden](/boligsiden-investering-guide), så du kan efterprøve annoncens tal på minutter.
 
 **2. At glemme tomgang og vedligehold.** En lejer flytter i gennemsnit efter 2-4 år, og hvert skift koster typisk en måneds tomgang plus istandsættelse. Budgettér 1 % af ejendomsværdien årligt til vedligehold og en måneds leje til tomgang — hvert år, ikke kun de år hvor det sker.
 
@@ -128,7 +128,7 @@ Tommelfingerreglen: én ejendom med beskedent overskud → personligt regi eller
 - Ejerforeningens økonomi og kommende renoveringsprojekter gennemgået
 - Exit-scenarie gennemtænkt: hvem køber denne ejendom af dig om 10 år?
 
-Kan du sætte flueben ved alle syv, ved du mere om handlen end 80 % af dem, der byder imod dig.
+Kan du sætte flueben ved alle syv, ved du mere om handlen end 80 % af dem, der byder imod dig. Vil du have en hurtigere version, koger vores artikel [Er denne lejebolig en god handel?](/blog/er-denne-lejebolig-en-god-handel) beslutningen ned til fem tjek på 60 sekunder.
 
 ## Kør tallene, før du forelsker dig
 
