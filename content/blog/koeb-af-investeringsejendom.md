@@ -88,6 +88,24 @@ Købsprisen fylder mest i hovedet, men finansieringsstrukturen fylder mest i res
 
 **Stresstesten** er ikke til forhandling. Kør tallene ved din rente plus 2 procentpoint. Ydelsen på et lån på 1,68 mio. kr. stiger fra ca. 8.500 til ca. 10.600 kr. om måneden, hvis renten går fra 4,5 til 6,5 %. Kan du dække de ekstra 2.100 kr. hver måned uden at svede? Hvis ikke, så køb billigere eller læg mere udbetaling.
 
+## Skat: de tre måder at eje på
+
+Skattestrukturen afgør, hvor meget af afkastet du beholder — og den skal vælges *inden* købet, ikke repareres bagefter.
+
+### Personligt regi
+
+Du ejer ejendommen i eget navn og beskattes af lejeoverskuddet som personlig indkomst — op mod 52 % i topskat. Renteudgifter kan kun fratrækkes som kapitalindkomst med en fradragsværdi omkring 33 %. Simpelt at etablere, men skattemæssigt den tungeste model, hvis du har høj lønindkomst ved siden af.
+
+### Virksomhedsordningen (VSO)
+
+Udlejning i personligt regi kan drives under virksomhedsordningen. Fordelene er markante: renteudgifter fratrækkes fuldt ud i virksomhedens resultat, og overskud du lader stå i virksomheden, beskattes foreløbigt med cirka 22 % — resten udskydes til du hæver pengene. For investorer, der vil geninvestere overskuddet i næste ejendom, er VSO ofte det rigtige valg. Prisen er krav om adskilt økonomi og typisk 8.000-15.000 kr. årligt til revisor.
+
+### Selskab (ApS)
+
+Ejendommen ejes af et anpartsselskab. Overskud beskattes med 22 % selskabsskat, og du beskattes først personligt, når du trækker udbytte ud. Fordelen er fleksibilitet ved flere ejendomme og nemmere generationsskifte; ulempen er, at realkreditbelåning til selskaber ofte er strammere, og at et salg af ejendommen udløser avancebeskatning i selskabet uden ejendomsavancebeskatningslovens undtagelser for parcelhuse.
+
+Tommelfingerreglen: én ejendom med beskedent overskud → personligt regi eller VSO. Flere ejendomme eller planer om at skalere → tal med en revisor om selskabsstruktur, før du byder på nummer to. Regn med at strukturvalget flytter 5.000-25.000 kr. om året på bundlinjen for en typisk enkelt-lejlighedsinvestering — det er mere end de fleste forhandler sig til i købspris.
+
 ## Fem fejl der koster førstegangsinvestorer dyrt
 
 **1. At regne med annoncens tal.** Mæglerens "forventet leje" er et salgsargument, ikke en garanti. Tjek selv de faktiske lejeniveauer for tilsvarende boliger i samme postnummer, og træk 5-10 % fra som forsigtighed.
