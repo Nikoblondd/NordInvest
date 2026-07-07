@@ -130,6 +130,20 @@ Tommelfingerreglen: én ejendom med beskedent overskud → personligt regi eller
 
 Kan du sætte flueben ved alle syv, ved du mere om handlen end 80 % af dem, der byder imod dig. Vil du have en hurtigere version, koger vores artikel [Er denne lejebolig en god handel?](/blog/er-denne-lejebolig-en-god-handel) beslutningen ned til fem tjek på 60 sekunder.
 
+## Ofte stillede spørgsmål om ejendomsinvestering
+
+### Hvor mange penge skal man have for at investere i ejendom?
+
+Regn med 25-30 % af købsprisen i kontanter: 20-25 % udbetaling plus 3-5 % til handelsomkostninger, tinglysning og advokat. For en investeringslejlighed til 2 mio. kr. betyder det 500.000-600.000 kr. Dertil en likviditetsbuffer på mindst 6 måneders ydelse, så en tom lejlighed eller en uventet regning ikke tvinger dig til at sælge på det forkerte tidspunkt.
+
+### Hvad er et godt afkast på en investeringsejendom i Danmark?
+
+Det afhænger af markedet. I København er 3,5-4,5 % brutto normalt og acceptabelt, fordi værdistigningen bærer resten. I Odense og Aalborg er 5-6 % standard. På Fyn uden for Odense og i mindre jyske byer bør du kræve 6-8 % — det højere afkast er kompensation for lavere likviditet og svagere prisvækst. Et afkast skal altid vurderes mod postnummeret, aldrig mod et landsgennemsnit.
+
+### Kan ejendomsinvestering betale sig i 2026?
+
+Ja, men marginerne er smallere end for fem år siden, og strategivalget betyder mere. Cash flow-handler findes stadig uden for de store byer, og værdistigningshandler i København kræver længere horisont end tidligere. Den fulde gennemgang står i vores analyse af [det danske boligmarked i 2026](/investere-i-ejendom-danmark-2026).
+
 ## Kør tallene, før du forelsker dig
 
 Ejendomsinvestering belønner de kølige og straffer de forelskede. Forskellen på en god og en dårlig handel er sjældent ejendommen selv — det er regnestykket, køberen lavede eller sprang over, inden der blev skrevet under.
