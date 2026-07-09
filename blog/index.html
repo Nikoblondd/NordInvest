@@ -138,14 +138,86 @@
     }
 
     /* FILTERS */
+    /* ── Search box ── */
+    .search-wrap {
+      max-width: 1100px;
+      margin: 40px auto 0;
+      padding: 0 24px;
+    }
+    .search-inner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface, #F8F9FA);
+      border: 1px solid var(--border, #E5E7EB);
+      border-radius: 12px;
+      padding: 4px 6px 4px 14px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .search-inner:focus-within {
+      border-color: var(--navy, #0F1F3D);
+      box-shadow: 0 0 0 3px rgba(15,31,61,0.08);
+      background: #fff;
+    }
+    .search-icon {
+      width: 18px; height: 18px;
+      color: var(--muted, #6B7280);
+      flex-shrink: 0;
+    }
+    .search-input {
+      flex: 1;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      padding: 12px 4px;
+      font: inherit;
+      font-size: 15px;
+      color: var(--navy, #0F1F3D);
+      min-width: 0;              /* flex overflow safety */
+      -webkit-appearance: none;
+    }
+    .search-input::-webkit-search-cancel-button { display: none; }
+    .search-input::placeholder { color: var(--muted, #6B7280); }
+    .search-clear {
+      background: transparent;
+      border: 0;
+      color: var(--muted, #6B7280);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .search-clear:hover { background: rgba(15,31,61,0.06); color: var(--navy, #0F1F3D); }
+    @media (max-width: 640px) {
+      .search-wrap { margin-top: 28px; padding: 0 16px; }
+      .search-inner { padding: 3px 4px 3px 12px; }
+      .search-input {
+        padding: 11px 2px;
+        font-size: 16px;         /* prevent iOS zoom on focus */
+      }
+      .search-icon { width: 16px; height: 16px; }
+    }
+    /* Highlight matched substring inside cards */
+    mark.search-hit {
+      background: #FEF3C7;
+      color: inherit;
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+
     .filters-bar {
       max-width: 1100px;
-      margin: 32px auto 0;
+      margin: 16px auto 0;
       padding: 0 24px;
       display: flex;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
+    }
+    @media (max-width: 640px) {
+      .filters-bar { padding: 0 16px; margin-top: 14px; }
     }
     .filter-label { font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-right: 4px; }
     .tag-filter {
@@ -447,6 +519,17 @@
   <p id="blog-sub">In-depth guides on investing in Denmark, Norway, and Sweden — from yield analysis to market strategy.</p>
 </header>
 
+<div class="search-wrap">
+  <div class="search-inner">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="search" id="searchInput" class="search-input" autocomplete="off"
+           placeholder="Search articles…" aria-label="Search articles">
+    <button type="button" id="searchClear" class="search-clear" aria-label="Clear search" hidden>×</button>
+  </div>
+</div>
+
 <div class="filters-bar" id="filtersBar">
   <span class="filter-label">Filter:</span>
   <button class="tag-filter active" data-tag="all">All Posts</button>
@@ -472,9 +555,12 @@
 <script>
   const grid   = document.getElementById('postsGrid');
   const filtersBar = document.getElementById('filtersBar');
+  const searchInput = document.getElementById('searchInput');
+  const searchClear = document.getElementById('searchClear');
 
   let allPosts = [];
   let activeTag = 'all';
+  let searchQuery = '';
 
   function formatDate(str) {
     if (!str) return '';
@@ -544,10 +630,18 @@
     if (!posts.length) {
       const lang = (window.getLang && window.getLang()) || 'en';
       const t = (en, da) => lang === 'da' ? da : en;
-      grid.innerHTML = `<div class="posts-empty">
-        <h3>${t('No posts in this category', 'Ingen indlæg i denne kategori')}</h3>
-        <p>${t('Try a different filter above.', 'Prøv et andet filter ovenfor.')}</p>
-      </div>`;
+      const esc = s => (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      if (searchQuery) {
+        grid.innerHTML = `<div class="posts-empty">
+          <h3>${t('No matches for', 'Ingen resultater for')} "${esc(searchQuery)}"</h3>
+          <p>${t('Try a shorter or different search term.', 'Prøv et kortere eller andet søgeord.')}</p>
+        </div>`;
+      } else {
+        grid.innerHTML = `<div class="posts-empty">
+          <h3>${t('No posts in this category', 'Ingen indlæg i denne kategori')}</h3>
+          <p>${t('Try a different filter above.', 'Prøv et andet filter ovenfor.')}</p>
+        </div>`;
+      }
       return;
     }
     grid.innerHTML = posts.map((p, i) => renderCard(p, i)).join('');
@@ -606,15 +700,58 @@
       activeTag = btn.dataset.tag;
       filtersBar.querySelectorAll('.tag-filter').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const filtered = activeTag === 'all' ? allPosts : allPosts.filter(p => (p.tags||[]).includes(activeTag));
-      renderPosts(filtered);
+      applyFilters();
     };
   }
 
+  // Central filter: tag AND search combined.
+  function applyFilters() {
+    let filtered = activeTag === 'all'
+      ? allPosts.slice()
+      : allPosts.filter(p => (p.tags||[]).includes(activeTag));
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(p => (p.searchBlob || '').includes(q));
+    }
+    renderPosts(filtered);
+  }
+
+  // Wire the search box: debounced input, ESC to clear, × button.
+  if (searchInput) {
+    let debounce;
+    const onInput = () => {
+      searchQuery = searchInput.value.trim();
+      searchClear.hidden = !searchQuery;
+      clearTimeout(debounce);
+      debounce = setTimeout(applyFilters, 120);
+    };
+    searchInput.addEventListener('input', onInput);
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { searchInput.value = ''; onInput(); }
+    });
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      onInput();
+      searchInput.focus();
+    });
+  }
+
+  // Localised placeholder for search input.
+  function updateSearchLang() {
+    if (!searchInput) return;
+    const lang = (window.getLang && window.getLang()) || 'en';
+    searchInput.placeholder = lang === 'da'
+      ? 'Søg i artikler (titel, indhold, ord…)'
+      : 'Search articles (title, content, keyword…)';
+    searchInput.setAttribute('aria-label', lang === 'da' ? 'Søg i artikler' : 'Search articles');
+  }
+  document.addEventListener('i18n:ready', updateSearchLang);
+  updateSearchLang();
+
   // ── Frontmatter parser (runs in browser) ─────────────────────────────────
   function parseFrontmatter(content) {
-    const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-    if (!m) return { meta: {} };
+    const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)/);
+    if (!m) return { meta: {}, body: '' };
     const meta = {};
     for (const line of m[1].split('\n')) {
       const i = line.indexOf(':');
@@ -627,7 +764,18 @@
         meta[key] = raw.replace(/^["']|["']$/g,'');
       }
     }
-    return { meta };
+    // Strip markdown to a searchable plaintext blob — headings, links, bold,
+    // code fences, tables — everything becomes flat text we can substring match.
+    const body = (m[2] || '')
+      .replace(/```[\s\S]*?```/g, ' ')      // code blocks
+      .replace(/`([^`]+)`/g, '$1')          // inline code
+      .replace(/!\[[^\]]*\]\([^)]+\)/g, ' ')// images
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links → keep visible text
+      .replace(/[#*_>|~-]+/g, ' ')          // md syntax
+      .replace(/\s+/g, ' ')
+      .toLowerCase()
+      .trim();
+    return { meta, body };
   }
 
   // ── Load posts from static CDN files (no API / no Lambda) ────────────────
@@ -642,7 +790,7 @@
           const r = await fetch(`/content/blog/${slug}.md`);
           if (!r.ok) return null;
           const src = await r.text();
-          const { meta } = parseFrontmatter(src);
+          const { meta, body } = parseFrontmatter(src);
           const words = src.replace(/```[\s\S]*?```/g,'').split(/\s+/).length;
           return {
             slug:        meta.slug        || slug,
@@ -652,6 +800,7 @@
             tags:        Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
             image:       meta.image       || null,
             author:      meta.author      || 'NordInvest',
+            searchBlob:  (meta.title + ' ' + (meta.description || '') + ' ' + body).toLowerCase(),
             readingTime: Math.max(1, Math.round(words / 220)),
             lang:        meta.lang        || 'en',
           };
