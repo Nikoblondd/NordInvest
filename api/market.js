@@ -5,36 +5,11 @@
 // Methodology and source list: /methodology
 // Update the bundled file by running: node scripts/update-market-data.mjs
 
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
-
-// Load the bundled dataset once at cold-start. Resolves relative to THIS file
-// (import.meta.url) rather than process.cwd() — on Vercel's Node runtime the
-// working directory is not the deployment root, so cwd-based paths crash the
-// entire function with FUNCTION_INVOCATION_FAILED. This is portable to any
-// hosting.
-let marketStats;
-let marketStatsError = null;
-try {
-  const here = dirname(fileURLToPath(import.meta.url));
-  // Try common layouts: sibling to /api, or bundled next to the function.
-  const candidates = [
-    join(here, '..', 'data', 'market-stats.json'),
-    join(here, 'data', 'market-stats.json'),
-    join(process.cwd(), 'data', 'market-stats.json'),
-  ];
-  let loaded = null;
-  for (const p of candidates) {
-    try { loaded = readFileSync(p, 'utf8'); break; } catch (_) {}
-  }
-  if (!loaded) throw new Error('market-stats.json not found in any known location');
-  marketStats = JSON.parse(loaded);
-} catch (err) {
-  // Never crash the function at cold-start — degrade gracefully at request time.
-  marketStatsError = err.message || String(err);
-  marketStats = { denmark: {}, sweden: {}, norway: {} };
-}
+// Static ES module import — Vercel's bundler follows this and includes the
+// data file in the function bundle automatically. Reading the .json via fs
+// at cold-start silently fails on Vercel because dynamic file reads aren't
+// analyzed and the data/ directory doesn't get uploaded with the function.
+import marketStats from '../data/market-stats.mjs';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
