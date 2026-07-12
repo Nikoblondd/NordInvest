@@ -40,14 +40,17 @@ const COUNTRY_BUCKET = {
 // City alias → canonical slug used in the JSON file.
 const CITY_ALIASES = {
   // Denmark
+  'copenhagen': 'copenhagen',
   'kobenhavn': 'copenhagen', 'kbh': 'copenhagen', 'københavn': 'copenhagen',
   'nordhavn': 'copenhagen', 'osterbro': 'copenhagen', 'østerbro': 'copenhagen',
   'vesterbro': 'copenhagen', 'noerrebro': 'copenhagen', 'nørrebro': 'copenhagen',
   'indre by': 'copenhagen', 'christianshavn': 'copenhagen', 'amager': 'copenhagen',
+  'valby': 'copenhagen', 'sydhavn': 'copenhagen',
   'aarhus': 'aarhus', 'arhus': 'aarhus', 'århus': 'aarhus',
   'odense': 'odense', 'aalborg': 'aalborg', 'ålborg': 'aalborg',
   'frederiksberg': 'frederiksberg', 'gentofte': 'gentofte',
-  'lyngby': 'lyngby-taarbaek', 'lyngby-taarbaek': 'lyngby-taarbaek',
+  'hellerup': 'gentofte', 'charlottenlund': 'gentofte',
+  'lyngby': 'lyngby-taarbaek', 'lyngby-taarbaek': 'lyngby-taarbaek', 'taarbaek': 'lyngby-taarbaek',
   'vejle': 'vejle', 'horsens': 'horsens', 'kolding': 'kolding',
   'esbjerg': 'esbjerg', 'roskilde': 'roskilde',
   // Sweden
