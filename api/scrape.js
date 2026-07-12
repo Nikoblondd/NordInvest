@@ -261,26 +261,50 @@ function extractEnergyLabel(html) {
   return null;
 }
 
-// ── Property type ─────────────────────────────────────────────────────────
+// ── Property type + category ──────────────────────────────────────────────
+// Returns { type: "Kontor", category: "commercial" } — category drives analysis logic
+const TYPE_MAP = [
+  // Commercial — offices, retail, industrial
+  { rx: /kontorejendom|kontorbygning|kontor(?![a-zæøå])|office\s*building|office\s*space|contorhus/i, type: 'Kontor',        category: 'commercial' },
+  { rx: /butik|forretning|retail|shop\s*premises|butikslokale|butiksejendom/i,                        type: 'Butik',        category: 'commercial' },
+  { rx: /lagerejendom|lagerlokale|lagerbygning|warehouse|logistik/i,                                  type: 'Lager',        category: 'commercial' },
+  { rx: /industriejendom|industribygning|fabrik|produktionsbygning|production\s*facility|factory/i,   type: 'Industri',     category: 'commercial' },
+  { rx: /hotel|restaurant|caf[ée]|kro|hospitality|guest\s*house|pensionat/i,                          type: 'Hotel/restaurant', category: 'commercial' },
+  { rx: /blandet\s*(?:erhverv|bolig)|mixed[- ]use|erhverv\s*og\s*bolig|bolig\s*og\s*erhverv/i,        type: 'Blandet erhverv/bolig', category: 'mixed' },
+  { rx: /erhvervsejendom|erhvervsudlejning|commercial\s*property|erhverv(?![a-zæøå])/i,               type: 'Erhverv',      category: 'commercial' },
+  { rx: /udlejningsejendom|investment\s*property|apartment\s*building|multi[- ]?family|beboelsesejendom/i, type: 'Udlejningsejendom', category: 'commercial' },
+  // Land + agricultural
+  { rx: /landbrug|landbrugsejendom|agricultural|farm\s*property|g[åa]rd|bondeg[åa]rd/i,               type: 'Landbrug',     category: 'agricultural' },
+  { rx: /(?:byggegrund|helårsgrund|grundareal|grund til salg|building\s*plot|land\s*for\s*sale)(?![a-zæøå])/i, type: 'Grund',        category: 'land' },
+  // Residential
+  { rx: /villa|enfamiliehus|enfamilie|single[- ]family|detached\s*house/i,                            type: 'Villa',        category: 'residential' },
+  { rx: /r[æa]kkehus|townhouse|rekkehus|radhus|terrace\s*house/i,                                     type: 'Rækkehus',     category: 'residential' },
+  { rx: /andelsbolig|andelslejlighed|housing\s*co-?op/i,                                              type: 'Andelsbolig',  category: 'residential' },
+  { rx: /sommerhus|fritidsbolig|holiday\s*home|summer\s*cottage/i,                                    type: 'Sommerhus',    category: 'residential' },
+  { rx: /ejerlejlighed|lejlighed|apartment|leilighet|l[äa]genhet|flat(?![a-z])/i,                     type: 'Lejlighed',    category: 'residential' },
+];
+
 function extractPropertyType(html, url) {
   const u = url.toLowerCase();
-  // JSON keys first
-  const jm = html.match(/"(?:propertyType|boligtype|type|category)":\s*"([^"]{3,40})"/i);
-  if (jm) {
-    const t = jm[1].toLowerCase();
-    if (t.match(/villa|enfamiliehus|house/)) return 'Villa';
-    if (t.match(/lejlighed|apartment|leilighet/)) return 'Lejlighed';
-    if (t.match(/r[æa]kkehus|townhouse|rekkehus|radhus/)) return 'Rækkehus';
-    if (t.match(/andel/)) return 'Andelsbolig';
-    if (t.match(/sommerhus|fritidsbolig/)) return 'Sommerhus';
-    if (t.match(/erhverv|commercial/)) return 'Erhverv';
+
+  // 1. JSON keys — cleanest signal
+  const jsonKeys = ['propertyType', 'boligtype', 'ejendomstype', 'type', 'category', 'unitType', 'realEstateType'];
+  for (const k of jsonKeys) {
+    const jm = html.match(new RegExp(`"${k}":\\s*"([^"]{3,60})"`, 'i'));
+    if (jm) {
+      const t = jm[1];
+      for (const entry of TYPE_MAP) if (entry.rx.test(t)) return { type: entry.type, category: entry.category };
+    }
   }
-  // URL patterns
-  if (u.match(/villa|enfamilie/)) return 'Villa';
-  if (u.match(/lejlighed|apartment/)) return 'Lejlighed';
-  if (u.match(/raekkehus|rakkehus|townhouse/)) return 'Rækkehus';
-  if (u.match(/andels/)) return 'Andelsbolig';
-  return null;
+
+  // 2. Breadcrumbs / URL path
+  for (const entry of TYPE_MAP) if (entry.rx.test(u)) return { type: entry.type, category: entry.category };
+
+  // 3. Body text — first hit wins by TYPE_MAP order (commercial > residential precedence)
+  const bodyText = html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ').slice(0, 15000);
+  for (const entry of TYPE_MAP) if (entry.rx.test(bodyText)) return { type: entry.type, category: entry.category };
+
+  return { type: null, category: 'residential' }; // default assumption
 }
 
 // ── Description text (for condition analysis) ─────────────────────────────
@@ -368,6 +392,94 @@ function analyzeCondition(description, buildYear) {
   return { summary, flags: flags.slice(0, 4) };
 }
 
+// ── Aggressive location extractor (5 fallback layers) ────────────────────
+// Called only if the primary extractors (JSON-LD, __NEXT_DATA__, Danish patterns)
+// all failed to find a location. Never returns junk — always readable.
+function extractLocationAggressive(html, url) {
+  const clean = (s) => (s || '').replace(/\s+/g, ' ').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').trim();
+  const looksLikeAddress = (s) => {
+    if (!s || s.length < 3 || s.length > 120) return false;
+    if (/[{}<>|@]/.test(s)) return false;
+    if (/\\u[0-9a-f]{4}/i.test(s)) return false;
+    if (/^https?:/i.test(s)) return false;
+    if (/[a-zA-ZæøåÆØÅäöÄÖüÜ]/.test(s)) return true;
+    return false;
+  };
+
+  // 1. Postnummer + by from body text (Danish 4-digit postcode + city name)
+  const dkPost = html.match(/\b(\d{4})\s+([A-ZÆØÅ][a-zæøå]+(?:[- ][A-ZÆØÅ][a-zæøå]+){0,3})\b/);
+  if (dkPost) {
+    const t = `${dkPost[1]} ${dkPost[2]}`;
+    if (looksLikeAddress(t)) return clean(t);
+  }
+
+  // 2. Structured address blocks (schema.org address, microdata itemprop)
+  const structured = [
+    /<[^>]*itemprop="streetAddress"[^>]*>([^<]{3,100})</i,
+    /<[^>]*itemprop="address"[^>]*>([^<]{3,120})</i,
+    /<[^>]*itemprop="addressLocality"[^>]*>([^<]{3,80})</i,
+    /"streetAddress":\s*"([^"]{3,120})"/,
+    /"addressLocality":\s*"([^"]{3,80})"/,
+    /"postalCode":\s*"(\d{3,5})"[^}]{0,200}"addressLocality":\s*"([^"]{3,80})"/,
+    /"adresse":\s*"([^"]{3,120})"/i,
+    /"vejnavn":\s*"([^"]{3,100})"/i,
+  ];
+  for (const rx of structured) {
+    const m = html.match(rx);
+    if (m) {
+      const t = m[2] ? `${m[1]} ${m[2]}` : m[1];
+      if (looksLikeAddress(t)) return clean(t);
+    }
+  }
+
+  // 3. og:street-address / og:region / og:locality (Facebook Open Graph place tags)
+  const ogParts = [];
+  for (const prop of ['og:street-address', 'og:locality', 'og:region', 'og:country-name']) {
+    const m = html.match(new RegExp(`<meta[^>]*property="${prop}"[^>]*content="([^"]{2,80})"`, 'i'));
+    if (m) ogParts.push(clean(m[1]));
+  }
+  if (ogParts.length) {
+    const joined = ogParts.filter(Boolean).join(', ');
+    if (looksLikeAddress(joined)) return joined;
+  }
+
+  // 4. og:title / <title> mining — Danish + Nordic listings usually put the address up front
+  const title = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]{3,200})"/i)?.[1]
+             || html.match(/<title[^>]*>([^<]{3,200})<\/title>/i)?.[1] || '';
+  if (title) {
+    const cleanTitle = clean(title);
+    // Danish/Nordic pattern: "Vestergade 12, 2. tv., 8000 Aarhus C — 3 vær. lejlighed"
+    const addr = cleanTitle.match(/([A-ZÆØÅ][a-zæøåéèü]+(?:vej|gade|allé|allee|gata|gate|väg|veg|plads|torv|park|kvarter|boulevard|strædet|str[æa]de|strand)\s*\d+[A-Za-z]?)/);
+    if (addr && looksLikeAddress(addr[1])) return clean(addr[1]);
+    // Then a "1234 Byname" or "1234 Byname C" pattern
+    const post = cleanTitle.match(/\b(\d{4})\s+([A-ZÆØÅ][a-zæøå]+(?:\s+[A-ZÆØÅ])?)/);
+    if (post) return clean(`${post[1]} ${post[2]}`);
+    // Comma-separated cities
+    const parts = cleanTitle.split(/\s*[·|–—-]\s*|\s+in\s+/i);
+    for (const p of parts) {
+      const trimmed = p.trim();
+      if (/^[A-ZÆØÅ][a-zæøå]+(?:,?\s+[A-ZÆØÅ][a-zæøå]+){0,2}$/.test(trimmed) && looksLikeAddress(trimmed)) return trimmed;
+    }
+  }
+
+  // 5. URL slug mining — many Nordic portals expose location in the URL
+  //    e.g. /boliger/aarhus-c/vestergade-12/... or /koebenhavn/frederiksberg/...
+  const slugs = url.toLowerCase()
+    .replace(/^https?:\/\/[^/]+\//, '')
+    .split(/[\/?#]/)
+    .filter(s => s.length >= 3 && s.length <= 40 && /^[a-z0-9æøå-]+$/i.test(s))
+    .filter(s => !s.match(/^\d+$/) && !s.match(/^(listing|property|bolig|salg|til-salg|homes?|houses?|apartments?|leilighet|lgh|udlejning)$/));
+  const cityWords = ['koebenhavn','kobenhavn','copenhagen','aarhus','odense','aalborg','esbjerg','randers','kolding','horsens','vejle','roskilde','herning','helsingoer','silkeborg','naestved','fredericia','viborg','koege','holstebro','taastrup','slagelse','hillerod','svendborg','holbaek','soenderborg','stockholm','goteborg','malmoe','uppsala','oslo','bergen','trondheim','stavanger'];
+  for (const s of slugs) {
+    const norm = s.replace(/-/g, ' ');
+    if (cityWords.some(c => norm.includes(c.replace(/-/g,' ')))) {
+      return norm.replace(/\b\w/g, c => c.toUpperCase());
+    }
+  }
+
+  return null;
+}
+
 // ── Meta tags ─────────────────────────────────────────────────────────────
 function extractFromMeta(html) {
   const result = {};
@@ -431,24 +543,26 @@ export default async function handler(req) {
       extractBodyFallback(html),
     );
 
-    // New enrichment layer — condition + property type + energy label
+    // New enrichment layer — condition + property type + energy label + hardened location
     const description = extractDescription(html);
     const energyLabel = extractEnergyLabel(html);
-    const propertyType = extractPropertyType(html, url);
-    const condition = analyzeCondition(description, merged.buildYear);
+    const propType   = extractPropertyType(html, url);
+    const location   = merged.location || extractLocationAggressive(html, url);
+    const condition  = analyzeCondition(description, merged.buildYear);
 
     return new Response(JSON.stringify({
       success: true,
       price: merged.price || null,
       currency,
-      location: merged.location || null,
+      location: location || null,
       title: merged.title || null,
       downPayment: merged.downPayment || null,
       monthlyExpenses: merged.monthlyExpenses || null,
       squareMeters: merged.squareMeters || null,
       rooms: merged.rooms || null,
       buildYear: merged.buildYear || null,
-      propertyType: propertyType || null,
+      propertyType: propType.type || null,
+      propertyCategory: propType.category || 'residential', // residential | commercial | mixed | agricultural | land
       energyLabel: energyLabel || null,
       condition,   // { summary, flags: [{label, severity}] }
     }), { status: 200, headers: cors });

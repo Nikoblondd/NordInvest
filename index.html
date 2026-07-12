@@ -6706,6 +6706,19 @@ function renderConditionPanel(parsed) {
   const cond = parsed.condition || {};
   const flags = Array.isArray(cond.flags) ? cond.flags : [];
   const summary = cond.summary || null;
+
+  // Category badge — signals residential vs commercial to the user
+  const catLabels = {
+    residential:  { label: 'Residential',  cls: 'good'  },
+    commercial:   { label: 'Commercial',   cls: 'watch' },
+    mixed:        { label: 'Mixed-use',    cls: 'watch' },
+    agricultural: { label: 'Agricultural', cls: 'watch' },
+    land:         { label: 'Land / plot',  cls: 'watch' },
+  };
+  const catBadge = parsed.propertyCategory && catLabels[parsed.propertyCategory]
+    ? `<span class="condition-flag ${catLabels[parsed.propertyCategory].cls}">${catLabels[parsed.propertyCategory].label}</span>`
+    : '';
+
   const meta = [];
   if (parsed.propertyType) meta.push(`<span><strong>${parsed.propertyType}</strong></span>`);
   if (parsed.squareMeters) meta.push(`<span><strong>${parsed.squareMeters}</strong> m²</span>`);
@@ -6713,13 +6726,13 @@ function renderConditionPanel(parsed) {
   if (parsed.buildYear) meta.push(`<span>Built <strong>${parsed.buildYear}</strong></span>`);
   if (parsed.energyLabel) meta.push(`<span>Energy <strong>${parsed.energyLabel}</strong></span>`);
 
-  if (!summary && flags.length === 0 && meta.length === 0) {
+  if (!summary && flags.length === 0 && meta.length === 0 && !catBadge) {
     panel.style.display = 'none';
     return;
   }
 
   document.getElementById('condition-summary').textContent = summary || 'Property details extracted.';
-  document.getElementById('condition-flags').innerHTML = flags
+  document.getElementById('condition-flags').innerHTML = catBadge + flags
     .map(f => `<span class="condition-flag ${f.severity}">${f.label}</span>`).join('');
   document.getElementById('condition-meta').innerHTML = meta.join('');
   document.getElementById('condition-meta').style.display = meta.length ? 'flex' : 'none';
