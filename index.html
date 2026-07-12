@@ -1665,6 +1665,19 @@
   .extract-error { display: none; margin-top: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--red-pale); border: 1px solid rgba(239,68,68,0.2); font-size: 13px; color: var(--red); line-height: 1.5; }
   .extracted-banner { display: flex; align-items: center; gap: 9px; background: var(--green-pale); border: 1px solid rgba(16,185,129,0.25); border-radius: var(--radius-sm); padding: 10px 13px; font-size: 13px; font-weight: 600; color: var(--green); margin-bottom: 18px; }
   .extracted-banner svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .condition-panel { background:var(--white); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:18px; }
+  .condition-head { display:flex; gap:11px; align-items:flex-start; }
+  .condition-icon { width:28px; height:28px; border-radius:8px; background:var(--blue-pale); color:var(--blue); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .condition-icon svg { width:14px; height:14px; }
+  .condition-body { flex:1; min-width:0; }
+  .condition-summary { font-size:13.5px; font-weight:600; color:var(--text); line-height:1.35; }
+  .condition-flags { display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
+  .condition-flag { font-size:11.5px; font-weight:600; padding:3px 8px; border-radius:100px; letter-spacing:0.01em; }
+  .condition-flag.good  { background:var(--green-pale); color:var(--green); }
+  .condition-flag.watch { background:var(--amber-pale); color:var(--amber); }
+  .condition-flag.alert { background:var(--red-pale); color:var(--red); }
+  .condition-meta { display:flex; gap:14px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); font-size:11.5px; color:var(--text-muted); flex-wrap:wrap; }
+  .condition-meta strong { color:var(--text); font-weight:600; }
   .price-note { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; display: block; }
 
   /* Autocomplete */
@@ -3867,6 +3880,18 @@
                 <div class="extracted-banner">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                   <span data-i18n="analyze.extractSuccess">Data extracted — review and confirm before analyzing</span>
+                </div>
+                <div id="condition-panel" class="condition-panel" style="display:none">
+                  <div class="condition-head">
+                    <div class="condition-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H1l8-8 8 8h-8"/><path d="M15 13h8l-8 8-8-8h8"/></svg>
+                    </div>
+                    <div class="condition-body">
+                      <div class="condition-summary" id="condition-summary"></div>
+                      <div class="condition-flags" id="condition-flags"></div>
+                    </div>
+                  </div>
+                  <div class="condition-meta" id="condition-meta"></div>
                 </div>
                 <form id="extracted-form" onsubmit="submitAnalysisExtracted(event)">
                   <div class="form-grid">
@@ -6647,6 +6672,9 @@ async function extractPropertyData() {
       document.getElementById('ext-price').value = parsed.price;
       document.getElementById('ext-price-note').textContent = '';
     }
+
+    // Condition + property meta panel
+    renderConditionPanel(parsed);
     if (parsed.downPayment && parsed.price) {
       const pct = Math.round((parsed.downPayment / parsed.price) * 100);
       document.getElementById('ext-down').value = Math.min(pct, 100);
@@ -6670,6 +6698,32 @@ function showExtractError(msg) {
   const el = document.getElementById('extract-error');
   el.textContent = msg;
   el.style.display = 'block';
+}
+
+function renderConditionPanel(parsed) {
+  const panel = document.getElementById('condition-panel');
+  if (!panel) return;
+  const cond = parsed.condition || {};
+  const flags = Array.isArray(cond.flags) ? cond.flags : [];
+  const summary = cond.summary || null;
+  const meta = [];
+  if (parsed.propertyType) meta.push(`<span><strong>${parsed.propertyType}</strong></span>`);
+  if (parsed.squareMeters) meta.push(`<span><strong>${parsed.squareMeters}</strong> m²</span>`);
+  if (parsed.rooms) meta.push(`<span><strong>${parsed.rooms}</strong> rooms</span>`);
+  if (parsed.buildYear) meta.push(`<span>Built <strong>${parsed.buildYear}</strong></span>`);
+  if (parsed.energyLabel) meta.push(`<span>Energy <strong>${parsed.energyLabel}</strong></span>`);
+
+  if (!summary && flags.length === 0 && meta.length === 0) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  document.getElementById('condition-summary').textContent = summary || 'Property details extracted.';
+  document.getElementById('condition-flags').innerHTML = flags
+    .map(f => `<span class="condition-flag ${f.severity}">${f.label}</span>`).join('');
+  document.getElementById('condition-meta').innerHTML = meta.join('');
+  document.getElementById('condition-meta').style.display = meta.length ? 'flex' : 'none';
+  panel.style.display = 'block';
 }
 
 // ── SHARED ANALYSIS RUNNER ────────────────────

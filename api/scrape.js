@@ -245,6 +245,129 @@ function extractSiteSpecific(html, url) {
   return result;
 }
 
+// ── Energy label (A-G) ────────────────────────────────────────────────────
+function extractEnergyLabel(html) {
+  // Danish "Energimærke: A" / "Energimærke A2020"
+  const patterns = [
+    /[Ee]nergim[æe]rke[:\s]*([A-G])(?![a-z])/,
+    /[Ee]nergy\s*[Cc]lass[:\s]*([A-G])(?![a-z])/,
+    /"energy(?:Class|Label|Rating|Mark)":\s*"([A-G])"/i,
+    /energiklass[:\s]*([A-G])(?![a-z])/i,
+  ];
+  for (const p of patterns) {
+    const m = html.match(p);
+    if (m) return m[1].toUpperCase();
+  }
+  return null;
+}
+
+// ── Property type ─────────────────────────────────────────────────────────
+function extractPropertyType(html, url) {
+  const u = url.toLowerCase();
+  // JSON keys first
+  const jm = html.match(/"(?:propertyType|boligtype|type|category)":\s*"([^"]{3,40})"/i);
+  if (jm) {
+    const t = jm[1].toLowerCase();
+    if (t.match(/villa|enfamiliehus|house/)) return 'Villa';
+    if (t.match(/lejlighed|apartment|leilighet/)) return 'Lejlighed';
+    if (t.match(/r[æa]kkehus|townhouse|rekkehus|radhus/)) return 'Rækkehus';
+    if (t.match(/andel/)) return 'Andelsbolig';
+    if (t.match(/sommerhus|fritidsbolig/)) return 'Sommerhus';
+    if (t.match(/erhverv|commercial/)) return 'Erhverv';
+  }
+  // URL patterns
+  if (u.match(/villa|enfamilie/)) return 'Villa';
+  if (u.match(/lejlighed|apartment/)) return 'Lejlighed';
+  if (u.match(/raekkehus|rakkehus|townhouse/)) return 'Rækkehus';
+  if (u.match(/andels/)) return 'Andelsbolig';
+  return null;
+}
+
+// ── Description text (for condition analysis) ─────────────────────────────
+function extractDescription(html) {
+  // Try JSON-LD description first
+  const jld = html.match(/"description":\s*"((?:[^"\\]|\\.){50,2500})"/);
+  if (jld) return jld[1].replace(/\\n/g, ' ').replace(/\\"/g, '"').slice(0, 2000);
+
+  // og:description
+  const og = html.match(/<meta[^>]*(?:property|name)="og:description"[^>]*content="([^"]{50,2000})"/i)
+        || html.match(/<meta[^>]*content="([^"]{50,2000})"[^>]*(?:property|name)="og:description"/i);
+  if (og) return og[1];
+
+  // meta description
+  const md = html.match(/<meta[^>]*name="description"[^>]*content="([^"]{50,2000})"/i);
+  if (md) return md[1];
+  return '';
+}
+
+// ── Condition analysis (heuristic keyword scan) ───────────────────────────
+function analyzeCondition(description, buildYear) {
+  const t = (description || '').toLowerCase();
+  const flags = [];
+
+  // Positive signals
+  const pos = [
+    { rx: /nyistandsat|totalrenoveret|gennemgribende renoveret|fully renovated|totally renovated|recently renovated|newly renovated|nyrenoveret/, label: 'Recently renovated', severity: 'good' },
+    { rx: /velholdt|vedligeholdt|god stand|godt vedligeholdt|well[- ]maintained|move[- ]in ready|turn[- ]key|move-in condition/, label: 'Well maintained', severity: 'good' },
+    { rx: /nyt k[øo]kken|new kitchen|k[øo]kken fra 20[12]\d|kitchen from 20[12]\d/, label: 'New kitchen', severity: 'good' },
+    { rx: /nyt bad|nyt badev[æa]relse|new bathroom|badev[æa]relse fra 20[12]\d/, label: 'New bathroom', severity: 'good' },
+    { rx: /nyt tag|new roof|tag fra 20[12]\d/, label: 'New roof', severity: 'good' },
+    { rx: /nye vinduer|new windows|termovinduer fra 20[12]\d/, label: 'New windows', severity: 'good' },
+  ];
+
+  // Watch signals — needs attention, not urgent
+  const watch = [
+    { rx: /tr[æa]nger til (?:et )?nyt? k[øo]kken|kitchen needs (?:renovation|updating|replacing)|dated kitchen|old kitchen|k[øo]kken tr[æa]nger/, label: 'Kitchen needs work', severity: 'watch' },
+    { rx: /tr[æa]nger til (?:et )?nyt? bad|bathroom needs (?:renovation|updating|replacing)|dated bathroom|old bathroom|bad tr[æa]nger/, label: 'Bathroom needs work', severity: 'watch' },
+    { rx: /trænger til istands[æa]ttelse|needs (?:some )?renovation|requires (?:some )?updating|needs updating|needs modernising/, label: 'Needs updating', severity: 'watch' },
+    { rx: /slidt|worn|dated finish|overfladisk|cosmetic work/, label: 'Cosmetic wear', severity: 'watch' },
+    { rx: /oprindelig|original[e]? overflad|original condition/, label: 'Original condition', severity: 'watch' },
+  ];
+
+  // Alert signals — serious issues
+  const alert = [
+    { rx: /nyt tag p[åa]kr[æa]vet|roof (?:needs )?replac|tag skal skiftes|leaking roof|tag utæt/, label: 'Roof issue', severity: 'alert' },
+    { rx: /fugtskade|moisture damage|water damage|vandskade/, label: 'Moisture damage', severity: 'alert' },
+    { rx: /skimmelsvamp|mould|mold problem/, label: 'Mold', severity: 'alert' },
+    { rx: /kloak(?:ering)? skal|sewer (?:needs|replacement)|kloak defekt|drain (?:needs|replacement)/, label: 'Sewer/drain issue', severity: 'alert' },
+    { rx: /elinstallation (?:skal|udskiftes|forny)|electrical (?:needs|rewiring)|old wiring|gamle elinstallationer/, label: 'Electrical rewiring', severity: 'alert' },
+    { rx: /solgt som beset|solgt i den stand|sold as[- ]is|as[- ]is condition|solgt som den er/, label: 'Sold as-is', severity: 'alert' },
+    { rx: /kondemn|uninhabitable|uinhabitab|ubeboelig/, label: 'Uninhabitable', severity: 'alert' },
+    { rx: /gennemgribende istand|major renovation required|extensive work required|kr[æa]ver istands[æa]ttelse/, label: 'Major renovation needed', severity: 'alert' },
+  ];
+
+  const seen = new Set();
+  const pushFlag = (list) => {
+    for (const item of list) {
+      if (item.rx.test(t) && !seen.has(item.label)) {
+        flags.push({ label: item.label, severity: item.severity });
+        seen.add(item.label);
+      }
+    }
+  };
+  pushFlag(alert);
+  pushFlag(watch);
+  pushFlag(pos);
+
+  // Build-year heuristic — very old with no positive signals
+  if (buildYear && buildYear < 1960 && !flags.some(f => f.severity === 'good')) {
+    flags.push({ label: `Built ${buildYear} — inspect thoroughly`, severity: 'watch' });
+  }
+
+  // 1-line summary
+  let summary;
+  const alerts = flags.filter(f => f.severity === 'alert');
+  const goods  = flags.filter(f => f.severity === 'good');
+  if (alerts.length >= 2) summary = 'Multiple significant issues flagged — inspect carefully.';
+  else if (alerts.length === 1) summary = `Attention: ${alerts[0].label.toLowerCase()}.`;
+  else if (goods.length >= 2)   summary = 'Move-in ready — recently updated.';
+  else if (goods.length === 1)  summary = `${goods[0].label} noted.`;
+  else if (flags.length > 0)    summary = 'Minor updates likely — cosmetic work.';
+  else                          summary = null; // no strong signals
+
+  return { summary, flags: flags.slice(0, 4) };
+}
+
 // ── Meta tags ─────────────────────────────────────────────────────────────
 function extractFromMeta(html) {
   const result = {};
@@ -308,6 +431,12 @@ export default async function handler(req) {
       extractBodyFallback(html),
     );
 
+    // New enrichment layer — condition + property type + energy label
+    const description = extractDescription(html);
+    const energyLabel = extractEnergyLabel(html);
+    const propertyType = extractPropertyType(html, url);
+    const condition = analyzeCondition(description, merged.buildYear);
+
     return new Response(JSON.stringify({
       success: true,
       price: merged.price || null,
@@ -319,6 +448,9 @@ export default async function handler(req) {
       squareMeters: merged.squareMeters || null,
       rooms: merged.rooms || null,
       buildYear: merged.buildYear || null,
+      propertyType: propertyType || null,
+      energyLabel: energyLabel || null,
+      condition,   // { summary, flags: [{label, severity}] }
     }), { status: 200, headers: cors });
 
   } catch (err) {
