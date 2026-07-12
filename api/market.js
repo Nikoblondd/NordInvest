@@ -6,13 +6,35 @@
 // Update the bundled file by running: node scripts/update-market-data.mjs
 
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
-// Load the bundled dataset once at cold-start. Using fs.readFileSync (instead
-// of a JSON import attribute) keeps us compatible with Vercel's Node runtime
-// without depending on the `with { type: 'json' }` syntax some bundlers reject.
-const DATA_PATH = join(process.cwd(), 'data', 'market-stats.json');
-const marketStats = JSON.parse(readFileSync(DATA_PATH, 'utf8'));
+// Load the bundled dataset once at cold-start. Resolves relative to THIS file
+// (import.meta.url) rather than process.cwd() — on Vercel's Node runtime the
+// working directory is not the deployment root, so cwd-based paths crash the
+// entire function with FUNCTION_INVOCATION_FAILED. This is portable to any
+// hosting.
+let marketStats;
+let marketStatsError = null;
+try {
+  const here = dirname(fileURLToPath(import.meta.url));
+  // Try common layouts: sibling to /api, or bundled next to the function.
+  const candidates = [
+    join(here, '..', 'data', 'market-stats.json'),
+    join(here, 'data', 'market-stats.json'),
+    join(process.cwd(), 'data', 'market-stats.json'),
+  ];
+  let loaded = null;
+  for (const p of candidates) {
+    try { loaded = readFileSync(p, 'utf8'); break; } catch (_) {}
+  }
+  if (!loaded) throw new Error('market-stats.json not found in any known location');
+  marketStats = JSON.parse(loaded);
+} catch (err) {
+  // Never crash the function at cold-start — degrade gracefully at request time.
+  marketStatsError = err.message || String(err);
+  marketStats = { denmark: {}, sweden: {}, norway: {} };
+}
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
