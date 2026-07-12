@@ -1,14 +1,18 @@
 // Market data API — honest sourcing.
-// Reads /data/market-stats.json bundled with the deployment.
-// Returns ONLY data we have a real citation for; otherwise data_available: false.
+// Runs on Vercel Edge runtime (same as /api/scrape) which has full Web-standard
+// Fetch API: Request, Response, URL, AbortSignal.timeout — all native. The
+// original Node runtime was failing at cold-start because the handler used
+// Fetch API primitives without an edge runtime declaration.
 //
 // Methodology and source list: /methodology
-// Update the bundled file by running: node scripts/update-market-data.mjs
+// Update the bundled dataset by running: node scripts/update-market-data.mjs
+// then regenerating data/market-stats.mjs.
+
+export const config = { runtime: 'edge' };
 
 // Static ES module import — Vercel's bundler follows this and includes the
-// data file in the function bundle automatically. Reading the .json via fs
-// at cold-start silently fails on Vercel because dynamic file reads aren't
-// analyzed and the data/ directory doesn't get uploaded with the function.
+// dataset in the function bundle automatically. Reading the .json via fs
+// silently failed on Node runtime because the data/ directory wasn't uploaded.
 import marketStats from '../data/market-stats.mjs';
 
 const CORS = {
