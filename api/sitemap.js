@@ -1,4 +1,4 @@
-const BASE_URL = 'https://nordinvest.io';
+const BASE_URL = 'https://www.nordinvest.io';
 
 function parseMeta(content) {
   const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);

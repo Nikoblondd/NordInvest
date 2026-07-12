@@ -17,22 +17,22 @@
   <meta id="meta-desc" name="description" content="">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="theme-color" content="#0F1F3D">
-  <link id="canonical" rel="canonical" href="https://nordinvest.io/blog">
-  <link rel="alternate" hreflang="en" href="https://nordinvest.io/blog">
-  <link rel="alternate" hreflang="da" href="https://nordinvest.io/blog?lang=da">
-  <link rel="alternate" hreflang="x-default" href="https://nordinvest.io/blog">
+  <link id="canonical" rel="canonical" href="https://www.nordinvest.io/blog">
+  <link rel="alternate" hreflang="en" href="https://www.nordinvest.io/blog">
+  <link rel="alternate" hreflang="da" href="https://www.nordinvest.io/blog?lang=da">
+  <link rel="alternate" hreflang="x-default" href="https://www.nordinvest.io/blog">
   <meta id="og-type"  property="og:type"  content="article">
   <meta property="og:site_name" content="NordInvest">
   <meta id="og-url"   property="og:url"   content="">
   <meta id="og-title" property="og:title" content="">
   <meta id="og-desc"  property="og:description" content="">
-  <meta id="og-image" property="og:image" content="https://nordinvest.io/nordinvest-logo.png">
+  <meta id="og-image" property="og:image" content="https://www.nordinvest.io/nordinvest-logo.png">
   <meta property="og:locale" content="en_GB">
   <meta property="og:locale:alternate" content="da_DK">
   <meta name="twitter:card" content="summary_large_image">
   <meta id="tw-title" name="twitter:title" content="">
   <meta id="tw-desc"  name="twitter:description" content="">
-  <meta id="tw-image" name="twitter:image" content="https://nordinvest.io/nordinvest-logo.png">
+  <meta id="tw-image" name="twitter:image" content="https://www.nordinvest.io/nordinvest-logo.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -896,8 +896,8 @@
     addHreflang(postLang, postUrl);
     if (meta.translation) {
       const otherLang = postLang === 'en' ? 'da' : 'en';
-      addHreflang(otherLang, `https://nordinvest.io/blog/${meta.translation}`);
-      addHreflang('x-default', postLang === 'en' ? postUrl : `https://nordinvest.io/blog/${meta.translation}`);
+      addHreflang(otherLang, `https://www.nordinvest.io/blog/${meta.translation}`);
+      addHreflang('x-default', postLang === 'en' ? postUrl : `https://www.nordinvest.io/blog/${meta.translation}`);
     } else {
       addHreflang('x-default', postUrl);
     }
@@ -914,10 +914,10 @@
           "dateModified": meta.date || '',
           "inLanguage": postLang,
           "wordCount": (document.querySelector('.post-body')?.innerText?.split(/\s+/).length) || undefined,
-          "author": { "@type": "Organization", "name": meta.author || "NordInvest", "url": "https://nordinvest.io" },
+          "author": { "@type": "Organization", "name": meta.author || "NordInvest", "url": "https://www.nordinvest.io" },
           "publisher": {
-            "@type": "Organization", "name": "NordInvest", "url": "https://nordinvest.io",
-            "logo": { "@type": "ImageObject", "url": "https://nordinvest.io/nordinvest-logo.png", "width": 2000, "height": 2000 }
+            "@type": "Organization", "name": "NordInvest", "url": "https://www.nordinvest.io",
+            "logo": { "@type": "ImageObject", "url": "https://www.nordinvest.io/nordinvest-logo.png", "width": 2000, "height": 2000 }
           },
           "image": { "@type": "ImageObject", "url": heroImg },
           "mainEntityOfPage": { "@type": "WebPage", "@id": postUrl },
@@ -930,8 +930,8 @@
         {
           "@type": "BreadcrumbList",
           "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home",  "item": "https://nordinvest.io/" },
-            { "@type": "ListItem", "position": 2, "name": "Blog",  "item": "https://nordinvest.io/blog" },
+            { "@type": "ListItem", "position": 1, "name": "Home",  "item": "https://www.nordinvest.io/" },
+            { "@type": "ListItem", "position": 2, "name": "Blog",  "item": "https://www.nordinvest.io/blog" },
             { "@type": "ListItem", "position": 3, "name": meta.title, "item": postUrl }
           ]
         }
@@ -968,7 +968,7 @@
       const { meta, body } = parseFrontmatter(src);
 
       const postSlug = meta.slug || slug;
-      const postUrl  = `https://nordinvest.io/blog/${postSlug}`;
+      const postUrl  = `https://www.nordinvest.io/blog/${postSlug}`;
       const words    = body.replace(/```[\s\S]*?```/g,'').split(/\s+/).filter(Boolean).length;
       meta.readingTime = Math.max(1, Math.round(words / 220));
 
@@ -1048,7 +1048,7 @@
   document.addEventListener('i18n:ready', () => {
     const meta = window._currentPostMeta;
     if (!meta) return;
-    const postUrl = `https://nordinvest.io/blog/${meta.slug}`;
+    const postUrl = `https://www.nordinvest.io/blog/${meta.slug}`;
     const postLang = meta.lang || 'en';
     document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
     const add = (lang, href) => {
@@ -1061,8 +1061,8 @@
     add(postLang, postUrl);
     if (meta.translation) {
       const otherLang = postLang === 'en' ? 'da' : 'en';
-      add(otherLang, `https://nordinvest.io/blog/${meta.translation}`);
-      add('x-default', postLang === 'en' ? postUrl : `https://nordinvest.io/blog/${meta.translation}`);
+      add(otherLang, `https://www.nordinvest.io/blog/${meta.translation}`);
+      add('x-default', postLang === 'en' ? postUrl : `https://www.nordinvest.io/blog/${meta.translation}`);
     } else {
       add('x-default', postUrl);
     }
