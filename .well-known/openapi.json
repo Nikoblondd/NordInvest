@@ -1,0 +1,121 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NordInvest Property Analyzer API",
+    "description": "Public endpoints powering the free property investment analyzer at nordinvest.io. All endpoints are read-only, free, and require no authentication.",
+    "version": "2026.07",
+    "contact": { "email": "contact@nordinvest.io" }
+  },
+  "servers": [
+    { "url": "https://www.nordinvest.io" }
+  ],
+  "paths": {
+    "/api/scrape": {
+      "get": {
+        "operationId": "extractPropertyData",
+        "summary": "Extract structured data from a public property listing URL",
+        "description": "Given a listing URL, extracts price, location, square metres, rooms, build year, property type (villa / apartment / office / retail / industrial / land / etc.), category (residential / commercial / mixed / agricultural / land), energy label (A–G), and a condition summary with flagged concerns.",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uri" },
+            "description": "Public property listing URL"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Extraction result",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExtractResult" } } }
+          }
+        }
+      }
+    },
+    "/api/market": {
+      "get": {
+        "operationId": "getLocalMarketData",
+        "summary": "Local per-square-metre market data for a Nordic city",
+        "description": "Returns sale price per m², monthly rent per m², and annual appreciation for the specified location. All figures are sourced from official national statistics agencies and carry an explicit source, last-updated date, and confidence label. If no authoritative source exists the endpoint returns data_available: false rather than an estimate.",
+        "parameters": [
+          { "name": "location", "in": "query", "required": true,  "schema": { "type": "string" }, "description": "City name — Copenhagen, Aarhus, Stockholm, Oslo, etc." },
+          { "name": "country",  "in": "query", "required": false, "schema": { "type": "string", "enum": ["DK", "SE", "NO"] }, "description": "Two-letter country code (optional — auto-detected from location)" },
+          { "name": "sqm",      "in": "query", "required": false, "schema": { "type": "integer" }, "description": "Property size in square metres (optional — used for derived rent estimate)" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Market data or explicit unavailability",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MarketResult" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExtractResult": {
+        "type": "object",
+        "properties": {
+          "success":          { "type": "boolean" },
+          "price":            { "type": ["integer", "null"] },
+          "currency":         { "type": "string" },
+          "location":         { "type": ["string", "null"] },
+          "title":            { "type": ["string", "null"] },
+          "downPayment":      { "type": ["integer", "null"] },
+          "monthlyExpenses":  { "type": ["integer", "null"] },
+          "squareMeters":     { "type": ["integer", "null"] },
+          "rooms":            { "type": ["integer", "null"] },
+          "buildYear":        { "type": ["integer", "null"] },
+          "propertyType":     { "type": ["string", "null"], "description": "Villa · Lejlighed · Rækkehus · Andelsbolig · Sommerhus · Kontor · Butik · Lager · Industri · Hotel/restaurant · Erhverv · Landbrug · Grund" },
+          "propertyCategory": { "type": "string", "enum": ["residential", "commercial", "mixed", "agricultural", "land"] },
+          "energyLabel":      { "type": ["string", "null"], "description": "Energy performance label A through G" },
+          "condition":        {
+            "type": "object",
+            "properties": {
+              "summary": { "type": ["string", "null"] },
+              "flags":   {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label":    { "type": "string" },
+                    "severity": { "type": "string", "enum": ["good", "watch", "alert"] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "MarketResult": {
+        "type": "object",
+        "properties": {
+          "success":         { "type": "boolean" },
+          "data_available":  { "type": "boolean" },
+          "location":        { "type": "string" },
+          "region":          { "type": "object", "properties": { "name": { "type": "string" }, "scope": { "type": "string" } } },
+          "currency":        { "type": "string" },
+          "metrics":         {
+            "type": "object",
+            "properties": {
+              "avg_sale_per_m2":         { "$ref": "#/components/schemas/Metric" },
+              "avg_rent_per_m2_monthly": { "$ref": "#/components/schemas/Metric" },
+              "appreciation_pct_yr":     { "$ref": "#/components/schemas/Metric" }
+            }
+          }
+        }
+      },
+      "Metric": {
+        "type": "object",
+        "properties": {
+          "value":        { "type": ["number", "null"] },
+          "unit":         { "type": "string" },
+          "source":       { "type": "string" },
+          "source_url":   { "type": "string" },
+          "last_updated": { "type": "string" },
+          "confidence":   { "type": "string", "enum": ["high", "medium", "low", "unavailable"] }
+        }
+      }
+    }
+  }
+}

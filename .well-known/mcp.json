@@ -1,0 +1,52 @@
+{
+  "schema_version": "2025-06-01",
+  "name": "NordInvest Property Analyzer",
+  "description": "Free property investment analysis for Nordic and European real estate. Rental yield, cash flow, ROI, BRRRR, appreciation projection — in under 60 seconds.",
+  "publisher": {
+    "name": "NordInvest",
+    "url": "https://www.nordinvest.io",
+    "contact": "contact@nordinvest.io"
+  },
+  "resources": [
+    { "type": "webpage", "url": "https://www.nordinvest.io/",                          "title": "Property Analyzer" },
+    { "type": "webpage", "url": "https://www.nordinvest.io/methodology",               "title": "Data Methodology" },
+    { "type": "webpage", "url": "https://www.nordinvest.io/investment-models",         "title": "Investment Models" },
+    { "type": "webpage", "url": "https://www.nordinvest.io/glossary",                  "title": "Glossary" },
+    { "type": "webpage", "url": "https://www.nordinvest.io/blog",                      "title": "Nordic Property Insights" },
+    { "type": "sitemap", "url": "https://www.nordinvest.io/sitemap.xml" },
+    { "type": "llms",    "url": "https://www.nordinvest.io/llms.txt" }
+  ],
+  "actions": [
+    {
+      "id": "analyze_property",
+      "description": "Analyze whether a specific property in the Nordic or European markets is worth buying as an investment. Accepts either a listing URL or manual inputs.",
+      "invoke": {
+        "method": "navigate",
+        "url": "https://www.nordinvest.io/#analyze-section"
+      }
+    },
+    {
+      "id": "extract_property_data",
+      "description": "Extract price, location, size, property type, energy label, and condition summary from a public property listing URL.",
+      "invoke": {
+        "method": "GET",
+        "url": "https://www.nordinvest.io/api/scrape",
+        "params": {
+          "url": { "type": "string", "required": true, "description": "Public listing URL from finn.no, hemnet.se, boligsiden.dk, boliga.dk, rightmove.co.uk, zillow.com, etc." }
+        }
+      }
+    },
+    {
+      "id": "get_local_market_data",
+      "description": "Return per-square-metre sale price, rental price, and annual appreciation for a Nordic city — sourced exclusively from official national statistics agencies (DST EJ55, SCB BO0501, SSB 06035).",
+      "invoke": {
+        "method": "GET",
+        "url": "https://www.nordinvest.io/api/market",
+        "params": {
+          "location": { "type": "string", "required": true, "description": "City name (e.g. Copenhagen, Aarhus, Stockholm, Oslo)" },
+          "country":  { "type": "string", "required": false, "description": "Two-letter country code (DK, SE, NO). Optional." }
+        }
+      }
+    }
+  ]
+}
