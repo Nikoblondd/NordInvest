@@ -122,12 +122,16 @@
       updateHtmlLang();
       updateHreflang();
       applyTranslations();
-      // Sync URL ?lang= without reload
+      // Always strip ?lang from the visible URL — language preference lives in
+      // localStorage so it persists across visits, and the URL stays clean.
+      // (Previously kept ?lang=da visible, which looked unprofessional after
+      // Google Danish SERP clicks landed users on /?lang=da.)
       try {
         const url = new URL(window.location.href);
-        if (lang === DEFAULT_LANG) url.searchParams.delete('lang');
-        else url.searchParams.set('lang', lang);
-        window.history.replaceState({}, '', url.toString());
+        if (url.searchParams.has('lang')) {
+          url.searchParams.delete('lang');
+          window.history.replaceState({}, '', url.toString());
+        }
       } catch (_) {}
       document.dispatchEvent(new CustomEvent('i18n:ready', { detail: { lang } }));
     } catch (err) {
