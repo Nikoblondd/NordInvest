@@ -52,6 +52,19 @@ export default {
     ],
     "translation": "property-investment-denmark-for-foreigners"
   },
+  "ejendomsskat-investeringsejendom-2026": {
+    "title": "Ejendomsskat på investeringsejendom 2026 — det du betaler og de fradrag der flytter regningen",
+    "description": "Hvad du betaler i grundskyld og skat på lejeindtægt, plus de 9 fradrag investorer ofte glemmer. Konkret 2026-eksempel og VSO, ApS eller personligt regi.",
+    "date": "2026-07-13",
+    "image": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=1200&auto=format&fit=crop&q=80",
+    "author": "NordInvest",
+    "lang": "da",
+    "tags": [
+      "danmark",
+      "guide"
+    ],
+    "translation": null
+  },
   "ejerlejlighed-vs-andelsbolig-investering": {
     "title": "Ejerlejlighed eller andelsbolig — hvad er bedst som investering i 2026?",
     "description": "Klar sammenligning af ejerlejlighed og andelsbolig fra en investors perspektiv — udlejningsregler, finansiering, afkast, likviditet og skat. Med konkrete tal.",
