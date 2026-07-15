@@ -30,6 +30,17 @@ export default async function handler(req, res) {
     { url: '/investering-i-ejendom-fyn',        changefreq: 'monthly', priority: '0.9' },
     { url: '/boligsiden-investering-guide',     changefreq: 'monthly', priority: '0.8' },
     { url: '/investere-i-ejendom-danmark-2026', changefreq: 'monthly', priority: '0.95' },
+    {
+      url: '/brand',
+      changefreq: 'monthly',
+      priority: '0.6',
+      images: [
+        { loc: '/brand/nordinvest-logo.png',              title: 'NordInvest logo — primary black wordmark',                              caption: 'NordInvest primary logo for the Nordic and European property investment analyzer.' },
+        { loc: '/brand/nordinvest-icon-black.png',        title: 'NordInvest icon — standalone N-mark',                                    caption: 'NordInvest icon used for the ejendomsanalyzer app icon and favicons.' },
+        { loc: '/brand/nordinvest-logo-dark-banner.png',  title: 'NordInvest banner — dark mode (white logo on black)',                    caption: 'NordInvest dark-mode banner for social preview, video thumbnails, and press headers.' },
+        { loc: '/brand/nordinvest-logo-light-banner.png', title: 'NordInvest banner — light mode (black logo on white)',                   caption: 'NordInvest light-mode banner for editorial articles, blog covers, and presentations.' },
+      ],
+    },
   ];
 
   // Fetch manifest + posts from static CDN files — no filesystem needed
@@ -58,12 +69,20 @@ export default async function handler(req, res) {
 
   const allPages = [...staticPages, ...blogEntries];
 
+  const escXml = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${allPages.map(p => `  <url>
     <loc>${BASE_URL}${p.url}</loc>${p.lastmod ? `\n    <lastmod>${p.lastmod}</lastmod>` : ''}
     <changefreq>${p.changefreq}</changefreq>
-    <priority>${p.priority}</priority>
+    <priority>${p.priority}</priority>${(p.images || []).map(img => `
+    <image:image>
+      <image:loc>${BASE_URL}${img.loc}</image:loc>
+      <image:title>${escXml(img.title)}</image:title>
+      <image:caption>${escXml(img.caption)}</image:caption>
+    </image:image>`).join('')}
   </url>`).join('\n')}
 </urlset>`;
 
