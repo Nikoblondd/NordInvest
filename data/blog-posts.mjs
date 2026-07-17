@@ -39,6 +39,19 @@ export default {
     ],
     "translation": null
   },
+  "ejendomsinvestering-for-begyndere-2026": {
+    "title": "Ejendomsinvestering for begyndere 2026 — sådan køber du din første investeringsejendom",
+    "description": "Komplet begyndervejledning til ejendomsinvestering i Danmark 2026. Udbetaling, finansiering, afkast, skat, valg af område og de fejl der koster førstegangsinvestorer dyrt.",
+    "date": "2026-07-17",
+    "image": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&auto=format&fit=crop&q=80",
+    "author": "NordInvest",
+    "lang": "da",
+    "tags": [
+      "danmark",
+      "guide"
+    ],
+    "translation": null
+  },
   "ejendomsinvestering-i-danmark-for-udlaendinge": {
     "title": "Ejendomsinvestering i Danmark for udlændinge — en praktisk guide",
     "description": "Hvad internationale investorer skal vide, før de køber ejendom i Danmark — opholdsregler, finansiering, afkast, skat og den realistiske strategi for det danske marked.",
@@ -183,6 +196,19 @@ export default {
     ],
     "translation": "ejendomsinvestering-i-danmark-for-udlaendinge"
   },
+  "property-investment-norway-guide-2026": {
+    "title": "Property investment in Norway 2026 — a complete guide for foreign buyers",
+    "description": "What foreign investors need to know before buying Norwegian property in 2026 — eligibility, financing, taxes, Oslo vs Bergen vs Trondheim yields, and a realistic strategy.",
+    "date": "2026-07-17",
+    "image": "https://images.unsplash.com/photo-1601581875039-e899893d520c?w=1200&auto=format&fit=crop&q=80",
+    "author": "NordInvest",
+    "lang": "en",
+    "tags": [
+      "guide",
+      "strategy"
+    ],
+    "translation": null
+  },
   "sadan-analyserer-du-en-nordisk-ejendomsinvestering": {
     "title": "Sådan analyserer du en nordisk ejendomsinvestering (trin-for-trin guide)",
     "description": "En praktisk ramme til at vurdere om en ejendom i Danmark, Norge eller Sverige er værd at købe — dækker afkast, cash flow, værdistigning og markedskontekst.",
@@ -208,5 +234,18 @@ export default {
       "guide"
     ],
     "translation": "how-to-calculate-rental-yield"
+  },
+  "udbetaling-investeringsejendom": {
+    "title": "Hvor meget udbetaling skal du have til en investeringsejendom? 2026-guide",
+    "description": "Realistisk 2026-oversigt over udbetalingskrav på investeringsejendom i Danmark — realkredit, banklån, LTV-grænser og hvor meget kontant du reelt skal have klar.",
+    "date": "2026-07-17",
+    "image": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=1200&auto=format&fit=crop&q=80",
+    "author": "NordInvest",
+    "lang": "da",
+    "tags": [
+      "danmark",
+      "guide"
+    ],
+    "translation": null
   }
 };
