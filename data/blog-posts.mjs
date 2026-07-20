@@ -183,6 +183,19 @@ export default {
     ],
     "translation": null
   },
+  "passiv-indkomst-ejendomsinvestering": {
+    "title": "Passiv indkomst med ejendomsinvestering. Realistisk 2026 guide til Danmark.",
+    "description": "Hvor meget passiv indkomst kan du realistisk skabe med udlejningsejendomme i Danmark 2026. Konkrete tal, arbejdstimer pr. måned og hvornår det bliver rigtigt passivt.",
+    "date": "2026-07-24",
+    "image": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&auto=format&fit=crop&q=80",
+    "author": "NordInvest",
+    "lang": "da",
+    "tags": [
+      "danmark",
+      "strategi"
+    ],
+    "translation": null
+  },
   "property-investment-denmark-for-foreigners": {
     "title": "Property Investment in Denmark for Foreigners — A Practical Guide",
     "description": "What international investors need to know before buying property in Denmark — residency rules, financing, yields, taxes, and the realistic strategy for the Danish market.",
