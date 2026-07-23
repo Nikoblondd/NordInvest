@@ -48,7 +48,9 @@
 
 <!-- Performance: warm up external origins early (per Google PageSpeed guidance) -->
 <link rel="dns-prefetch" href="https://images.unsplash.com">
-<link rel="preconnect"   href="https://images.unsplash.com" crossorigin>
+<!-- Unsplash preconnect removed — homepage no longer uses Unsplash images (moved to /brand/) -->
+<!-- Preload default locale so /locales/en.json fetch runs in parallel with i18n.js instead of sequential (shaves ~250ms off critical path per Lighthouse) -->
+<link rel="preload" as="fetch" href="/locales/en.json" type="application/json" crossorigin>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 <link rel="dns-prefetch" href="https://script.google.com">
 
@@ -798,7 +800,7 @@
     display: flex; align-items: center; gap: 8px;
     font-size: 11.5px; font-weight: 700;
     letter-spacing: 1.2px; text-transform: uppercase;
-    color: var(--green);
+    color: #059669; /* darker green for WCAG AA contrast on grey-50 bg */
     margin-bottom: 14px;
   }
   .mockup-ex-dot {
@@ -917,8 +919,8 @@
     color: var(--navy);
     letter-spacing: -0.3px;
   }
-  .mrm-val.pos { color: var(--green); }
-  .mrm-val.neg { color: var(--red, #EF4444); }
+  .mrm-val.pos { color: #059669; } /* WCAG AA contrast on grey-50 mockup bg */
+  .mrm-val.neg { color: #DC2626; }
   .mockup-report-verdict {
     background: var(--blue-pale); border-left: 3px solid var(--blue);
     border-radius: 8px;
@@ -3746,20 +3748,20 @@
       <h2 class="ticker-title" data-i18n="ticker.title">Recommended property websites</h2>
       <p class="ticker-sub" data-i18n="ticker.sub">Browse a listing, copy the URL, paste it into the analyzer.</p>
     </div>
-    <div class="ticker-track" role="list">
+    <div class="ticker-track">
       <div class="ticker-inner">
         <!-- Set A -->
-        <a class="ticker-card ticker-card--ejendomstorvet" href="https://www.ejendomstorvet.dk" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">Ejendomstorvet</span></a>
-        <a class="ticker-card ticker-card--boligsiden" href="https://www.boligsiden.dk" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">Boligsiden</span></a>
-        <a class="ticker-card ticker-card--edc" href="https://www.edc.dk" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">EDC</span></a>
-        <a class="ticker-card ticker-card--home" href="https://home.dk" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">Home</span></a>
-        <a class="ticker-card ticker-card--nybolig" href="https://www.nybolig.dk" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">Nybolig</span></a>
-        <a class="ticker-card ticker-card--finn" href="https://www.finn.no/realestate" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">finn</span></a>
-        <a class="ticker-card ticker-card--em1" href="https://www.em1.no" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">EiendomsMegler</span></a>
-        <a class="ticker-card ticker-card--krogsveen" href="https://krogsveen.no" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">Krogsveen</span></a>
-        <a class="ticker-card ticker-card--hemnet" href="https://www.hemnet.se" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">Hemnet</span></a>
-        <a class="ticker-card ticker-card--bovision" href="https://www.bovision.se" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">Bovision</span></a>
-        <a class="ticker-card ticker-card--booli" href="https://www.booli.se" target="_blank" rel="noopener nofollow" role="listitem"><span class="ticker-name">Booli</span></a>
+        <a class="ticker-card ticker-card--ejendomstorvet" href="https://www.ejendomstorvet.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">Ejendomstorvet</span></a>
+        <a class="ticker-card ticker-card--boligsiden" href="https://www.boligsiden.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">Boligsiden</span></a>
+        <a class="ticker-card ticker-card--edc" href="https://www.edc.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">EDC</span></a>
+        <a class="ticker-card ticker-card--home" href="https://home.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">Home</span></a>
+        <a class="ticker-card ticker-card--nybolig" href="https://www.nybolig.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">Nybolig</span></a>
+        <a class="ticker-card ticker-card--finn" href="https://www.finn.no/realestate" target="_blank" rel="noopener nofollow"><span class="ticker-name">finn</span></a>
+        <a class="ticker-card ticker-card--em1" href="https://www.em1.no" target="_blank" rel="noopener nofollow"><span class="ticker-name">EiendomsMegler</span></a>
+        <a class="ticker-card ticker-card--krogsveen" href="https://krogsveen.no" target="_blank" rel="noopener nofollow"><span class="ticker-name">Krogsveen</span></a>
+        <a class="ticker-card ticker-card--hemnet" href="https://www.hemnet.se" target="_blank" rel="noopener nofollow"><span class="ticker-name">Hemnet</span></a>
+        <a class="ticker-card ticker-card--bovision" href="https://www.bovision.se" target="_blank" rel="noopener nofollow"><span class="ticker-name">Bovision</span></a>
+        <a class="ticker-card ticker-card--booli" href="https://www.booli.se" target="_blank" rel="noopener nofollow"><span class="ticker-name">Booli</span></a>
 
         <!-- Set B (duplicate for seamless loop — aria-hidden so screen readers ignore) -->
         <a class="ticker-card ticker-card--ejendomstorvet" href="https://www.ejendomstorvet.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">Ejendomstorvet</span></a>
