@@ -1611,7 +1611,10 @@
   @media (max-width: 640px) {
     .strategy-cards { grid-template-columns: 1fr; gap: 6px; }
     .strategy-card { padding: 9px 11px; }
-    .strategy-name { white-space: normal; }
+    /* Names are short by design now (Cashflow / Værdistigning / Værditilvækst) —
+       keep single-line + ellipsis everywhere as a safety net instead of wrapping,
+       so a future longer translation degrades gracefully instead of breaking
+       card alignment like "Værditilvækst / Renovering" used to. */
   }
 
   /* Strategy badge on the report page */
@@ -1642,12 +1645,13 @@
     background: var(--grey-100); border-radius: 9px; margin-bottom: 20px;
   }
   .form-tab {
-    flex: 1; font-family: var(--font); font-size: 13px; font-weight: 600;
+    flex: 1; min-width: 0; font-family: var(--font); font-size: 13px; font-weight: 600;
     padding: 9px 10px; border: none; border-radius: 7px; cursor: pointer;
     background: transparent; color: var(--text-muted);
     transition: background 0.18s, color 0.18s, box-shadow 0.18s;
     display: flex; align-items: center; justify-content: center; gap: 6px;
   }
+  .form-tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .form-tab svg { width: 13px; height: 13px; flex-shrink: 0; }
   .form-tab.active { background: white; color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
   .tab-pane { display: none; }
@@ -3840,7 +3844,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
                   </div>
                   <div class="strategy-text">
-                    <div class="strategy-name" data-i18n="strategy.cashflow.name">Cashflow focus</div>
+                    <div class="strategy-name" data-i18n="strategy.cashflow.name">Cashflow</div>
                     <div class="strategy-desc" data-i18n="strategy.cashflow.desc">Monthly rental income</div>
                   </div>
                 </button>
@@ -3849,7 +3853,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-6"/></svg>
                   </div>
                   <div class="strategy-text">
-                    <div class="strategy-name" data-i18n="strategy.appreciation.name">Appreciation focus</div>
+                    <div class="strategy-name" data-i18n="strategy.appreciation.name">Appreciation</div>
                     <div class="strategy-desc" data-i18n="strategy.appreciation.desc">Long-term price growth</div>
                   </div>
                 </button>
@@ -3858,7 +3862,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                   </div>
                   <div class="strategy-text">
-                    <div class="strategy-name" data-i18n="strategy.valueadd.name">Value-add / Renovation</div>
+                    <div class="strategy-name" data-i18n="strategy.valueadd.name">Value-add</div>
                     <div class="strategy-desc" data-i18n="strategy.valueadd.desc">Force value via rehab</div>
                   </div>
                 </button>
@@ -3870,11 +3874,11 @@
             <div class="form-tabs">
               <button class="form-tab active" id="tab-btn-url" type="button" onclick="switchFormTab('url')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-                <span data-i18n="analyze.tabUrl">From Listing URL</span>
+                <span data-i18n="analyze.tabUrl">From URL</span>
               </button>
               <button class="form-tab" id="tab-btn-manual" type="button" onclick="switchFormTab('manual')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                <span data-i18n="analyze.tabManual">Enter Manually</span>
+                <span data-i18n="analyze.tabManual">Manual</span>
               </button>
             </div>
 

@@ -29,8 +29,8 @@
     "formTitle": "Property Analysis",
     "formSub": "Paste a listing URL to auto-fill, or enter details manually.",
     "currencyTitle": "Currency",
-    "tabUrl": "From Listing URL",
-    "tabManual": "Enter Manually",
+    "tabUrl": "From URL",
+    "tabManual": "Manual",
     "urlLabel": "Property Listing URL",
     "urlPlaceholder": "Paste URL from finn.no, hemnet.se, rightmove.co.uk…",
     "extractBtn": "Extract Data",
@@ -256,7 +256,6 @@
     "aiTitle": "Investment Summary",
     "aiGenerating": "Generating analysis...",
     "perMonth": "/mo",
-
     "layer1": {
       "investmentType": "Investment Type",
       "monthlyCashflow": "Monthly Cash Flow",
@@ -406,9 +405,18 @@
   "strategy": {
     "label": "Pick your strategy",
     "step2": "Enter the property",
-    "cashflow":     { "name": "Cashflow focus",        "desc": "Monthly rental income" },
-    "appreciation": { "name": "Appreciation focus",    "desc": "Long-term price growth" },
-    "valueadd":     { "name": "Value-add / Renovation","desc": "Force value via rehab" }
+    "cashflow": {
+      "name": "Cashflow",
+      "desc": "Monthly rental income"
+    },
+    "appreciation": {
+      "name": "Appreciation",
+      "desc": "Long-term price growth"
+    },
+    "valueadd": {
+      "name": "Value-add",
+      "desc": "Force value via rehab"
+    }
   },
   "brrrr": {
     "intro": "<strong>What if I renovate for X?</strong> Enter your budget, new rent, and new value — we'll recompute the ROI.",

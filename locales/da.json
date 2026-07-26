@@ -29,8 +29,8 @@
     "formTitle": "Ejendomsanalyse",
     "formSub": "Indsæt et boligannonce-URL for at udfylde automatisk, eller indtast detaljer manuelt.",
     "currencyTitle": "Valuta",
-    "tabUrl": "Fra boligannonce-URL",
-    "tabManual": "Indtast manuelt",
+    "tabUrl": "Fra annonce",
+    "tabManual": "Manuelt",
     "urlLabel": "Boligannonce-URL",
     "urlPlaceholder": "Indsæt URL fra finn.no, hemnet.se, rightmove.co.uk…",
     "extractBtn": "Udtræk data",
@@ -256,7 +256,6 @@
     "aiTitle": "Investeringsresumé",
     "aiGenerating": "Genererer analyse...",
     "perMonth": "/md",
-
     "layer1": {
       "investmentType": "Investeringstype",
       "monthlyCashflow": "Månedlig cash flow",
@@ -406,9 +405,18 @@
   "strategy": {
     "label": "Vælg din strategi",
     "step2": "Indtast ejendommen",
-    "cashflow":     { "name": "Cashflow-fokus",       "desc": "Månedlig lejeindtægt" },
-    "appreciation": { "name": "Værdistigning-fokus",  "desc": "Langsigtet prisvækst" },
-    "valueadd":     { "name": "Værditilvækst / Renovering", "desc": "Skab værdi via renovering" }
+    "cashflow": {
+      "name": "Cashflow",
+      "desc": "Månedlig lejeindtægt"
+    },
+    "appreciation": {
+      "name": "Værdistigning",
+      "desc": "Langsigtet prisvækst"
+    },
+    "valueadd": {
+      "name": "Værditilvækst",
+      "desc": "Skab værdi via renovering"
+    }
   },
   "brrrr": {
     "intro": "<strong>Hvad hvis jeg renoverer for X?</strong> Indtast budget, ny leje og ny værdi — vi genberegner ROI.",
