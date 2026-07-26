@@ -1,7 +1,7 @@
 /**
  * NordInvest i18n — lightweight vanilla runtime
  * ---------------------------------------------
- * - Reads ?lang= URL param > localStorage 'ni_lang' > default 'en'
+ * - Reads ?lang= URL param > localStorage 'ni_lang' > default 'da'
  * - Fetches /locales/{lang}.json
  * - Translates [data-i18n], [data-i18n-placeholder], [data-i18n-aria]
  * - Exposes window.t(key, vars), window.setLang(lang), window.getLang()
@@ -12,7 +12,7 @@
  */
 (function () {
   const SUPPORTED = ['en', 'da'];
-  const DEFAULT_LANG = 'en';
+  const DEFAULT_LANG = 'da'; // Danish is the site default — matches static hreflang/canonical markup across pages.
   const STORAGE_KEY = 'ni_lang';
   let dict = {};
   let currentLang = DEFAULT_LANG;
