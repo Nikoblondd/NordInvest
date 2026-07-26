@@ -30,7 +30,9 @@ export default async function handler(req, res) {
     { url: '/investering-i-ejendom-fyn',        changefreq: 'monthly', priority: '0.9' },
     { url: '/boligsiden-investering-guide',     changefreq: 'monthly', priority: '0.8' },
     { url: '/investere-i-ejendom-danmark-2026', changefreq: 'monthly', priority: '0.95' },
+    { url: '/vaerktoejer', changefreq: 'monthly', priority: '0.8' },
     { url: '/vaerktoejer/bruttoafkast-beregner', changefreq: 'monthly', priority: '0.85' },
+    { url: '/vaerktoejer/boligkoeb-laaneberegner', changefreq: 'monthly', priority: '0.85' },
     {
       url: '/brand',
       changefreq: 'monthly',

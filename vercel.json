@@ -14,7 +14,9 @@
     { "source": "/boligsiden-investering-guide", "destination": "/boligsiden-investering-guide.html" },
     { "source": "/investere-i-ejendom-danmark-2026", "destination": "/investere-i-ejendom-danmark-2026.html" },
     { "source": "/brand", "destination": "/brand.html" },
+    { "source": "/vaerktoejer", "destination": "/vaerktoejer/index.html" },
     { "source": "/vaerktoejer/bruttoafkast-beregner", "destination": "/vaerktoejer/bruttoafkast-beregner.html" },
+    { "source": "/vaerktoejer/boligkoeb-laaneberegner", "destination": "/vaerktoejer/boligkoeb-laaneberegner.html" },
     { "source": "/blog/:slug+", "destination": "/api/blog-render" }
   ]
 }
