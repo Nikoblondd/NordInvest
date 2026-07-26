@@ -573,6 +573,7 @@
       border: 2px solid #fff;
     }
   </style>
+<script defer src="/i18n.js"></script>
 </head>
 <body>
 
@@ -1069,7 +1070,7 @@
   });
 </script>
 
-<script src="/i18n.js"></script>
+<!-- i18n.js moved to head with defer for parallel download -->
 <script>
 document.addEventListener('i18n:ready', (e) => {
   const lang = e.detail.lang;

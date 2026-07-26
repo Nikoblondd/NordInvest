@@ -51,6 +51,8 @@
 <!-- Unsplash preconnect removed — homepage no longer uses Unsplash images (moved to /brand/) -->
 <!-- Preload default locale so /locales/en.json fetch runs in parallel with i18n.js instead of sequential (shaves ~250ms off critical path per Lighthouse) -->
 <link rel="preload" as="fetch" href="/locales/en.json" type="application/json" crossorigin>
+<!-- Deferred i18n loader — parallel download with HTML parse, executes after DOMContentLoaded. Was end-of-body sync script; Lighthouse flagged it as the 351ms critical path chain blocking LCP. -->
+<script defer src="/i18n.js"></script>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 <link rel="dns-prefetch" href="https://script.google.com">
 
@@ -7274,6 +7276,6 @@ window.addEventListener('storage', renderPortfolioCTA);
 })();
 </script>
 
-<script src="/i18n.js"></script>
+<!-- i18n.js is now loaded in <head> with defer for parallel download + non-blocking parse -->
 </body>
 </html>

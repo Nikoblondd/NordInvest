@@ -473,6 +473,7 @@
     .nav-links a:not(.nav-cta) { display: none; }
   }
 </style>
+<script defer src="/i18n.js"></script>
 </head>
 <body>
 
@@ -678,7 +679,7 @@ document.addEventListener('DOMContentLoaded', render);
 document.addEventListener('i18n:ready', render);
 window.addEventListener('storage', render);
 </script>
-<script src="/i18n.js"></script>
+<!-- i18n.js moved to head with defer for parallel download -->
 
 <script>
 (function(){
