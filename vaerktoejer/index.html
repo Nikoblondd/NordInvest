@@ -17,6 +17,7 @@
 <meta name="theme-color" content="#0F1F3D">
 <link rel="canonical" href="https://www.nordinvest.io/vaerktoejer">
 <link rel="alternate" hreflang="da" href="https://www.nordinvest.io/vaerktoejer">
+<link rel="alternate" hreflang="en" href="https://www.nordinvest.io/vaerktoejer?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://www.nordinvest.io/vaerktoejer">
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
@@ -55,7 +56,8 @@
   "name": "NordInvest værktøjer til ejendomsinvestering",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Bruttoafkast beregner", "url": "https://www.nordinvest.io/vaerktoejer/bruttoafkast-beregner" },
-    { "@type": "ListItem", "position": 2, "name": "Boligkøber låneberegner", "url": "https://www.nordinvest.io/vaerktoejer/boligkoeb-laaneberegner" }
+    { "@type": "ListItem", "position": 2, "name": "Boligkøber låneberegner", "url": "https://www.nordinvest.io/vaerktoejer/boligkoeb-laaneberegner" },
+    { "@type": "ListItem", "position": 3, "name": "Tomgangsrisiko beregner", "url": "https://www.nordinvest.io/vaerktoejer/tomgangsrisiko-beregner" }
   ]
 }
 </script>
@@ -68,10 +70,14 @@
   .nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
   .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; }
   .nav a.logo { color: var(--navy); text-decoration: none; font-weight: 800; font-size: 18px; letter-spacing: -0.4px; margin-right: 16px; }
-  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-links { display: flex; gap: 20px; align-items: center; }
   .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 180ms ease; }
   .nav-links a:hover, .nav-links a.active { color: var(--navy); }
-  @media (max-width: 560px) { .nav-links { gap: 14px; } .nav-links a { font-size: 13px; } }
+  .lang-toggle { display: inline-flex; background: var(--grey-100); border-radius: 8px; padding: 3px; gap: 2px; flex-shrink: 0; }
+  .lang-btn { font-family: inherit; font-size: 12px; font-weight: 700; padding: 5px 10px; border: none; border-radius: 6px; background: transparent; color: var(--text-muted); cursor: pointer; letter-spacing: 0.3px; transition: all 160ms ease; }
+  .lang-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  @media (max-width: 560px) { .nav-secondary { display: none; } .nav-right { gap: 12px; } .nav-links { gap: 12px; } }
   main { max-width: 900px; margin: 44px auto 90px; padding: 0 24px; }
   .breadcrumb-nav { margin-bottom: 22px; }
   .breadcrumb-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; color: var(--text-muted); }
@@ -117,11 +123,17 @@
 <nav class="nav">
   <div class="nav-inner">
     <a href="/" class="logo">NordInvest</a>
-    <div class="nav-links">
-      <a href="/vaerktoejer" class="active">Værktøjer</a>
-      <a href="/investment-models">Modeller</a>
-      <a href="/glossary">Ordliste</a>
-      <a href="/blog">Blog</a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="/vaerktoejer" class="active" data-i18n="nav.tools">Værktøjer</a>
+        <a href="/investment-models" class="nav-secondary" data-i18n="nav.models">Modeller</a>
+        <a href="/glossary" class="nav-secondary" data-i18n="nav.glossary">Ordliste</a>
+        <a href="/blog" class="nav-secondary" data-i18n="nav.blog">Blog</a>
+      </div>
+      <div class="lang-toggle" role="group" aria-label="Sprog / Language">
+        <button type="button" class="lang-btn active" data-lang="da" onclick="setToolLang('da')">DA</button>
+        <button type="button" class="lang-btn" data-lang="en" onclick="setToolLang('en')">EN</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -129,76 +141,105 @@
 <main>
   <nav class="breadcrumb-nav" aria-label="Brødkrummesti">
     <ol class="breadcrumb-list">
-      <li><a href="/">Hjem</a></li>
-      <li aria-current="page">Værktøjer</li>
+      <li><a href="/" data-i18n="bc.home">Hjem</a></li>
+      <li aria-current="page" data-i18n="nav.tools">Værktøjer</li>
     </ol>
   </nav>
 
-  <span class="eyebrow">Gratis værktøjer</span>
-  <h1>Værktøjer til <em>ejendomsinvestering</em></h1>
-  <p class="lede">Gratis beregnere der hjælper dig med at træffe bedre ejendomsbeslutninger. Hver enkelt løser ét konkret spørgsmål på under et minut — ingen tilmelding, ingen login. Når du er klar til det fulde billede, sender de dig videre til NordInvest analyzeren.</p>
+  <span class="eyebrow" data-i18n="eyebrow">Gratis værktøjer</span>
+  <h1 data-i18n-html="h1">Værktøjer til <em>ejendomsinvestering</em></h1>
+  <p class="lede" data-i18n="lede">Gratis beregnere der hjælper dig med at træffe bedre ejendomsbeslutninger. Hver enkelt løser ét konkret spørgsmål på under et minut — ingen tilmelding, ingen login. Når du er klar til det fulde billede, sender de dig videre til NordInvest analyzeren.</p>
 
   <div class="tool-grid">
     <a href="/vaerktoejer/bruttoafkast-beregner" class="tool-card">
-      <span class="tool-tag">Gratis</span>
+      <span class="tool-tag" data-i18n="tag.free">Gratis</span>
       <div class="tool-icon i-brutto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
       </div>
-      <div class="tool-name">Bruttoafkast beregner</div>
-      <div class="tool-desc">Er ejendommen værd at kigge nærmere på? Indtast købspris og årlig leje, og få et farvekodet mavefornemmelses-tjek på 30 sekunder.</div>
-      <span class="tool-cta">Åbn beregner →</span>
+      <div class="tool-name" data-i18n="t1.name">Bruttoafkast beregner</div>
+      <div class="tool-desc" data-i18n="t1.desc">Er ejendommen værd at kigge nærmere på? Indtast købspris og årlig leje, og få et farvekodet mavefornemmelses-tjek på 30 sekunder.</div>
+      <span class="tool-cta" data-i18n="cta.open">Åbn beregner →</span>
     </a>
 
     <a href="/vaerktoejer/boligkoeb-laaneberegner" class="tool-card">
-      <span class="tool-tag">Gratis</span>
+      <span class="tool-tag" data-i18n="tag.free">Gratis</span>
       <div class="tool-icon i-laan">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>
       </div>
-      <div class="tool-name">Boligkøber låneberegner</div>
-      <div class="tool-desc">Hvor meget kan du reelt låne til bolig? Indtast løn, faste udgifter og opsparing, og se din realistiske køberamme set fra bankens side.</div>
-      <span class="tool-cta">Åbn beregner →</span>
+      <div class="tool-name" data-i18n="t2.name">Boligkøber låneberegner</div>
+      <div class="tool-desc" data-i18n="t2.desc">Hvor meget kan du reelt låne til bolig? Indtast løn, faste udgifter og opsparing, og se din realistiske køberamme set fra bankens side.</div>
+      <span class="tool-cta" data-i18n="cta.open">Åbn beregner →</span>
+    </a>
+
+    <a href="/vaerktoejer/tomgangsrisiko-beregner" class="tool-card">
+      <span class="tool-tag" data-i18n="tag.free">Gratis</span>
+      <div class="tool-icon i-brutto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 9l-6 6-4-4-3 3"/></svg>
+      </div>
+      <div class="tool-name" data-i18n="t3.name">Tomgangsrisiko beregner</div>
+      <div class="tool-desc" data-i18n="t3.desc">Hvor mange måneders tomgang kan din investering tåle, før den bliver urentabel? Break-even-analyse for erfarne investorer.</div>
+      <span class="tool-cta" data-i18n="cta.open">Åbn beregner →</span>
     </a>
 
     <div class="tool-card soon">
-      <span class="tool-tag soon-tag">Kommer snart</span>
-      <div class="tool-icon i-brutto" style="background:var(--grey-100);color:var(--text-muted);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 9l-6 6-4-4-3 3"/></svg>
-      </div>
-      <div class="tool-name">Tomgangsrisiko beregner</div>
-      <div class="tool-desc">Hvor mange måneders tomgang kan din investering tåle, før den bliver urentabel? Break-even-analyse for erfarne investorer.</div>
-      <span class="tool-cta" style="color:var(--text-muted);">Kommer snart</span>
-    </div>
-
-    <div class="tool-card soon">
-      <span class="tool-tag soon-tag">Kommer snart</span>
+      <span class="tool-tag soon-tag" data-i18n="tag.soon">Kommer snart</span>
       <div class="tool-icon i-laan" style="background:var(--grey-100);color:var(--text-muted);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-8-4.5-8-11a8 8 0 1116 0c0 6.5-8 11-8 11z"/><circle cx="12" cy="10" r="3"/></svg>
       </div>
-      <div class="tool-name">Investeringskort</div>
-      <div class="tool-desc">Udforsk det danske marked på et interaktivt kort. Se estimeret afkast pr. område og find investeringsmuligheder.</div>
-      <span class="tool-cta" style="color:var(--text-muted);">Kommer snart</span>
+      <div class="tool-name" data-i18n="t4.name">Investeringskort</div>
+      <div class="tool-desc" data-i18n="t4.desc">Udforsk det danske marked på et interaktivt kort. Se estimeret afkast pr. område og find investeringsmuligheder.</div>
+      <span class="tool-cta" style="color:var(--text-muted);" data-i18n="cta.soon">Kommer snart</span>
     </div>
   </div>
 
   <div class="analyzer-band">
-    <h2>Klar til den fulde analyse?</h2>
-    <p>Værktøjerne er hurtige svar på enkelte spørgsmål. NordInvest analyzeren giver dig hele billedet — cash flow, ROI, rentestresstest og en investeringsdom på 60 sekunder.</p>
-    <a href="/" class="btn">Åbn analyzeren →</a>
+    <h2 data-i18n="band.h">Klar til den fulde analyse?</h2>
+    <p data-i18n="band.p">Værktøjerne er hurtige svar på enkelte spørgsmål. NordInvest analyzeren giver dig hele billedet — cash flow, ROI, rentestresstest og en investeringsdom på 60 sekunder.</p>
+    <a href="/" class="btn" data-i18n="band.btn">Åbn analyzeren →</a>
   </div>
 
-  <h2 class="section-h">Hvorfor bruge værktøjerne?</h2>
-  <p>De fleste danske ejendomsinvestorer starter med det samme spørgsmål: "Er den her overhovedet værd at kigge på?" Værktøjerne her giver dig et hurtigt, ærligt svar uden at du skal grave dig igennem en fuld analyse. Brug <a href="/vaerktoejer/bruttoafkast-beregner">bruttoafkast beregneren</a> til at screene en annonce på sekunder, eller <a href="/vaerktoejer/boligkoeb-laaneberegner">låneberegneren</a> til at finde din realistiske køberamme, før du overhovedet begynder at kigge på boliger.</p>
-  <p>Når du har fundet en ejendom, der ser lovende ud, kører du den igennem den fulde <a href="/">NordInvest analyzer</a> for cash flow, ROI og en samlet vurdering. Vil du forstå tallene bag, så læs vores guide til <a href="/blog/koeb-af-investeringsejendom">køb af investeringsejendom</a> eller <a href="/blog/ejendomsinvestering-for-begyndere-2026">ejendomsinvestering for begyndere</a>.</p>
+  <h2 class="section-h" data-i18n="why.h">Hvorfor bruge værktøjerne?</h2>
+  <p data-i18n-html="why.p1">De fleste danske ejendomsinvestorer starter med det samme spørgsmål: "Er den her overhovedet værd at kigge på?" Værktøjerne her giver dig et hurtigt, ærligt svar uden at du skal grave dig igennem en fuld analyse. Brug <a href="/vaerktoejer/bruttoafkast-beregner">bruttoafkast beregneren</a> til at screene en annonce på sekunder, eller <a href="/vaerktoejer/boligkoeb-laaneberegner">låneberegneren</a> til at finde din realistiske køberamme, før du overhovedet begynder at kigge på boliger.</p>
+  <p data-i18n-html="why.p2">Når du har fundet en ejendom, der ser lovende ud, kører du den igennem den fulde <a href="/">NordInvest analyzer</a> for cash flow, ROI og en samlet vurdering. Vil du forstå tallene bag, så læs vores guide til <a href="/blog/koeb-af-investeringsejendom">køb af investeringsejendom</a> eller <a href="/blog/ejendomsinvestering-for-begyndere-2026">ejendomsinvestering for begyndere</a>.</p>
 </main>
 
 <footer>
-  <a href="/">Analyzer</a>
-  <a href="/vaerktoejer">Værktøjer</a>
-  <a href="/investment-models">Modeller</a>
-  <a href="/glossary">Ordliste</a>
-  <a href="/methodology">Metode</a>
-  <a href="/blog">Blog</a>
+  <a href="/" data-i18n="foot.analyzer">Analyzer</a>
+  <a href="/vaerktoejer" data-i18n="nav.tools">Værktøjer</a>
+  <a href="/investment-models" data-i18n="nav.models">Modeller</a>
+  <a href="/glossary" data-i18n="nav.glossary">Ordliste</a>
+  <a href="/methodology" data-i18n="foot.method">Metode</a>
+  <a href="/blog" data-i18n="nav.blog">Blog</a>
   <p style="margin-top:14px">© 2026 NordInvest</p>
 </footer>
+
+<script>
+  window.TOOL_STRINGS_EN = {
+    "__title": "Free property investment tools. NordInvest.",
+    "nav.tools": "Tools", "nav.models": "Models", "nav.glossary": "Glossary", "nav.blog": "Blog",
+    "bc.home": "Home",
+    "eyebrow": "Free tools",
+    "h1": "Tools for <em>property investment</em>",
+    "lede": "Free calculators that help you make better property decisions. Each one answers a single specific question in under a minute — no sign-up, no login. When you're ready for the full picture, they send you on to the NordInvest analyzer.",
+    "tag.free": "Free", "tag.soon": "Coming soon",
+    "cta.open": "Open calculator →", "cta.soon": "Coming soon",
+    "t1.name": "Gross yield calculator",
+    "t1.desc": "Is the property worth a closer look? Enter the purchase price and annual rent, and get a color-coded gut check in 30 seconds.",
+    "t2.name": "Home buyer loan calculator",
+    "t2.desc": "How much can you actually borrow for a home? Enter income, fixed costs and savings, and see your realistic budget from the bank's side.",
+    "t3.name": "Vacancy risk calculator",
+    "t3.desc": "How many months of vacancy can your investment absorb before it runs at a loss? Break-even analysis for serious investors.",
+    "t4.name": "Investment map",
+    "t4.desc": "Explore the Danish market on an interactive map. See estimated yield per area and find investment opportunities.",
+    "band.h": "Ready for the full analysis?",
+    "band.p": "The tools are quick answers to single questions. The NordInvest analyzer gives you the whole picture — cash flow, ROI, interest-rate stress test and an investment verdict in 60 seconds.",
+    "band.btn": "Open the analyzer →",
+    "why.h": "Why use the tools?",
+    "why.p1": "Most Danish property investors start with the same question: \"Is this even worth a look?\" The tools here give you a quick, honest answer without digging through a full analysis. Use the <a href=\"/vaerktoejer/bruttoafkast-beregner\">gross yield calculator</a> to screen a listing in seconds, or the <a href=\"/vaerktoejer/boligkoeb-laaneberegner\">loan calculator</a> to find your realistic budget before you even start looking at homes.",
+    "why.p2": "Once you've found a property that looks promising, run it through the full <a href=\"/\">NordInvest analyzer</a> for cash flow, ROI and an overall verdict. Want to understand the numbers behind it? Read our guide to <a href=\"/blog/koeb-af-investeringsejendom\">buying an investment property</a> or <a href=\"/blog/ejendomsinvestering-for-begyndere-2026\">property investment for beginners</a>.",
+    "foot.analyzer": "Analyzer", "foot.method": "Methodology"
+  };
+</script>
+<script src="/vaerktoejer/tools-i18n.js"></script>
 </body>
 </html>

@@ -17,6 +17,7 @@
 <meta name="theme-color" content="#0F1F3D">
 <link rel="canonical" href="https://www.nordinvest.io/vaerktoejer/bruttoafkast-beregner">
 <link rel="alternate" hreflang="da" href="https://www.nordinvest.io/vaerktoejer/bruttoafkast-beregner">
+<link rel="alternate" hreflang="en" href="https://www.nordinvest.io/vaerktoejer/bruttoafkast-beregner?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://www.nordinvest.io/vaerktoejer/bruttoafkast-beregner">
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
@@ -113,10 +114,14 @@
   .nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
   .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; }
   .nav a.logo { color: var(--navy); text-decoration: none; font-weight: 800; font-size: 18px; letter-spacing: -0.4px; margin-right: 16px; }
-  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-links { display: flex; gap: 20px; align-items: center; }
   .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 180ms ease; }
-  .nav-links a:hover { color: var(--navy); }
-  @media (max-width: 560px) { .nav-links { gap: 14px; } .nav-links a { font-size: 13px; } }
+  .nav-links a:hover, .nav-links a.active { color: var(--navy); }
+  .lang-toggle { display: inline-flex; background: var(--grey-100); border-radius: 8px; padding: 3px; gap: 2px; flex-shrink: 0; }
+  .lang-btn { font-family: inherit; font-size: 12px; font-weight: 700; padding: 5px 10px; border: none; border-radius: 6px; background: transparent; color: var(--text-muted); cursor: pointer; letter-spacing: 0.3px; transition: all 160ms ease; }
+  .lang-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  @media (max-width: 560px) { .nav-secondary { display: none; } .nav-right { gap: 12px; } .nav-links { gap: 12px; } }
   main { max-width: 780px; margin: 40px auto 90px; padding: 0 24px; }
   .breadcrumb-nav { margin-bottom: 22px; }
   .breadcrumb-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; color: var(--text-muted); }
@@ -200,11 +205,17 @@
 <nav class="nav">
   <div class="nav-inner">
     <a href="/" class="logo">NordInvest</a>
-    <div class="nav-links">
-      <a href="/investment-models">Modeller</a>
-      <a href="/glossary">Ordliste</a>
-      <a href="/methodology">Metode</a>
-      <a href="/blog">Blog</a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="/vaerktoejer" data-i18n="nav.tools">Værktøjer</a>
+        <a href="/investment-models" class="nav-secondary" data-i18n="nav.models">Modeller</a>
+        <a href="/glossary" class="nav-secondary" data-i18n="nav.glossary">Ordliste</a>
+        <a href="/blog" class="nav-secondary" data-i18n="nav.blog">Blog</a>
+      </div>
+      <div class="lang-toggle" role="group" aria-label="Sprog / Language">
+        <button type="button" class="lang-btn active" data-lang="da" onclick="setToolLang('da')">DA</button>
+        <button type="button" class="lang-btn" data-lang="en" onclick="setToolLang('en')">EN</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -212,19 +223,20 @@
 <main>
   <nav class="breadcrumb-nav" aria-label="Brødkrummesti">
     <ol class="breadcrumb-list">
-      <li><a href="/">Hjem</a></li>
-      <li aria-current="page">Bruttoafkast beregner</li>
+      <li><a href="/" data-i18n="bc.home">Hjem</a></li>
+      <li><a href="/vaerktoejer" data-i18n="nav.tools">Værktøjer</a></li>
+      <li aria-current="page" data-i18n="bc.current">Bruttoafkast beregner</li>
     </ol>
   </nav>
 
-  <span class="eyebrow">Gratis værktøj</span>
-  <h1>Bruttoafkast <em>beregner</em></h1>
-  <p class="lede">Er ejendommen overhovedet værd at kigge nærmere på? Indtast købspris og årlig leje, og få et hurtigt mavefornemmelses-tjek på 30 sekunder. Farvekodet, så du med det samme kan se, om afkastet er stærkt, middel eller svagt for det danske marked.</p>
+  <span class="eyebrow" data-i18n="eyebrow">Gratis værktøj</span>
+  <h1 data-i18n-html="h1">Bruttoafkast <em>beregner</em></h1>
+  <p class="lede" data-i18n="lede">Er ejendommen overhovedet værd at kigge nærmere på? Indtast købspris og årlig leje, og få et hurtigt mavefornemmelses-tjek på 30 sekunder. Farvekodet, så du med det samme kan se, om afkastet er stærkt, middel eller svagt for det danske marked.</p>
 
   <div class="calc">
     <div class="calc-grid">
       <div class="field">
-        <label for="pris">Købspris</label>
+        <label for="pris" data-i18n="f.price">Købspris</label>
         <div class="input-wrap">
           <input type="number" id="pris" inputmode="numeric" placeholder="2.000.000" autocomplete="off">
           <span class="suffix">kr.</span>
@@ -232,15 +244,15 @@
         <div class="hint" id="pris-hint"></div>
       </div>
       <div class="field">
-        <label for="leje">Årlig lejeindtægt</label>
+        <label for="leje" data-i18n="f.rent">Årlig lejeindtægt</label>
         <div class="input-wrap">
           <input type="number" id="leje" inputmode="numeric" placeholder="120.000" autocomplete="off">
-          <span class="suffix">kr./år</span>
+          <span class="suffix" data-i18n="f.krYear">kr./år</span>
         </div>
-        <div class="hint" id="leje-hint">Kender du kun den månedlige leje? Gang med 12.</div>
+        <div class="hint" id="leje-hint" data-i18n="f.rentHint">Kender du kun den månedlige leje? Gang med 12.</div>
       </div>
       <div class="field">
-        <label for="postnr">Postnummer <span style="font-weight:500;color:var(--text-muted);">(valgfrit)</span></label>
+        <label for="postnr" data-i18n-html="f.postnr">Postnummer <span style="font-weight:500;color:var(--text-muted);">(valgfrit)</span></label>
         <div class="input-wrap">
           <input type="text" id="postnr" inputmode="numeric" maxlength="4" placeholder="8000" autocomplete="off">
         </div>
@@ -249,99 +261,156 @@
     </div>
 
     <div class="result">
-      <div class="result-label">Bruttoafkast</div>
+      <div class="result-label" data-i18n="r.label">Bruttoafkast</div>
       <div class="result-value empty" id="result">—</div>
       <div id="badge-wrap"></div>
       <div class="result-monthly" id="monthly"></div>
-      <div class="result-explain" id="explain">Indtast købspris og årlig leje for at se afkastet.</div>
+      <div class="result-explain" id="explain" data-i18n="r.placeholder">Indtast købspris og årlig leje for at se afkastet.</div>
     </div>
 
     <div class="calc-cta">
-      <a href="/" id="analyzer-cta">Vil du have en dybere analyse? Prøv NordInvest analyzer →</a>
-      <span class="sub">Cash flow, ROI, rentestresstest og investeringsdom — gratis, på 60 sekunder.</span>
+      <a href="/" id="analyzer-cta" data-i18n="cta.analyzer">Vil du have en dybere analyse? Prøv NordInvest analyzer →</a>
+      <span class="sub" data-i18n="cta.analyzerSub">Cash flow, ROI, rentestresstest og investeringsdom — gratis, på 60 sekunder.</span>
     </div>
   </div>
 
-  <h2>Hvad er et godt bruttoafkast i Danmark?</h2>
-  <p>Bruttoafkast er det første tal enhver ejendomsinvestor kigger på. Det fortæller, hvor mange procent af købsprisen du får ind i leje om året, før udgifter. Formlen er enkel: <strong>(årlig leje ÷ købspris) × 100</strong>. Men hvad der er "godt" afhænger fuldstændigt af, hvor i landet du kigger.</p>
+  <h2 data-i18n="s1.h">Hvad er et godt bruttoafkast i Danmark?</h2>
+  <p data-i18n-html="s1.p">Bruttoafkast er det første tal enhver ejendomsinvestor kigger på. Det fortæller, hvor mange procent af købsprisen du får ind i leje om året, før udgifter. Formlen er enkel: <strong>(årlig leje ÷ købspris) × 100</strong>. Men hvad der er "godt" afhænger fuldstændigt af, hvor i landet du kigger.</p>
 
   <table class="scale">
-    <thead><tr><th>Bruttoafkast</th><th>Vurdering</th><th>Typisk område</th></tr></thead>
+    <thead><tr><th data-i18n="tbl.yield">Bruttoafkast</th><th data-i18n="tbl.verdict">Vurdering</th><th data-i18n="tbl.area">Typisk område</th></tr></thead>
     <tbody>
-      <tr><td><span class="dot" style="background:var(--red)"></span><strong>Under 4 %</strong></td><td>Svagt afkast</td><td>Centralt København, Frederiksberg</td></tr>
-      <tr><td><span class="dot" style="background:var(--amber)"></span><strong>4–6 %</strong></td><td>Middelmådigt</td><td>Aarhus, Odense, forstæder</td></tr>
-      <tr><td><span class="dot" style="background:var(--green)"></span><strong>Over 6 %</strong></td><td>Stærkt afkast</td><td>Aalborg, Esbjerg, sekundære byer</td></tr>
+      <tr><td><span class="dot" style="background:var(--red)"></span><strong data-i18n="tbl.r1a">Under 4 %</strong></td><td data-i18n="tbl.r1b">Svagt afkast</td><td data-i18n="tbl.r1c">Centralt København, Frederiksberg</td></tr>
+      <tr><td><span class="dot" style="background:var(--amber)"></span><strong data-i18n="tbl.r2a">4–6 %</strong></td><td data-i18n="tbl.r2b">Middelmådigt</td><td data-i18n="tbl.r2c">Aarhus, Odense, forstæder</td></tr>
+      <tr><td><span class="dot" style="background:var(--green)"></span><strong data-i18n="tbl.r3a">Over 6 %</strong></td><td data-i18n="tbl.r3b">Stærkt afkast</td><td data-i18n="tbl.r3c">Aalborg, Esbjerg, sekundære byer</td></tr>
     </tbody>
   </table>
 
-  <p>Et lavt bruttoafkast er ikke automatisk en dårlig investering. Centralt København handles til 3–4 % netop fordi markedet er stærkt og efterspørgslen høj — her kommer afkastet fra værdistigning frem for cash flow. Omvendt kan et højt bruttoafkast på 8 % i en fraflytningskommune skjule tomgangsrisiko og fladt værdistigningspotentiale. Tallet er et udgangspunkt, ikke en dom.</p>
+  <p data-i18n="s1.p2">Et lavt bruttoafkast er ikke automatisk en dårlig investering. Centralt København handles til 3–4 % netop fordi markedet er stærkt og efterspørgslen høj — her kommer afkastet fra værdistigning frem for cash flow. Omvendt kan et højt bruttoafkast på 8 % i en fraflytningskommune skjule tomgangsrisiko og fladt værdistigningspotentiale. Tallet er et udgangspunkt, ikke en dom.</p>
 
-  <h2>Bruttoafkast er kun første skridt</h2>
-  <p>Bruttoafkastet fortæller dig, om en ejendom er værd at analysere videre. Men det tager ikke højde for det, der afgør, om investeringen faktisk tjener penge:</p>
+  <h2 data-i18n="s2.h">Bruttoafkast er kun første skridt</h2>
+  <p data-i18n="s2.p1">Bruttoafkastet fortæller dig, om en ejendom er værd at analysere videre. Men det tager ikke højde for det, der afgør, om investeringen faktisk tjener penge:</p>
   <ul>
-    <li><strong>Cash flow</strong> — leje minus realkreditydelse, ejerforening, ejendomsskat, forsikring og vedligehold. En ejendom med 6 % brutto kan stadig give negativ cash flow ved høj rente.</li>
-    <li><strong>Rentestresstest</strong> — hvad sker der med din økonomi, hvis renten stiger 2 procentpoint?</li>
-    <li><strong>Nettoafkast</strong> — det reelle afkast efter alle driftsudgifter, typisk 20–30 % lavere end brutto.</li>
-    <li><strong>Værdistigning</strong> — den langsigtede prisudvikling i det specifikke område.</li>
+    <li data-i18n-html="s2.li1"><strong>Cash flow</strong> — leje minus realkreditydelse, ejerforening, ejendomsskat, forsikring og vedligehold. En ejendom med 6 % brutto kan stadig give negativ cash flow ved høj rente.</li>
+    <li data-i18n-html="s2.li2"><strong>Rentestresstest</strong> — hvad sker der med din økonomi, hvis renten stiger 2 procentpoint?</li>
+    <li data-i18n-html="s2.li3"><strong>Nettoafkast</strong> — det reelle afkast efter alle driftsudgifter, typisk 20–30 % lavere end brutto.</li>
+    <li data-i18n-html="s2.li4"><strong>Værdistigning</strong> — den langsigtede prisudvikling i det specifikke område.</li>
   </ul>
-  <p>Når bruttoafkastet ser fornuftigt ud, kør ejendommen igennem den fulde <a href="/">NordInvest analyzer</a> for at få cash flow, ROI, rentestresstest og en samlet investeringsdom. For at forstå forskellen på brutto og netto, læs vores guide til <a href="/blog/sadan-beregner-du-lejeafkast">hvordan du beregner lejeafkast</a>.</p>
+  <p data-i18n-html="s2.p2">Når bruttoafkastet ser fornuftigt ud, kør ejendommen igennem den fulde <a href="/">NordInvest analyzer</a> for at få cash flow, ROI, rentestresstest og en samlet investeringsdom. For at forstå forskellen på brutto og netto, læs vores guide til <a href="/blog/sadan-beregner-du-lejeafkast">hvordan du beregner lejeafkast</a>.</p>
 
-  <h2>Andre gratis værktøjer</h2>
+  <h2 data-i18n="tools.h">Andre gratis værktøjer</h2>
   <div class="tools-row">
-    <a href="/">
-      <div class="t-name">Fuld ejendomsanalyzer →</div>
-      <div class="t-desc">Cash flow, ROI, rentestresstest og investeringsdom på 60 sekunder.</div>
+    <a href="/vaerktoejer/boligkoeb-laaneberegner">
+      <div class="t-name" data-i18n="tools.laanName">Boligkøber låneberegner →</div>
+      <div class="t-desc" data-i18n="tools.laanDesc">Hvor meget kan du låne til bolig? Se din køberamme på 30 sekunder.</div>
     </a>
-    <a href="/blog/koeb-af-investeringsejendom">
-      <div class="t-name">Guide: køb af investeringsejendom →</div>
-      <div class="t-desc">Regnestykke, finansiering, skat og de fem klassiske fejl.</div>
+    <a href="/vaerktoejer/tomgangsrisiko-beregner">
+      <div class="t-name" data-i18n="tools.tomName">Tomgangsrisiko beregner →</div>
+      <div class="t-desc" data-i18n="tools.tomDesc">Hvor meget tomgang tåler din udlejning, før den giver underskud?</div>
     </a>
   </div>
 
-  <h2>Ofte stillede spørgsmål</h2>
+  <h2 data-i18n="faq.h">Ofte stillede spørgsmål</h2>
   <div class="faq">
     <details>
-      <summary>Hvad er bruttoafkast på en investeringsejendom?</summary>
-      <p>Bruttoafkast er den årlige lejeindtægt divideret med købsprisen, ganget med 100. Det viser, hvor mange procent af ejendommens pris du får ind i leje om året, før du trækker udgifter fra. Formlen er: (årlig leje ÷ købspris) × 100. En lejlighed til 2.000.000 kr., der giver 100.000 kr. i årlig leje, har et bruttoafkast på 5 %.</p>
+      <summary data-i18n="faq.q1">Hvad er bruttoafkast på en investeringsejendom?</summary>
+      <p data-i18n="faq.a1">Bruttoafkast er den årlige lejeindtægt divideret med købsprisen, ganget med 100. Det viser, hvor mange procent af ejendommens pris du får ind i leje om året, før du trækker udgifter fra. Formlen er: (årlig leje ÷ købspris) × 100. En lejlighed til 2.000.000 kr., der giver 100.000 kr. i årlig leje, har et bruttoafkast på 5 %.</p>
     </details>
     <details>
-      <summary>Hvad er et godt bruttoafkast i Danmark?</summary>
-      <p>På det danske marked er over 6 % et stærkt bruttoafkast, typisk i sekundære byer som Aalborg, Esbjerg og Odense. 4 til 6 % er middelmådigt og almindeligt i Aarhus og forstæderne. Under 4 % er lavt og typisk for centrale København, hvor afkastet i stedet kommer fra værdistigning frem for cash flow.</p>
+      <summary data-i18n="faq.q2">Hvad er et godt bruttoafkast i Danmark?</summary>
+      <p data-i18n="faq.a2">På det danske marked er over 6 % et stærkt bruttoafkast, typisk i sekundære byer som Aalborg, Esbjerg og Odense. 4 til 6 % er middelmådigt og almindeligt i Aarhus og forstæderne. Under 4 % er lavt og typisk for centrale København, hvor afkastet i stedet kommer fra værdistigning frem for cash flow.</p>
     </details>
     <details>
-      <summary>Er bruttoafkast det samme som nettoafkast?</summary>
-      <p>Nej. Bruttoafkast tager kun højde for lejeindtægt og købspris. Nettoafkast trækker alle driftsudgifter fra først, som ejendomsskat, forsikring, ejerforening, vedligehold og tomgang, og er derfor typisk 20 til 30 procent lavere end bruttoafkastet. Bruttoafkast er et hurtigt overslag, nettoafkast er det reelle billede.</p>
+      <summary data-i18n="faq.q3">Er bruttoafkast det samme som nettoafkast?</summary>
+      <p data-i18n="faq.a3">Nej. Bruttoafkast tager kun højde for lejeindtægt og købspris. Nettoafkast trækker alle driftsudgifter fra først, som ejendomsskat, forsikring, ejerforening, vedligehold og tomgang, og er derfor typisk 20 til 30 procent lavere end bruttoafkastet. Bruttoafkast er et hurtigt overslag, nettoafkast er det reelle billede.</p>
     </details>
     <details>
-      <summary>Kan jeg bruge bruttoafkast alene til at vurdere en investering?</summary>
-      <p>Bruttoafkast er et godt førstetjek, men ikke nok alene. En ejendom med højt bruttoafkast kan stadig give negativ cash flow, hvis renten er høj eller udgifterne store. Brug bruttoafkastet til at afgøre, om en ejendom er værd at analysere dybere, og kør derefter en fuld analyse med cash flow, ROI og rentestresstest.</p>
+      <summary data-i18n="faq.q4">Kan jeg bruge bruttoafkast alene til at vurdere en investering?</summary>
+      <p data-i18n="faq.a4">Bruttoafkast er et godt førstetjek, men ikke nok alene. En ejendom med højt bruttoafkast kan stadig give negativ cash flow, hvis renten er høj eller udgifterne store. Brug bruttoafkastet til at afgøre, om en ejendom er værd at analysere dybere, og kør derefter en fuld analyse med cash flow, ROI og rentestresstest.</p>
     </details>
     <details>
-      <summary>Hvorfor er bruttoafkast lavt i København?</summary>
-      <p>Centrale København handles til lave bruttoafkast, typisk 3 til 4,5 procent, fordi efterspørgslen er høj og udbuddet begrænset. Det er et værdistigningsmarked, hvor investorer accepterer lavt løbende afkast mod forventning om stabil prisvækst. Det lave afkast er et symptom på markedets styrke, ikke svaghed.</p>
+      <summary data-i18n="faq.q5">Hvorfor er bruttoafkast lavt i København?</summary>
+      <p data-i18n="faq.a5">Centrale København handles til lave bruttoafkast, typisk 3 til 4,5 procent, fordi efterspørgslen er høj og udbuddet begrænset. Det er et værdistigningsmarked, hvor investorer accepterer lavt løbende afkast mod forventning om stabil prisvækst. Det lave afkast er et symptom på markedets styrke, ikke svaghed.</p>
     </details>
     <details>
-      <summary>Bør jeg regne med månedlig eller årlig leje?</summary>
-      <p>Bruttoafkast beregnes altid på årlig leje. Hvis du kun kender den månedlige leje, ganger du den med 12. En månedlig leje på 9.000 kr. svarer til 108.000 kr. om året. Beregneren viser automatisk den månedlige svarende værdi, så du kan tjekke, at tallet passer.</p>
+      <summary data-i18n="faq.q6">Bør jeg regne med månedlig eller årlig leje?</summary>
+      <p data-i18n="faq.a6">Bruttoafkast beregnes altid på årlig leje. Hvis du kun kender den månedlige leje, ganger du den med 12. En månedlig leje på 9.000 kr. svarer til 108.000 kr. om året. Beregneren viser automatisk den månedlige svarende værdi, så du kan tjekke, at tallet passer.</p>
     </details>
   </div>
 
   <div class="cta-card">
-    <h3>Klar til en rigtig investeringsanalyse?</h3>
-    <p>Bruttoafkast er starten. Få hele billedet — gratis, på 60 sekunder.</p>
-    <a href="/" class="btn">Åbn analyzeren →</a>
+    <h3 data-i18n="ctacard.h">Klar til en rigtig investeringsanalyse?</h3>
+    <p data-i18n="ctacard.p">Bruttoafkast er starten. Få hele billedet — gratis, på 60 sekunder.</p>
+    <a href="/" class="btn" data-i18n="ctacard.btn">Åbn analyzeren →</a>
   </div>
 </main>
 
 <footer>
-  <a href="/">Analyzer</a>
-  <a href="/vaerktoejer/bruttoafkast-beregner">Bruttoafkast</a>
-  <a href="/investment-models">Modeller</a>
-  <a href="/glossary">Ordliste</a>
-  <a href="/methodology">Metode</a>
-  <a href="/blog">Blog</a>
+  <a href="/" data-i18n="foot.analyzer">Analyzer</a>
+  <a href="/vaerktoejer" data-i18n="nav.tools">Værktøjer</a>
+  <a href="/investment-models" data-i18n="nav.models">Modeller</a>
+  <a href="/glossary" data-i18n="nav.glossary">Ordliste</a>
+  <a href="/methodology" data-i18n="foot.method">Metode</a>
+  <a href="/blog" data-i18n="nav.blog">Blog</a>
   <p style="margin-top:14px">© 2026 NordInvest</p>
 </footer>
+
+<script>
+  window.TOOL_STRINGS_EN = {
+    "__title": "Gross yield calculator. Free, in 30 seconds.",
+    "nav.tools": "Tools", "nav.models": "Models", "nav.glossary": "Glossary", "nav.blog": "Blog",
+    "bc.home": "Home", "bc.current": "Gross yield calculator",
+    "eyebrow": "Free tool",
+    "h1": "Gross yield <em>calculator</em>",
+    "lede": "Is the property even worth a closer look? Enter the purchase price and annual rent, and get a quick gut check in 30 seconds. Color-coded, so you can see at once whether the yield is strong, average or weak for the Danish market.",
+    "f.price": "Purchase price",
+    "f.rent": "Annual rental income",
+    "f.krYear": "kr./yr",
+    "f.rentHint": "Only know the monthly rent? Multiply by 12.",
+    "f.postnr": "Postcode <span style=\"font-weight:500;color:var(--text-muted);\">(optional)</span>",
+    "r.label": "Gross yield",
+    "r.placeholder": "Enter purchase price and annual rent to see the yield.",
+    "cta.analyzer": "Want a deeper analysis? Try the NordInvest analyzer →",
+    "cta.analyzerSub": "Cash flow, ROI, interest-rate stress test and an investment verdict — free, in 60 seconds.",
+    "s1.h": "What is a good gross yield in Denmark?",
+    "s1.p": "Gross yield is the first number any property investor looks at. It tells you what percent of the purchase price you take in as rent per year, before costs. The formula is simple: <strong>(annual rent ÷ purchase price) × 100</strong>. But what counts as \"good\" depends entirely on where in the country you're looking.",
+    "tbl.yield": "Gross yield", "tbl.verdict": "Verdict", "tbl.area": "Typical area",
+    "tbl.r1a": "Under 4%", "tbl.r1b": "Weak yield", "tbl.r1c": "Central Copenhagen, Frederiksberg",
+    "tbl.r2a": "4–6%", "tbl.r2b": "Average", "tbl.r2c": "Aarhus, Odense, suburbs",
+    "tbl.r3a": "Over 6%", "tbl.r3b": "Strong yield", "tbl.r3c": "Aalborg, Esbjerg, secondary cities",
+    "s1.p2": "A low gross yield isn't automatically a bad investment. Central Copenhagen trades at 3–4% precisely because the market is strong and demand is high — here the return comes from appreciation rather than cash flow. Conversely, a high gross yield of 8% in a declining municipality can hide vacancy risk and flat appreciation potential. The number is a starting point, not a verdict.",
+    "s2.h": "Gross yield is only the first step",
+    "s2.p1": "Gross yield tells you whether a property is worth analyzing further. But it doesn't account for what actually decides whether the investment makes money:",
+    "s2.li1": "<strong>Cash flow</strong> — rent minus mortgage payment, HOA fees, property tax, insurance and maintenance. A property with 6% gross can still run negative cash flow at high rates.",
+    "s2.li2": "<strong>Interest-rate stress test</strong> — what happens to your finances if rates rise 2 percentage points?",
+    "s2.li3": "<strong>Net yield</strong> — the real return after all operating costs, typically 20–30% lower than gross.",
+    "s2.li4": "<strong>Appreciation</strong> — the long-term price trend in the specific area.",
+    "s2.p2": "When the gross yield looks reasonable, run the property through the full <a href=\"/\">NordInvest analyzer</a> to get cash flow, ROI, an interest-rate stress test and an overall investment verdict. To understand the difference between gross and net, read our guide to <a href=\"/blog/sadan-beregner-du-lejeafkast\">how to calculate rental yield</a>.",
+    "tools.h": "Other free tools",
+    "tools.laanName": "Home buyer loan calculator →",
+    "tools.laanDesc": "How much can you borrow for a home? See your budget in 30 seconds.",
+    "tools.tomName": "Vacancy risk calculator →",
+    "tools.tomDesc": "How much vacancy can your rental absorb before it runs at a loss?",
+    "faq.h": "Frequently asked questions",
+    "faq.q1": "What is gross yield on an investment property?",
+    "faq.a1": "Gross yield is the annual rental income divided by the purchase price, multiplied by 100. It shows what percent of the property's price you take in as rent per year, before deducting costs. The formula is: (annual rent ÷ purchase price) × 100. An apartment at 2,000,000 kr. that yields 100,000 kr. in annual rent has a gross yield of 5%.",
+    "faq.q2": "What is a good gross yield in Denmark?",
+    "faq.a2": "In the Danish market, over 6% is a strong gross yield, typically in secondary cities like Aalborg, Esbjerg and Odense. 4 to 6% is average and common in Aarhus and the suburbs. Under 4% is low and typical for central Copenhagen, where the return instead comes from appreciation rather than cash flow.",
+    "faq.q3": "Is gross yield the same as net yield?",
+    "faq.a3": "No. Gross yield only accounts for rental income and purchase price. Net yield subtracts all operating costs first, like property tax, insurance, HOA fees, maintenance and vacancy, and is therefore typically 20 to 30 percent lower than the gross yield. Gross yield is a quick estimate; net yield is the real picture.",
+    "faq.q4": "Can I use gross yield alone to judge an investment?",
+    "faq.a4": "Gross yield is a good first check, but not enough on its own. A property with a high gross yield can still run negative cash flow if rates are high or costs are large. Use the gross yield to decide whether a property is worth analyzing more deeply, then run a full analysis with cash flow, ROI and an interest-rate stress test.",
+    "faq.q5": "Why is gross yield low in Copenhagen?",
+    "faq.a5": "Central Copenhagen trades at low gross yields, typically 3 to 4.5 percent, because demand is high and supply is limited. It's an appreciation market, where investors accept a low running return in exchange for expected steady price growth. The low yield is a symptom of the market's strength, not weakness.",
+    "faq.q6": "Should I use monthly or annual rent?",
+    "faq.a6": "Gross yield is always calculated on annual rent. If you only know the monthly rent, multiply it by 12. A monthly rent of 9,000 kr. equals 108,000 kr. per year. The calculator automatically shows the monthly equivalent so you can check the number fits.",
+    "ctacard.h": "Ready for a real investment analysis?",
+    "ctacard.p": "Gross yield is the start. Get the whole picture — free, in 60 seconds.",
+    "ctacard.btn": "Open the analyzer →",
+    "foot.analyzer": "Analyzer", "foot.method": "Methodology"
+  };
+</script>
+<script src="/vaerktoejer/tools-i18n.js"></script>
 
 <script>
   (function () {
@@ -355,8 +424,35 @@
     var lejeHint = document.getElementById('leje-hint');
     var postnrHint = document.getElementById('postnr-hint');
 
-    var fmt = new Intl.NumberFormat('da-DK');
     var trackedUse = false;
+
+    var DYN = {
+      da: {
+        rentHint: 'Kender du kun den månedlige leje? Gang med 12.',
+        rentEquiv: function (m) { return 'Svarer til ' + m + ' kr./md.'; },
+        area: function (c) { return 'Område: ' + c; },
+        placeholder: 'Indtast købspris og årlig leje for at se afkastet.',
+        labelWeak: 'Svagt afkast', labelMid: 'Middelmådigt', labelStrong: 'Stærkt afkast',
+        textWeak: 'Under 4 % er lavt for det danske marked. Det kan stadig give mening som et værdistigningskøb i fx centrale København, men forvent ikke positiv cash flow.',
+        textMid: '4–6 % er et fornuftigt, gennemsnitligt afkast — typisk for Aarhus, Odense og forstæderne. Værd at analysere videre for cash flow og rentestresstest.',
+        textStrong: 'Over 6 % er et stærkt bruttoafkast, ofte i sekundære byer. Tjek dog tomgangsrisiko og værdistigningspotentiale, før du byder — højt afkast kan skjule et fladt marked.',
+        monthly: function (m, p) { return '<strong>' + m + ' kr.</strong>/md. i leje på en ejendom til <strong>' + p + ' kr.</strong>'; }
+      },
+      en: {
+        rentHint: 'Only know the monthly rent? Multiply by 12.',
+        rentEquiv: function (m) { return 'Equals ' + m + ' kr./mo.'; },
+        area: function (c) { return 'Area: ' + c; },
+        placeholder: 'Enter purchase price and annual rent to see the yield.',
+        labelWeak: 'Weak yield', labelMid: 'Average', labelStrong: 'Strong yield',
+        textWeak: 'Under 4% is low for the Danish market. It can still make sense as an appreciation buy in e.g. central Copenhagen, but don\'t expect positive cash flow.',
+        textMid: '4–6% is a reasonable, average yield — typical for Aarhus, Odense and the suburbs. Worth analyzing further for cash flow and an interest-rate stress test.',
+        textStrong: 'Over 6% is a strong gross yield, often in secondary cities. But check vacancy risk and appreciation potential before you bid — a high yield can hide a flat market.',
+        monthly: function (m, p) { return '<strong>' + m + ' kr.</strong>/mo. in rent on a property at <strong>' + p + ' kr.</strong>'; }
+      }
+    };
+    function L() { return DYN[window.toolLang === 'en' ? 'en' : 'da']; }
+    function loc() { return window.toolLang === 'en' ? 'en-GB' : 'da-DK'; }
+    function fmtN(n) { return new Intl.NumberFormat(loc()).format(n); }
 
     // Light postnummer → city context (no fabricated yield data — just area name)
     var POSTNR = [
@@ -386,50 +482,43 @@
     }
 
     function classify(y) {
-      if (y < 4) return {
-        cls: 'red', label: 'Svagt afkast',
-        text: 'Under 4 % er lavt for det danske marked. Det kan stadig give mening som et værdistigningskøb i fx centrale København, men forvent ikke positiv cash flow.'
-      };
-      if (y < 6) return {
-        cls: 'amber', label: 'Middelmådigt',
-        text: '4–6 % er et fornuftigt, gennemsnitligt afkast — typisk for Aarhus, Odense og forstæderne. Værd at analysere videre for cash flow og rentestresstest.'
-      };
-      return {
-        cls: 'green', label: 'Stærkt afkast',
-        text: 'Over 6 % er et stærkt bruttoafkast, ofte i sekundære byer. Tjek dog tomgangsrisiko og værdistigningspotentiale, før du byder — højt afkast kan skjule et fladt marked.'
-      };
+      var t = L();
+      if (y < 4) return { cls: 'red', label: t.labelWeak, text: t.textWeak };
+      if (y < 6) return { cls: 'amber', label: t.labelMid, text: t.textMid };
+      return { cls: 'green', label: t.labelStrong, text: t.textStrong };
     }
 
     function recalc() {
+      var t = L();
       var pris = parseFloat(prisEl.value);
       var leje = parseFloat(lejeEl.value);
 
       // Monthly equivalent hint for annual rent
       if (!isNaN(leje) && leje > 0) {
-        lejeHint.textContent = 'Svarer til ' + fmt.format(Math.round(leje / 12)) + ' kr./md.';
+        lejeHint.textContent = t.rentEquiv(fmtN(Math.round(leje / 12)));
       } else {
-        lejeHint.textContent = 'Kender du kun den månedlige leje? Gang med 12.';
+        lejeHint.textContent = t.rentHint;
       }
 
       // Postnummer context
       var city = cityFor(postnrEl.value);
-      postnrHint.textContent = city ? 'Område: ' + city : '';
+      postnrHint.textContent = city ? t.area(city) : '';
 
       if (isNaN(pris) || pris <= 0 || isNaN(leje) || leje <= 0) {
         resultEl.textContent = '—';
         resultEl.className = 'result-value empty';
         badgeWrap.innerHTML = '';
         monthlyEl.textContent = '';
-        explainEl.textContent = 'Indtast købspris og årlig leje for at se afkastet.';
+        explainEl.textContent = t.placeholder;
         return;
       }
 
       var yield_ = (leje / pris) * 100;
       var v = classify(yield_);
-      resultEl.textContent = yield_.toLocaleString('da-DK', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' %';
+      resultEl.textContent = yield_.toLocaleString(loc(), { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' %';
       resultEl.className = 'result-value ' + v.cls;
       badgeWrap.innerHTML = '<span class="result-badge ' + v.cls + '">' + v.label + '</span>';
-      monthlyEl.innerHTML = '<strong>' + fmt.format(Math.round(leje / 12)) + ' kr.</strong>/md. i leje på en ejendom til <strong>' + fmt.format(pris) + ' kr.</strong>';
+      monthlyEl.innerHTML = t.monthly(fmtN(Math.round(leje / 12)), fmtN(pris));
       explainEl.textContent = v.text;
 
       // GA event — fire once per session on first valid calculation
@@ -442,6 +531,7 @@
     prisEl.addEventListener('input', recalc);
     lejeEl.addEventListener('input', recalc);
     postnrEl.addEventListener('input', recalc);
+    document.addEventListener('toolLang:changed', recalc);
 
     // Track click-through to the main analyzer as a conversion
     function trackCta(label) {

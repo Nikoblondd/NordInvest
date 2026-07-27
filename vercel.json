@@ -17,6 +17,7 @@
     { "source": "/vaerktoejer", "destination": "/vaerktoejer/index.html" },
     { "source": "/vaerktoejer/bruttoafkast-beregner", "destination": "/vaerktoejer/bruttoafkast-beregner.html" },
     { "source": "/vaerktoejer/boligkoeb-laaneberegner", "destination": "/vaerktoejer/boligkoeb-laaneberegner.html" },
+    { "source": "/vaerktoejer/tomgangsrisiko-beregner", "destination": "/vaerktoejer/tomgangsrisiko-beregner.html" },
     { "source": "/blog/:slug+", "destination": "/api/blog-render" }
   ]
 }

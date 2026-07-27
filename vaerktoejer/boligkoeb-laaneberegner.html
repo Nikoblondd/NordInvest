@@ -17,6 +17,7 @@
 <meta name="theme-color" content="#0F1F3D">
 <link rel="canonical" href="https://www.nordinvest.io/vaerktoejer/boligkoeb-laaneberegner">
 <link rel="alternate" hreflang="da" href="https://www.nordinvest.io/vaerktoejer/boligkoeb-laaneberegner">
+<link rel="alternate" hreflang="en" href="https://www.nordinvest.io/vaerktoejer/boligkoeb-laaneberegner?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://www.nordinvest.io/vaerktoejer/boligkoeb-laaneberegner">
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
@@ -113,10 +114,14 @@
   .nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
   .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; }
   .nav a.logo { color: var(--navy); text-decoration: none; font-weight: 800; font-size: 18px; letter-spacing: -0.4px; margin-right: 16px; }
-  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-links { display: flex; gap: 20px; align-items: center; }
   .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 180ms ease; }
   .nav-links a:hover, .nav-links a.active { color: var(--navy); }
-  @media (max-width: 560px) { .nav-links { gap: 14px; } .nav-links a { font-size: 13px; } }
+  .lang-toggle { display: inline-flex; background: var(--grey-100); border-radius: 8px; padding: 3px; gap: 2px; flex-shrink: 0; }
+  .lang-btn { font-family: inherit; font-size: 12px; font-weight: 700; padding: 5px 10px; border: none; border-radius: 6px; background: transparent; color: var(--text-muted); cursor: pointer; letter-spacing: 0.3px; transition: all 160ms ease; }
+  .lang-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  @media (max-width: 560px) { .nav-secondary { display: none; } .nav-right { gap: 12px; } .nav-links { gap: 12px; } }
   main { max-width: 780px; margin: 40px auto 90px; padding: 0 24px; }
   .breadcrumb-nav { margin-bottom: 22px; }
   .breadcrumb-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; color: var(--text-muted); }
@@ -198,11 +203,17 @@
 <nav class="nav">
   <div class="nav-inner">
     <a href="/" class="logo">NordInvest</a>
-    <div class="nav-links">
-      <a href="/vaerktoejer" class="active">Værktøjer</a>
-      <a href="/investment-models">Modeller</a>
-      <a href="/glossary">Ordliste</a>
-      <a href="/blog">Blog</a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="/vaerktoejer" data-i18n="nav.tools">Værktøjer</a>
+        <a href="/investment-models" class="nav-secondary" data-i18n="nav.models">Modeller</a>
+        <a href="/glossary" class="nav-secondary" data-i18n="nav.glossary">Ordliste</a>
+        <a href="/blog" class="nav-secondary" data-i18n="nav.blog">Blog</a>
+      </div>
+      <div class="lang-toggle" role="group" aria-label="Sprog / Language">
+        <button type="button" class="lang-btn active" data-lang="da" onclick="setToolLang('da')">DA</button>
+        <button type="button" class="lang-btn" data-lang="en" onclick="setToolLang('en')">EN</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -210,41 +221,41 @@
 <main>
   <nav class="breadcrumb-nav" aria-label="Brødkrummesti">
     <ol class="breadcrumb-list">
-      <li><a href="/">Hjem</a></li>
-      <li><a href="/vaerktoejer">Værktøjer</a></li>
-      <li aria-current="page">Boligkøber låneberegner</li>
+      <li><a href="/" data-i18n="bc.home">Hjem</a></li>
+      <li><a href="/vaerktoejer" data-i18n="nav.tools">Værktøjer</a></li>
+      <li aria-current="page" data-i18n="bc.current">Boligkøber låneberegner</li>
     </ol>
   </nav>
 
-  <span class="eyebrow">Gratis værktøj</span>
-  <h1>Hvor meget kan jeg <em>låne til bolig?</em></h1>
-  <p class="lede">Find din realistiske køberamme, før du begynder at kigge på boliger. Indtast løn, faste udgifter og opsparing, og se med det samme, hvor meget banken sandsynligvis vil låne dig — baseret på de gældsfaktor- og rådighedsbeløbsregler, danske banker faktisk bruger.</p>
+  <span class="eyebrow" data-i18n="eyebrow">Gratis værktøj</span>
+  <h1 data-i18n-html="h1">Hvor meget kan jeg <em>låne til bolig?</em></h1>
+  <p class="lede" data-i18n="lede">Find din realistiske køberamme, før du begynder at kigge på boliger. Indtast løn, faste udgifter og opsparing, og se med det samme, hvor meget banken sandsynligvis vil låne dig — baseret på de gældsfaktor- og rådighedsbeløbsregler, danske banker faktisk bruger.</p>
 
   <div class="calc">
     <div class="calc-grid">
       <div class="field">
-        <label for="loen1">Din månedlige bruttoløn</label>
+        <label for="loen1" data-i18n="f.income1">Din månedlige bruttoløn</label>
         <div class="input-wrap">
           <input type="number" id="loen1" inputmode="numeric" placeholder="35.000" autocomplete="off">
           <span class="suffix">kr.</span>
         </div>
       </div>
       <div class="field">
-        <label for="loen2">Partners bruttoløn <span class="opt">(valgfrit)</span></label>
+        <label for="loen2" data-i18n-html="f.income2">Partners bruttoløn <span class="opt">(valgfrit)</span></label>
         <div class="input-wrap">
           <input type="number" id="loen2" inputmode="numeric" placeholder="0" autocomplete="off">
           <span class="suffix">kr.</span>
         </div>
       </div>
       <div class="field">
-        <label for="udgifter">Månedlige faste udgifter</label>
+        <label for="udgifter" data-i18n="f.costs">Månedlige faste udgifter</label>
         <div class="input-wrap">
           <input type="number" id="udgifter" inputmode="numeric" placeholder="6.000" value="6000" autocomplete="off">
           <span class="suffix">kr.</span>
         </div>
       </div>
       <div class="field">
-        <label for="udbetaling">Opsparet udbetaling</label>
+        <label for="udbetaling" data-i18n="f.down">Opsparet udbetaling</label>
         <div class="input-wrap">
           <input type="number" id="udbetaling" inputmode="numeric" placeholder="200.000" autocomplete="off">
           <span class="suffix">kr.</span>
@@ -254,102 +265,154 @@
 
     <div class="result">
       <div class="result-head">
-        <div class="result-label">Realistisk køberamme</div>
+        <div class="result-label" data-i18n="r.budget">Realistisk køberamme</div>
         <div class="result-value empty" id="ramme">—</div>
-        <div class="result-sub" id="ramme-sub">Indtast din løn og opsparing for at se din køberamme.</div>
+        <div class="result-sub" id="ramme-sub" data-i18n="r.placeholder">Indtast din løn og opsparing for at se din køberamme.</div>
       </div>
       <div class="breakdown">
         <div class="bd-item">
-          <div class="bd-label">Maks. lån</div>
+          <div class="bd-label" data-i18n="bd.maxLoan">Maks. lån</div>
           <div class="bd-value" id="maxlaan">—</div>
         </div>
         <div class="bd-item">
-          <div class="bd-label">Månedlig ydelse</div>
+          <div class="bd-label" data-i18n="bd.payment">Månedlig ydelse</div>
           <div class="bd-value" id="ydelse">—</div>
         </div>
         <div class="bd-item">
-          <div class="bd-label">Rådighed efter køb</div>
+          <div class="bd-label" data-i18n="bd.disposable">Rådighed efter køb</div>
           <div class="bd-value" id="raadighed">—</div>
         </div>
       </div>
       <div class="warn" id="warn"></div>
-      <div class="disclaimer">Estimatet bygger på danske bankers typiske regler i 2026: gældsfaktor op til 4× husstandens årlige bruttoindkomst, et minimum-rådighedsbeløb, og mindst 5 % udbetaling til en helårsbolig. Månedsydelsen er beregnet ved 4,5 % rente over 30 år. Det er et vejledende overslag — din bank laver den endelige vurdering, og transaktionsomkostninger (ca. 3 %) kommer oveni.</div>
+      <div class="disclaimer" data-i18n="disclaimer">Estimatet bygger på danske bankers typiske regler i 2026: gældsfaktor op til 4× husstandens årlige bruttoindkomst, et minimum-rådighedsbeløb, og mindst 5 % udbetaling til en helårsbolig. Månedsydelsen er beregnet ved 4,5 % rente over 30 år. Det er et vejledende overslag — din bank laver den endelige vurdering, og transaktionsomkostninger (ca. 3 %) kommer oveni.</div>
     </div>
 
     <div class="calc-cta">
-      <a href="/" id="analyzer-cta">Overvejer du at leje ud i stedet? Prøv NordInvest analyzer →</a>
-      <span class="sub">Se investeringspotentialet i en konkret ejendom — cash flow, afkast og finansiering.</span>
+      <a href="/" id="analyzer-cta" data-i18n="cta.analyzer">Overvejer du at leje ud i stedet? Prøv NordInvest analyzer →</a>
+      <span class="sub" data-i18n="cta.analyzerSub">Se investeringspotentialet i en konkret ejendom — cash flow, afkast og finansiering.</span>
     </div>
   </div>
 
-  <h2>Hvordan beregner banken, hvor meget du kan låne?</h2>
-  <p>Danske banker bruger primært to grænser, når de vurderer, hvor meget du kan låne til en bolig. Beregneren tager begge med og bruger den, der giver den laveste ramme — præcis som banken gør.</p>
+  <h2 data-i18n="s1.h">Hvordan beregner banken, hvor meget du kan låne?</h2>
+  <p data-i18n="s1.p1">Danske banker bruger primært to grænser, når de vurderer, hvor meget du kan låne til en bolig. Beregneren tager begge med og bruger den, der giver den laveste ramme — præcis som banken gør.</p>
   <ul>
-    <li><strong>Gældsfaktor</strong> — din samlede gæld må typisk ikke overstige 4 gange husstandens årlige bruttoindkomst. Tjener I 700.000 kr. om året, ligger loftet omkring 2,8 millioner kr. i lån.</li>
-    <li><strong>Rådighedsbeløb</strong> — efter alle faste udgifter og boligydelsen skal du have et minimum tilbage hver måned. Bankerne regner i 2026 med cirka 5.500 kr. for en enlig og 9.500 kr. for et par. Er beløbet for lavt, afvises lånet uanset gældsfaktor.</li>
+    <li data-i18n-html="s1.li1"><strong>Gældsfaktor</strong> — din samlede gæld må typisk ikke overstige 4 gange husstandens årlige bruttoindkomst. Tjener I 700.000 kr. om året, ligger loftet omkring 2,8 millioner kr. i lån.</li>
+    <li data-i18n-html="s1.li2"><strong>Rådighedsbeløb</strong> — efter alle faste udgifter og boligydelsen skal du have et minimum tilbage hver måned. Bankerne regner i 2026 med cirka 5.500 kr. for en enlig og 9.500 kr. for et par. Er beløbet for lavt, afvises lånet uanset gældsfaktor.</li>
   </ul>
-  <p>Oveni kommer <strong>udbetalingskravet</strong>: til en helårsbolig skal du selv lægge mindst 5 % af købsprisen. Realkreditinstituttet dækker op til 80 %, og de sidste 15 % dækkes typisk af et dyrere boliglån i banken. Jo større udbetaling, jo billigere bliver dit lån samlet set.</p>
+  <p data-i18n-html="s1.p2">Oveni kommer <strong>udbetalingskravet</strong>: til en helårsbolig skal du selv lægge mindst 5 % af købsprisen. Realkreditinstituttet dækker op til 80 %, og de sidste 15 % dækkes typisk af et dyrere boliglån i banken. Jo større udbetaling, jo billigere bliver dit lån samlet set.</p>
 
-  <h2>Køber du for at bo — eller for at leje ud?</h2>
-  <p>Denne beregner er lavet til dig, der køber en bolig, du selv skal bo i. Overvejer du i stedet at købe for at leje ud, gælder helt andre regler: investeringsejendomme vurderes på lejeindtægt og afkast frem for din personlige rådighedsbeløb, og udbetalingskravet er typisk 20–25 %.</p>
-  <p>Vil du se, om en konkret ejendom er en god investering, så kør den igennem den fulde <a href="/">NordInvest analyzer</a> — den giver dig cash flow, afkast, ROI og en samlet investeringsdom på 60 sekunder. Læs også vores guide til <a href="/blog/udbetaling-investeringsejendom">udbetaling til investeringsejendom</a> for at forstå kravene.</p>
+  <h2 data-i18n="s2.h">Køber du for at bo — eller for at leje ud?</h2>
+  <p data-i18n="s2.p1">Denne beregner er lavet til dig, der køber en bolig, du selv skal bo i. Overvejer du i stedet at købe for at leje ud, gælder helt andre regler: investeringsejendomme vurderes på lejeindtægt og afkast frem for din personlige rådighedsbeløb, og udbetalingskravet er typisk 20–25 %.</p>
+  <p data-i18n-html="s2.p2">Vil du se, om en konkret ejendom er en god investering, så kør den igennem den fulde <a href="/">NordInvest analyzer</a> — den giver dig cash flow, afkast, ROI og en samlet investeringsdom på 60 sekunder. Læs også vores guide til <a href="/blog/udbetaling-investeringsejendom">udbetaling til investeringsejendom</a> for at forstå kravene.</p>
 
-  <h2>Andre gratis værktøjer</h2>
+  <h2 data-i18n="tools.h">Andre gratis værktøjer</h2>
   <div class="tools-row">
     <a href="/vaerktoejer/bruttoafkast-beregner">
-      <div class="t-name">Bruttoafkast beregner →</div>
-      <div class="t-desc">Er en udlejningsejendom værd at kigge på? Tjek afkastet på 30 sekunder.</div>
+      <div class="t-name" data-i18n="tools.bruttoName">Bruttoafkast beregner →</div>
+      <div class="t-desc" data-i18n="tools.bruttoDesc">Er en udlejningsejendom værd at kigge på? Tjek afkastet på 30 sekunder.</div>
     </a>
-    <a href="/">
-      <div class="t-name">Fuld ejendomsanalyzer →</div>
-      <div class="t-desc">Cash flow, ROI, rentestresstest og investeringsdom på 60 sekunder.</div>
+    <a href="/vaerktoejer/tomgangsrisiko-beregner">
+      <div class="t-name" data-i18n="tools.tomName">Tomgangsrisiko beregner →</div>
+      <div class="t-desc" data-i18n="tools.tomDesc">Hvor meget tomgang tåler din udlejning, før den giver underskud?</div>
     </a>
   </div>
 
-  <h2>Ofte stillede spørgsmål</h2>
+  <h2 data-i18n="faq.h">Ofte stillede spørgsmål</h2>
   <div class="faq">
     <details>
-      <summary>Hvor meget kan jeg låne til bolig?</summary>
-      <p>De fleste danske banker låner op til cirka 4 gange husstandens årlige bruttoindkomst, men det endelige beløb afhænger også af dine faste udgifter og hvor meget du har tilbage til rådighed hver måned. En husstand med 600.000 kr. i årlig bruttoløn kan typisk låne omkring 2,4 millioner kr. Realkredit dækker op til 80 procent af boligprisen, du skal selv lægge mindst 5 procent i udbetaling.</p>
+      <summary data-i18n="faq.q1">Hvor meget kan jeg låne til bolig?</summary>
+      <p data-i18n="faq.a1">De fleste danske banker låner op til cirka 4 gange husstandens årlige bruttoindkomst, men det endelige beløb afhænger også af dine faste udgifter og hvor meget du har tilbage til rådighed hver måned. En husstand med 600.000 kr. i årlig bruttoløn kan typisk låne omkring 2,4 millioner kr. Realkredit dækker op til 80 procent af boligprisen, du skal selv lægge mindst 5 procent i udbetaling.</p>
     </details>
     <details>
-      <summary>Hvad er gældsfaktor, og hvorfor betyder den noget?</summary>
-      <p>Gældsfaktor er forholdet mellem din samlede gæld og din årlige bruttoindkomst. Har du 500.000 kr. i indkomst og vil låne 2 millioner kr., er din gældsfaktor 4. Danske banker er tilbageholdende med gældsfaktorer over 4, og kan da kræve, at du kan bære en rente på 6 til 7 procent over 30 år. Lav gældsfaktor giver dig bedre lånevilkår.</p>
+      <summary data-i18n="faq.q2">Hvad er gældsfaktor, og hvorfor betyder den noget?</summary>
+      <p data-i18n="faq.a2">Gældsfaktor er forholdet mellem din samlede gæld og din årlige bruttoindkomst. Har du 500.000 kr. i indkomst og vil låne 2 millioner kr., er din gældsfaktor 4. Danske banker er tilbageholdende med gældsfaktorer over 4, og kan da kræve, at du kan bære en rente på 6 til 7 procent over 30 år. Lav gældsfaktor giver dig bedre lånevilkår.</p>
     </details>
     <details>
-      <summary>Hvor stor en udbetaling skal jeg have til en bolig?</summary>
-      <p>Til en helårsbolig du selv skal bo i, kræver loven mindst 5 procent af købsprisen i udbetaling. På en bolig til 3 millioner kr. er det 150.000 kr. Realkreditinstituttet dækker op til 80 procent, de resterende 15 procent dækkes typisk af et boliglån i banken til højere rente. Jo større udbetaling, jo lavere bliver din samlede låneomkostning.</p>
+      <summary data-i18n="faq.q3">Hvor stor en udbetaling skal jeg have til en bolig?</summary>
+      <p data-i18n="faq.a3">Til en helårsbolig du selv skal bo i, kræver loven mindst 5 procent af købsprisen i udbetaling. På en bolig til 3 millioner kr. er det 150.000 kr. Realkreditinstituttet dækker op til 80 procent, de resterende 15 procent dækkes typisk af et boliglån i banken til højere rente. Jo større udbetaling, jo lavere bliver din samlede låneomkostning.</p>
     </details>
     <details>
-      <summary>Hvad er rådighedsbeløb, og hvor stort skal det være?</summary>
-      <p>Rådighedsbeløb er det, du har tilbage hver måned, efter alle faste udgifter og boligydelsen er betalt. Bankerne kræver et minimum for at godkende lånet. Som tommelfingerregel regner banker i 2026 med cirka 5.500 til 6.500 kr. for en enlig og 9.500 til 11.000 kr. for et par, plus et tillæg pr. barn. Er dit rådighedsbeløb for lavt, afviser banken lånet, uanset gældsfaktor.</p>
+      <summary data-i18n="faq.q4">Hvad er rådighedsbeløb, og hvor stort skal det være?</summary>
+      <p data-i18n="faq.a4">Rådighedsbeløb er det, du har tilbage hver måned, efter alle faste udgifter og boligydelsen er betalt. Bankerne kræver et minimum for at godkende lånet. Som tommelfingerregel regner banker i 2026 med cirka 5.500 til 6.500 kr. for en enlig og 9.500 til 11.000 kr. for et par, plus et tillæg pr. barn. Er dit rådighedsbeløb for lavt, afviser banken lånet, uanset gældsfaktor.</p>
     </details>
     <details>
-      <summary>Kan jeg låne mere, hvis jeg køber sammen med en partner?</summary>
-      <p>Ja. Når to indkomster lægges sammen, stiger både gældsfaktor-loftet og betalingsevnen markant. To personer med hver 30.000 kr. i månedlig bruttoløn har en husstandsindkomst på 720.000 kr. om året og kan typisk låne omkring 2,9 millioner kr., mod cirka 1,4 millioner for en enlig med samme løn. Bankerne kræver dog et højere rådighedsbeløb for par.</p>
+      <summary data-i18n="faq.q5">Kan jeg låne mere, hvis jeg køber sammen med en partner?</summary>
+      <p data-i18n="faq.a5">Ja. Når to indkomster lægges sammen, stiger både gældsfaktor-loftet og betalingsevnen markant. To personer med hver 30.000 kr. i månedlig bruttoløn har en husstandsindkomst på 720.000 kr. om året og kan typisk låne omkring 2,9 millioner kr., mod cirka 1,4 millioner for en enlig med samme løn. Bankerne kræver dog et højere rådighedsbeløb for par.</p>
     </details>
     <details>
-      <summary>Overvejer jeg at leje boligen ud i stedet for at bo i den?</summary>
-      <p>Hvis du overvejer at købe for at leje ud frem for at bo selv, gælder andre regler. Investeringsejendomme vurderes på lejeindtægt og afkast frem for din personlige rådighedsbeløb, og udbetalingskravet er typisk højere, ofte 20 til 25 procent. Brug NordInvest analyzeren til at se investeringspotentialet i en konkret ejendom.</p>
+      <summary data-i18n="faq.q6">Overvejer jeg at leje boligen ud i stedet for at bo i den?</summary>
+      <p data-i18n="faq.a6">Hvis du overvejer at købe for at leje ud frem for at bo selv, gælder andre regler. Investeringsejendomme vurderes på lejeindtægt og afkast frem for din personlige rådighedsbeløb, og udbetalingskravet er typisk højere, ofte 20 til 25 procent. Brug NordInvest analyzeren til at se investeringspotentialet i en konkret ejendom.</p>
     </details>
   </div>
 
   <div class="cta-card">
-    <h3>Køber du for at investere?</h3>
-    <p>Se om en konkret ejendom er en god investering — gratis, på 60 sekunder.</p>
-    <a href="/" class="btn">Åbn analyzeren →</a>
+    <h3 data-i18n="ctacard.h">Køber du for at investere?</h3>
+    <p data-i18n="ctacard.p">Se om en konkret ejendom er en god investering — gratis, på 60 sekunder.</p>
+    <a href="/" class="btn" data-i18n="ctacard.btn">Åbn analyzeren →</a>
   </div>
 </main>
 
 <footer>
-  <a href="/">Analyzer</a>
-  <a href="/vaerktoejer">Værktøjer</a>
-  <a href="/investment-models">Modeller</a>
-  <a href="/glossary">Ordliste</a>
-  <a href="/methodology">Metode</a>
-  <a href="/blog">Blog</a>
+  <a href="/" data-i18n="foot.analyzer">Analyzer</a>
+  <a href="/vaerktoejer" data-i18n="nav.tools">Værktøjer</a>
+  <a href="/investment-models" data-i18n="nav.models">Modeller</a>
+  <a href="/glossary" data-i18n="nav.glossary">Ordliste</a>
+  <a href="/methodology" data-i18n="foot.method">Metode</a>
+  <a href="/blog" data-i18n="nav.blog">Blog</a>
   <p style="margin-top:14px">© 2026 NordInvest</p>
 </footer>
+
+<script>
+  window.TOOL_STRINGS_EN = {
+    "__title": "How much can I borrow for a home? Free calculator.",
+    "nav.tools": "Tools", "nav.models": "Models", "nav.glossary": "Glossary", "nav.blog": "Blog",
+    "bc.home": "Home", "bc.current": "Home buyer loan calculator",
+    "eyebrow": "Free tool",
+    "h1": "How much can I <em>borrow for a home?</em>",
+    "lede": "Find your realistic budget before you start looking at homes. Enter income, fixed costs and savings, and see at once how much the bank is likely to lend you — based on the debt-to-income and disposable-income rules Danish banks actually use.",
+    "f.income1": "Your monthly gross income",
+    "f.income2": "Partner's gross income <span class=\"opt\">(optional)</span>",
+    "f.costs": "Monthly fixed costs",
+    "f.down": "Savings for down payment",
+    "r.budget": "Realistic budget",
+    "r.placeholder": "Enter your income and savings to see your budget.",
+    "bd.maxLoan": "Max. loan", "bd.payment": "Monthly payment", "bd.disposable": "Disposable after purchase",
+    "disclaimer": "The estimate is based on Danish banks' typical rules in 2026: debt-to-income up to 4× the household's annual gross income, a minimum disposable amount, and at least 5% down payment for a year-round home. The monthly payment is calculated at 4.5% interest over 30 years. It's a guiding estimate — your bank makes the final assessment, and transaction costs (about 3%) come on top.",
+    "cta.analyzer": "Considering renting it out instead? Try the NordInvest analyzer →",
+    "cta.analyzerSub": "See the investment potential in a specific property — cash flow, yield and financing.",
+    "s1.h": "How does the bank decide how much you can borrow?",
+    "s1.p1": "Danish banks primarily use two limits when assessing how much you can borrow for a home. The calculator takes both into account and uses the one that gives the lower budget — exactly as the bank does.",
+    "s1.li1": "<strong>Debt-to-income</strong> — your total debt typically can't exceed 4 times the household's annual gross income. If you earn 700,000 kr. a year, the ceiling is around 2.8 million kr. in loans.",
+    "s1.li2": "<strong>Disposable income</strong> — after all fixed costs and the housing payment, you need a minimum left each month. In 2026, banks reckon with roughly 5,500 kr. for a single person and 9,500 kr. for a couple. If it's too low, the loan is declined regardless of debt-to-income.",
+    "s1.p2": "On top comes the <strong>down payment requirement</strong>: for a year-round home you must put down at least 5% of the purchase price yourself. The mortgage institution covers up to 80%, and the last 15% is typically covered by a more expensive bank loan. The bigger your down payment, the cheaper your loan overall.",
+    "s2.h": "Buying to live in — or to rent out?",
+    "s2.p1": "This calculator is made for you buying a home to live in yourself. If you're instead considering buying to rent out, completely different rules apply: investment properties are assessed on rental income and yield rather than your personal disposable income, and the down payment requirement is typically 20–25%.",
+    "s2.p2": "Want to see whether a specific property is a good investment? Run it through the full <a href=\"/\">NordInvest analyzer</a> — it gives you cash flow, yield, ROI and an overall investment verdict in 60 seconds. Also read our guide to <a href=\"/blog/udbetaling-investeringsejendom\">down payment for an investment property</a> to understand the requirements.",
+    "tools.h": "Other free tools",
+    "tools.bruttoName": "Gross yield calculator →",
+    "tools.bruttoDesc": "Is a rental property worth a look? Check the yield in 30 seconds.",
+    "tools.tomName": "Vacancy risk calculator →",
+    "tools.tomDesc": "How much vacancy can your rental absorb before it runs at a loss?",
+    "faq.h": "Frequently asked questions",
+    "faq.q1": "How much can I borrow for a home?",
+    "faq.a1": "Most Danish banks lend up to about 4 times the household's annual gross income, but the final amount also depends on your fixed costs and how much you have left each month. A household with 600,000 kr. in annual gross income can typically borrow around 2.4 million kr. Mortgage credit covers up to 80 percent of the property price; you must put down at least 5 percent yourself.",
+    "faq.q2": "What is debt-to-income, and why does it matter?",
+    "faq.a2": "Debt-to-income is the ratio between your total debt and your annual gross income. If you have 500,000 kr. in income and want to borrow 2 million kr., your ratio is 4. Danish banks are cautious with ratios above 4, and may then require that you can carry an interest rate of 6 to 7 percent over 30 years. A low ratio gives you better loan terms.",
+    "faq.q3": "How large a down payment do I need for a home?",
+    "faq.a3": "For a year-round home you'll live in yourself, the law requires at least 5 percent of the purchase price as a down payment. On a home at 3 million kr. that's 150,000 kr. The mortgage institution covers up to 80 percent; the remaining 15 percent is typically covered by a bank loan at a higher rate. The bigger your down payment, the lower your total loan cost.",
+    "faq.q4": "What is disposable income, and how large should it be?",
+    "faq.a4": "Disposable income is what you have left each month after all fixed costs and the housing payment are paid. Banks require a minimum to approve the loan. As a rule of thumb, in 2026 banks reckon with roughly 5,500 to 6,500 kr. for a single person and 9,500 to 11,000 kr. for a couple, plus an addition per child. If your disposable income is too low, the bank declines the loan, regardless of debt-to-income.",
+    "faq.q5": "Can I borrow more if I buy together with a partner?",
+    "faq.a5": "Yes. When two incomes are combined, both the debt-to-income ceiling and the payment capacity rise significantly. Two people each earning 30,000 kr. in monthly gross income have a household income of 720,000 kr. a year and can typically borrow around 2.9 million kr., versus about 1.4 million for a single person with the same income. Banks do require a higher disposable amount for couples, though.",
+    "faq.q6": "Am I considering renting the home out instead of living in it?",
+    "faq.a6": "If you're considering buying to rent out rather than live in it yourself, different rules apply. Investment properties are assessed on rental income and yield rather than your personal disposable income, and the down payment requirement is typically higher, often 20 to 25 percent. Use the NordInvest analyzer to see the investment potential in a specific property.",
+    "ctacard.h": "Buying to invest?",
+    "ctacard.p": "See whether a specific property is a good investment — free, in 60 seconds.",
+    "ctacard.btn": "Open the analyzer →",
+    "foot.analyzer": "Analyzer", "foot.method": "Methodology"
+  };
+</script>
+<script src="/vaerktoejer/tools-i18n.js"></script>
 
 <script>
   (function () {
@@ -365,11 +428,34 @@
     var raadighedEl = document.getElementById('raadighed');
     var warnEl = document.getElementById('warn');
 
-    var fmt = new Intl.NumberFormat('da-DK');
     var trackedUse = false;
 
-    function kr(n) { return fmt.format(Math.round(n)) + ' kr.'; }
-    function mio(n) { return (n / 1000000).toLocaleString('da-DK', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' mio. kr.'; }
+    var DYN = {
+      da: {
+        placeholder: 'Indtast din løn og opsparing for at se din køberamme.',
+        mioUnit: ' mio. kr.', perMonth: '/md.',
+        sub: function (inc, down) { return 'Baseret på en husstandsindkomst på <strong>' + inc + '</strong>/år og <strong>' + down + '</strong> i udbetaling.'; },
+        noLoan: '<strong>Din økonomi bærer ikke et boliglån endnu.</strong> Efter faste udgifter og bankens minimum-rådighedsbeløb er der ikke plads til en boligydelse. Prøv at sænke de faste udgifter, øge indkomsten, eller købe sammen med en partner.',
+        downLimit: function (down, price) { return '<strong>Udbetalingen begrænser din ramme.</strong> Med din indkomst kunne du låne mere, men udbetalingen på ' + down + ' rækker kun til en bolig til ' + price + ' (mindst 5 % egenbetaling). Sparer du mere op, stiger rammen.'; },
+        tight: function (disp, req, who) { return '<strong>Stramt budget.</strong> Ved den fulde ramme har du kun ' + disp + '/md. tilbage efter boligudgifter. Bankerne foretrækker mindst ' + req + ' for en ' + who + '. Overvej en lavere købspris for luft i økonomien.'; },
+        whoCouple: 'husstand med to', whoSingle: 'enlig',
+        healthy: function (disp) { return '<strong>Sundt budget.</strong> Ved den fulde ramme har du ' + disp + '/md. tilbage efter boligudgifter — komfortabelt over bankens minimum.'; }
+      },
+      en: {
+        placeholder: 'Enter your income and savings to see your budget.',
+        mioUnit: ' M kr.', perMonth: '/mo.',
+        sub: function (inc, down) { return 'Based on a household income of <strong>' + inc + '</strong>/yr and <strong>' + down + '</strong> in savings.'; },
+        noLoan: '<strong>Your finances can\'t carry a home loan yet.</strong> After fixed costs and the bank\'s minimum disposable amount, there\'s no room for a housing payment. Try lowering your fixed costs, increasing income, or buying together with a partner.',
+        downLimit: function (down, price) { return '<strong>Your down payment limits your budget.</strong> Your income could support more, but a down payment of ' + down + ' only stretches to a home at ' + price + ' (minimum 5% own payment). Saving more raises the budget.'; },
+        tight: function (disp, req, who) { return '<strong>Tight budget.</strong> At the full budget you have only ' + disp + '/mo. left after housing costs. Banks prefer at least ' + req + ' for a ' + who + '. Consider a lower purchase price for breathing room.'; },
+        whoCouple: 'two-person household', whoSingle: 'single person',
+        healthy: function (disp) { return '<strong>Healthy budget.</strong> At the full budget you have ' + disp + '/mo. left after housing costs — comfortably above the bank\'s minimum.'; }
+      }
+    };
+    function L() { return DYN[window.toolLang === 'en' ? 'en' : 'da']; }
+    function loc() { return window.toolLang === 'en' ? 'en-GB' : 'da-DK'; }
+    function kr(n) { return new Intl.NumberFormat(loc()).format(Math.round(n)) + ' kr.'; }
+    function mio(n) { return (n / 1000000).toLocaleString(loc(), { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + L().mioUnit; }
 
     // Annuity monthly payment factor for a given annual rate and term (years)
     function annuityFactor(annualRate, years) {
@@ -379,6 +465,7 @@
     }
 
     function recalc() {
+      var t = L();
       var loen1 = parseFloat(loen1El.value) || 0;
       var loen2 = parseFloat(loen2El.value) || 0;
       var udgifter = parseFloat(udgifterEl.value);
@@ -391,7 +478,7 @@
       if (monthlyGross <= 0) {
         rammeEl.textContent = '—';
         rammeEl.className = 'result-value empty';
-        rammeSubEl.textContent = 'Indtast din løn og opsparing for at se din køberamme.';
+        rammeSubEl.textContent = t.placeholder;
         maxlaanEl.textContent = '—';
         ydelseEl.textContent = '—';
         raadighedEl.textContent = '—';
@@ -435,26 +522,26 @@
 
       rammeEl.className = 'result-value';
       rammeEl.textContent = mio(maxPrice);
-      rammeSubEl.innerHTML = 'Baseret på en husstandsindkomst på <strong>' + kr(annualGross) + '</strong>/år og <strong>' + kr(udbetaling) + '</strong> i udbetaling.';
+      rammeSubEl.innerHTML = t.sub(kr(annualGross), kr(udbetaling));
       maxlaanEl.textContent = mio(actualLoan);
-      ydelseEl.textContent = kr(monthlyPayment) + '/md.';
-      raadighedEl.textContent = kr(disposableAfter) + '/md.';
+      ydelseEl.textContent = kr(monthlyPayment) + t.perMonth;
+      raadighedEl.textContent = kr(disposableAfter) + t.perMonth;
 
       // Warnings
       if (actualLoan < 100000) {
         // Income can't support a meaningful mortgage — don't show a rosy verdict
         warnEl.className = 'warn show tight';
-        warnEl.innerHTML = '<strong>Din økonomi bærer ikke et boliglån endnu.</strong> Efter faste udgifter og bankens minimum-rådighedsbeløb er der ikke plads til en boligydelse. Prøv at sænke de faste udgifter, øge indkomsten, eller købe sammen med en partner.';
+        warnEl.innerHTML = t.noLoan;
       } else if (maxPrice_fromDown < maxPrice_fromLoan - 1000) {
         // Down payment is the binding constraint
         warnEl.className = 'warn show tight';
-        warnEl.innerHTML = '<strong>Udbetalingen begrænser din ramme.</strong> Med din indkomst kunne du låne mere, men udbetalingen på ' + kr(udbetaling) + ' rækker kun til en bolig til ' + mio(maxPrice) + ' (mindst 5 % egenbetaling). Sparer du mere op, stiger rammen.';
+        warnEl.innerHTML = t.downLimit(kr(udbetaling), mio(maxPrice));
       } else if (disposableAfter < requiredDisposable * 0.9) {
         warnEl.className = 'warn show tight';
-        warnEl.innerHTML = '<strong>Stramt budget.</strong> Ved den fulde ramme har du kun ' + kr(disposableAfter) + '/md. tilbage efter boligudgifter. Bankerne foretrækker mindst ' + kr(requiredDisposable) + ' for en ' + (hasPartner ? 'husstand med to' : 'enlig') + '. Overvej en lavere købspris for luft i økonomien.';
+        warnEl.innerHTML = t.tight(kr(disposableAfter), kr(requiredDisposable), hasPartner ? t.whoCouple : t.whoSingle);
       } else {
         warnEl.className = 'warn show ok';
-        warnEl.innerHTML = '<strong>Sundt budget.</strong> Ved den fulde ramme har du ' + kr(disposableAfter) + '/md. tilbage efter boligudgifter — komfortabelt over bankens minimum.';
+        warnEl.innerHTML = t.healthy(kr(disposableAfter));
       }
 
       if (!trackedUse && typeof gtag === 'function') {
@@ -466,6 +553,7 @@
     [loen1El, loen2El, udgifterEl, udbetalingEl].forEach(function (el) {
       el.addEventListener('input', recalc);
     });
+    document.addEventListener('toolLang:changed', recalc);
 
     function trackCta(label) {
       if (typeof gtag === 'function') {
