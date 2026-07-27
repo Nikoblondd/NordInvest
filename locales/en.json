@@ -187,6 +187,25 @@
     "benefit3": "Early access to new analyzer features and country expansions",
     "submitBtn": "Get Early Access"
   },
+  "map": {
+    "label": "Property map",
+    "title": "Explore the housing market on the map",
+    "sub": "Zoom in on an area, click a property and send it straight to the analyzer. One click from map to investment verdict.",
+    "badge": "Demo · example data",
+    "loading": "Loading map…",
+    "analyse": "Analyze property",
+    "exampleNote": "Example property · representative figures",
+    "rooms": "rooms",
+    "perM2": "kr/m²",
+    "priceUnit": "kr",
+    "disclaimer": "The properties on the map are representative examples for demonstration, not live listings. Figures are approximate and can be adjusted in the analyzer.",
+    "types": {
+      "apartment": "Apartment",
+      "villa": "House",
+      "townhouse": "Townhouse",
+      "summerhouse": "Summer house"
+    }
+  },
   "footer": {
     "copyright": "© 2026 NordInvest. All rights reserved.",
     "marketsLabel": "Markets we cover",

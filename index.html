@@ -3987,7 +3987,7 @@
                   <div class="form-group full">
                     <label for="property-price" data-i18n="analyze.priceLabel">Property Price</label>
                     <div class="input-wrap">
-                      <span class="input-prefix">€</span>
+                      <span class="input-prefix currency-sym">€</span>
                       <input type="number" id="property-price" class="has-prefix" placeholder="350,000" min="0">
                     </div>
                     <span class="field-error" id="err-price" data-i18n="errors.price">Please enter a property price.</span>
@@ -3995,7 +3995,7 @@
                   <div class="form-group">
                     <label for="monthly-rent" data-i18n="analyze.rentLabel">Expected Monthly Rent</label>
                     <div class="input-wrap">
-                      <span class="input-prefix">€</span>
+                      <span class="input-prefix currency-sym">€</span>
                       <input type="number" id="monthly-rent" class="has-prefix" placeholder="1,500" min="0">
                     </div>
                     <span class="field-error" id="err-rent" data-i18n="errors.rent">Please enter expected rent.</span>
@@ -4019,7 +4019,7 @@
                   <div class="form-group">
                     <label for="monthly-expenses" data-i18n="analyze.expensesLabel">Monthly Expenses</label>
                     <div class="input-wrap">
-                      <span class="input-prefix">€</span>
+                      <span class="input-prefix currency-sym">€</span>
                       <input type="number" id="monthly-expenses" class="has-prefix" placeholder="200" min="0" value="0">
                     </div>
                   </div>
@@ -4036,6 +4036,51 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- PROPERTY MAP -->
+  <style>
+    .map-section { padding: 72px 0; background: var(--grey-50, #F8F9FA); border-top: 1px solid var(--border, #E5E7EB); }
+    .map-head { text-align: center; margin-bottom: 30px; }
+    .map-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; letter-spacing: 0.4px; color: #B45309; background: #FFFBEB; border: 1px solid #FDE68A; padding: 5px 12px; border-radius: 100px; margin-top: 14px; }
+    .map-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #F59E0B; }
+    .map-shell { position: relative; isolation: isolate; border-radius: 18px; overflow: hidden; border: 1px solid var(--border, #E5E7EB); box-shadow: 0 10px 40px rgba(15,31,61,0.10); background: #dfe6ec; }
+    #ni-map { width: 100%; height: 560px; z-index: 1; }
+    .map-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 10px; color: #4B5563; font-size: 14px; font-weight: 600; z-index: 2; background: #dfe6ec; }
+    .map-loading .sp { width: 18px; height: 18px; border: 2.5px solid #cbd5e1; border-top-color: #0F1F3D; border-radius: 50%; animation: nispin 0.8s linear infinite; }
+    @keyframes nispin { to { transform: rotate(360deg); } }
+    .map-disclaimer { text-align: center; font-size: 12.5px; color: #6B7280; margin-top: 16px; max-width: 640px; margin-left: auto; margin-right: auto; line-height: 1.55; }
+    @media (max-width: 768px) { .map-section { padding: 52px 0; } #ni-map { height: 76vh; min-height: 500px; max-height: 680px; } }
+
+    /* Brand-styled Leaflet markers + clusters (EDC-style white pins, navy text) */
+    .ni-pin { background: #fff; border: 2px solid #0F1F3D; color: #0F1F3D; border-radius: 50% 50% 50% 0; width: 30px; height: 30px; transform: rotate(-45deg); box-shadow: 0 3px 8px rgba(15,31,61,0.28); display: flex; align-items: center; justify-content: center; }
+    .ni-pin svg { transform: rotate(45deg); width: 14px; height: 14px; }
+    .ni-cluster { background: #fff; border: 2px solid #0F1F3D; color: #0F1F3D; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 800; box-shadow: 0 3px 10px rgba(15,31,61,0.28); }
+    .ni-cluster span { line-height: 1; }
+    .leaflet-popup-content-wrapper { border-radius: 14px; box-shadow: 0 10px 30px rgba(15,31,61,0.22); padding: 2px; }
+    .leaflet-popup-content { margin: 14px 16px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    .ni-pop-type { font-size: 11px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: #2563EB; }
+    .ni-pop-area { font-size: 17px; font-weight: 800; color: #0F1F3D; letter-spacing: -0.3px; margin: 1px 0 6px; }
+    .ni-pop-price { font-size: 21px; font-weight: 800; color: #0F1F3D; letter-spacing: -0.5px; }
+    .ni-pop-meta { font-size: 13px; color: #4B5563; margin: 3px 0 12px; }
+    .ni-pop-btn { display: block; width: 100%; text-align: center; background: #0F1F3D; color: #fff; border: none; border-radius: 9px; padding: 10px 14px; font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: background 160ms ease; }
+    .ni-pop-btn:hover { background: #1a3360; }
+    .ni-pop-note { font-size: 10.5px; color: #9CA3AF; text-align: center; margin-top: 8px; }
+  </style>
+  <section class="map-section" id="kort">
+    <div class="container">
+      <div class="section-header center map-head">
+        <div class="section-label" data-i18n="map.label">Boligkort</div>
+        <h2 class="section-title" data-i18n="map.title">Udforsk boligmarkedet på kortet</h2>
+        <p class="section-sub" data-i18n="map.sub">Zoom ind på et område, klik på en bolig og send den direkte videre til analyzeren. Ét klik fra kort til investeringsdom.</p>
+        <div class="map-badge" data-i18n="map.badge">Demo · eksempeldata</div>
+      </div>
+      <div class="map-shell">
+        <div id="ni-map"></div>
+        <div class="map-loading" id="ni-map-loading"><span class="sp"></span><span data-i18n="map.loading">Indlæser kort…</span></div>
+      </div>
+      <p class="map-disclaimer" data-i18n="map.disclaimer">Boligerne på kortet er repræsentative eksempler til demonstration, ikke live-annoncer. Tal er omtrentlige og kan justeres i analyzeren.</p>
     </div>
   </section>
 
@@ -6793,7 +6838,8 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   data._price = price;
   window._niAnalysisData = data;
 
-  document.getElementById('analysis-subtitle').textContent = `€${price.toLocaleString()} property · €${rent.toLocaleString()}/mo rent · ${location}`;
+  const curSym = CURRENCY_SYMBOLS[activeCurrency] || activeCurrency;
+  document.getElementById('analysis-subtitle').textContent = `${curSym}${price.toLocaleString()} property · ${curSym}${rent.toLocaleString()}/mo rent · ${location}`;
   document.getElementById('analysis-date').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
 
   const circumference = 527.79; // 2π × 84 (new larger gauge radius)
@@ -7283,5 +7329,209 @@ window.addEventListener('storage', renderPortfolioCTA);
 </script>
 
 <!-- i18n.js is now loaded in <head> with defer for parallel download + non-blocking parse -->
+
+<!-- PROPERTY MAP (Leaflet + markercluster, lazy-loaded on scroll) -->
+<script>
+(function () {
+  // Representative EXAMPLE properties (demo data — not live listings). Prices in DKK.
+  // A real listings feed can replace NI_LISTINGS without touching the rest of the code.
+  window.NI_LISTINGS = [
+    { t:'apartment', area:'København K',   lat:55.6805, lng:12.5820, m2:68,  rooms:2, price:4650000, rent:15500, expenses:2600 },
+    { t:'apartment', area:'København Ø',   lat:55.7057, lng:12.5789, m2:82,  rooms:3, price:5250000, rent:17500, expenses:2900 },
+    { t:'apartment', area:'København NV',  lat:55.7075, lng:12.5290, m2:58,  rooms:2, price:3450000, rent:12500, expenses:2300 },
+    { t:'apartment', area:'Frederiksberg', lat:55.6787, lng:12.5340, m2:74,  rooms:3, price:4980000, rent:16000, expenses:2700 },
+    { t:'townhouse', area:'Valby',         lat:55.6620, lng:12.5130, m2:96,  rooms:4, price:5200000, rent:17000, expenses:3000 },
+    { t:'apartment', area:'Ørestad',       lat:55.6300, lng:12.5790, m2:88,  rooms:3, price:4100000, rent:15000, expenses:3200 },
+    { t:'villa',     area:'Roskilde',      lat:55.6415, lng:12.0803, m2:142, rooms:5, price:4350000, rent:16500, expenses:3400 },
+    { t:'townhouse', area:'Køge',          lat:55.4580, lng:12.1820, m2:104, rooms:4, price:3100000, rent:13000, expenses:2900 },
+    { t:'villa',     area:'Helsingør',     lat:56.0360, lng:12.6136, m2:138, rooms:5, price:3650000, rent:15000, expenses:3300 },
+    { t:'villa',     area:'Hillerød',      lat:55.9276, lng:12.3020, m2:150, rooms:5, price:4200000, rent:16000, expenses:3400 },
+    { t:'apartment', area:'Næstved',       lat:55.2300, lng:11.7600, m2:78,  rooms:3, price:1750000, rent:8500,  expenses:2100 },
+    { t:'townhouse', area:'Slagelse',      lat:55.4030, lng:11.3540, m2:98,  rooms:4, price:1950000, rent:9500,  expenses:2300 },
+    { t:'villa',     area:'Holbæk',        lat:55.7180, lng:11.7050, m2:132, rooms:5, price:2650000, rent:12000, expenses:2900 },
+    { t:'apartment', area:'Odense C',      lat:55.4038, lng:10.4024, m2:72,  rooms:3, price:2450000, rent:11000, expenses:2400 },
+    { t:'townhouse', area:'Odense SØ',     lat:55.3730, lng:10.4400, m2:110, rooms:4, price:2950000, rent:13000, expenses:2800 },
+    { t:'villa',     area:'Svendborg',     lat:55.0600, lng:10.6070, m2:128, rooms:5, price:2350000, rent:11500, expenses:2900 },
+    { t:'apartment', area:'Nyborg',        lat:55.3120, lng:10.7900, m2:66,  rooms:2, price:1650000, rent:8000,  expenses:2000 },
+    { t:'apartment', area:'Aarhus C',      lat:56.1572, lng:10.2107, m2:84,  rooms:3, price:3250000, rent:13500, expenses:2600 },
+    { t:'apartment', area:'Aarhus V',      lat:56.1500, lng:10.1500, m2:70,  rooms:3, price:2450000, rent:11500, expenses:2400 },
+    { t:'townhouse', area:'Aarhus N',      lat:56.1900, lng:10.1800, m2:102, rooms:4, price:3350000, rent:14000, expenses:2900 },
+    { t:'villa',     area:'Randers',       lat:56.4600, lng:10.0360, m2:140, rooms:5, price:2350000, rent:12000, expenses:3000 },
+    { t:'villa',     area:'Horsens',       lat:55.8607, lng:9.8500,  m2:134, rooms:5, price:2550000, rent:12500, expenses:3000 },
+    { t:'townhouse', area:'Vejle',         lat:55.7090, lng:9.5350,  m2:106, rooms:4, price:2850000, rent:13000, expenses:2800 },
+    { t:'apartment', area:'Kolding',       lat:55.4904, lng:9.4720,  m2:76,  rooms:3, price:2150000, rent:10500, expenses:2300 },
+    { t:'townhouse', area:'Fredericia',    lat:55.5657, lng:9.7527,  m2:98,  rooms:4, price:2050000, rent:10000, expenses:2400 },
+    { t:'apartment', area:'Esbjerg',       lat:55.4765, lng:8.4594,  m2:80,  rooms:3, price:1550000, rent:8500,  expenses:2200 },
+    { t:'villa',     area:'Herning',       lat:56.1390, lng:8.9740,  m2:136, rooms:5, price:2250000, rent:11500, expenses:2900 },
+    { t:'villa',     area:'Holstebro',     lat:56.3600, lng:8.6160,  m2:130, rooms:5, price:1950000, rent:10500, expenses:2800 },
+    { t:'villa',     area:'Viborg',        lat:56.4530, lng:9.4020,  m2:138, rooms:5, price:2450000, rent:12000, expenses:2900 },
+    { t:'townhouse', area:'Silkeborg',     lat:56.1700, lng:9.5460,  m2:112, rooms:4, price:3050000, rent:13500, expenses:2800 },
+    { t:'villa',     area:'Skanderborg',   lat:56.0390, lng:9.9270,  m2:146, rooms:5, price:3450000, rent:14500, expenses:3200 },
+    { t:'apartment', area:'Aalborg C',     lat:57.0488, lng:9.9217,  m2:78,  rooms:3, price:2350000, rent:11000, expenses:2400 },
+    { t:'townhouse', area:'Aalborg Ø',     lat:57.0430, lng:9.9700,  m2:100, rooms:4, price:2650000, rent:12000, expenses:2700 },
+    { t:'villa',     area:'Frederikshavn', lat:57.4400, lng:10.5360, m2:126, rooms:5, price:1650000, rent:9500,  expenses:2700 },
+    { t:'villa',     area:'Hjørring',      lat:57.4600, lng:9.9820,  m2:132, rooms:5, price:1550000, rent:9000,  expenses:2700 },
+    { t:'villa',     area:'Sønderborg',    lat:54.9090, lng:9.7920,  m2:134, rooms:5, price:1950000, rent:10500, expenses:2800 },
+    { t:'townhouse', area:'Aabenraa',      lat:55.0440, lng:9.4180,  m2:104, rooms:4, price:1750000, rent:9500,  expenses:2500 },
+    { t:'apartment', area:'Haderslev',     lat:55.2510, lng:9.4900,  m2:74,  rooms:3, price:1450000, rent:8000,  expenses:2100 },
+    { t:'summerhouse', area:'Rønne',       lat:55.1000, lng:14.7000, m2:86,  rooms:3, price:2150000, rent:9000,  expenses:2600 },
+    { t:'apartment', area:'Nykøbing F',    lat:54.7690, lng:11.8730, m2:70,  rooms:3, price:1250000, rent:7500,  expenses:2000 },
+    { t:'villa',     area:'Kalundborg',    lat:55.6790, lng:11.0890, m2:128, rooms:5, price:1650000, rent:9500,  expenses:2700 }
+  ];
+
+  var loaded = false, mapReady = false, niMap = null, clusterGroup = null;
+
+  function L_lang() { return (window.getLang && window.getLang()) || 'da'; }
+  function tt(key, fallback) { var v = (window.t && window.t(key)); return (v && v !== key) ? v : fallback; }
+  function fmt(n) {
+    try { return new Intl.NumberFormat(L_lang() === 'en' ? 'en-GB' : 'da-DK').format(Math.round(n)); }
+    catch (e) { return String(Math.round(n)); }
+  }
+
+  function loadCss(href) {
+    return new Promise(function (res) {
+      var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; l.onload = res; l.onerror = res;
+      document.head.appendChild(l);
+    });
+  }
+  function loadJs(src) {
+    return new Promise(function (res, rej) {
+      var s = document.createElement('script'); s.src = src; s.async = true; s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+
+  function homeIcon() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>';
+  }
+
+  function popupHtml(i) {
+    var p = window.NI_LISTINGS[i];
+    var type = tt('map.types.' + p.t, p.t);
+    var unit = tt('map.priceUnit', 'kr');
+    var perM2 = tt('map.perM2', 'kr/m²');
+    var rooms = tt('map.rooms', 'vær.');
+    return '<div class="ni-pop">' +
+      '<div class="ni-pop-type">' + type + '</div>' +
+      '<div class="ni-pop-area">' + p.area + '</div>' +
+      '<div class="ni-pop-price">' + fmt(p.price) + ' ' + unit + '</div>' +
+      '<div class="ni-pop-meta">' + p.m2 + ' m² · ' + p.rooms + ' ' + rooms + ' · ' + fmt(p.price / p.m2) + ' ' + perM2 + '</div>' +
+      '<button type="button" class="ni-pop-btn" onclick="analyzeFromMap(' + i + ')">' + tt('map.analyse', 'Analysér bolig') + ' →</button>' +
+      '<div class="ni-pop-note">' + tt('map.exampleNote', 'Eksempelbolig · repræsentative tal') + '</div>' +
+      '</div>';
+  }
+
+  window.analyzeFromMap = function (i) {
+    var p = window.NI_LISTINGS[i];
+    if (!p) return;
+    try { if (window.switchFormTab) switchFormTab('manual'); } catch (e) {}
+    try {
+      var cs = document.getElementById('currency-select');
+      if (cs) { cs.value = 'DKK'; if (window.setCurrency) setCurrency('DKK'); }
+    } catch (e) {}
+    var set = function (id, v) { var el = document.getElementById(id); if (el) el.value = v; };
+    set('property-location', p.area);
+    set('property-price', p.price);
+    set('monthly-rent', p.rent);
+    set('monthly-expenses', p.expenses || 0);
+    var sec = document.getElementById('analyze-section');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function () {
+      var f = document.getElementById('analysis-form');
+      if (!f) return;
+      if (f.requestSubmit) f.requestSubmit();
+      else f.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }, 700);
+    if (typeof gtag === 'function') gtag('event', 'map_analyze', { tool: 'boligkort', area: p.area });
+  };
+
+  function buildMarkers() {
+    if (!clusterGroup) return;
+    clusterGroup.clearLayers();
+    window.NI_LISTINGS.forEach(function (p, i) {
+      var icon = L.divIcon({
+        className: '', html: '<div class="ni-pin">' + homeIcon() + '</div>',
+        iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -28]
+      });
+      var m = L.marker([p.lat, p.lng], { icon: icon });
+      m._popupIdx = i;
+      m.bindPopup(function () { return popupHtml(i); }, { closeButton: true, minWidth: 210, maxWidth: 240 });
+      clusterGroup.addLayer(m);
+    });
+  }
+
+  function initMap() {
+    if (mapReady) return;
+    mapReady = true;
+    niMap = L.map('ni-map', { scrollWheelZoom: false, attributionControl: true }).setView([56.05, 11.35], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(niMap);
+    // Enable wheel-zoom only after a click, so scrolling the page doesn't hijack.
+    niMap.on('click', function () { niMap.scrollWheelZoom.enable(); });
+
+    clusterGroup = L.markerClusterGroup({
+      maxClusterRadius: 55,
+      showCoverageOnHover: false,
+      spiderfyOnMaxZoom: true,
+      iconCreateFunction: function (cluster) {
+        var c = cluster.getChildCount();
+        var size = c < 10 ? 38 : (c < 50 ? 46 : 54);
+        return L.divIcon({
+          html: '<div class="ni-cluster" style="width:' + size + 'px;height:' + size + 'px;font-size:' + (c < 100 ? 15 : 13) + 'px;"><span>' + c + '</span></div>',
+          className: '', iconSize: [size, size]
+        });
+      }
+    });
+    buildMarkers();
+    niMap.addLayer(clusterGroup);
+
+    var loadingEl = document.getElementById('ni-map-loading');
+    if (loadingEl) loadingEl.style.display = 'none';
+    setTimeout(function () { niMap.invalidateSize(); }, 200);
+
+    if (typeof gtag === 'function') gtag('event', 'map_view', { tool: 'boligkort' });
+
+    // Re-render open popup on language change
+    document.addEventListener('i18n:ready', function () {
+      var pop = niMap && niMap._popup;
+      if (pop && pop.isOpen && pop.isOpen()) {
+        // Rebuild content of the currently open popup
+        var src = pop._source;
+        if (src && src._popupIdx != null) pop.setContent(popupHtml(src._popupIdx));
+      }
+    });
+  }
+
+  function load() {
+    if (loaded) return;
+    loaded = true;
+    Promise.all([
+      loadCss('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'),
+      loadCss('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css')
+    ]).then(function () {
+      return loadJs('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
+    }).then(function () {
+      return loadJs('https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js');
+    }).then(function () {
+      initMap();
+    }).catch(function () {
+      var el = document.getElementById('ni-map-loading');
+      if (el) el.querySelector('span[data-i18n]') && (el.querySelector('span[data-i18n]').textContent = '⚠︎');
+    });
+  }
+
+  var target = document.getElementById('kort');
+  if (target && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { load(); io.disconnect(); } });
+    }, { rootMargin: '300px 0px' });
+    io.observe(target);
+  } else {
+    load();
+  }
+})();
+</script>
 </body>
 </html>
