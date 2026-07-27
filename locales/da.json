@@ -187,25 +187,6 @@
     "benefit3": "Tidlig adgang til nye analysator-funktioner og udvidelser til flere lande",
     "submitBtn": "Få tidlig adgang"
   },
-  "map": {
-    "label": "Boligkort",
-    "title": "Udforsk boligmarkedet på kortet",
-    "sub": "Zoom ind på et område, klik på en bolig og send den direkte videre til analyzeren. Ét klik fra kort til investeringsdom.",
-    "badge": "Demo · eksempeldata",
-    "loading": "Indlæser kort…",
-    "analyse": "Analysér bolig",
-    "exampleNote": "Eksempelbolig · repræsentative tal",
-    "rooms": "vær.",
-    "perM2": "kr/m²",
-    "priceUnit": "kr",
-    "disclaimer": "Boligerne på kortet er repræsentative eksempler til demonstration, ikke live-annoncer. Tal er omtrentlige og kan justeres i analyzeren.",
-    "types": {
-      "apartment": "Lejlighed",
-      "villa": "Villa",
-      "townhouse": "Rækkehus",
-      "summerhouse": "Sommerhus"
-    }
-  },
   "footer": {
     "copyright": "© 2026 NordInvest. Alle rettigheder forbeholdes.",
     "marketsLabel": "Markeder vi dækker",
