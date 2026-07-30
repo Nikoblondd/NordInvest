@@ -18,6 +18,8 @@
     { "source": "/vaerktoejer/bruttoafkast-beregner", "destination": "/vaerktoejer/bruttoafkast-beregner.html" },
     { "source": "/vaerktoejer/boligkoeb-laaneberegner", "destination": "/vaerktoejer/boligkoeb-laaneberegner.html" },
     { "source": "/vaerktoejer/tomgangsrisiko-beregner", "destination": "/vaerktoejer/tomgangsrisiko-beregner.html" },
+    { "source": "/vaerktoejer/koebe-eller-leje-bolig", "destination": "/vaerktoejer/koebe-eller-leje-bolig.html" },
+    { "source": "/vaerktoejer/boligvurdering-beregner", "destination": "/vaerktoejer/boligvurdering-beregner.html" },
     { "source": "/blog/:slug+", "destination": "/api/blog-render" }
   ]
 }

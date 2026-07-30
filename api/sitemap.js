@@ -34,6 +34,8 @@ export default async function handler(req, res) {
     { url: '/vaerktoejer/bruttoafkast-beregner', changefreq: 'monthly', priority: '0.85' },
     { url: '/vaerktoejer/boligkoeb-laaneberegner', changefreq: 'monthly', priority: '0.85' },
     { url: '/vaerktoejer/tomgangsrisiko-beregner', changefreq: 'monthly', priority: '0.85' },
+    { url: '/vaerktoejer/koebe-eller-leje-bolig', changefreq: 'monthly', priority: '0.85' },
+    { url: '/vaerktoejer/boligvurdering-beregner', changefreq: 'monthly', priority: '0.85' },
     {
       url: '/brand',
       changefreq: 'monthly',
