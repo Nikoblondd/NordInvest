@@ -110,3 +110,5 @@ Udbetaling til investeringsejendom er ikke ét tal — det er en portefølje af 
 Regn med **28-33 % af købsprisen i alt** som det realistiske kontantbehov. Har du tallet klart *inden* du kigger på annoncer, spilder du ikke tid på handler du ikke kan finansiere — og du forhandler stærkere, når du gør.
 
 For den fulde begynderguide til ejendomsinvestering, se [ejendomsinvestering for begyndere 2026](/blog/ejendomsinvestering-for-begyndere-2026). For skattesiden af regnestykket, læs [ejendomsskat på investeringsejendom](/blog/ejendomsskat-investeringsejendom-2026).
+
+Vil du se, hvor stor en bolig din økonomi kan bære, så prøv vores gratis [boligkøber låneberegner](/vaerktoejer/boligkoeb-laaneberegner) — den viser din realistiske køberamme set fra bankens side.

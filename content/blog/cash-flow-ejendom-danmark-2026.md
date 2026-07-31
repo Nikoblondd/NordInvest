@@ -106,3 +106,5 @@ De bedste cash flow-handler dukker op igennem:
 Før du byder, indsæt annoncen i [NordInvest-analyzeren](/). Vælg strategien "Cashflow", og få bruttoafkast, nettoafkast, cash-on-cash return, månedlig cash flow, rentestresstest og en klassificering på under 60 sekunder — bygget på DST EJ55-data for det præcise postnummer.
 
 Læs også vores [guide til at beregne lejeafkast](/blog/sadan-beregner-du-lejeafkast) og [købsguiden til investeringsejendomme](/blog/koeb-af-investeringsejendom) for den fulde beslutningsramme.
+
+Vil du screene hurtigt, så prøv vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner) og [tomgangsrisiko beregner](/vaerktoejer/tomgangsrisiko-beregner) — de to tal afgør, om et cash flow-projekt er robust nok til at holde til en tom måned eller to.

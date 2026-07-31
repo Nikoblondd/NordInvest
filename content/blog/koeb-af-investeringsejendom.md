@@ -149,3 +149,5 @@ Ja, men marginerne er smallere end for fem år siden, og strategivalget betyder 
 Ejendomsinvestering belønner de kølige og straffer de forelskede. Forskellen på en god og en dårlig handel er sjældent ejendommen selv — det er regnestykket, køberen lavede eller sprang over, inden der blev skrevet under.
 
 Det regnestykke tager 60 sekunder med [NordInvests gratis analyzer](/). Indsæt et link fra Boligsiden eller indtast pris, leje og udgifter selv — og få bruttoafkast, cash flow, ROI, stresstest og en samlet investeringsscore, før du overhovedet ringer til mægleren. Første skridt i enhver ejendomsinvestering er ikke en fremvisning. Det er et tal.
+
+Inden du kigger på annoncer, så find din realistiske ramme med vores gratis [boligkøber låneberegner](/vaerktoejer/boligkoeb-laaneberegner) — og hvis boligen er til dig selv, så afklar det grundlæggende spørgsmål med [købe eller leje bolig](/vaerktoejer/koebe-eller-leje-bolig) beregneren.

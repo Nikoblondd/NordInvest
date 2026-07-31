@@ -85,3 +85,5 @@ En ejendom med beskedne 3 % afkast og negativ månedlig cash flow kan stadig væ
 Du kan lave hele regnestykket i hånden, men [NordInvest-analyzeren](/) gør det på under 60 sekunder — brutto- og nettoafkast, cash flow, ROI, 5-årig værdistigningsprognose og en investeringsklassificering — med rigtige pr-m²-markedsdata for ejendommens præcise område.
 
 For hele beslutningsrammen, læs vores guide om [hvordan du analyserer en nordisk ejendomsinvestering](/blog/sadan-analyserer-du-en-nordisk-ejendomsinvestering).
+
+Vil du regne afkastet uden regneark, så brug vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner), og stresstest resultatet med [tomgangsrisiko beregneren](/vaerktoejer/tomgangsrisiko-beregner).

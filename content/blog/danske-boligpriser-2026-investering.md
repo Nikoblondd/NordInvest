@@ -86,3 +86,5 @@ Danske realkreditinstitutter tilbyder stadig favorable renter for investeringsej
 Indsæt en Boligsiden-URL i [NordInvest-analyzeren](/). På 60 sekunder får du bruttoafkast, månedlig cash flow, cash-on-cash ROI, break-even-leje, og en strategi-baseret dom. Alle benchmark-tal kommer fra Danmarks Statistik — vi scraper ikke Boligsiden, og hvis DST ikke har data for et postnummer, siger vi det ærligt.
 
 Læs også: [Er det stadig værd at investere i ejendom i Danmark i 2026?](/investere-i-ejendom-danmark-2026) — en dybere landing page med postnummer-guide og strategisk breakdown. Og hvis du står foran dit første køb, gennemgår vores guide til [køb af investeringsejendom](/blog/koeb-af-investeringsejendom) hele processen fra regnestykke til underskrift — inklusiv skat og finansiering.
+
+Overvejer du din egen bolig i det marked, så tjek hvad den er værd med vores gratis [boligvurdering online](/vaerktoejer/boligvurdering-beregner), eller afvej [købe eller leje bolig](/vaerktoejer/koebe-eller-leje-bolig) inden du beslutter dig.
