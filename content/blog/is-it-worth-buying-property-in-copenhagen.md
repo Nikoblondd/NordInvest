@@ -61,3 +61,5 @@ If it is "low yield, deeply negative cash flow, fails the rate shock, flat distr
 Don't guess. Paste a Copenhagen listing into the [NordInvest analyzer](/) and get the net yield, cash flow, interest-rate stress test, 5-year appreciation projection, and an investment classification in under a minute — using real per-square-metre data for that exact area.
 
 To understand the full framework behind the verdict, see [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment) and [how to calculate rental yield](/blog/how-to-calculate-rental-yield).
+
+If you would live there yourself, weigh it up with our free [buy or rent calculator](/vaerktoejer/koebe-eller-leje-bolig). If you would rent it out, check the return with the [gross yield calculator](/vaerktoejer/bruttoafkast-beregner).

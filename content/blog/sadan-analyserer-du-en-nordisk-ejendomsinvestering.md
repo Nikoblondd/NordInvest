@@ -77,3 +77,5 @@ En københavner-ejendom med 3,7 % afkast og −3.000 kr./md. cash flow *kan* sta
 Nordisk ejendomsinvestering belønner tålmodighed og kapitalstyrke. Hvis du har brug for månedlig indtægt fra dag et, kig på højafkastmarkeder (Lissabon, Warszawa, Budapest). Hvis du bygger langsigtet formue i et stabilt, likvidt, lav-volatilitets marked — så leverer Skandinavien.
 
 Brug [NordInvest-analyzeren](/) til at køre disse beregninger på under 60 sekunder for enhver ejendom, du overvejer.
+
+Kom hurtigt i gang med vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner), og test robustheden med [tomgangsrisiko beregneren](/vaerktoejer/tomgangsrisiko-beregner).

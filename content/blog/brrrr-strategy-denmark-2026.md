@@ -132,3 +132,5 @@ If you're new to BRRRR in Denmark, the fastest path:
 5. Model one deal completely before you bid — including refinance timing and post-refinance cash flow
 
 Read [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment) and [is this rental a good deal?](/blog/is-this-rental-a-good-deal) for the underlying framework, and the [Danish investment property buying guide](/blog/koeb-af-investeringsejendom) for the legal, tax, and financing context specific to Denmark.
+
+Screen a deal fast with our free [gross yield calculator](/vaerktoejer/bruttoafkast-beregner), and pressure-test it with the [vacancy risk calculator](/vaerktoejer/tomgangsrisiko-beregner).

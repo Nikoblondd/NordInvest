@@ -146,6 +146,22 @@
     "f6Title": "AI Summary",
     "f6Desc": "A plain-English summary of the property's strengths, weaknesses, and risks — written by AI, based on the numbers."
   },
+  "homeTools": {
+    "label": "Free tools",
+    "title": "Free property calculators",
+    "sub": "Quick answers to a single question at a time. Each one funnels into the full analyzer.",
+    "t1": "Buy or rent a home",
+    "t1d": "Should you buy or keep renting? Get the answer in 30 seconds.",
+    "t2": "Property valuation online free",
+    "t2d": "What is your home worth? A free estimate without an agent.",
+    "t3": "Gross yield calculator",
+    "t3d": "Is a rental worth a closer look? Check the yield.",
+    "t4": "Home buyer loan calculator",
+    "t4d": "How much can you actually borrow for a home? See your budget.",
+    "t5": "Vacancy risk calculator",
+    "t5d": "How much vacancy can your rental absorb before it runs at a loss?",
+    "all": "See all tools →"
+  },
   "faq": {
     "label": "FAQ",
     "title": "Frequently asked questions",

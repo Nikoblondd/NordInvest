@@ -62,3 +62,5 @@ Always model net yield (after these costs), not the headline gross figure.
 Before you make an offer, run the property through the [NordInvest analyzer](/). Paste the listing and get net yield, monthly cash flow, an interest-rate stress test, a 5-year appreciation projection, and an investment classification — built on real per-square-metre market data for that specific area.
 
 For the underlying method, read [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment) and our guide to [whether buying in Copenhagen is worth it](/blog/is-it-worth-buying-property-in-copenhagen).
+
+Find your realistic borrowing budget with our free [home buyer loan calculator](/vaerktoejer/boligkoeb-laaneberegner), and screen a rental's return with the [gross yield calculator](/vaerktoejer/bruttoafkast-beregner).

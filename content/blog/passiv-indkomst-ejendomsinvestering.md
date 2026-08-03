@@ -115,3 +115,5 @@ Passiv indkomst gennem ejendom i Danmark er reel, men den er ikke gratis, og den
 Det gode ved modellen er at den skalerer. Aktier på 500.000 kr. giver ikke mere sikkert cashflow end aktier på 5 mio. kr. i procent. Ejendom belønner discipliner der bygger over tid. Første ejendom er langsom, men den finansierer den næste, og fra ejendom 3 og fremad accelererer maskinen.
 
 For den bredere strategi bag hvordan man analyserer om en handel er en cashflow-handel eller en værdistigningshandel, læs [sådan analyserer du en nordisk ejendomsinvestering](/blog/sadan-analyserer-du-en-nordisk-ejendomsinvestering) og [er det stadig værd at købe ejendom i København](/blog/er-det-vaerd-at-koebe-ejendom-i-koebenhavn).
+
+Passiv indkomst står og falder med afkastet og tomgangen. Regn på begge dele med vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner) og [tomgangsrisiko beregner](/vaerktoejer/tomgangsrisiko-beregner).

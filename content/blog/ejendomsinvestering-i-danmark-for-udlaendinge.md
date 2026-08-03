@@ -62,3 +62,5 @@ Modellér altid nettoafkastet (efter disse omkostninger), ikke det overskrifts-b
 Før du byder, kør ejendommen igennem [NordInvest-analyzeren](/). Indsæt annoncen og få nettoafkast, månedlig cash flow, rentestresstest, 5-årig værdistigningsprognose og en investeringsklassificering — bygget på rigtige pr-m²-markedsdata for det specifikke område.
 
 For den underliggende metode, læs [hvordan du analyserer en nordisk ejendomsinvestering](/blog/sadan-analyserer-du-en-nordisk-ejendomsinvestering) og vores guide til [om det er værd at købe i København](/blog/er-det-vaerd-at-koebe-ejendom-i-koebenhavn).
+
+Find din realistiske låneramme med vores gratis [boligkøber låneberegner](/vaerktoejer/boligkoeb-laaneberegner), og screen afkastet på en udlejningsbolig med [bruttoafkast beregneren](/vaerktoejer/bruttoafkast-beregner).

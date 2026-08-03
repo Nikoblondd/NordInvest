@@ -77,3 +77,5 @@ A Copenhagen property with 3.7% yield and -3,000 DKK/month cash flow *can* still
 Nordic property investment rewards patience and capital depth. If you need monthly income from day one, look at high-yield markets (Lisbon, Warsaw, Budapest). If you are building long-term wealth in a stable, liquid, low-volatility market — Scandinavia delivers.
 
 Use the [NordInvest analyzer](/) to run these calculations in under 60 seconds for any property you're considering.
+
+Put it into practice with our free [gross yield calculator](/vaerktoejer/bruttoafkast-beregner) and [vacancy risk calculator](/vaerktoejer/tomgangsrisiko-beregner).

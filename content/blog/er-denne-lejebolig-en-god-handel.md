@@ -151,3 +151,5 @@ Break-even-tjekket (Tjek 4). Hvis nuværende leje er under break-even, bløder e
 ## Prøv det selv
 
 Tag enhver lejeannonce — fra Boligsiden, Hemnet, Finn.no eller andre steder. Indsæt URL'en i [NordInvest's gratis analyzer](/), vælg din strategi (Cash flow, Værdistigning eller Value-add), og du får alle fem tjek på 60 sekunder. Ingen tilmelding. Ingen regneark. Bare dommen.
+
+Vil du selv regne den efter, så brug vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner) og se, hvor meget tomgang den tåler med [tomgangsrisiko beregneren](/vaerktoejer/tomgangsrisiko-beregner).

@@ -100,3 +100,5 @@ Budget **3-3.5 % of purchase price** for transaction costs on top of the down pa
 Before you bid, run the property through the [NordInvest analyzer](/) — paste a listing URL from finn.no or eiendom.no and get yield, cash flow, ROI, 5-year appreciation projection, and a strategy-classified verdict in under a minute. Local data comes directly from SSB 06035, per municipality.
 
 For the general framework behind how to analyze any Nordic deal, see our guide on [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment). For the Danish equivalent of this guide (which most foreign investors also consider), read [property investment in Denmark for foreigners](/blog/property-investment-denmark-for-foreigners).
+
+Whichever Nordic market you target, screen a deal's return fast with our free [gross yield calculator](/vaerktoejer/bruttoafkast-beregner).

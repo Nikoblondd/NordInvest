@@ -61,3 +61,5 @@ Hvis det er "lavt afkast, dybt negativ cash flow, dumper rentechokket, fladt omr
 Gæt ikke. Indsæt en københavner-annonce i [NordInvest-analyzeren](/) og få nettoafkast, cash flow, rentestresstest, 5-årig værdistigningsprognose og en investeringsklassificering på under et minut — bygget på rigtige pr-m²-data for det præcise område.
 
 For at forstå den fulde ramme bag dommen, læs [hvordan du analyserer en nordisk ejendomsinvestering](/blog/sadan-analyserer-du-en-nordisk-ejendomsinvestering) og [sådan beregner du lejeafkast](/blog/sadan-beregner-du-lejeafkast).
+
+Skal du selv bo der, så afklar først [købe eller leje bolig](/vaerktoejer/koebe-eller-leje-bolig). Skal den lejes ud, så tjek afkastet med vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner).

@@ -151,3 +151,5 @@ The break-even check (Check 4). If current rent is below break-even, the propert
 ## Try It Yourself
 
 Take any rental listing — from Boligsiden, Hemnet, Finn.no, or anywhere else. Paste the URL into [NordInvest's free analyzer](/), pick your strategy (Cashflow, Appreciation, or Value-add), and you'll see all five checks in 60 seconds. No signup. No spreadsheets. Just the verdict.
+
+Run the numbers yourself with our free [gross yield calculator](/vaerktoejer/bruttoafkast-beregner), then see how much vacancy it can take with the [vacancy risk calculator](/vaerktoejer/tomgangsrisiko-beregner).

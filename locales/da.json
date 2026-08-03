@@ -146,6 +146,22 @@
     "f6Title": "AI-resumé",
     "f6Desc": "Et resumé på almindeligt sprog af ejendommens styrker, svagheder og risici — skrevet af AI, baseret på tallene."
   },
+  "homeTools": {
+    "label": "Gratis værktøjer",
+    "title": "Gratis boligberegnere",
+    "sub": "Hurtige svar på ét spørgsmål ad gangen. Hver beregner sender dig videre til den fulde analyzer.",
+    "t1": "Købe eller leje bolig",
+    "t1d": "Bør du købe eller blive ved med at leje? Få svaret på 30 sekunder.",
+    "t2": "Boligvurdering online gratis",
+    "t2d": "Hvad er din bolig værd? Gratis estimat uden mægler.",
+    "t3": "Bruttoafkast beregner",
+    "t3d": "Er en udlejningsbolig værd at kigge på? Tjek afkastet.",
+    "t4": "Boligkøber låneberegner",
+    "t4d": "Hvor meget kan du reelt låne til bolig? Se din køberamme.",
+    "t5": "Tomgangsrisiko beregner",
+    "t5d": "Hvor meget tomgang tåler din udlejning, før den giver underskud?",
+    "all": "Se alle værktøjer →"
+  },
   "faq": {
     "label": "FAQ",
     "title": "Ofte stillede spørgsmål",

@@ -85,3 +85,5 @@ A property with a modest 3% yield and negative monthly cash flow can still be an
 You can run all of this by hand, but the [NordInvest analyzer](/) does it in under 60 seconds — gross and net yield, cash flow, ROI, a 5-year appreciation projection, and an investment classification — using real per-square-metre market data for the property's exact area.
 
 For the full decision framework, read our guide on [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment).
+
+Skip the spreadsheet — our free [gross yield calculator](/vaerktoejer/bruttoafkast-beregner) does it in 30 seconds, and the [vacancy risk calculator](/vaerktoejer/tomgangsrisiko-beregner) shows how much vacancy the yield can absorb.

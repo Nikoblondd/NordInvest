@@ -92,3 +92,5 @@ Konkret plan for de næste 90 dage.
 For den fulde ramme bag hvordan man vurderer en dansk investeringsejendom, læs [ejendomsinvestering for begyndere 2026](/blog/ejendomsinvestering-for-begyndere-2026) og [købsguiden til investeringsejendomme](/blog/koeb-af-investeringsejendom). For skattesiden af regnestykket, se [ejendomsskat på investeringsejendom](/blog/ejendomsskat-investeringsejendom-2026).
 
 Prognoserne er offentliggjort. Nu er det din tur.
+
+Vil du vide, hvad din egen bolig er værd i det marked, så prøv vores gratis [boligvurdering online](/vaerktoejer/boligvurdering-beregner). Og skal du screene en udlejningsbolig, giver [bruttoafkast beregneren](/vaerktoejer/bruttoafkast-beregner) svaret på 30 sekunder.
