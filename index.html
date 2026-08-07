@@ -5463,56 +5463,95 @@
       </section>
 
       <!-- Lead Capture -->
-      <div class="lead-card">
-        <div class="lead-header">
-          <div class="lead-header-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      <style>
+        .fin-card { background:#0F1F3D; border-radius:18px; overflow:hidden; box-shadow:0 20px 50px rgba(15,31,61,0.18); }
+        .fin-head { display:flex; gap:14px; align-items:center; padding:24px 28px; }
+        .fin-head-icon { flex-shrink:0; width:44px; height:44px; border-radius:12px; background:rgba(255,255,255,0.10); display:flex; align-items:center; justify-content:center; }
+        .fin-head-icon svg { width:22px; height:22px; color:#fff; }
+        .fin-head-text h3 { font-size:19px; font-weight:800; color:#fff; margin:0 0 3px; letter-spacing:-0.3px; }
+        .fin-head-text p { font-size:13.5px; color:rgba(255,255,255,0.60); line-height:1.5; margin:0; }
+        .fin-progress { padding:0 28px 4px; }
+        .fin-progress-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+        .fin-progress-top span { font-size:12px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:rgba(255,255,255,0.55); }
+        .fin-back { background:none; border:none; color:rgba(255,255,255,0.7); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; padding:2px 4px; }
+        .fin-back:hover { color:#fff; }
+        .fin-progress-track { height:5px; background:rgba(255,255,255,0.12); border-radius:100px; overflow:hidden; }
+        .fin-progress-bar { height:100%; background:#2563EB; border-radius:100px; width:20%; transition:width 350ms cubic-bezier(.4,0,.2,1); }
+        .fin-body { background:#fff; padding:26px 28px 30px; border-radius:18px 18px 0 0; margin-top:16px; }
+        .fin-q { font-size:20px; font-weight:800; color:#0F1F3D; letter-spacing:-0.4px; margin:0 0 4px; }
+        .fin-hint { font-size:13.5px; color:#6B7280; margin:0 0 20px; }
+        .fin-opts { display:grid; gap:10px; }
+        .fin-opt { display:flex; align-items:center; gap:12px; text-align:left; width:100%; background:#F8F9FA; border:1.5px solid #E5E7EB; border-radius:12px; padding:16px 18px; font-family:inherit; font-size:15.5px; font-weight:600; color:#0F1F3D; cursor:pointer; transition:all 150ms ease; }
+        .fin-opt:hover { border-color:#2563EB; background:#EFF6FF; transform:translateY(-1px); }
+        .fin-opt.sel { border-color:#2563EB; background:#EFF6FF; box-shadow:0 0 0 3px rgba(37,99,235,0.12); }
+        .fin-opt .fin-opt-ic { flex-shrink:0; width:34px; height:34px; border-radius:9px; background:#fff; border:1px solid #E5E7EB; display:flex; align-items:center; justify-content:center; }
+        .fin-opt .fin-opt-ic svg { width:18px; height:18px; color:#2563EB; }
+        .fin-opt .fin-opt-sub { display:block; font-size:12.5px; font-weight:500; color:#6B7280; margin-top:2px; }
+        .fin-yn { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .fin-yn button { background:#F8F9FA; border:1.5px solid #E5E7EB; border-radius:12px; padding:14px; font-family:inherit; font-size:15px; font-weight:700; color:#0F1F3D; cursor:pointer; transition:all 150ms ease; }
+        .fin-yn button:hover { border-color:#2563EB; }
+        .fin-yn button.sel { border-color:#2563EB; background:#EFF6FF; box-shadow:0 0 0 3px rgba(37,99,235,0.12); }
+        .fin-ynrow { margin-bottom:16px; }
+        .fin-ynrow > span { display:block; font-size:14.5px; font-weight:600; color:#0F1F3D; margin-bottom:8px; }
+        .fin-field { margin-bottom:14px; }
+        .fin-field label { display:block; font-size:13px; font-weight:600; color:#0F1F3D; margin-bottom:6px; }
+        .fin-inwrap { position:relative; display:flex; align-items:center; }
+        .fin-inwrap input { width:100%; font-family:inherit; font-size:16px; font-weight:500; padding:13px 15px; border:1.5px solid #E5E7EB; border-radius:10px; background:#F8F9FA; color:#111827; -moz-appearance:textfield; }
+        .fin-inwrap input::-webkit-outer-spin-button, .fin-inwrap input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+        .fin-inwrap input:focus { outline:none; border-color:#2563EB; background:#fff; box-shadow:0 0 0 3px rgba(37,99,235,0.12); }
+        .fin-inwrap .fin-suffix { position:absolute; right:14px; font-size:13px; color:#6B7280; font-weight:600; pointer-events:none; }
+        .fin-slider-val { text-align:center; font-size:26px; font-weight:800; color:#2563EB; letter-spacing:-0.5px; margin:6px 0 18px; }
+        .fin-slider { width:100%; -webkit-appearance:none; appearance:none; height:6px; border-radius:100px; background:#E5E7EB; outline:none; }
+        .fin-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:26px; height:26px; border-radius:50%; background:#0F1F3D; cursor:pointer; border:3px solid #fff; box-shadow:0 2px 8px rgba(15,31,61,0.3); }
+        .fin-slider::-moz-range-thumb { width:26px; height:26px; border-radius:50%; background:#0F1F3D; cursor:pointer; border:3px solid #fff; }
+        .fin-scale { display:flex; justify-content:space-between; font-size:11px; color:#9CA3AF; margin-top:8px; }
+        .fin-next { width:100%; margin-top:20px; background:#0F1F3D; color:#fff; border:none; border-radius:11px; padding:15px; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:background 160ms ease; }
+        .fin-next:hover { background:#1a3360; }
+        .fin-next:disabled { opacity:0.45; cursor:not-allowed; }
+        .fin-empgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px; }
+        @media (max-width:480px){ .fin-empgrid { grid-template-columns:1fr; } }
+        .fin-loading { text-align:center; padding:30px 10px; }
+        .fin-spinner { width:44px; height:44px; margin:0 auto 18px; border:4px solid #E5E7EB; border-top-color:#2563EB; border-radius:50%; animation:finspin 0.85s linear infinite; }
+        @keyframes finspin { to { transform:rotate(360deg); } }
+        .fin-loading p { font-size:15px; font-weight:700; color:#0F1F3D; }
+        .fin-profile { background:#F8F9FA; border:1px solid #E5E7EB; border-radius:14px; padding:18px 20px; margin-bottom:18px; }
+        .fin-profile h4 { font-size:13px; font-weight:800; letter-spacing:0.4px; text-transform:uppercase; color:#2563EB; margin:0 0 12px; }
+        .fin-prow { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:7px 0; border-bottom:1px solid #EEF1F4; }
+        .fin-prow:last-child { border-bottom:none; }
+        .fin-prow .k { font-size:13.5px; color:#4B5563; }
+        .fin-prow .v { font-size:15px; font-weight:800; color:#0F1F3D; font-variant-numeric:tabular-nums; text-align:right; }
+        .fin-flag { display:flex; gap:9px; align-items:flex-start; background:#FFFBEB; border:1px solid #FDE68A; border-radius:11px; padding:12px 14px; margin-bottom:18px; font-size:13px; color:#92400E; line-height:1.5; }
+        .fin-nextstep { font-size:14px; color:#111827; line-height:1.6; margin:0 0 18px; }
+        .fin-contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+        @media (max-width:480px){ .fin-contact-grid { grid-template-columns:1fr; } }
+        .fin-consent { display:flex; gap:10px; align-items:flex-start; margin-bottom:16px; }
+        .fin-consent input { margin-top:3px; width:17px; height:17px; flex-shrink:0; accent-color:#2563EB; }
+        .fin-consent label { font-size:12.5px; color:#4B5563; line-height:1.5; }
+        .fin-err { border-color:#DC2626 !important; }
+        .fin-privacy { font-size:11.5px; color:#9CA3AF; text-align:center; margin-top:12px; line-height:1.5; }
+        .fin-success { text-align:center; padding:24px 10px; }
+        .fin-success svg { width:52px; height:52px; color:#059669; margin-bottom:14px; }
+        .fin-success h4 { font-size:20px; font-weight:800; color:#0F1F3D; margin:0 0 8px; }
+        .fin-success p { font-size:14px; color:#4B5563; line-height:1.6; max-width:360px; margin:0 auto; }
+      </style>
+      <div class="fin-card" id="financing-flow">
+        <div class="fin-head">
+          <div class="fin-head-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>
           </div>
-          <div class="lead-header-text">
-            <h3 data-i18n="leadCapture.title">Speak to a Financing Expert</h3>
-            <p data-i18n="leadCapture.sub">Our network of mortgage advisors can help you secure the best rates for your investment property.</p>
+          <div class="fin-head-text">
+            <h3 id="fin-title">Find den rette finansiering</h3>
+            <p id="fin-sub">Svar på et par hurtige spørgsmål og se din finansieringsprofil på 60 sekunder.</p>
           </div>
         </div>
-        <div class="lead-body">
-          <div id="lead-form-wrap">
-            <div class="lead-form-grid">
-              <div class="form-group">
-                <label for="lead-fname" data-i18n="leadCapture.firstName">First Name</label>
-                <input type="text" id="lead-fname" placeholder="Erik">
-                <span class="field-error" id="err-fname" data-i18n="errors.required">Required.</span>
-              </div>
-              <div class="form-group">
-                <label for="lead-lname" data-i18n="leadCapture.lastName">Last Name</label>
-                <input type="text" id="lead-lname" placeholder="Hansen">
-                <span class="field-error" id="err-lname" data-i18n="errors.required">Required.</span>
-              </div>
-              <div class="form-group">
-                <label for="lead-email" data-i18n="leadCapture.email">Email Address</label>
-                <input type="email" id="lead-email" placeholder="erik@example.com">
-                <span class="field-error" id="err-email" data-i18n="errors.validEmail">Enter a valid email.</span>
-              </div>
-              <div class="form-group">
-                <label for="lead-phone" data-i18n="leadCapture.phone">Phone Number</label>
-                <input type="tel" id="lead-phone" placeholder="+47 123 45 678">
-                <span class="field-error" id="err-phone" data-i18n="errors.required">Required.</span>
-              </div>
-            </div>
-            <div class="checkbox-group">
-              <input type="checkbox" id="lead-financing" checked>
-              <label for="lead-financing" data-i18n="leadCapture.consent">I would like to be contacted regarding financing options.</label>
-            </div>
-            <button class="btn-lead" onclick="submitLead(event)">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-              <span data-i18n="leadCapture.submit">Request Financing Advice</span>
-            </button>
-            <p class="privacy-note" data-i18n="leadCapture.privacy" data-i18n-html>Your information is handled with care. We will never share your details without consent. <a href="#">Privacy Policy</a>.</p>
+        <div class="fin-progress" id="fin-progress">
+          <div class="fin-progress-top">
+            <span id="fin-step-label">Trin 1 af 5</span>
+            <button type="button" class="fin-back" id="fin-back" style="display:none">← <span id="fin-back-label">Tilbage</span></button>
           </div>
-          <div class="success-msg" id="lead-success">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <h4 data-i18n="leadCapture.thanksTitle">Thank you!</h4>
-            <p data-i18n="leadCapture.thanksSub">A financing advisor will be in touch shortly. We look forward to helping you with your investment.</p>
-          </div>
+          <div class="fin-progress-track"><div class="fin-progress-bar" id="fin-bar"></div></div>
         </div>
+        <div class="fin-body" id="fin-body"></div>
       </div>
 
     </div>
@@ -6888,12 +6927,11 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   document.getElementById('market-results').style.display = 'none';
   document.getElementById('market-location-text').textContent = location;
   document.getElementById('market-loading-text').textContent = (window.t ? window.t('analysis.marketLoadingCity', {city: location}) : `Researching rental market in ${location}…`);
-  document.getElementById('lead-form-wrap').style.display = 'block';
   document.getElementById('classification-loading').style.display = 'flex';
   document.getElementById('classification-result').style.display = 'none';
   document.getElementById('projection-card').style.display = 'none';
   document.getElementById('stress-card').style.display = 'none';
-  document.getElementById('lead-success').classList.remove('show');
+  if (window.resetFinancingFlow) window.resetFinancingFlow();
 
   btn.classList.remove('loading');
   btnTextEl.textContent = originalText;
@@ -6992,29 +7030,312 @@ setupAutocomplete('ext-location', 'ext-location-dropdown');
 initCurrency();
 
 // ── SUBMIT LEAD ───────────────────────────────
-function submitLead(e) {
-  e.preventDefault();
-  let valid = true;
-  const clrE = (id, eId) => { document.getElementById(id).classList.remove('error'); document.getElementById(eId).classList.remove('show'); };
-  const setE  = (id, eId) => { document.getElementById(id).classList.add('error');   document.getElementById(eId).classList.add('show');   valid = false; };
+// ── FINANCING LEAD FLOW (5-step, value-first) ──────────────
+(function () {
+  var body = document.getElementById('fin-body');
+  if (!body) return;
 
-  clrE('lead-fname','err-fname'); clrE('lead-lname','err-lname');
-  clrE('lead-email','err-email'); clrE('lead-phone','err-phone');
+  var RANGES = [
+    { mid: 750000 }, { mid: 2000000 }, { mid: 4000000 }, { mid: 7500000 }, { mid: 12000000 }
+  ];
 
-  const fname = document.getElementById('lead-fname').value.trim();
-  const lname = document.getElementById('lead-lname').value.trim();
-  const email = document.getElementById('lead-email').value.trim();
-  const phone = document.getElementById('lead-phone').value.trim();
+  var T = {
+    da: {
+      title: 'Find den rette finansiering',
+      sub: 'Svar på et par hurtige spørgsmål og se din finansieringsprofil på under et minut.',
+      step: function (n) { return 'Trin ' + n + ' af 5'; },
+      back: 'Tilbage', next: 'Videre', seeProfile: 'Se min profil',
+      q1: 'Hvad søger du finansiering til?',
+      needs: [
+        { k: 'boliglaan', t: 'Boliglån', s: 'Til en bolig jeg selv skal bo i' },
+        { k: 'investering', t: 'Investeringsejendom', s: 'Til udlejning eller videresalg' },
+        { k: 'refinansiering', t: 'Refinansiering', s: 'Af et eksisterende lån' },
+        { k: 'erhverv', t: 'Erhvervslån', s: 'Til virksomhed eller erhvervsejendom' }
+      ],
+      q2: 'Hvor meget skal du låne?', q2hint: 'Træk i skyderen for at vælge et interval.',
+      rangeLabels: ['Under 1 mio. kr', '1–3 mio. kr', '3–5 mio. kr', '5–10 mio. kr', 'Over 10 mio. kr'],
+      q3: 'Din økonomiske situation', q3hint: 'Bruges kun til at estimere din låneramme. Helt uforpligtende.',
+      fGross: 'Månedlig bruttoløn', fDebt: 'Nuværende gæld i alt', fDown: 'Udbetaling til rådighed', fEmp: 'Ansættelsestype',
+      emps: [ { k: 'fast', t: 'Fastansat' }, { k: 'selv', t: 'Selvstændig' }, { k: 'free', t: 'Freelance' }, { k: 'andet', t: 'Andet' } ],
+      q4: 'Tre hurtige spørgsmål',
+      yn: [ { k: 'rki', t: 'Er du registreret i RKI?' }, { k: 'def', t: 'Har du misligholdt lån de seneste 3 år?' }, { k: 'owns', t: 'Ejer du allerede fast ejendom?' } ],
+      yes: 'Ja', no: 'Nej',
+      loading: 'Vi analyserer din profil…',
+      profileTitle: 'Din finansieringsprofil',
+      pType: 'Anbefalet finansiering', pMax: 'Estimeret låneramme', pAmount: 'Ønsket lånebeløb', pLtv: 'Belåningsgrad (LTV)',
+      typeBolig: 'Realkredit op til 80 % + banklån', typeInvest: 'Realkredit til udlejning + banklån',
+      typeRefi: 'Omlægning af realkredit + banklån', typeErhverv: 'Erhvervsrealkredit + banklån',
+      estimate: 'estimat',
+      nextStep: 'Ud fra dine svar kan en finansieringsrådgiver finde og sammenligne konkrete lånetilbud til dig. Indtast dine oplysninger, så bliver du kontaktet — gratis og uforpligtende.',
+      flag: 'Du har angivet en RKI-registrering eller misligholdelse. De fleste traditionelle långivere kræver en ren kreditregistrering, så mulighederne kan være begrænsede. En rådgiver kan vise, hvad der realistisk kan lade sig gøre.',
+      cName: 'Fulde navn', cEmail: 'E-mail', cPhone: 'Telefonnummer',
+      consent: 'Jeg accepterer at blive kontaktet af NordInvest om lånemuligheder baseret på mine oplysninger.',
+      submit: 'Få min gratis vurdering',
+      privacy: 'Dine oplysninger behandles fortroligt og deles ikke uden dit samtykke.',
+      errName: 'Skriv dit navn.', errEmail: 'Skriv en gyldig e-mail.', errPhone: 'Skriv dit telefonnummer.', errConsent: 'Du skal acceptere for at fortsætte.',
+      sending: 'Sender…',
+      thanksTitle: 'Tak — vi har modtaget din anmodning.',
+      thanksSub: 'En finansieringsrådgiver kontakter dig hurtigst muligt med konkrete lånemuligheder til din profil.'
+    },
+    en: {
+      title: 'Find the right financing',
+      sub: 'Answer a few quick questions and see your financing profile in under a minute.',
+      step: function (n) { return 'Step ' + n + ' of 5'; },
+      back: 'Back', next: 'Continue', seeProfile: 'See my profile',
+      q1: 'What do you need financing for?',
+      needs: [
+        { k: 'boliglaan', t: 'Home loan', s: 'For a home I will live in myself' },
+        { k: 'investering', t: 'Investment property', s: 'For letting or resale' },
+        { k: 'refinansiering', t: 'Refinancing', s: 'Of an existing loan' },
+        { k: 'erhverv', t: 'Business loan', s: 'For a company or commercial property' }
+      ],
+      q2: 'How much do you need to borrow?', q2hint: 'Drag the slider to pick a range.',
+      rangeLabels: ['Under 1M kr', '1–3M kr', '3–5M kr', '5–10M kr', 'Over 10M kr'],
+      q3: 'Your financial situation', q3hint: 'Used only to estimate your borrowing range. No obligation.',
+      fGross: 'Monthly gross salary', fDebt: 'Total current debt', fDown: 'Down payment available', fEmp: 'Employment type',
+      emps: [ { k: 'fast', t: 'Permanent' }, { k: 'selv', t: 'Self-employed' }, { k: 'free', t: 'Freelance' }, { k: 'andet', t: 'Other' } ],
+      q4: 'Three quick questions',
+      yn: [ { k: 'rki', t: 'Are you registered with RKI (debt register)?' }, { k: 'def', t: 'Have you defaulted on a loan in the last 3 years?' }, { k: 'owns', t: 'Do you already own property?' } ],
+      yes: 'Yes', no: 'No',
+      loading: 'Analyzing your profile…',
+      profileTitle: 'Your financing profile',
+      pType: 'Recommended financing', pMax: 'Estimated borrowing range', pAmount: 'Desired loan amount', pLtv: 'Loan-to-value (LTV)',
+      typeBolig: 'Mortgage up to 80% + bank loan', typeInvest: 'Buy-to-let mortgage + bank loan',
+      typeRefi: 'Mortgage remortgage + bank loan', typeErhverv: 'Commercial mortgage + bank loan',
+      estimate: 'estimate',
+      nextStep: 'Based on your answers, a financing advisor can find and compare concrete loan offers for you. Enter your details and they will get in touch — free and with no obligation.',
+      flag: 'You indicated an RKI registration or a default. Most traditional lenders require a clean credit record, so options may be limited. An advisor can show what is realistically possible.',
+      cName: 'Full name', cEmail: 'Email', cPhone: 'Phone number',
+      consent: 'I agree to be contacted by NordInvest about financing options based on my details.',
+      submit: 'Get my free assessment',
+      privacy: 'Your details are handled confidentially and are not shared without your consent.',
+      errName: 'Enter your name.', errEmail: 'Enter a valid email.', errPhone: 'Enter your phone number.', errConsent: 'You must accept to continue.',
+      sending: 'Sending…',
+      thanksTitle: 'Thanks — we have received your request.',
+      thanksSub: 'A financing advisor will contact you as soon as possible with concrete loan options for your profile.'
+    }
+  };
+  function lang() { return (window.getLang && window.getLang() === 'en') ? 'en' : 'da'; }
+  function t() { return T[lang()]; }
+  function kr(n) { return new Intl.NumberFormat(lang() === 'en' ? 'en-GB' : 'da-DK').format(Math.round(n)) + ' kr.'; }
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  if (!fname) setE('lead-fname','err-fname');
-  if (!lname) setE('lead-lname','err-lname');
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) setE('lead-email','err-email');
-  if (!phone) setE('lead-phone','err-phone');
-  if (!valid) return;
+  var S = { step: 1, need: null, amount: 2, gross: '', debt: '', down: '', emp: null, rki: null, def: null, owns: null, source: 'analyzer', done: false };
+  var lastTracked = 0;
 
-  document.getElementById('lead-form-wrap').style.display = 'none';
-  document.getElementById('lead-success').classList.add('show');
-}
+  function track(ev, extra) { if (typeof gtag === 'function') gtag('event', ev, Object.assign({ event_category: 'financing_lead' }, extra || {})); }
+
+  function setChrome() {
+    var s = t();
+    var titleEl = document.getElementById('fin-title'); if (titleEl) titleEl.textContent = s.title;
+    var subEl = document.getElementById('fin-sub'); if (subEl) subEl.textContent = s.sub;
+    var prog = document.getElementById('fin-progress');
+    var label = document.getElementById('fin-step-label');
+    var bar = document.getElementById('fin-bar');
+    var backLbl = document.getElementById('fin-back-label');
+    var back = document.getElementById('fin-back');
+    if (backLbl) backLbl.textContent = s.back;
+    if (S.done) { if (prog) prog.style.display = 'none'; return; }
+    if (prog) prog.style.display = 'block';
+    if (label) label.textContent = s.step(S.step);
+    if (bar) bar.style.width = (S.step * 20) + '%';
+    if (back) back.style.display = S.step > 1 ? 'inline-block' : 'none';
+  }
+
+  function go(step) {
+    S.step = step;
+    if (step !== lastTracked) { track('financing_step', { step: step, need: S.need || 'none', source: S.source }); lastTracked = step; }
+    render();
+  }
+
+  function render() {
+    setChrome();
+    var s = t();
+    if (S.done) { renderSuccess(); return; }
+    if (S.step === 1) renderNeed();
+    else if (S.step === 2) renderAmount();
+    else if (S.step === 3) renderSituation();
+    else if (S.step === 4) renderQuick();
+    else if (S.step === 5) renderProfile();
+  }
+
+  function renderNeed() {
+    var s = t();
+    body.innerHTML = '<h3 class="fin-q">' + s.q1 + '</h3><div class="fin-opts">' +
+      s.needs.map(function (n) {
+        return '<button type="button" class="fin-opt' + (S.need === n.k ? ' sel' : '') + '" data-need="' + n.k + '">' +
+          '<span class="fin-opt-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>' +
+          '<span><span>' + n.t + '</span><span class="fin-opt-sub">' + n.s + '</span></span></button>';
+      }).join('') + '</div>';
+    body.querySelectorAll('.fin-opt').forEach(function (b) {
+      b.addEventListener('click', function () { S.need = b.getAttribute('data-need'); go(2); });
+    });
+  }
+
+  function renderAmount() {
+    var s = t();
+    body.innerHTML = '<h3 class="fin-q">' + s.q2 + '</h3><p class="fin-hint">' + s.q2hint + '</p>' +
+      '<div class="fin-slider-val" id="fin-amt">' + s.rangeLabels[S.amount] + '</div>' +
+      '<input type="range" class="fin-slider" id="fin-range" min="0" max="4" step="1" value="' + S.amount + '">' +
+      '<div class="fin-scale"><span>1 mio.</span><span>3</span><span>5</span><span>10</span><span>10+</span></div>' +
+      '<button type="button" class="fin-next" id="fin-go">' + s.next + '</button>';
+    var range = document.getElementById('fin-range');
+    range.addEventListener('input', function () { S.amount = parseInt(range.value, 10); document.getElementById('fin-amt').textContent = s.rangeLabels[S.amount]; });
+    document.getElementById('fin-go').addEventListener('click', function () { go(3); });
+  }
+
+  function renderSituation() {
+    var s = t();
+    body.innerHTML = '<h3 class="fin-q">' + s.q3 + '</h3><p class="fin-hint">' + s.q3hint + '</p>' +
+      field('fin-gross', s.fGross, S.gross) + field('fin-debt', s.fDebt, S.debt) + field('fin-down', s.fDown, S.down) +
+      '<div class="fin-field"><label>' + s.fEmp + '</label><div class="fin-empgrid">' +
+      s.emps.map(function (e) { return '<button type="button" class="fin-opt' + (S.emp === e.k ? ' sel' : '') + '" data-emp="' + e.k + '" style="justify-content:center;">' + e.t + '</button>'; }).join('') +
+      '</div></div>' +
+      '<button type="button" class="fin-next" id="fin-go" ' + (canSituation() ? '' : 'disabled') + '>' + s.next + '</button>';
+    ['fin-gross:gross','fin-debt:debt','fin-down:down'].forEach(function (pair) {
+      var id = pair.split(':')[0], key = pair.split(':')[1];
+      var el = document.getElementById(id);
+      el.addEventListener('input', function () { S[key] = el.value; updateGo(); });
+    });
+    body.querySelectorAll('[data-emp]').forEach(function (b) {
+      b.addEventListener('click', function () { S.emp = b.getAttribute('data-emp'); body.querySelectorAll('[data-emp]').forEach(function (x) { x.classList.remove('sel'); }); b.classList.add('sel'); updateGo(); });
+    });
+    document.getElementById('fin-go').addEventListener('click', function () { if (canSituation()) go(4); });
+    function updateGo() { document.getElementById('fin-go').disabled = !canSituation(); }
+  }
+  function field(id, label, val) {
+    return '<div class="fin-field"><label for="' + id + '">' + label + '</label><div class="fin-inwrap">' +
+      '<input type="number" id="' + id + '" inputmode="numeric" value="' + esc(val) + '" placeholder="0"><span class="fin-suffix">kr.</span></div></div>';
+  }
+  function canSituation() { return String(S.gross).trim() !== '' && parseFloat(S.gross) > 0 && S.emp; }
+
+  function renderQuick() {
+    var s = t();
+    body.innerHTML = '<h3 class="fin-q">' + s.q4 + '</h3>' +
+      s.yn.map(function (q) {
+        var cur = S[q.k];
+        return '<div class="fin-ynrow"><span>' + q.t + '</span><div class="fin-yn">' +
+          '<button type="button" data-k="' + q.k + '" data-v="1" class="' + (cur === true ? 'sel' : '') + '">' + s.yes + '</button>' +
+          '<button type="button" data-k="' + q.k + '" data-v="0" class="' + (cur === false ? 'sel' : '') + '">' + s.no + '</button>' +
+          '</div></div>';
+      }).join('');
+    body.querySelectorAll('.fin-yn button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var k = b.getAttribute('data-k');
+        S[k] = b.getAttribute('data-v') === '1';
+        render();
+        if (S.rki !== null && S.def !== null && S.owns !== null) { setTimeout(startMatching, 250); }
+      });
+    });
+  }
+
+  function startMatching() {
+    var s = t();
+    S.step = 5;
+    setChrome();
+    body.innerHTML = '<div class="fin-loading"><div class="fin-spinner"></div><p>' + s.loading + '</p></div>';
+    track('financing_matching', { need: S.need, source: S.source });
+    setTimeout(function () { go(5); }, 2000);
+  }
+
+  function profileNumbers() {
+    var gross = parseFloat(S.gross) || 0, debt = parseFloat(S.debt) || 0, down = parseFloat(S.down) || 0;
+    var annual = gross * 12;
+    var maxLoan = Math.max(0, annual * 4 - debt); // Danish gældsfaktor ~4x gross, minus existing debt
+    var amount = RANGES[S.amount].mid;
+    var price = amount + down;
+    var ltv = price > 0 ? Math.min(100, amount / price * 100) : null;
+    return { maxLoan: maxLoan, amount: amount, ltv: ltv };
+  }
+
+  function renderProfile() {
+    var s = t();
+    var n = profileNumbers();
+    var typeMap = { boliglaan: s.typeBolig, investering: s.typeInvest, refinansiering: s.typeRefi, erhverv: s.typeErhverv };
+    var flag = (S.rki === true || S.def === true) ? '<div class="fin-flag"><span>⚠︎</span><span>' + s.flag + '</span></div>' : '';
+    body.innerHTML =
+      '<div class="fin-profile"><h4>' + s.profileTitle + '</h4>' +
+        '<div class="fin-prow"><span class="k">' + s.pType + '</span><span class="v">' + (typeMap[S.need] || typeMap.boliglaan) + '</span></div>' +
+        '<div class="fin-prow"><span class="k">' + s.pAmount + '</span><span class="v">' + s.rangeLabels[S.amount] + '</span></div>' +
+        (n.maxLoan > 0 ? '<div class="fin-prow"><span class="k">' + s.pMax + '</span><span class="v">~ ' + kr(n.maxLoan) + '<br><span style="font-weight:500;font-size:11px;color:#9CA3AF;">(' + s.estimate + ')</span></span></div>' : '') +
+        (n.ltv != null ? '<div class="fin-prow"><span class="k">' + s.pLtv + '</span><span class="v">~ ' + n.ltv.toFixed(0) + ' %</span></div>' : '') +
+      '</div>' + flag +
+      '<p class="fin-nextstep">' + s.nextStep + '</p>' +
+      '<div class="fin-contact-grid">' +
+        '<div class="fin-field" style="grid-column:1/-1;"><label for="fin-name">' + s.cName + '</label><div class="fin-inwrap"><input type="text" id="fin-name" autocomplete="name"></div></div>' +
+        '<div class="fin-field"><label for="fin-email">' + s.cEmail + '</label><div class="fin-inwrap"><input type="email" id="fin-email" autocomplete="email"></div></div>' +
+        '<div class="fin-field"><label for="fin-phone">' + s.cPhone + '</label><div class="fin-inwrap"><input type="tel" id="fin-phone" autocomplete="tel"></div></div>' +
+      '</div>' +
+      '<div class="fin-consent"><input type="checkbox" id="fin-consent"><label for="fin-consent">' + s.consent + '</label></div>' +
+      '<button type="button" class="fin-next" id="fin-submit">' + s.submit + '</button>' +
+      '<p class="fin-privacy">' + s.privacy + '</p>';
+    document.getElementById('fin-submit').addEventListener('click', submitFin);
+  }
+
+  function submitFin() {
+    var s = t();
+    var name = document.getElementById('fin-name'), email = document.getElementById('fin-email'), phone = document.getElementById('fin-phone'), consent = document.getElementById('fin-consent');
+    [name, email, phone].forEach(function (el) { el.classList.remove('fin-err'); });
+    var ok = true;
+    if (!name.value.trim()) { name.classList.add('fin-err'); ok = false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) { email.classList.add('fin-err'); ok = false; }
+    if (!phone.value.trim()) { phone.classList.add('fin-err'); ok = false; }
+    if (!consent.checked) { consent.parentElement.style.color = '#DC2626'; ok = false; }
+    if (!ok) return;
+
+    var btn = document.getElementById('fin-submit');
+    btn.disabled = true; btn.textContent = s.sending;
+
+    var payload = {
+      name: name.value.trim(), email: email.value.trim(), phone: phone.value.trim(),
+      need: S.need, amountRange: s.rangeLabels[S.amount],
+      grossMonthly: parseFloat(S.gross) || null, existingDebt: parseFloat(S.debt) || null, downPayment: parseFloat(S.down) || null,
+      employment: S.emp, rki: S.rki === true, defaulted: S.def === true, ownsProperty: S.owns === true,
+      source: S.source, lang: lang(), consent: true
+    };
+
+    fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function () { finishOk(); })
+      .catch(function () { finishOk(); }); // lead is also captured server-side via logs; never dead-end the user
+  }
+
+  function finishOk() {
+    S.done = true;
+    track('financing_submit', { need: S.need, source: S.source, amountRange: t().rangeLabels[S.amount] });
+    render();
+  }
+
+  function renderSuccess() {
+    var s = t();
+    body.innerHTML = '<div class="fin-success">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
+      '<h4>' + s.thanksTitle + '</h4><p>' + s.thanksSub + '</p></div>';
+  }
+
+  document.getElementById('fin-back').addEventListener('click', function () { if (S.step > 1) go(S.step - 1); });
+  document.addEventListener('i18n:ready', function () { render(); });
+
+  // Entry point for contextual buttons: preselect a need + source, jump to step 2.
+  window.openFinancingFlow = function (need, source) {
+    if (need) S.need = need;
+    if (source) S.source = source;
+    S.done = false;
+    var card = document.getElementById('financing-flow');
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    go(need ? 2 : 1);
+  };
+
+  // Reset to a fresh flow when a new analysis is run.
+  window.resetFinancingFlow = function () {
+    S = { step: 1, need: null, amount: 2, gross: '', debt: '', down: '', emp: null, rki: null, def: null, owns: null, source: 'analyzer', done: false };
+    lastTracked = 0;
+    render();
+  };
+
+  track('financing_start', { source: S.source });
+  render();
+})();
 
 // ── I18N: sync language switcher active state on lang change ─
 document.addEventListener('i18n:ready', (e) => {
