@@ -1,5 +1,5 @@
 ---
-title: Property investment in Norway 2026 — a complete guide for foreign buyers
+title: "Property Investment in Norway 2026: A Foreign Buyer's Guide"
 slug: property-investment-norway-guide-2026
 date: 2026-07-17
 description: What foreign investors need to know before buying Norwegian property in 2026 — eligibility, financing, taxes, Oslo vs Bergen vs Trondheim yields, and a realistic strategy.
@@ -8,6 +8,8 @@ author: NordInvest
 image: https://images.unsplash.com/photo-1601581875039-e899893d520c?w=1200&auto=format&fit=crop&q=80
 lang: en
 ---
+
+**Quick answer:** Foreigners can buy property in Norway with almost no restrictions. Expect a minimum 15% deposit for a home you'll live in (often 35%+ for a pure investment or secondary property), mortgage rates around 4–5%, and gross rental yields of roughly 3–4% in Oslo. The market is stable and transparent, but the financing rules are among the strictest in Europe.
 
 Norway is one of the most stable, transparent property markets in Europe — with among the strictest financing rules in the developed world. This guide is for foreign investors trying to figure out whether Norway makes sense for their portfolio, and if so, how to actually get in.
 

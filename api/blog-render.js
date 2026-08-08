@@ -50,7 +50,7 @@ function buildJsonLd(slug, post) {
 
 function renderHead(slug, post) {
   const url = `${SITE}/blog/${slug}`;
-  const title = `${post.title} — NordInvest Blog`;
+  const title = `${post.title} | NordInvest`;
   const desc  = post.description || '';
   const image = post.image || `${SITE}/nordinvest-logo.png`;
   const lang  = post.lang === 'da' ? 'da' : 'en';

@@ -1,5 +1,5 @@
 ---
-title: Cash flow ejendom Danmark — sådan finder du positive udlejningsejendomme i 2026
+title: "Cash flow ejendom Danmark 2026: sådan finder du positive handler"
 slug: cash-flow-ejendom-danmark-2026
 date: 2026-07-12
 description: Realistisk guide til at finde investeringsejendomme med positivt cash flow i Danmark. Postnumre der leverer, tal at kigge efter, og en trin-for-trin metode til at screene handler i 2026.
@@ -8,6 +8,8 @@ author: NordInvest
 image: https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&auto=format&fit=crop&q=80
 lang: da
 ---
+
+**Kort svar:** Ja, positive cash flow-ejendomme findes i Danmark i 2026 — men næsten aldrig i København eller centrum af Aarhus. De lever i sekundære byer og ældre ejendomme, hvor prisen pr. m² er lav i forhold til lejen. Sigt efter et bruttoafkast på 6–8 %, og stresstest for tomgang, før du byder.
 
 ## Hvad er cash flow ejendom — og findes det overhovedet i Danmark?
 

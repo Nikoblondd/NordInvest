@@ -27,7 +27,7 @@ export default {
     "translation": null
   },
   "cash-flow-ejendom-danmark-2026": {
-    "title": "Cash flow ejendom Danmark — sådan finder du positive udlejningsejendomme i 2026",
+    "title": "Cash flow ejendom Danmark 2026: sådan finder du positive handler",
     "description": "Realistisk guide til at finde investeringsejendomme med positivt cash flow i Danmark. Postnumre der leverer, tal at kigge efter, og en trin-for-trin metode til at screene handler i 2026.",
     "date": "2026-07-12",
     "image": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&auto=format&fit=crop&q=80",
@@ -223,7 +223,7 @@ export default {
     "translation": "ejendomsinvestering-i-danmark-for-udlaendinge"
   },
   "property-investment-norway-guide-2026": {
-    "title": "Property investment in Norway 2026 — a complete guide for foreign buyers",
+    "title": "Property Investment in Norway 2026: A Foreign Buyer's Guide",
     "description": "What foreign investors need to know before buying Norwegian property in 2026 — eligibility, financing, taxes, Oslo vs Bergen vs Trondheim yields, and a realistic strategy.",
     "date": "2026-07-17",
     "image": "https://images.unsplash.com/photo-1601581875039-e899893d520c?w=1200&auto=format&fit=crop&q=80",

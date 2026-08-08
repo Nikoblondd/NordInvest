@@ -10,6 +10,8 @@ lang: da
 translation: how-to-calculate-rental-yield
 ---
 
+**Kort svar:** Lejeafkast beregnes som årlig leje delt med ejendommens pris gange 100. Bruttoafkast bruger den fulde leje, mens nettoafkast trækker driftsomkostningerne fra først. Eksempel: 120.000 kr i årlig leje på en bolig til 2.000.000 kr giver et bruttoafkast på 6 %. Et sundt dansk bruttoafkast ligger typisk mellem 4 % og 8 % afhængigt af by.
+
 ## Hvad er lejeafkast?
 
 Lejeafkast er det enkelte mest brugbare tal, når du sammenligner ejendomsinvesteringer. Det viser hvor meget årlig lejeindtægt en ejendom genererer i forhold til dens pris — i procent.
