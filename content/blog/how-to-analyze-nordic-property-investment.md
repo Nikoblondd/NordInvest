@@ -79,3 +79,5 @@ Nordic property investment rewards patience and capital depth. If you need month
 Use the [NordInvest analyzer](/) to run these calculations in under 60 seconds for any property you're considering.
 
 Put it into practice with our free [gross yield calculator](/vaerktoejer/bruttoafkast-beregner) and [vacancy risk calculator](/vaerktoejer/tomgangsrisiko-beregner).
+
+Targeting a specific market? Our [property investment in Norway guide for foreign buyers](/blog/property-investment-norway-guide-2026) applies this framework to one of the Nordics' most stable markets — eligibility, financing, tax and yields by city.

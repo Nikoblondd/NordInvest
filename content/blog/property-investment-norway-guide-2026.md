@@ -9,7 +9,7 @@ image: https://images.unsplash.com/photo-1601581875039-e899893d520c?w=1200&auto=
 lang: en
 ---
 
-**Quick answer:** Foreigners can buy property in Norway with almost no restrictions. Expect a minimum 15% deposit for a home you'll live in (often 35%+ for a pure investment or secondary property), mortgage rates around 4–5%, and gross rental yields of roughly 3–4% in Oslo. The market is stable and transparent, but the financing rules are among the strictest in Europe.
+**Quick answer:** Foreigners can buy property in Norway with almost no restrictions — the hard part is getting a mortgage. Expect a minimum 15% deposit for a home you'll live in, but 40%+ for a pure investment property, and foreign buyers are often asked for 25–40% regardless of the rules. Mortgage rates sit around 4.5–5.5%, and gross rental yields are roughly 3.7–4.5% in Oslo (net closer to 2%). Norway is a stable appreciation and capital-preservation market, not a cash-flow market.
 
 Norway is one of the most stable, transparent property markets in Europe — with among the strictest financing rules in the developed world. This guide is for foreign investors trying to figure out whether Norway makes sense for their portfolio, and if so, how to actually get in.
 
@@ -97,10 +97,33 @@ Budget **3-3.5 % of purchase price** for transaction costs on top of the down pa
 5. **Plan a 7+ year hold.** Transaction costs (~3.5 %) plus the appreciation-driven return profile both reward patience.
 6. **Get a Norwegian accountant or a cross-border firm.** Wealth tax + double-taxation treaty administration is not something to DIY.
 
+## Frequently asked questions
+
+### Can foreigners get a mortgage in Norway?
+This is the hardest part. There are no ownership restrictions, but Norwegian banks strongly prefer borrowers with Norwegian income, a D-number (personal ID) and an established local banking relationship. A resident with Norwegian income has roughly 60–80% approval odds; a non-resident with only foreign income is closer to 10–30%. Without Norwegian income, budget for a cash purchase or finance through a bank in your home country.
+
+### How much deposit do you need to buy property in Norway?
+The regulatory floor is 15% for a primary home, but for a secondary or pure investment property the LTV cap is 60% — meaning at least 40% down in cash. In practice, foreign buyers are frequently asked for 25–40% regardless. Anti-money-laundering rules also require you to document where every krone of the deposit came from.
+
+### What is a good rental yield in Oslo?
+Gross rental yields in Oslo run roughly 3.7–4.5%, with net yields around 2.2% after costs. Lower-priced eastern districts like Tøyen, Ensjø and Groruddalen deliver better yields than prestige areas like Frogner, where prices are high relative to rent. Oslo is an appreciation market first and a cash-flow market a distant second.
+
+### Which Norwegian city is best for property investment?
+It depends on your driver. Central Oslo is the safest with the lowest yield (an appreciation play). Bergen and Trondheim are the balanced middle at around 5%. Stavanger and Kristiansand lean toward cash flow at 5.5–6%+, though Stavanger is tied to oil-sector volatility. Tromsø adds tourism upside with weather and liquidity risk.
+
+### Do foreigners pay tax on rental income in Norway?
+Yes. Norway taxes rental income at a flat 22% on net income and capital gains at 22%, regardless of your residency. You may also owe wealth tax (~0.85% on net Norwegian assets above ~1.7M NOK) and municipal property tax (0.1–0.7%). Most countries have a double-taxation treaty with Norway, so you typically get a credit at home — confirm the structure with a cross-border advisor.
+
+### Is it worth buying property in Norway in 2026?
+For monthly cash flow, no — yields are thin and financing is strict. For long-run appreciation, capital preservation and currency diversification inside a Nordic portfolio, Norway earns its place on a 7+ year horizon. The deciding factor is almost always financing, so settle the cash-versus-mortgage question before you start shopping.
+
+### Can I buy property in Norway without living there?
+Yes — non-residents can buy freely for residential use. The catch is financing: without Norwegian income most non-residents can't get a Norwegian mortgage, so it's typically a cash purchase or a loan from your home country (with the currency mismatch that implies). You'll still need a D-number for the transaction and for tax reporting.
+
 ## Analyze any Norwegian listing in 60 seconds
 
 Before you bid, run the property through the [NordInvest analyzer](/) — paste a listing URL from finn.no or eiendom.no and get yield, cash flow, ROI, 5-year appreciation projection, and a strategy-classified verdict in under a minute. Local data comes directly from SSB 06035, per municipality.
 
-For the general framework behind how to analyze any Nordic deal, see our guide on [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment). For the Danish equivalent of this guide (which most foreign investors also consider), read [property investment in Denmark for foreigners](/blog/property-investment-denmark-for-foreigners).
+For a closer look at the capital specifically, see our [Oslo property investment guide](/property-investment-oslo). For the general framework behind how to analyze any Nordic deal, see our guide on [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment). For the Danish equivalent of this guide (which most foreign investors also consider), read [property investment in Denmark for foreigners](/blog/property-investment-denmark-for-foreigners).
 
 Whichever Nordic market you target, screen a deal's return fast with our free [gross yield calculator](/vaerktoejer/bruttoafkast-beregner).
