@@ -5533,6 +5533,37 @@
         .fin-success svg { width:52px; height:52px; color:#059669; margin-bottom:14px; }
         .fin-success h4 { font-size:20px; font-weight:800; color:#0F1F3D; margin:0 0 8px; }
         .fin-success p { font-size:14px; color:#4B5563; line-height:1.6; max-width:360px; margin:0 auto; }
+        /* Step 5 — improved results */
+        .fin-verdict { display:flex; gap:13px; align-items:flex-start; border-radius:14px; padding:16px 18px; margin-bottom:14px; }
+        .fin-verdict.g { background:#ECFDF5; border:1px solid #A7F3D0; }
+        .fin-verdict.a { background:#FFFBEB; border:1px solid #FDE68A; }
+        .fin-verdict.r { background:#FEF2F2; border:1px solid #FECACA; }
+        .fin-verdict-ic { flex-shrink:0; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; color:#fff; }
+        .fin-verdict.g .fin-verdict-ic { background:#059669; } .fin-verdict.a .fin-verdict-ic { background:#D97706; } .fin-verdict.r .fin-verdict-ic { background:#DC2626; }
+        .fin-verdict-tx h4 { margin:0 0 3px; font-size:16.5px; font-weight:800; letter-spacing:-0.3px; }
+        .fin-verdict.g .fin-verdict-tx h4 { color:#065F46; } .fin-verdict.a .fin-verdict-tx h4 { color:#92400E; } .fin-verdict.r .fin-verdict-tx h4 { color:#991B1B; }
+        .fin-verdict-tx p { margin:0; font-size:13px; color:#4B5563; line-height:1.5; }
+        .fin-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:14px; }
+        @media (max-width:520px){ .fin-stats { grid-template-columns:1fr; } }
+        .fin-stat { background:#F8F9FA; border:1px solid #E5E7EB; border-radius:12px; padding:13px 14px; }
+        .fin-stat .sl { font-size:11px; font-weight:700; letter-spacing:0.3px; text-transform:uppercase; color:#6B7280; margin-bottom:4px; }
+        .fin-stat .sv { font-size:18px; font-weight:800; color:#0F1F3D; letter-spacing:-0.4px; line-height:1.1; }
+        .fin-stat .se { font-size:11px; color:#6B7280; line-height:1.4; margin-top:5px; }
+        .fin-acc { border:1px solid #E5E7EB; border-radius:12px; margin-bottom:14px; overflow:hidden; background:#fff; }
+        .fin-acc summary { list-style:none; cursor:pointer; padding:13px 16px; font-size:13.5px; font-weight:700; color:#0F1F3D; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+        .fin-acc summary::-webkit-details-marker { display:none; }
+        .fin-acc summary::after { content:'+'; font-size:20px; font-weight:400; color:#2563EB; }
+        .fin-acc[open] summary::after { content:'−'; }
+        .fin-acc-body { padding:0 16px 14px; }
+        .fin-gloss { font-size:12.5px; color:#4B5563; line-height:1.55; margin-top:10px; padding-top:10px; border-top:1px solid #EEF1F4; }
+        .fin-gloss p { margin:0 0 7px; } .fin-gloss p:last-child { margin-bottom:0; } .fin-gloss strong { color:#0F1F3D; }
+        .fin-disc { font-size:11.5px; color:#9CA3AF; line-height:1.5; margin:0 0 16px; padding:11px 14px; background:#F8F9FA; border-radius:10px; }
+        .fin-ctablock { background:#0F1F3D; border-radius:14px; padding:20px; margin-bottom:16px; }
+        .fin-ctablock h4 { color:#fff; font-size:17px; font-weight:800; margin:0 0 5px; letter-spacing:-0.3px; }
+        .fin-ctablock p.sub { color:rgba(255,255,255,0.72); font-size:13px; line-height:1.5; margin:0 0 13px; }
+        .fin-reasons { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+        .fin-reasons li { display:flex; gap:9px; align-items:center; color:#fff; font-size:13.5px; font-weight:600; }
+        .fin-reasons li svg { flex-shrink:0; width:17px; height:17px; color:#34D399; }
       </style>
       <div class="fin-card" id="financing-flow">
         <div class="fin-head">
@@ -7115,9 +7146,33 @@ attachMoneyInputs();
       estimate: 'estimat',
       nextStep: 'Ud fra dine svar kan en finansieringsrådgiver finde og sammenligne konkrete lånetilbud til dig. Indtast dine oplysninger, så bliver du kontaktet — gratis og uforpligtende.',
       flag: 'Du har angivet en RKI-registrering eller misligholdelse. De fleste traditionelle långivere kræver en ren kreditregistrering, så mulighederne kan være begrænsede. En rådgiver kan vise, hvad der realistisk kan lade sig gøre.',
+      verdictYes: 'Ja, du kan sandsynligvis låne',
+      verdictMaybe: 'Måske, det afhænger af banken',
+      verdictNo: 'Det bliver svært lige nu',
+      vReasonBlocked: 'En RKI-registrering eller misligholdelse betyder, at de fleste banker siger nej. En rådgiver kan vise dig alternativerne.',
+      vReasonHighDebt: 'Du ønsker at låne mere end ca. 5 gange din årsindkomst, og det afviser de fleste banker. Et lavere beløb eller en større udbetaling hjælper.',
+      vReasonHighLtv: 'Din udbetaling er lav i forhold til lånet, så belåningsgraden bliver for høj. Mere udbetaling forbedrer dine chancer markant.',
+      vReasonYes: 'Din gældsfaktor og udbetaling ser sunde ud. Du opfylder de vigtigste krav, bankerne kigger på.',
+      vReasonMaybe: 'Du ligger tæt på bankernes grænser. Det kan sagtens lade sig gøre, men den endelige vurdering afhænger af banken.',
+      hMax: 'Din låneramme', hMaxSub: 'Det du typisk kan låne ud fra din indkomst.',
+      hLtv: 'Belåningsgrad', hLtvSub: 'Hvor stor en del af boligens pris du låner. Under 80 % er komfortabelt.',
+      hGaeld: 'Gældsfaktor', hGaeldSub: 'Din samlede gæld målt mod din årsindkomst. Bankerne vil helst holde den under 4.',
+      accTitle: 'Sådan er tallene regnet ud, og hvad ordene betyder',
+      accType: 'Anbefalet finansiering', accAmount: 'Ønsket lånebeløb', accMax: 'Estimeret låneramme',
+      accMaxNote: 'Lånerammen er beregnet som gældsfaktor 4 gange din årsindkomst minus din nuværende gæld.',
+      accStressNote: 'Bankerne laver en stresstest: kan du stadig betale, hvis renten stiger 3 procentpoint?',
+      glLtv: '<strong>Belåningsgrad (LTV):</strong> hvor stor en del af boligens pris, du låner. Låner du 3 mio. af en bolig til 4 mio., er den 75 %.',
+      glGaeld: '<strong>Gældsfaktor:</strong> din samlede gæld delt med din årsindkomst. Under 4 er sundt, over 5 afvises typisk.',
+      glReal: '<strong>Realkredit vs. banklån:</strong> realkredit dækker op til 80 % af prisen til lav rente. Resten dækkes ofte af et dyrere banklån.',
+      disc: 'Dette er et uforpligtende estimat baseret på dine svar, ikke finansiel rådgivning og ikke en kreditgodkendelse. De endelige vilkår afgøres af banken eller långiveren.',
+      ctaHead: 'Vil du vide præcis, hvad du kan låne?',
+      ctaSub: 'En uafhængig finansieringsrådgiver gennemgår din profil og finder de bedste vilkår til lige netop dig.',
+      ctaR1: '100 % gratis og helt uforpligtende',
+      ctaR2: 'Personlig gennemgang, ikke en robot',
+      ctaR3: 'Spar tid, bankmøder og bøvl',
       cName: 'Fulde navn', cEmail: 'E-mail', cPhone: 'Telefonnummer',
-      consent: 'Jeg accepterer at blive kontaktet af NordInvest om lånemuligheder baseret på mine oplysninger.',
-      submit: 'Få min gratis vurdering',
+      consent: 'Jeg accepterer NordInvests vilkår og privatlivspolitik, og at NordInvest må gemme mine oplysninger og kontakte mig om lånemuligheder. Samtykket kan trækkes tilbage når som helst.',
+      submit: 'Ja tak, vis mig mine muligheder',
       privacy: 'Dine oplysninger behandles fortroligt og deles ikke uden dit samtykke.',
       errName: 'Skriv dit navn.', errEmail: 'Skriv en gyldig e-mail.', errPhone: 'Skriv dit telefonnummer.', errConsent: 'Du skal acceptere for at fortsætte.',
       sending: 'Sender…',
@@ -7152,9 +7207,33 @@ attachMoneyInputs();
       estimate: 'estimate',
       nextStep: 'Based on your answers, a financing advisor can find and compare concrete loan offers for you. Enter your details and they will get in touch — free and with no obligation.',
       flag: 'You indicated an RKI registration or a default. Most traditional lenders require a clean credit record, so options may be limited. An advisor can show what is realistically possible.',
+      verdictYes: 'Yes, you can most likely borrow',
+      verdictMaybe: 'Maybe, it depends on the bank',
+      verdictNo: 'This will be hard right now',
+      vReasonBlocked: 'An RKI registration or default means most banks say no. An advisor can show you the alternatives.',
+      vReasonHighDebt: 'You want to borrow more than about 5 times your annual income, which most banks reject. A lower amount or a bigger down payment helps.',
+      vReasonHighLtv: 'Your down payment is low relative to the loan, so the loan-to-value is too high. More down payment improves your odds a lot.',
+      vReasonYes: 'Your debt ratio and down payment look healthy. You meet the main criteria banks look at.',
+      vReasonMaybe: 'You are close to the banks\' limits. It can well be possible, but the final assessment depends on the bank.',
+      hMax: 'Your borrowing range', hMaxSub: 'What you can typically borrow based on your income.',
+      hLtv: 'Loan-to-value', hLtvSub: 'How much of the price you borrow. Under 80% is comfortable.',
+      hGaeld: 'Debt ratio', hGaeldSub: 'Your total debt against your annual income. Banks prefer to keep it under 4.',
+      accTitle: 'How the numbers are worked out, and what the terms mean',
+      accType: 'Recommended financing', accAmount: 'Desired loan amount', accMax: 'Estimated borrowing range',
+      accMaxNote: 'The borrowing range is calculated as a debt ratio of 4 times your annual income minus your current debt.',
+      accStressNote: 'Banks run a stress test: can you still pay if rates rise by 3 percentage points?',
+      glLtv: '<strong>Loan-to-value (LTV):</strong> how much of the property price you borrow. Borrow 3M of a 4M home and it is 75%.',
+      glGaeld: '<strong>Debt ratio:</strong> your total debt divided by your annual income. Under 4 is healthy, over 5 is usually rejected.',
+      glReal: '<strong>Mortgage vs. bank loan:</strong> a mortgage covers up to 80% of the price at a low rate. The rest is often a more expensive bank loan.',
+      disc: 'This is a non-binding estimate based on your answers, not financial advice and not a credit approval. Final terms are decided by the bank or lender.',
+      ctaHead: 'Want to know exactly what you can borrow?',
+      ctaSub: 'An independent financing advisor reviews your profile and finds the best terms for you specifically.',
+      ctaR1: '100% free and no obligation',
+      ctaR2: 'A personal review, not a robot',
+      ctaR3: 'Save time, bank meetings and hassle',
       cName: 'Full name', cEmail: 'Email', cPhone: 'Phone number',
-      consent: 'I agree to be contacted by NordInvest about financing options based on my details.',
-      submit: 'Get my free assessment',
+      consent: 'I accept NordInvest\'s terms and privacy policy, and that NordInvest may store my details and contact me about financing options. I can withdraw consent at any time.',
+      submit: 'Yes please, show me my options',
       privacy: 'Your details are handled confidentially and are not shared without your consent.',
       errName: 'Enter your name.', errEmail: 'Enter a valid email.', errPhone: 'Enter your phone number.', errConsent: 'You must accept to continue.',
       sending: 'Sending…',
@@ -7292,22 +7371,52 @@ attachMoneyInputs();
     var amount = RANGES[S.amount].mid;
     var price = amount + down;
     var ltv = price > 0 ? Math.min(100, amount / price * 100) : null;
-    return { maxLoan: maxLoan, amount: amount, ltv: ltv };
+    var gaeld = annual > 0 ? (debt + amount) / annual : 99; // debt-to-income incl. the desired loan
+    var ltvLimit = (S.need === 'investering') ? 75 : 95;
+    var blocked = (S.rki === true) || (S.def === true);
+    var verdict;
+    if (blocked || gaeld > 5 || (ltv != null && ltv > ltvLimit) || gross <= 0) verdict = 'no';
+    else if (gaeld <= 4 && S.emp === 'fast' && (ltv == null || ltv <= ltvLimit - 5)) verdict = 'yes';
+    else verdict = 'maybe';
+    return { maxLoan: maxLoan, amount: amount, ltv: ltv, gaeld: gaeld, ltvLimit: ltvLimit, verdict: verdict, blocked: blocked };
   }
 
   function renderProfile() {
     var s = t();
     var n = profileNumbers();
     var typeMap = { boliglaan: s.typeBolig, investering: s.typeInvest, refinansiering: s.typeRefi, erhverv: s.typeErhverv };
-    var flag = (S.rki === true || S.def === true) ? '<div class="fin-flag"><span>⚠︎</span><span>' + s.flag + '</span></div>' : '';
+    var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    function nf1(x) { return x.toLocaleString(lang() === 'en' ? 'en-GB' : 'da-DK', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+
+    var vcls = n.verdict === 'yes' ? 'g' : (n.verdict === 'maybe' ? 'a' : 'r');
+    var vic = n.verdict === 'yes' ? '✓' : (n.verdict === 'maybe' ? '?' : '!');
+    var vhead = n.verdict === 'yes' ? s.verdictYes : (n.verdict === 'maybe' ? s.verdictMaybe : s.verdictNo);
+    var vreason;
+    if (n.blocked) vreason = s.vReasonBlocked;
+    else if (n.gaeld > 5) vreason = s.vReasonHighDebt;
+    else if (n.ltv != null && n.ltv > n.ltvLimit) vreason = s.vReasonHighLtv;
+    else if (n.verdict === 'yes') vreason = s.vReasonYes;
+    else vreason = s.vReasonMaybe;
+    var gaeldStr = n.gaeld > 5 ? (lang() === 'en' ? 'over 5×' : 'over 5 ×') : nf1(n.gaeld) + ' ×';
+
     body.innerHTML =
-      '<div class="fin-profile"><h4>' + s.profileTitle + '</h4>' +
-        '<div class="fin-prow"><span class="k">' + s.pType + '</span><span class="v">' + (typeMap[S.need] || typeMap.boliglaan) + '</span></div>' +
-        '<div class="fin-prow"><span class="k">' + s.pAmount + '</span><span class="v">' + s.rangeLabels[S.amount] + '</span></div>' +
-        (n.maxLoan > 0 ? '<div class="fin-prow"><span class="k">' + s.pMax + '</span><span class="v">~ ' + kr(n.maxLoan) + '<br><span style="font-weight:500;font-size:11px;color:#9CA3AF;">(' + s.estimate + ')</span></span></div>' : '') +
+      '<div class="fin-verdict ' + vcls + '"><div class="fin-verdict-ic">' + vic + '</div><div class="fin-verdict-tx"><h4>' + vhead + '</h4><p>' + vreason + '</p></div></div>' +
+      '<div class="fin-stats">' +
+        '<div class="fin-stat"><div class="sl">' + s.hMax + '</div><div class="sv">~ ' + kr(n.maxLoan) + '</div><div class="se">' + s.hMaxSub + '</div></div>' +
+        (n.ltv != null ? '<div class="fin-stat"><div class="sl">' + s.hLtv + '</div><div class="sv">~ ' + n.ltv.toFixed(0) + ' %</div><div class="se">' + s.hLtvSub + '</div></div>' : '') +
+        '<div class="fin-stat"><div class="sl">' + s.hGaeld + '</div><div class="sv">' + gaeldStr + '</div><div class="se">' + s.hGaeldSub + '</div></div>' +
+      '</div>' +
+      '<details class="fin-acc"><summary>' + s.accTitle + '</summary><div class="fin-acc-body">' +
+        '<div class="fin-prow"><span class="k">' + s.accType + '</span><span class="v">' + (typeMap[S.need] || typeMap.boliglaan) + '</span></div>' +
+        '<div class="fin-prow"><span class="k">' + s.accAmount + '</span><span class="v">' + s.rangeLabels[S.amount] + '</span></div>' +
+        '<div class="fin-prow"><span class="k">' + s.accMax + '</span><span class="v">~ ' + kr(n.maxLoan) + '</span></div>' +
         (n.ltv != null ? '<div class="fin-prow"><span class="k">' + s.pLtv + '</span><span class="v">~ ' + n.ltv.toFixed(0) + ' %</span></div>' : '') +
-      '</div>' + flag +
-      '<p class="fin-nextstep">' + s.nextStep + '</p>' +
+        '<div class="fin-gloss"><p>' + s.accMaxNote + '</p><p>' + s.accStressNote + '</p><p>' + s.glLtv + '</p><p>' + s.glGaeld + '</p><p>' + s.glReal + '</p></div>' +
+      '</div></details>' +
+      '<p class="fin-disc">' + s.disc + '</p>' +
+      '<div class="fin-ctablock"><h4>' + s.ctaHead + '</h4><p class="sub">' + s.ctaSub + '</p>' +
+        '<ul class="fin-reasons"><li>' + CHECK + '<span>' + s.ctaR1 + '</span></li><li>' + CHECK + '<span>' + s.ctaR2 + '</span></li><li>' + CHECK + '<span>' + s.ctaR3 + '</span></li></ul>' +
+      '</div>' +
       '<div class="fin-contact-grid">' +
         '<div class="fin-field" style="grid-column:1/-1;"><label for="fin-name">' + s.cName + '</label><div class="fin-inwrap"><input type="text" id="fin-name" autocomplete="name"></div></div>' +
         '<div class="fin-field"><label for="fin-email">' + s.cEmail + '</label><div class="fin-inwrap"><input type="email" id="fin-email" autocomplete="email"></div></div>' +
