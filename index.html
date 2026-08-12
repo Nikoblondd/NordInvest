@@ -5624,7 +5624,28 @@ function handleContactClick(e) {
 
 // ── CURRENCY ──────────────────────────────────
 const CURRENCY_SYMBOLS = { DKK: 'kr', SEK: 'kr', NOK: 'kr', EUR: '€', GBP: '£', USD: '$', CHF: 'Fr' };
-let activeCurrency = 'EUR';
+const CURRENCY_LOCALE  = { DKK: 'da-DK', SEK: 'sv-SE', NOK: 'nb-NO', EUR: 'de-DE', GBP: 'en-GB', USD: 'en-US', CHF: 'de-CH' };
+const NORDIC_CCY = ['DKK', 'SEK', 'NOK'];
+// Pick a sensible default currency from the visitor's language / locale so a
+// Danish user sees DKK, not EUR. They can still override via the selector.
+function detectDefaultCurrency() {
+  try {
+    const l = localStorage.getItem('ni_lang');
+    if (l === 'da') return 'DKK';
+    if (l === 'sv') return 'SEK';
+    if (l === 'no' || l === 'nb' || l === 'nn') return 'NOK';
+  } catch (_) {}
+  try {
+    const nl = (navigator.language || '').toLowerCase();
+    if (nl.startsWith('da')) return 'DKK';
+    if (nl.startsWith('sv')) return 'SEK';
+    if (nl.startsWith('nb') || nl.startsWith('nn') || nl.startsWith('no')) return 'NOK';
+    if (nl === 'en-gb') return 'GBP';
+    if (nl.startsWith('de-ch') || nl.startsWith('fr-ch') || nl.startsWith('it-ch')) return 'CHF';
+  } catch (_) {}
+  return 'EUR';
+}
+let activeCurrency = detectDefaultCurrency();
 
 function setCurrency(currency) {
   activeCurrency = currency;
@@ -5636,14 +5657,17 @@ function setCurrency(currency) {
 }
 
 function initCurrency() {
-  const saved = localStorage.getItem('ni_currency') || 'EUR';
+  const saved = localStorage.getItem('ni_currency') || detectDefaultCurrency();
   setCurrency(saved);
 }
 
 // ── FORMATTING ────────────────────────────────
 const fmt = (v) => {
   const sym = CURRENCY_SYMBOLS[activeCurrency] || activeCurrency;
-  return sym + Math.abs(v).toLocaleString('en-EU', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const loc = CURRENCY_LOCALE[activeCurrency] || 'da-DK';
+  const n = Math.abs(Math.round(v)).toLocaleString(loc, { maximumFractionDigits: 0 });
+  // Nordic 'kr' reads correctly as a suffix ("4.300.000 kr"); €/$/£ as a prefix.
+  return NORDIC_CCY.indexOf(activeCurrency) >= 0 ? `${n} ${sym}` : `${sym}${n}`;
 };
 const fmtPct = (v) => v.toFixed(2) + '%';
 
@@ -5831,13 +5855,13 @@ function showMarketResults(marketInfo, userRent) {
       ${renderMetric({
         label: window.t ? window.t('analysis.marketAvgSale') : 'Avg. Sale Price',
         metric: metrics.avg_sale_per_m2,
-        format: (v) => sym + Number(v).toLocaleString() + '/m²',
+        format: (v) => sym + Number(v).toLocaleString(CURRENCY_LOCALE[currency] || 'da-DK') + '/m²',
         unavailLabel: window.t ? window.t('analysis.marketAvgSale') : 'Sale price',
       })}
       ${renderMetric({
         label: window.t ? window.t('analysis.marketAvgRent') : 'Avg. Rent per m²',
         metric: metrics.avg_rent_per_m2_monthly,
-        format: (v) => sym + Number(v).toLocaleString() + '/m²/mo',
+        format: (v) => sym + Number(v).toLocaleString(CURRENCY_LOCALE[currency] || 'da-DK') + '/m²/mo',
         unavailLabel: window.t ? window.t('analysis.marketAvgRent') : 'Rent per m²',
       })}
       ${renderMetric({
@@ -5863,10 +5887,10 @@ function showMarketResults(marketInfo, userRent) {
     const diff = userRentPerSqm - mktRent;
     const diffPct = Math.abs(Math.round((diff / mktRent) * 100));
     if (diff > mktRent * 0.15) {
-      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, <strong>${diffPct}% above</strong> the area average of ${sym}${mktRent}/m²/mo. Market rent for ${sqm}m² ≈ <strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong>.`;
+      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, <strong>${diffPct}% above</strong> the area average of ${sym}${mktRent}/m²/mo. Market rent for ${sqm}m² ≈ <strong>${sym}${mktRentForSqm.toLocaleString(CURRENCY_LOCALE[currency] || 'da-DK')}/mo</strong>.`;
       badgeEl.className = 'market-badge-neg'; badgeEl.textContent = '⚠ Above market rate';
     } else if (diff < -mktRent * 0.10) {
-      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, <strong>${diffPct}% below</strong> the area average of ${sym}${mktRent}/m²/mo. Market rent for ${sqm}m² ≈ <strong>${sym}${mktRentForSqm.toLocaleString()}/mo</strong>.`;
+      compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, <strong>${diffPct}% below</strong> the area average of ${sym}${mktRent}/m²/mo. Market rent for ${sqm}m² ≈ <strong>${sym}${mktRentForSqm.toLocaleString(CURRENCY_LOCALE[currency] || 'da-DK')}/mo</strong>.`;
       badgeEl.className = 'market-badge-pos'; badgeEl.textContent = '↑ Below market — upside';
     } else {
       compEl.innerHTML = `Your rent implies <strong>${sym}${userRentPerSqm}/m²/mo</strong>, in line with the area average of ${sym}${mktRent}/m²/mo.`;
@@ -6868,8 +6892,7 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   data._price = price;
   window._niAnalysisData = data;
 
-  const curSym = CURRENCY_SYMBOLS[activeCurrency] || activeCurrency;
-  document.getElementById('analysis-subtitle').textContent = `${curSym}${price.toLocaleString()} property · ${curSym}${rent.toLocaleString()}/mo rent · ${location}`;
+  document.getElementById('analysis-subtitle').textContent = `${fmt(price)} property · ${fmt(rent)}/mo rent · ${location}`;
   document.getElementById('analysis-date').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
 
   const circumference = 527.79; // 2π × 84 (new larger gauge radius)
