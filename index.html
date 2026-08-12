@@ -7106,6 +7106,33 @@ setupAutocomplete('property-location', 'location-dropdown');
 setupAutocomplete('ext-location', 'ext-location-dropdown');
 initCurrency();
 attachMoneyInputs();
+maybeOpenSavedAnalysis();
+
+// When a saved property is opened from the profile, re-run the full analysis
+// exactly as if it were a fresh one (score, KPIs, BRRRR/Renovation, projection,
+// stress test — the works). The property data is handed over via localStorage.
+function maybeOpenSavedAnalysis() {
+  let raw;
+  try { raw = localStorage.getItem('ni_open_analysis'); } catch (_) { return; }
+  if (!raw) return;
+  try { localStorage.removeItem('ni_open_analysis'); } catch (_) {}
+  let p; try { p = JSON.parse(raw); } catch (_) { return; }
+  if (!p || !p.price) return;
+
+  try { if (p.currency) { const cs = document.getElementById('currency-select'); if (cs) cs.value = p.currency; setCurrency(p.currency); } } catch (_) {}
+  try { if (p.strategy) setStrategy(p.strategy); } catch (_) {}
+  try { switchFormTab('manual'); } catch (_) {}
+
+  const loc = document.getElementById('property-location'); if (loc) loc.value = p.location || '';
+  setMoneyInput('property-price', p.price);
+  setMoneyInput('monthly-rent', p.rent || 0);
+  setMoneyInput('monthly-expenses', p.expenses || 0);
+  const dp = document.getElementById('down-payment'); if (dp) dp.value = (p.down != null ? p.down : 20);
+  const ir = document.getElementById('interest-rate'); if (ir) ir.value = (p.rate != null ? p.rate : 4.5);
+
+  const f = document.getElementById('analysis-form');
+  if (f) setTimeout(() => { f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); }, 300);
+}
 
 // ── SUBMIT LEAD ───────────────────────────────
 // ── FINANCING LEAD FLOW (5-step, value-first) ──────────────
@@ -7653,6 +7680,7 @@ function savePropertyToPortfolio() {
     roi: d.roi ?? null,
     classification: document.getElementById('classification-label')?.textContent || '—',
     currency: window.activeCurrency || 'EUR',
+    strategy: d._strategy || window._niStrategy || 'cashflow',
     savedAt: new Date().toISOString(),
   };
   // Avoid exact dupes (same price + rent + location saved in last hour)

@@ -647,7 +647,7 @@ function render() {
                 <div class="pc-metric"><div class="pc-metric-label">${L('Afkast','Yield')}</div><div class="pc-metric-value">${p.rentalYield != null ? p.rentalYield.toFixed(2) + '%' : '—'}</div></div>
                 <div class="pc-metric"><div class="pc-metric-label">Cash flow</div><div class="pc-metric-value ${p.monthlyCashFlow >= 0 ? 'positive' : 'negative'}">${p.monthlyCashFlow != null ? (p.monthlyCashFlow >= 0 ? '+' : '−') + fmtCurrency(Math.abs(p.monthlyCashFlow), p.currency) : '—'}</div></div>
               </div>
-              <div class="pc-open-hint">${ICON_EYE}${L('Se alle detaljer','See full details')}</div>
+              <div class="pc-open-hint">${ICON_EYE}${L('Åbn fuld analyse','Open full analysis')} →</div>
             </div>
             <div class="pc-actions">
               <button type="button" class="pcbtn primary" data-export="${p.id}">${ICON_SHEET}<span>${L('Eksportér','Export')}</span></button>
@@ -720,9 +720,9 @@ function render() {
     localStorage.removeItem(NI_USER_KEY);
     render();
   });
-  // Open detail on card body click
+  // Open the full analyzer on card body click — re-runs the complete analysis
   main.querySelectorAll('[data-open]').forEach(el => {
-    el.addEventListener('click', () => openDetail(el.getAttribute('data-open')));
+    el.addEventListener('click', () => openInAnalyzer(el.getAttribute('data-open')));
   });
   // Per-property export
   main.querySelectorAll('[data-export]').forEach(btn => {
@@ -743,6 +743,21 @@ function render() {
   });
   // Export all
   document.getElementById('export-all-btn')?.addEventListener('click', exportAll);
+}
+
+// ═══════════ OPEN IN FULL ANALYZER ═══════════
+// Hand the saved property to the homepage analyzer, which re-runs the complete
+// analysis (score, KPIs, BRRRR / Renovation, projection, stress test) on load.
+function openInAnalyzer(id) {
+  const p = niGetPortfolio().find(x => x.id === id);
+  if (!p) return;
+  try {
+    localStorage.setItem('ni_open_analysis', JSON.stringify({
+      location: p.location, price: p.price, rent: p.rent, down: p.down,
+      rate: p.rate, expenses: p.expenses, currency: p.currency, strategy: p.strategy || 'cashflow'
+    }));
+  } catch (_) {}
+  window.location.href = '/';
 }
 
 // ═══════════ RENAME (inline) ═══════════
