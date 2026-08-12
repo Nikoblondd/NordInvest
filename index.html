@@ -1552,14 +1552,14 @@
     gap: 8px;
   }
   .strategy-card {
-    display: flex; align-items: center; gap: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 7px;
     background: #fff;
     border: 1.5px solid var(--border);
     border-radius: 10px;
-    padding: 10px 12px;
+    padding: 12px 8px;
     cursor: pointer;
     transition: all 220ms ease;
-    text-align: left;
+    text-align: center;
     font-family: inherit;
     min-width: 0;
   }
@@ -1582,7 +1582,7 @@
   .strategy-icon-cf   { background: var(--green-pale); color: var(--green); }
   .strategy-icon-appr { background: var(--blue-pale);  color: var(--blue);  }
   .strategy-icon-va   { background: var(--amber-pale); color: var(--amber); }
-  .strategy-text { flex: 1; min-width: 0; }
+  .strategy-text { width: 100%; min-width: 0; }
   .strategy-name {
     font-size: 12.5px;
     font-weight: 700;
@@ -1590,7 +1590,7 @@
     letter-spacing: -0.2px;
     line-height: 1.2;
     margin-bottom: 2px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    white-space: normal; overflow: visible; text-overflow: clip;
   }
   .strategy-desc {
     font-size: 10.5px;
@@ -3929,7 +3929,7 @@
                       <label for="ext-price" data-i18n="analyze.priceLabel">Property Price</label>
                       <div class="input-wrap">
                         <span class="input-prefix currency-sym">€</span>
-                        <input type="number" id="ext-price" class="has-prefix" placeholder="350,000" min="0">
+                        <input type="text" inputmode="numeric" id="ext-price" class="has-prefix" placeholder="350.000">
                       </div>
                       <span class="price-note" id="ext-price-note"></span>
                     </div>
@@ -3937,7 +3937,7 @@
                       <label for="ext-rent" data-i18n="analyze.rentLabel">Expected Monthly Rent</label>
                       <div class="input-wrap">
                         <span class="input-prefix currency-sym">€</span>
-                        <input type="number" id="ext-rent" class="has-prefix" placeholder="1,500" min="0">
+                        <input type="text" inputmode="numeric" id="ext-rent" class="has-prefix" placeholder="1.500">
                       </div>
                     </div>
                     <div class="form-group">
@@ -3958,7 +3958,7 @@
                       <label for="ext-expenses" data-i18n="analyze.expensesLabel">Monthly Expenses</label>
                       <div class="input-wrap">
                         <span class="input-prefix currency-sym">€</span>
-                        <input type="number" id="ext-expenses" class="has-prefix" value="0" min="0">
+                        <input type="text" inputmode="numeric" id="ext-expenses" class="has-prefix" value="0">
                       </div>
                     </div>
                   </div>
@@ -3988,7 +3988,7 @@
                     <label for="property-price" data-i18n="analyze.priceLabel">Property Price</label>
                     <div class="input-wrap">
                       <span class="input-prefix currency-sym">€</span>
-                      <input type="number" id="property-price" class="has-prefix" placeholder="350,000" min="0">
+                      <input type="text" inputmode="numeric" id="property-price" class="has-prefix" placeholder="350.000">
                     </div>
                     <span class="field-error" id="err-price" data-i18n="errors.price">Please enter a property price.</span>
                   </div>
@@ -3996,7 +3996,7 @@
                     <label for="monthly-rent" data-i18n="analyze.rentLabel">Expected Monthly Rent</label>
                     <div class="input-wrap">
                       <span class="input-prefix currency-sym">€</span>
-                      <input type="number" id="monthly-rent" class="has-prefix" placeholder="1,500" min="0">
+                      <input type="text" inputmode="numeric" id="monthly-rent" class="has-prefix" placeholder="1.500">
                     </div>
                     <span class="field-error" id="err-rent" data-i18n="errors.rent">Please enter expected rent.</span>
                   </div>
@@ -4020,7 +4020,7 @@
                     <label for="monthly-expenses" data-i18n="analyze.expensesLabel">Monthly Expenses</label>
                     <div class="input-wrap">
                       <span class="input-prefix currency-sym">€</span>
-                      <input type="number" id="monthly-expenses" class="has-prefix" placeholder="200" min="0" value="0">
+                      <input type="text" inputmode="numeric" id="monthly-expenses" class="has-prefix" placeholder="200" value="0">
                     </div>
                   </div>
                 </div>
@@ -5671,6 +5671,29 @@ const fmt = (v) => {
 };
 const fmtPct = (v) => v.toFixed(2) + '%';
 
+// ── LIVE NUMBER FORMATTING FOR MONEY INPUTS ────
+// Amount fields show grouped digits as the user types / when auto-filled
+// (10.400.000), while calculations read the raw digits back out.
+function stripDigits(v) { return String(v == null ? '' : v).replace(/[^\d]/g, ''); }
+function groupDigits(digits) {
+  if (!digits) return '';
+  const loc = CURRENCY_LOCALE[activeCurrency] || 'da-DK';
+  return parseInt(digits, 10).toLocaleString(loc, { maximumFractionDigits: 0 });
+}
+function setMoneyInput(id, val) { const el = document.getElementById(id); if (el) el.value = groupDigits(stripDigits(val)); }
+const MONEY_INPUT_IDS = ['property-price', 'monthly-rent', 'monthly-expenses', 'ext-price', 'ext-rent', 'ext-expenses'];
+function attachMoneyInputs() {
+  MONEY_INPUT_IDS.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el || el._moneyBound) return;
+    el._moneyBound = true;
+    const reformat = () => { el.value = groupDigits(stripDigits(el.value)); };
+    el.addEventListener('input', reformat);
+    el.addEventListener('blur', reformat);
+    if (el.value) reformat(); // format any pre-set value (e.g. "0")
+  });
+}
+
 // ── CALCULATIONS ──────────────────────────────
 function calculate(price, rent, downPct, rate, expenses) {
   const rentalYield = (rent * 12) / price * 100;
@@ -6811,7 +6834,7 @@ async function extractPropertyData() {
     if (parsed.location) document.getElementById('ext-location').value = parsed.location;
     if (parsed.squareMeters) window._niPropertySqm = parsed.squareMeters;
     if (parsed.price) {
-      document.getElementById('ext-price').value = parsed.price;
+      setMoneyInput('ext-price', parsed.price);
       document.getElementById('ext-price-note').textContent = '';
     }
 
@@ -6822,10 +6845,10 @@ async function extractPropertyData() {
       document.getElementById('ext-down').value = Math.min(pct, 100);
     }
     if (parsed.monthlyExpenses) {
-      document.getElementById('ext-expenses').value = parsed.monthlyExpenses;
+      setMoneyInput('ext-expenses', parsed.monthlyExpenses);
     }
     const estRent = parsed.price ? estimateRentFromPrice(parsed.price, parsed.location || '') : null;
-    if (estRent) document.getElementById('ext-rent').value = estRent;
+    if (estRent) setMoneyInput('ext-rent', estRent);
 
     document.getElementById('extracted-review').style.display = 'block';
     document.getElementById('extracted-review').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -7009,11 +7032,11 @@ async function submitAnalysis(e) {
   const setE  = (id, eId) => { document.getElementById(id).classList.add('error');   document.getElementById(eId).classList.add('show');   valid = false; };
 
   const location = document.getElementById('property-location').value.trim();
-  const price    = parseFloat(document.getElementById('property-price').value);
-  const rent     = parseFloat(document.getElementById('monthly-rent').value);
+  const price    = parseFloat(stripDigits(document.getElementById('property-price').value));
+  const rent     = parseFloat(stripDigits(document.getElementById('monthly-rent').value));
   const down     = parseFloat(document.getElementById('down-payment').value);
   const rate     = parseFloat(document.getElementById('interest-rate').value);
-  const expenses = parseFloat(document.getElementById('monthly-expenses').value) || 0;
+  const expenses = parseFloat(stripDigits(document.getElementById('monthly-expenses').value)) || 0;
 
   clrE('property-location','err-location'); clrE('property-price','err-price');
   clrE('monthly-rent','err-rent'); clrE('down-payment','err-down'); clrE('interest-rate','err-rate');
@@ -7033,11 +7056,11 @@ async function submitAnalysis(e) {
 async function submitAnalysisExtracted(e) {
   e.preventDefault();
   const location = document.getElementById('ext-location').value.trim();
-  const price    = parseFloat(document.getElementById('ext-price').value);
-  const rent     = parseFloat(document.getElementById('ext-rent').value);
+  const price    = parseFloat(stripDigits(document.getElementById('ext-price').value));
+  const rent     = parseFloat(stripDigits(document.getElementById('ext-rent').value));
   const down     = parseFloat(document.getElementById('ext-down').value);
   const rate     = parseFloat(document.getElementById('ext-rate').value);
-  const expenses = parseFloat(document.getElementById('ext-expenses').value) || 0;
+  const expenses = parseFloat(stripDigits(document.getElementById('ext-expenses').value)) || 0;
 
   if (!price || price <= 0 || !rent || rent <= 0) {
     alert(window.t ? window.t('errors.fillMinimum') : 'Please fill in at least the price and expected monthly rent before analyzing.');
@@ -7051,6 +7074,7 @@ async function submitAnalysisExtracted(e) {
 setupAutocomplete('property-location', 'location-dropdown');
 setupAutocomplete('ext-location', 'ext-location-dropdown');
 initCurrency();
+attachMoneyInputs();
 
 // ── SUBMIT LEAD ───────────────────────────────
 // ── FINANCING LEAD FLOW (5-step, value-first) ──────────────
