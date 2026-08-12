@@ -472,6 +472,65 @@
     .stats-strip { grid-template-columns: 1fr; }
     .nav-links a:not(.nav-cta) { display: none; }
   }
+
+  /* ═══════════ INTERACTIVE CARDS ═══════════ */
+  .pc-clickable { cursor: pointer; }
+  .pc-title { font-size: 15px; font-weight: 700; color: var(--navy); line-height: 1.35; word-break: break-word; }
+  .pc-title-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; word-break: break-word; }
+  .pc-open-hint { display:inline-flex; align-items:center; gap:4px; font-size: 11px; color: var(--blue); font-weight: 600; margin-top: 10px; }
+  .pc-open-hint svg { width: 12px; height: 12px; }
+  .pc-rename-input { width: 100%; font-family: inherit; font-size: 15px; font-weight: 700; color: var(--navy); border: 1.5px solid var(--blue); border-radius: 8px; padding: 6px 9px; outline: none; box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+  .pc-actions { display: flex; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .pc-actions .pcbtn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; font-size: 12.5px; font-weight: 700; padding: 9px 8px; border-radius: 8px; border: 1px solid var(--border); background: #fff; color: var(--navy); cursor: pointer; transition: all 160ms ease; min-height: 40px; }
+  .pc-actions .pcbtn svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .pc-actions .pcbtn.primary { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .pc-actions .pcbtn.primary:hover { background: var(--navy-light); }
+  .pc-actions .pcbtn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-pale); }
+  .pc-actions .pcbtn.danger { flex: 0 0 auto; padding: 9px 11px; }
+  .pc-actions .pcbtn.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-pale); }
+  @media (max-width: 380px) { .pc-actions .pcbtn { font-size: 11.5px; } .pc-actions .pcbtn.label-hide span { display: none; } }
+
+  /* Export-all button in the section header */
+  .section-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .btn-export-all { display: inline-flex; align-items: center; gap: 8px; background: var(--navy); color: #fff; border: none; border-radius: 9px; padding: 10px 16px; font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 200ms ease; }
+  .btn-export-all:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(15,31,61,0.16); }
+  .btn-export-all svg { width: 15px; height: 15px; }
+
+  /* ═══════════ DETAIL MODAL ═══════════ */
+  .pd-backdrop { position: fixed; inset: 0; background: rgba(15,31,61,0.55); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .pd-backdrop.open { display: flex; }
+  .pd-modal { background: #fff; border-radius: 18px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 70px rgba(15,31,61,0.35); animation: pdin 220ms cubic-bezier(.2,.7,.3,1); }
+  @keyframes pdin { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .pd-head { position: sticky; top: 0; background: var(--navy); color: #fff; padding: 20px 22px; border-radius: 18px 18px 0 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; z-index: 1; }
+  .pd-head h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.3px; margin: 0; line-height: 1.3; word-break: break-word; }
+  .pd-head .pd-loc { font-size: 12.5px; color: rgba(255,255,255,0.68); margin-top: 3px; }
+  .pd-close { flex-shrink: 0; background: rgba(255,255,255,0.14); border: none; color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 20px; line-height: 1; cursor: pointer; }
+  .pd-close:hover { background: rgba(255,255,255,0.28); }
+  .pd-body { padding: 22px; }
+  .pd-scorewrap { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+  .pd-score { flex-shrink: 0; width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .pd-score.green { border-color: var(--green); color: var(--green); background: var(--green-pale); }
+  .pd-score.amber { border-color: var(--amber); color: var(--amber); background: var(--amber-pale); }
+  .pd-score.red { border-color: var(--red); color: var(--red); background: var(--red-pale); }
+  .pd-score b { font-size: 22px; letter-spacing: -1px; } .pd-score span { font-size: 9px; color: var(--text-muted); font-family: inherit; }
+  .pd-verdict { flex: 1; min-width: 0; } .pd-verdict .cls { font-size: 15px; font-weight: 800; color: var(--navy); } .pd-verdict .dt { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .pd-group-title { font-size: 11px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--blue); margin: 22px 0 10px; }
+  .pd-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pd-row { background: var(--grey-50); border: 1px solid var(--border); border-radius: 10px; padding: 11px 13px; }
+  .pd-row .l { font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+  .pd-row .v { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--navy); word-break: break-word; }
+  .pd-row .v.pos { color: var(--green); } .pd-row .v.neg { color: var(--red); }
+  .pd-actions { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+  .pd-actions button { flex: 1; min-width: 130px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 12px; border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: #fff; color: var(--navy); transition: all 160ms ease; }
+  .pd-actions button svg { width: 15px; height: 15px; }
+  .pd-actions .primary { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .pd-actions .primary:hover { background: var(--navy-light); }
+  .pd-actions button:hover { border-color: var(--blue); }
+  @media (max-width: 560px) {
+    .pd-backdrop { padding: 0; align-items: flex-end; }
+    .pd-modal { max-width: 100%; max-height: 94vh; border-radius: 20px 20px 0 0; }
+    .pd-head { border-radius: 20px 20px 0 0; }
+  }
 </style>
 <script defer src="/i18n.js"></script>
 </head>
@@ -505,11 +564,18 @@ function niInitials(n) {
   if (!n) return '?';
   return n.trim().split(/\s+/).slice(0,2).map(s => s[0]?.toUpperCase() || '').join('') || '?';
 }
+const CCY_LOCALE = { DKK:'da-DK', SEK:'sv-SE', NOK:'nb-NO', EUR:'de-DE', GBP:'en-GB', USD:'en-US', CHF:'de-CH' };
 function fmtCurrency(n, c) {
   const sym = { DKK:'kr', SEK:'kr', NOK:'kr', EUR:'€', GBP:'£', USD:'$', CHF:'Fr' }[c] || c;
   if (n == null || isNaN(n)) return '—';
-  return sym + Math.round(n).toLocaleString();
+  const num = Math.round(n).toLocaleString(CCY_LOCALE[c] || 'da-DK');
+  return (c === 'DKK' || c === 'SEK' || c === 'NOK') ? (num + ' ' + sym) : (sym + num);
 }
+function L(da, en) { return (window.getLang && window.getLang() === 'en') ? en : da; }
+const ICON_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+const ICON_SHEET = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h1"/></svg>';
+const ICON_PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
+const ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>';
 function scoreColor(s) {
   if (s == null) return '';
   return s >= 65 ? 'green' : s >= 40 ? 'amber' : 'red';
@@ -565,35 +631,28 @@ function render() {
     : `
       <div class="property-grid">
         ${portfolio.map(p => `
-          <article class="property-card">
-            <div class="pc-top">
-              <div class="pc-location">${escapeHtml(p.location)}</div>
-              ${p.score != null ? `<div class="pc-score ${scoreColor(p.score)}">${p.score}</div>` : ''}
+          <article class="property-card" data-card="${p.id}">
+            <div class="pc-clickable" data-open="${p.id}">
+              <div class="pc-top">
+                <div style="flex:1;min-width:0;">
+                  <div class="pc-title" data-title="${p.id}">${escapeHtml(p.title || p.location)}</div>
+                  ${p.title ? `<div class="pc-title-sub">${escapeHtml(p.location)}</div>` : ''}
+                </div>
+                ${p.score != null ? `<div class="pc-score ${scoreColor(p.score)}">${p.score}</div>` : ''}
+              </div>
+              ${p.classification && p.classification !== '—' ? `<div class="pc-classification" style="margin-top:12px;"><span class="pc-dot"></span>${escapeHtml(p.classification)}</div>` : ''}
+              <div class="pc-metrics">
+                <div class="pc-metric"><div class="pc-metric-label">${L('Pris','Price')}</div><div class="pc-metric-value">${fmtCurrency(p.price, p.currency)}</div></div>
+                <div class="pc-metric"><div class="pc-metric-label">${L('Leje / md','Rent / mo')}</div><div class="pc-metric-value">${fmtCurrency(p.rent, p.currency)}</div></div>
+                <div class="pc-metric"><div class="pc-metric-label">${L('Afkast','Yield')}</div><div class="pc-metric-value">${p.rentalYield != null ? p.rentalYield.toFixed(2) + '%' : '—'}</div></div>
+                <div class="pc-metric"><div class="pc-metric-label">Cash flow</div><div class="pc-metric-value ${p.monthlyCashFlow >= 0 ? 'positive' : 'negative'}">${p.monthlyCashFlow != null ? (p.monthlyCashFlow >= 0 ? '+' : '−') + fmtCurrency(Math.abs(p.monthlyCashFlow), p.currency) : '—'}</div></div>
+              </div>
+              <div class="pc-open-hint">${ICON_EYE}${L('Se alle detaljer','See full details')}</div>
             </div>
-            ${p.classification && p.classification !== '—' ? `
-              <div class="pc-classification"><span class="pc-dot"></span>${escapeHtml(p.classification)}</div>
-            ` : ''}
-            <div class="pc-metrics">
-              <div class="pc-metric">
-                <div class="pc-metric-label">Price</div>
-                <div class="pc-metric-value">${fmtCurrency(p.price, p.currency)}</div>
-              </div>
-              <div class="pc-metric">
-                <div class="pc-metric-label">Rent / mo</div>
-                <div class="pc-metric-value">${fmtCurrency(p.rent, p.currency)}</div>
-              </div>
-              <div class="pc-metric">
-                <div class="pc-metric-label">Yield</div>
-                <div class="pc-metric-value">${p.rentalYield != null ? p.rentalYield.toFixed(2) + '%' : '—'}</div>
-              </div>
-              <div class="pc-metric">
-                <div class="pc-metric-label">Cash flow</div>
-                <div class="pc-metric-value ${p.monthlyCashFlow >= 0 ? 'positive' : 'negative'}">${p.monthlyCashFlow != null ? (p.monthlyCashFlow >= 0 ? '+' : '−') + fmtCurrency(Math.abs(p.monthlyCashFlow), p.currency).replace(/^[^\d−\-+]+/, m => m) : '—'}</div>
-              </div>
-            </div>
-            <div class="pc-footer">
-              <span class="pc-date">${t('portfolio.savedOn')} ${fmtDate(p.savedAt)}</span>
-              <button type="button" class="pc-remove" data-id="${p.id}">${t('portfolio.removeBtn')}</button>
+            <div class="pc-actions">
+              <button type="button" class="pcbtn primary" data-export="${p.id}">${ICON_SHEET}<span>${L('Eksportér','Export')}</span></button>
+              <button type="button" class="pcbtn label-hide" data-rename="${p.id}">${ICON_PENCIL}<span>${L('Omdøb','Rename')}</span></button>
+              <button type="button" class="pcbtn danger" data-remove="${p.id}" aria-label="${L('Fjern','Remove')}" title="${L('Fjern','Remove')}">${ICON_TRASH}</button>
             </div>
           </article>
         `).join('')}
@@ -650,29 +709,263 @@ function render() {
     </section>
 
     <div class="section-header">
-      <div class="section-title">${t('portfolio.saved')} ${t('analyze.feature5').toLowerCase().includes('summary') ? 'analyses' : ''}</div>
-      ${total > 0 ? `<div class="section-count">${total} ${total === 1 ? 'property' : 'properties'}</div>` : ''}
+      <div class="section-title">${L('Gemte boliger','Saved properties')}${total > 0 ? ` <span class="section-count">(${total})</span>` : ''}</div>
+      ${total > 0 ? `<button type="button" class="btn-export-all" id="export-all-btn">${ICON_SHEET}${L('Eksportér alle til Sheets','Export all to Sheets')}</button>` : ''}
     </div>
     ${propertiesHtml}
   `;
 
-  // Wire up removes + logout
+  // Wire up logout
   document.getElementById('logout-btn')?.addEventListener('click', () => {
     localStorage.removeItem(NI_USER_KEY);
     render();
   });
-  main.querySelectorAll('.pc-remove').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (!confirm(t('portfolio.removeConfirm'))) return;
-      const id = btn.getAttribute('data-id');
-      niSetPortfolio(niGetPortfolio().filter(p => p.id !== id));
+  // Open detail on card body click
+  main.querySelectorAll('[data-open]').forEach(el => {
+    el.addEventListener('click', () => openDetail(el.getAttribute('data-open')));
+  });
+  // Per-property export
+  main.querySelectorAll('[data-export]').forEach(btn => {
+    btn.addEventListener('click', (e) => { e.stopPropagation(); exportProperty(btn.getAttribute('data-export')); });
+  });
+  // Rename
+  main.querySelectorAll('[data-rename]').forEach(btn => {
+    btn.addEventListener('click', (e) => { e.stopPropagation(); startRename(btn.getAttribute('data-rename')); });
+  });
+  // Remove
+  main.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!confirm(L('Fjern denne bolig fra din profil?', 'Remove this property from your profile?'))) return;
+      niSetPortfolio(niGetPortfolio().filter(p => p.id !== btn.getAttribute('data-remove')));
       render();
     });
   });
+  // Export all
+  document.getElementById('export-all-btn')?.addEventListener('click', exportAll);
+}
+
+// ═══════════ RENAME (inline) ═══════════
+function startRename(id) {
+  const p = niGetPortfolio().find(x => x.id === id);
+  const titleEl = document.querySelector('.pc-title[data-title="' + id + '"]');
+  if (!p || !titleEl) return;
+  const input = document.createElement('input');
+  input.className = 'pc-rename-input';
+  input.value = p.title || p.location || '';
+  input.maxLength = 80;
+  titleEl.replaceWith(input);
+  input.focus(); input.select();
+  let done = false;
+  const commit = (save) => {
+    if (done) return; done = true;
+    if (save) {
+      const v = input.value.trim();
+      const arr = niGetPortfolio();
+      const it = arr.find(x => x.id === id);
+      if (it) { if (v && v !== it.location) it.title = v; else delete it.title; niSetPortfolio(arr); }
+    }
+    render();
+  };
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); commit(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); commit(false); }
+  });
+  input.addEventListener('blur', () => commit(true));
+}
+
+// ═══════════ DETAIL MODAL ═══════════
+function ensureModal() {
+  let bd = document.getElementById('pd-backdrop');
+  if (bd) return bd;
+  bd = document.createElement('div');
+  bd.className = 'pd-backdrop'; bd.id = 'pd-backdrop';
+  bd.innerHTML = '<div class="pd-modal" id="pd-modal" role="dialog" aria-modal="true"></div>';
+  document.body.appendChild(bd);
+  bd.addEventListener('click', (e) => { if (e.target === bd) closeDetail(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDetail(); });
+  return bd;
+}
+function closeDetail() { document.getElementById('pd-backdrop')?.classList.remove('open'); }
+function openDetail(id) {
+  const p = niGetPortfolio().find(x => x.id === id);
+  if (!p) return;
+  const bd = ensureModal();
+  const modal = document.getElementById('pd-modal');
+  const sc = scoreColor(p.score);
+  const cf = p.monthlyCashFlow;
+  const row = (l, v, cls) => `<div class="pd-row"><div class="l">${l}</div><div class="v ${cls || ''}">${v}</div></div>`;
+  modal.innerHTML = `
+    <div class="pd-head">
+      <div style="min-width:0;">
+        <h3>${escapeHtml(p.title || p.location)}</h3>
+        ${p.title ? `<div class="pd-loc">${escapeHtml(p.location)}</div>` : `<div class="pd-loc">${L('Gemt','Saved')} ${fmtDate(p.savedAt)}</div>`}
+      </div>
+      <button type="button" class="pd-close" aria-label="Luk" onclick="closeDetail()">×</button>
+    </div>
+    <div class="pd-body">
+      <div class="pd-scorewrap">
+        ${p.score != null ? `<div class="pd-score ${sc}"><b>${p.score}</b><span>/100</span></div>` : ''}
+        <div class="pd-verdict">
+          <div class="cls">${escapeHtml(p.classification && p.classification !== '—' ? p.classification : L('Analyseret bolig','Analyzed property'))}</div>
+          <div class="dt">${L('Gemt','Saved')} ${fmtDate(p.savedAt)}</div>
+        </div>
+      </div>
+      <div class="pd-group-title">${L('Nøgletal','Key metrics')}</div>
+      <div class="pd-rows">
+        ${row(L('Bruttoafkast','Gross yield'), p.rentalYield != null ? p.rentalYield.toFixed(2) + '%' : '—')}
+        ${row('Cash flow / md', cf != null ? (cf >= 0 ? '+' : '−') + fmtCurrency(Math.abs(cf), p.currency) : '—', cf >= 0 ? 'pos' : 'neg')}
+        ${row('ROI', p.roi != null ? p.roi.toFixed(2) + '%' : '—')}
+        ${row(L('Score','Score'), p.score != null ? p.score + '/100' : '—')}
+      </div>
+      <div class="pd-group-title">${L('Ejendommen','The property')}</div>
+      <div class="pd-rows">
+        ${row(L('Pris','Price'), fmtCurrency(p.price, p.currency))}
+        ${row(L('Månedlig leje','Monthly rent'), fmtCurrency(p.rent, p.currency))}
+        ${row(L('Udbetaling','Down payment'), p.down != null ? p.down + '%' : '—')}
+        ${row(L('Rente','Interest rate'), p.rate != null ? p.rate + '%' : '—')}
+        ${row(L('Månedlige udgifter','Monthly expenses'), fmtCurrency(p.expenses, p.currency))}
+        ${row(L('Valuta','Currency'), p.currency || '—')}
+      </div>
+      <div class="pd-actions">
+        <button type="button" class="primary" data-pd-export="${p.id}">${ICON_SHEET}${L('Eksportér til Sheets','Export to Sheets')}</button>
+        <button type="button" data-pd-rename="${p.id}">${ICON_PENCIL}${L('Omdøb','Rename')}</button>
+      </div>
+    </div>`;
+  modal.querySelector('[data-pd-export]').addEventListener('click', () => exportProperty(p.id));
+  modal.querySelector('[data-pd-rename]').addEventListener('click', () => { closeDetail(); startRename(p.id); });
+  bd.classList.add('open');
 }
 
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ═══════════ EXPORT TO SHEETS (multi-tab .xlsx — opens in Google Sheets, Excel, Numbers) ═══════════
+function propertyRows(p) {
+  const cur = p.currency || '';
+  const money = (n) => (n == null || isNaN(n)) ? '' : Math.round(n);
+  return [
+    ['NordInvest — ' + L('Ejendomsanalyse','Property analysis')],
+    [L('Titel','Title'), p.title || p.location || ''],
+    [L('Placering','Location'), p.location || ''],
+    [L('Gemt','Saved'), fmtDate(p.savedAt)],
+    [],
+    [L('NØGLETAL','KEY METRICS')],
+    [L('Investeringsscore','Investment score'), p.score == null ? '' : p.score],
+    [L('Bruttoafkast (%)','Gross yield (%)'), p.rentalYield == null ? '' : Number(p.rentalYield.toFixed(2))],
+    [L('Månedlig cash flow','Monthly cash flow') + (cur ? ' (' + cur + ')' : ''), money(p.monthlyCashFlow)],
+    ['ROI (%)', p.roi == null ? '' : Number(p.roi.toFixed(2))],
+    [L('Klassificering','Classification'), p.classification || ''],
+    [],
+    [L('EJENDOM','PROPERTY')],
+    [L('Pris','Price') + (cur ? ' (' + cur + ')' : ''), money(p.price)],
+    [L('Månedlig leje','Monthly rent') + (cur ? ' (' + cur + ')' : ''), money(p.rent)],
+    [L('Udbetaling (%)','Down payment (%)'), p.down == null ? '' : p.down],
+    [L('Rente (%)','Interest rate (%)'), p.rate == null ? '' : p.rate],
+    [L('Månedlige udgifter','Monthly expenses') + (cur ? ' (' + cur + ')' : ''), money(p.expenses)],
+    [L('Valuta','Currency'), cur],
+  ];
+}
+function overviewRows(list) {
+  const head = [L('Titel','Title'), L('Placering','Location'), 'Score', L('Afkast %','Yield %'), 'Cash flow', 'ROI %', L('Pris','Price'), L('Leje','Rent'), L('Valuta','Currency'), L('Gemt','Saved')];
+  const rows = [['NordInvest — ' + L('Porteføljeoversigt','Portfolio overview')], [], head];
+  list.forEach(p => rows.push([
+    p.title || p.location || '', p.location || '', p.score == null ? '' : p.score,
+    p.rentalYield == null ? '' : Number(p.rentalYield.toFixed(2)),
+    p.monthlyCashFlow == null ? '' : Math.round(p.monthlyCashFlow),
+    p.roi == null ? '' : Number(p.roi.toFixed(2)),
+    p.price == null ? '' : Math.round(p.price), p.rent == null ? '' : Math.round(p.rent),
+    p.currency || '', fmtDate(p.savedAt)
+  ]));
+  return rows;
+}
+function sheetNameFor(str, used) {
+  let n = String(str || 'Bolig').replace(/[\[\]\:\*\?\/\\]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 28) || 'Bolig';
+  const base = n; let i = 2;
+  while (used.has(n.toLowerCase())) { n = (base.slice(0, 25) + ' ' + i); i++; }
+  used.add(n.toLowerCase());
+  return n;
+}
+function slug(s) { return String(s || 'bolig').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'bolig'; }
+function exportProperty(id) {
+  const p = niGetPortfolio().find(x => x.id === id);
+  if (!p) return;
+  const bytes = buildXlsx([{ name: sheetNameFor(p.title || p.location, new Set()), rows: propertyRows(p) }]);
+  downloadXlsx(bytes, 'nordinvest-' + slug(p.title || p.location) + '.xlsx');
+}
+function exportAll() {
+  const list = niGetPortfolio();
+  if (!list.length) return;
+  const used = new Set();
+  const sheets = [{ name: sheetNameFor(L('Oversigt','Overview'), used), rows: overviewRows(list) }];
+  list.forEach(p => sheets.push({ name: sheetNameFor(p.title || p.location, used), rows: propertyRows(p) }));
+  downloadXlsx(buildXlsx(sheets), 'nordinvest-portefolje.xlsx');
+}
+function downloadXlsx(bytes, filename) {
+  const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+}
+function xmlEsc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function colLetter(i) { let s = ''; i++; while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+function sheetXml(rows) {
+  let body = '';
+  rows.forEach((row, r) => {
+    let cells = '';
+    (row || []).forEach((val, c) => {
+      if (val === '' || val == null) return;
+      const ref = colLetter(c) + (r + 1);
+      if (typeof val === 'number' && isFinite(val)) cells += '<c r="' + ref + '"><v>' + val + '</v></c>';
+      else cells += '<c r="' + ref + '" t="inlineStr"><is><t xml:space="preserve">' + xmlEsc(val) + '</t></is></c>';
+    });
+    body += '<row r="' + (r + 1) + '">' + cells + '</row>';
+  });
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>' + body + '</sheetData></worksheet>';
+}
+function buildXlsx(sheets) {
+  const enc = (s) => new TextEncoder().encode(s);
+  const files = [];
+  let overrides = '';
+  sheets.forEach((s, i) => { overrides += '<Override PartName="/xl/worksheets/sheet' + (i+1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'; });
+  files.push({ name: '[Content_Types].xml', data: enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' + overrides + '</Types>') });
+  files.push({ name: '_rels/.rels', data: enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>') });
+  let sheetTags = '', relTags = '';
+  sheets.forEach((s, i) => {
+    sheetTags += '<sheet name="' + xmlEsc(s.name) + '" sheetId="' + (i+1) + '" r:id="rId' + (i+1) + '"/>';
+    relTags += '<Relationship Id="rId' + (i+1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i+1) + '.xml"/>';
+  });
+  files.push({ name: 'xl/workbook.xml', data: enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>' + sheetTags + '</sheets></workbook>') });
+  files.push({ name: 'xl/_rels/workbook.xml.rels', data: enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + relTags + '</Relationships>') });
+  sheets.forEach((s, i) => { files.push({ name: 'xl/worksheets/sheet' + (i+1) + '.xml', data: enc(sheetXml(s.rows)) }); });
+  return zipStore(files);
+}
+function crc32(bytes) {
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) { crc ^= bytes[i]; for (let j = 0; j < 8; j++) crc = (crc >>> 1) ^ (0xEDB88320 & -(crc & 1)); }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function zipStore(files) {
+  const u16 = (n) => [n & 0xff, (n >>> 8) & 0xff];
+  const u32 = (n) => [n & 0xff, (n >>> 8) & 0xff, (n >>> 16) & 0xff, (n >>> 24) & 0xff];
+  const parts = [], central = []; let offset = 0;
+  for (const f of files) {
+    const nameB = new TextEncoder().encode(f.name);
+    const crc = crc32(f.data), size = f.data.length;
+    const local = new Uint8Array([].concat(u32(0x04034b50), u16(20), u16(0), u16(0), u16(0), u16(0), u32(crc), u32(size), u32(size), u16(nameB.length), u16(0)));
+    parts.push(local, nameB, f.data);
+    central.push(new Uint8Array([].concat(u32(0x02014b50), u16(20), u16(20), u16(0), u16(0), u16(0), u16(0), u32(crc), u32(size), u32(size), u16(nameB.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset))), nameB);
+    offset += local.length + nameB.length + size;
+  }
+  let cdSize = 0; for (const c of central) cdSize += c.length;
+  const eocd = new Uint8Array([].concat(u32(0x06054b50), u16(0), u16(0), u16(files.length), u16(files.length), u32(cdSize), u32(offset), u16(0)));
+  const all = parts.concat(central, [eocd]);
+  let total = 0; for (const a of all) total += a.length;
+  const out = new Uint8Array(total); let pos = 0;
+  for (const a of all) { out.set(a, pos); pos += a.length; }
+  return out;
 }
 
 document.addEventListener('DOMContentLoaded', render);
