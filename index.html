@@ -2161,9 +2161,25 @@
      no need for a render-blocking @import here. Kept the comment as an anchor. */
 
   .mono {
-    font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+    /* Numbers use the body sans with tabular figures — aligned like a real
+       financial report, not a code editor. (Was JetBrains Mono, which read
+       as an "AI fintech mockup".) */
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    letter-spacing: -0.005em;
+  }
+  /* Convert the remaining report numbers that set the mono font directly. */
+  #page-analysis .hero-score-num,
+  #page-analysis .hero-cashflow,
+  #page-analysis .proj-val,
+  #page-analysis .proj-gain,
+  #page-analysis #stress-grid .stress-val,
+  #page-analysis .report-stamp,
+  #page-analysis .market-stat-source {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
   }
 
   /* ── REPORT HEADER ── */
@@ -2709,6 +2725,16 @@
     color: var(--text);
     line-height: 1.55;
   }
+  .calc-foot { margin-top: 14px; font-size: 12px; color: var(--text-muted); font-style: italic; }
+
+  /* Plain-language, real-number worked examples ("sådan regner vi det") */
+  .calc-plain { display: flex; flex-direction: column; gap: 14px; }
+  .calc-step { background: var(--grey-50); border: 1px solid var(--border); border-left: 3px solid var(--blue); border-radius: 10px; padding: 13px 15px; }
+  .calc-step-h { font-size: 13.5px; font-weight: 800; color: var(--navy); margin-bottom: 3px; }
+  .calc-step-plain { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px; }
+  .calc-step-math { font-size: 13.5px; color: var(--text-dark); line-height: 1.7; font-variant-numeric: tabular-nums; }
+  .calc-step-math b { color: var(--navy); font-weight: 800; }
+  .calc-step-math .eq { color: var(--text-muted); padding: 0 3px; }
 
   /* Score color states (sync with classifyInvestment colors) */
   .score-fill.score-green, .hero-score-fill.score-green { stroke: var(--green); }
@@ -5060,22 +5086,8 @@
                 <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
               </summary>
               <div class="calc-details-body">
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
-                  <code class="calc-formula" data-i18n="analysis.layer3.yieldFormula">Annual Rent ÷ Property Price × 100</code>
-                </div>
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
-                  <code class="calc-formula" data-i18n="analysis.layer3.cashflowFormula">Monthly Rent − Monthly Mortgage − Monthly Expenses</code>
-                </div>
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
-                  <code class="calc-formula" data-i18n="analysis.layer3.roiFormula">(Annual Cash Flow ÷ Cash Invested) × 100</code>
-                </div>
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
-                  <p class="calc-text" data-i18n="analysis.layer3.cashflowAssump">30-year amortization. Expenses include maintenance, taxes, and association fees if entered.</p>
-                </div>
+                <div class="calc-plain" id="calc-plain-cashflow"></div>
+                <p class="calc-text calc-foot" data-i18n="analysis.layer3.cashflowAssump">30-year amortization. Expenses include maintenance, taxes, and association fees if entered.</p>
               </div>
             </details>
           </div>
@@ -5111,7 +5123,7 @@
                 <label for="rr-market-rent" data-i18n="rentReserve.marketRent">Estimated market rent (post-renovation)</label>
                 <div class="rr-input-wrap">
                   <span class="rr-prefix currency-sym">kr</span>
-                  <input type="number" id="rr-market-rent" min="0" placeholder="e.g. 16,000" inputmode="numeric" oninput="calculateRentReserve()">
+                  <input type="text" id="rr-market-rent" placeholder="f.eks. 16.000" inputmode="numeric" oninput="calculateRentReserve()">
                 </div>
                 <div class="rr-hint" data-i18n="rentReserve.marketRentHint">What you could charge after renovation, or what comparable units in the area earn today.</div>
               </div>
@@ -5772,7 +5784,7 @@ function groupDigits(digits) {
   return parseInt(digits, 10).toLocaleString(loc, { maximumFractionDigits: 0 });
 }
 function setMoneyInput(id, val) { const el = document.getElementById(id); if (el) el.value = groupDigits(stripDigits(val)); }
-const MONEY_INPUT_IDS = ['property-price', 'monthly-rent', 'monthly-expenses', 'ext-price', 'ext-rent', 'ext-expenses'];
+const MONEY_INPUT_IDS = ['property-price', 'monthly-rent', 'monthly-expenses', 'ext-price', 'ext-rent', 'ext-expenses', 'rr-market-rent'];
 function attachMoneyInputs() {
   MONEY_INPUT_IDS.forEach((id) => {
     const el = document.getElementById(id);
@@ -6037,7 +6049,7 @@ function rrSuggest(mult) {
   const newVal = Math.round((data._rent || 0) * mult);
   const input = document.getElementById('rr-market-rent');
   if (input) {
-    input.value = newVal;
+    input.value = groupDigits(String(newVal));
     calculateRentReserve();
   }
 }
@@ -6048,7 +6060,7 @@ function calculateRentReserve() {
   const currentRent = data._rent || 0;
   const price = data._price || 0;
   if (!currentRent || !price) return;
-  const marketRentInput = parseFloat(document.getElementById('rr-market-rent')?.value);
+  const marketRentInput = parseFloat(stripDigits(document.getElementById('rr-market-rent')?.value || ''));
   if (!isFinite(marketRentInput) || marketRentInput < 0) {
     document.getElementById('rr-results').style.display = 'none';
     return;
@@ -6335,11 +6347,13 @@ function runClassificationWithMarket(d, displayName) {
   // ─ Seed the Rent Reserve inputs from the analysis data
   const rrCurrent = document.getElementById('rr-current-rent');
   const rrMarket = document.getElementById('rr-market-rent');
-  if (rrCurrent && data._rent != null) rrCurrent.value = fmt(data._rent);
+  // The inputs already show a "kr" affordance — so the value must be the bare
+  // grouped number ("14.000"), never fmt() (which appends " kr" → "kr 14.000 kr").
+  if (rrCurrent && data._rent != null) rrCurrent.value = groupDigits(String(Math.round(data._rent)));
   if (rrMarket && data._rent != null) {
     // Default the market rent to current rent so the gap starts at zero.
     // User adjusts with the +5/10/15/20% chips or by typing.
-    rrMarket.value = Math.round(data._rent);
+    rrMarket.value = groupDigits(String(Math.round(data._rent)));
     calculateRentReserve();
   }
 
@@ -6700,6 +6714,36 @@ function animateCounter(el, target, dur = 1100) {
     if (p < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
+}
+
+// ── PLAIN-LANGUAGE "SÅDAN REGNER VI DET" ──────
+// Fills the cashflow calc-details with a worked example using THIS property's
+// real numbers — so anyone (no finance background) can follow every figure.
+function renderPlainCashflow(data, price, rent, expenses) {
+  const el = document.getElementById('calc-plain-cashflow');
+  if (!el) return;
+  const mort = Math.round(data.monthlyMortgage);
+  const cf = Math.round(data.monthlyCashFlow);
+  const annualCf = cf * 12;
+  const sign = (n) => (n >= 0 ? '+' : '−') + fmt(Math.abs(n));
+  el.innerHTML = `
+    <div class="calc-step">
+      <div class="calc-step-h">Lejeafkast — ${fmtPct(data.rentalYield)}</div>
+      <div class="calc-step-plain">Hvor stor en del af prisen du får ind i leje på et helt år.</div>
+      <div class="calc-step-math">${fmt(rent)} <span class="eq">×</span> 12 måneder <span class="eq">=</span> ${fmt(rent * 12)} om året.<br>
+        ${fmt(rent * 12)} <span class="eq">÷</span> ${fmt(price)} (prisen) <span class="eq">=</span> <b>${fmtPct(data.rentalYield)}</b></div>
+    </div>
+    <div class="calc-step">
+      <div class="calc-step-h">Månedlig cash flow — ${sign(cf)}</div>
+      <div class="calc-step-plain">Hvad der er tilbage hver måned, når lånet og udgifterne er betalt.</div>
+      <div class="calc-step-math">${fmt(rent)} (leje) <span class="eq">−</span> ${fmt(mort)} (lån) <span class="eq">−</span> ${fmt(expenses)} (udgifter) <span class="eq">=</span> <b>${sign(cf)}</b> om måneden</div>
+    </div>
+    <div class="calc-step">
+      <div class="calc-step-h">Årligt afkast — ${fmtPct(data.roi)}</div>
+      <div class="calc-step-plain">Dit årlige over- eller underskud i forhold til de penge, du selv lægger (udbetalingen).</div>
+      <div class="calc-step-math">${sign(cf)} <span class="eq">×</span> 12 <span class="eq">=</span> ${sign(annualCf)} om året.<br>
+        ${sign(annualCf)} <span class="eq">÷</span> ${fmt(data.downAmount)} (din udbetaling) <span class="eq">=</span> <b>${fmtPct(data.roi)}</b></div>
+    </div>`;
 }
 
 // ── TAB SWITCHING ─────────────────────────────
@@ -7084,6 +7128,8 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   const cfNet = document.getElementById('cf-net-row');
   cfNet.className = 'cf-net ' + (data.monthlyCashFlow >= 0 ? 'positive' : 'negative');
   document.getElementById('cf-net-val').textContent = (data.monthlyCashFlow >= 0 ? '+' : '-') + fmt(data.monthlyCashFlow) + '/md.';
+
+  renderPlainCashflow(data, price, rent, expenses);
 
   document.getElementById('ai-summary-text').innerHTML = generateSummary(data, location, null);
   document.getElementById('market-loading').style.display = 'flex';
