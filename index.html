@@ -5210,14 +5210,7 @@
                 <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
               </summary>
               <div class="calc-details-body">
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
-                  <code class="calc-formula" data-i18n="analysis.layer3.apprFormula">Property Price × (1 + appreciation rate)^years</code>
-                </div>
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
-                  <p class="calc-text" data-i18n="analysis.layer3.apprAssump">Historical area appreciation. Past performance does not guarantee future results.</p>
-                </div>
+                <div class="calc-plain" id="calc-plain-appr"></div>
                 <div class="calc-block">
                   <div class="calc-label" data-i18n="analysis.layer3.sources">Sources</div>
                   <p class="calc-text" data-i18n="analysis.layer3.marketSource">Per-square-metre data from local market sources</p>
@@ -5253,14 +5246,7 @@
                 <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
               </summary>
               <div class="calc-details-body">
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
-                  <code class="calc-formula" data-i18n="analysis.layer3.mortgageFormula">P × (r(1+r)^n) ÷ ((1+r)^n − 1)</code>
-                </div>
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
-                  <p class="calc-text" data-i18n="analysis.layer3.mortgageAssump">P = loan, r = monthly rate, n = 360 months. Standard amortizing loan.</p>
-                </div>
+                <div class="calc-plain" id="calc-plain-financing"></div>
               </div>
             </details>
           </div>
@@ -5286,14 +5272,7 @@
                 <span data-i18n="analysis.layer3.showDetails">Show calculation details</span>
               </summary>
               <div class="calc-details-body">
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.formula">Formula</div>
-                  <code class="calc-formula" data-i18n="analysis.layer3.mortgageFormula">P × (r(1+r)^n) ÷ ((1+r)^n − 1)</code>
-                </div>
-                <div class="calc-block">
-                  <div class="calc-label" data-i18n="analysis.layer3.assumptions">Assumptions</div>
-                  <p class="calc-text" data-i18n="analysis.layer3.stressAssump">Stress tests use the same loan amount and term but recalculate the monthly mortgage at higher rates.</p>
-                </div>
+                <div class="calc-plain" id="calc-plain-stress"></div>
               </div>
             </details>
           </div>
@@ -6418,6 +6397,20 @@ function runClassificationWithMarket(d, displayName) {
     document.getElementById('projection-rows').innerHTML = rows;
     document.getElementById('proj-rate').textContent = pct1(appreciation) + ' om året';
     document.getElementById('projection-card').style.display = 'block';
+
+    const apprEl = document.getElementById('calc-plain-appr');
+    if (apprEl) {
+      const val1 = Math.round(price * (1 + appreciation/100));
+      const val5 = Math.round(price * Math.pow(1 + appreciation/100, 5));
+      apprEl.innerHTML = `
+        <div class="calc-step">
+          <div class="calc-step-h">Sådan fremskriver vi værdien</div>
+          <div class="calc-step-plain">Vi lader prisen vokse med ${pct1(appreciation)} om året — det historiske gennemsnit for området. Hvert år regnes oven på året før (rente-på-rente), ikke af den oprindelige pris.</div>
+          <div class="calc-step-math">Efter år 1: ${fmt(price)} <span class="eq">×</span> ${pct1(100+appreciation)} <span class="eq">=</span> <b>${fmt(val1)}</b><br>
+            Efter 5 år: <b>${fmt(val5)}</b> (en gevinst på ${fmt(val5 - price)})</div>
+        </div>
+        <p class="calc-text calc-foot">Baseret på historisk markedsstigning. Tidligere resultater garanterer ikke fremtidige.</p>`;
+    }
   }
 
   // Stress Test
@@ -6743,6 +6736,43 @@ function renderPlainCashflow(data, price, rent, expenses) {
       <div class="calc-step-plain">Dit årlige over- eller underskud i forhold til de penge, du selv lægger (udbetalingen).</div>
       <div class="calc-step-math">${sign(cf)} <span class="eq">×</span> 12 <span class="eq">=</span> ${sign(annualCf)} om året.<br>
         ${sign(annualCf)} <span class="eq">÷</span> ${fmt(data.downAmount)} (din udbetaling) <span class="eq">=</span> <b>${fmtPct(data.roi)}</b></div>
+    </div>`;
+}
+
+function renderPlainFinancing(data, price, down, rate) {
+  const el = document.getElementById('calc-plain-financing');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="calc-step">
+      <div class="calc-step-h">Udbetaling — ${fmt(data.downAmount)}</div>
+      <div class="calc-step-plain">De penge, du selv skal lægge. Her ${pct1(down)} af prisen.</div>
+      <div class="calc-step-math">${fmt(price)} <span class="eq">×</span> ${pct1(down)} <span class="eq">=</span> <b>${fmt(data.downAmount)}</b></div>
+    </div>
+    <div class="calc-step">
+      <div class="calc-step-h">Lånebeløb — ${fmt(data.loanAmount)}</div>
+      <div class="calc-step-plain">Resten låner du i banken.</div>
+      <div class="calc-step-math">${fmt(price)} (pris) <span class="eq">−</span> ${fmt(data.downAmount)} (udbetaling) <span class="eq">=</span> <b>${fmt(data.loanAmount)}</b></div>
+    </div>
+    <div class="calc-step">
+      <div class="calc-step-h">Månedlig ydelse — ${fmt(Math.round(data.monthlyMortgage))}</div>
+      <div class="calc-step-plain">Vi fordeler lånet over 30 år (360 måneder) med renten — præcis som bankens egen låneberegner. På ${fmt(data.loanAmount)} ved ${pct1(rate)} bliver ydelsen <b>${fmt(Math.round(data.monthlyMortgage))}</b> om måneden.</div>
+    </div>`;
+}
+
+function renderPlainStress(data, rent, expenses, rate) {
+  const el = document.getElementById('calc-plain-stress');
+  if (!el) return;
+  const loan = data.loanAmount;
+  const m = (r) => { const mr = r/100/12, n = 360; return mr === 0 ? loan/n : loan*(mr*Math.pow(1+mr,n))/(Math.pow(1+mr,n)-1); };
+  const cfAt = (r) => Math.round(rent - m(r) - expenses);
+  const sign = (n) => (n >= 0 ? '+' : '−') + fmt(Math.abs(n));
+  el.innerHTML = `
+    <div class="calc-step">
+      <div class="calc-step-h">Hvorfor tester vi renten?</div>
+      <div class="calc-step-plain">Renten kan stige, mens du ejer boligen. Vi genberegner ydelsen ved en højere rente — samme lån, samme løbetid — så du kan se, om boligen stadig hænger sammen.</div>
+      <div class="calc-step-math">Ved ${pct1(rate)} i dag: cash flow <b>${sign(cfAt(rate))}</b>/md.<br>
+        Ved ${pct1(rate+1)}: <b>${sign(cfAt(rate+1))}</b>/md.<br>
+        Ved ${pct1(rate+2)}: <b>${sign(cfAt(rate+2))}</b>/md.</div>
     </div>`;
 }
 
@@ -7130,6 +7160,8 @@ async function runPropertyAnalysis(price, rent, down, rate, expenses, location, 
   document.getElementById('cf-net-val').textContent = (data.monthlyCashFlow >= 0 ? '+' : '-') + fmt(data.monthlyCashFlow) + '/md.';
 
   renderPlainCashflow(data, price, rent, expenses);
+  renderPlainFinancing(data, price, down, rate);
+  renderPlainStress(data, rent, expenses, rate);
 
   document.getElementById('ai-summary-text').innerHTML = generateSummary(data, location, null);
   document.getElementById('market-loading').style.display = 'flex';
