@@ -269,8 +269,8 @@
     </div>
 
     <div class="calc-cta">
-      <a href="/" id="analyzer-cta" data-i18n="cta.analyzer">Vil du have en dybere analyse? Prøv NordInvest analyzer →</a>
-      <span class="sub" data-i18n="cta.analyzerSub">Cash flow, ROI, rentestresstest og investeringsdom — gratis, på 60 sekunder.</span>
+      <a href="/" id="analyser-cta" data-i18n="cta.analyser">Vil du have en dybere analyse? Prøv NordInvest analyser →</a>
+      <span class="sub" data-i18n="cta.analyserSub">Cash flow, ROI, rentestresstest og investeringsdom — gratis, på 60 sekunder.</span>
     </div>
   </div>
 
@@ -296,7 +296,7 @@
     <li data-i18n-html="s2.li3"><strong>Nettoafkast</strong> — det reelle afkast efter alle driftsudgifter, typisk 20–30 % lavere end brutto.</li>
     <li data-i18n-html="s2.li4"><strong>Værdistigning</strong> — den langsigtede prisudvikling i det specifikke område.</li>
   </ul>
-  <p data-i18n-html="s2.p2">Når bruttoafkastet ser fornuftigt ud, kør ejendommen igennem den fulde <a href="/">NordInvest analyzer</a> for at få cash flow, ROI, rentestresstest og en samlet investeringsdom. For at forstå forskellen på brutto og netto, læs vores guide til <a href="/blog/sadan-beregner-du-lejeafkast">hvordan du beregner lejeafkast</a>.</p>
+  <p data-i18n-html="s2.p2">Når bruttoafkastet ser fornuftigt ud, kør ejendommen igennem den fulde <a href="/">NordInvest analyser</a> for at få cash flow, ROI, rentestresstest og en samlet investeringsdom. For at forstå forskellen på brutto og netto, læs vores guide til <a href="/blog/sadan-beregner-du-lejeafkast">hvordan du beregner lejeafkast</a>.</p>
 
   <h2 data-i18n="tools.h">Andre gratis værktøjer</h2>
   <div class="tools-row">
@@ -341,12 +341,12 @@
   <div class="cta-card">
     <h3 data-i18n="ctacard.h">Klar til en rigtig investeringsanalyse?</h3>
     <p data-i18n="ctacard.p">Bruttoafkast er starten. Få hele billedet — gratis, på 60 sekunder.</p>
-    <a href="/" class="btn" data-i18n="ctacard.btn">Åbn analyzeren →</a>
+    <a href="/" class="btn" data-i18n="ctacard.btn">Åbn analyseren →</a>
   </div>
 </main>
 
 <footer>
-  <a href="/" data-i18n="foot.analyzer">Analyzer</a>
+  <a href="/" data-i18n="foot.analyser">Analyser</a>
   <a href="/vaerktoejer" data-i18n="nav.tools">Værktøjer</a>
   <a href="/investment-models" data-i18n="nav.models">Modeller</a>
   <a href="/glossary" data-i18n="nav.glossary">Ordliste</a>
@@ -370,8 +370,8 @@
     "f.postnr": "Postcode <span style=\"font-weight:500;color:var(--text-muted);\">(optional)</span>",
     "r.label": "Gross yield",
     "r.placeholder": "Enter purchase price and annual rent to see the yield.",
-    "cta.analyzer": "Want a deeper analysis? Try the NordInvest analyzer →",
-    "cta.analyzerSub": "Cash flow, ROI, interest-rate stress test and an investment verdict — free, in 60 seconds.",
+    "cta.analyser": "Want a deeper analysis? Try the NordInvest analyser →",
+    "cta.analyserSub": "Cash flow, ROI, interest-rate stress test and an investment verdict — free, in 60 seconds.",
     "s1.h": "What is a good gross yield in Denmark?",
     "s1.p": "Gross yield is the first number any property investor looks at. It tells you what percent of the purchase price you take in as rent per year, before costs. The formula is simple: <strong>(annual rent ÷ purchase price) × 100</strong>. But what counts as \"good\" depends entirely on where in the country you're looking.",
     "tbl.yield": "Gross yield", "tbl.verdict": "Verdict", "tbl.area": "Typical area",
@@ -385,7 +385,7 @@
     "s2.li2": "<strong>Interest-rate stress test</strong> — what happens to your finances if rates rise 2 percentage points?",
     "s2.li3": "<strong>Net yield</strong> — the real return after all operating costs, typically 20–30% lower than gross.",
     "s2.li4": "<strong>Appreciation</strong> — the long-term price trend in the specific area.",
-    "s2.p2": "When the gross yield looks reasonable, run the property through the full <a href=\"/\">NordInvest analyzer</a> to get cash flow, ROI, an interest-rate stress test and an overall investment verdict. To understand the difference between gross and net, read our guide to <a href=\"/blog/sadan-beregner-du-lejeafkast\">how to calculate rental yield</a>.",
+    "s2.p2": "When the gross yield looks reasonable, run the property through the full <a href=\"/\">NordInvest analyser</a> to get cash flow, ROI, an interest-rate stress test and an overall investment verdict. To understand the difference between gross and net, read our guide to <a href=\"/blog/sadan-beregner-du-lejeafkast\">how to calculate rental yield</a>.",
     "tools.h": "Other free tools",
     "tools.laanName": "Home buyer loan calculator →",
     "tools.laanDesc": "How much can you borrow for a home? See your budget in 30 seconds.",
@@ -406,8 +406,8 @@
     "faq.a6": "Gross yield is always calculated on annual rent. If you only know the monthly rent, multiply it by 12. A monthly rent of 9,000 kr. equals 108,000 kr. per year. The calculator automatically shows the monthly equivalent so you can check the number fits.",
     "ctacard.h": "Ready for a real investment analysis?",
     "ctacard.p": "Gross yield is the start. Get the whole picture — free, in 60 seconds.",
-    "ctacard.btn": "Open the analyzer →",
-    "foot.analyzer": "Analyzer", "foot.method": "Methodology"
+    "ctacard.btn": "Open the analyser →",
+    "foot.analyser": "Analyser", "foot.method": "Methodology"
   };
 </script>
 <script src="/vaerktoejer/tools-i18n.js"></script>
@@ -533,13 +533,13 @@
     postnrEl.addEventListener('input', recalc);
     document.addEventListener('toolLang:changed', recalc);
 
-    // Track click-through to the main analyzer as a conversion
+    // Track click-through to the main analyser as a conversion
     function trackCta(label) {
       if (typeof gtag === 'function') {
-        gtag('event', 'analyzer_click', { source_tool: 'bruttoafkast_beregner', cta_label: label, event_category: 'conversion' });
+        gtag('event', 'analyser_click', { source_tool: 'bruttoafkast_beregner', cta_label: label, event_category: 'conversion' });
       }
     }
-    var cta = document.getElementById('analyzer-cta');
+    var cta = document.getElementById('analyser-cta');
     if (cta) cta.addEventListener('click', function () { trackCta('inline'); });
     document.querySelectorAll('.cta-card .btn').forEach(function (b) {
       b.addEventListener('click', function () { trackCta('bottom_card'); });

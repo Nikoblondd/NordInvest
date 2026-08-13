@@ -11,10 +11,10 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Din portefølje. NordInvest ejendomsanalyzer.</title>
+<title>Din portefølje. NordInvest ejendomsanalyser.</title>
 <meta name="application-name" content="NordInvest">
 <meta name="apple-mobile-web-app-title" content="NordInvest">
-<meta name="description" content="Your saved property analyses — every Nordic and European investment you've run through the NordInvest analyzer, in one place.">
+<meta name="description" content="Your saved property analyses — every Nordic and European investment you've run through the NordInvest analyser, in one place.">
 <meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="#0F1F3D">
 <link rel="canonical" href="https://www.nordinvest.io/portfolio">
@@ -720,9 +720,9 @@ function render() {
     localStorage.removeItem(NI_USER_KEY);
     render();
   });
-  // Open the full analyzer on card body click — re-runs the complete analysis
+  // Open the full analyser on card body click — re-runs the complete analysis
   main.querySelectorAll('[data-open]').forEach(el => {
-    el.addEventListener('click', () => openInAnalyzer(el.getAttribute('data-open')));
+    el.addEventListener('click', () => openInAnalyser(el.getAttribute('data-open')));
   });
   // Per-property export
   main.querySelectorAll('[data-export]').forEach(btn => {
@@ -745,10 +745,10 @@ function render() {
   document.getElementById('export-all-btn')?.addEventListener('click', exportAll);
 }
 
-// ═══════════ OPEN IN FULL ANALYZER ═══════════
-// Hand the saved property to the homepage analyzer, which re-runs the complete
+// ═══════════ OPEN IN FULL ANALYSER ═══════════
+// Hand the saved property to the homepage analyser, which re-runs the complete
 // analysis (score, KPIs, BRRRR / Renovation, projection, stress test) on load.
-function openInAnalyzer(id) {
+function openInAnalyser(id) {
   const p = niGetPortfolio().find(x => x.id === id);
   if (!p) return;
   try {
