@@ -3452,7 +3452,45 @@
     .nav-profile-avatar { font-size: 11px; }
   }
 
-  /* ── RECOMMENDED PROPERTY WEBSITES — minimalist dark marquee ── */
+  /* ── TRIN 1 · FIND EN BOLIG — interaktiv kildevælger ── */
+  .source-picker { background: var(--grey-50); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 46px 0 50px; }
+  .sp-head { text-align: center; max-width: 640px; margin: 0 auto 26px; padding: 0 20px; }
+  .sp-eyebrow { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.18); padding: 5px 12px; border-radius: 999px; margin-bottom: 14px; }
+  .sp-title { font-size: clamp(22px, 3.2vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--navy); margin: 0 0 10px; line-height: 1.2; }
+  .sp-sub { font-size: 15px; line-height: 1.6; color: var(--text-muted); margin: 0; }
+  .sp-sub strong { color: var(--navy); font-weight: 700; }
+  .sp-tier { max-width: 940px; margin: 0 auto 20px; padding: 0 20px; }
+  .sp-tier-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .sp-badge { display: inline-flex; align-items: center; font-size: 12px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-muted); background: #fff; border: 1px solid var(--border); padding: 4px 11px; border-radius: 999px; white-space: nowrap; }
+  .sp-badge-best { color: #047857; background: var(--green-pale); border-color: rgba(16,185,129,0.28); }
+  .sp-tier-desc { font-size: 13px; color: var(--text-muted); }
+  .sp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+  .sp-grid-sm { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .sp-card { position: relative; display: flex; flex-direction: column; gap: 4px; text-decoration: none; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 15px 16px; transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease; }
+  .sp-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(15,31,61,0.09); border-color: rgba(37,99,235,0.4); }
+  .sp-card-best { border-left: 3px solid var(--green); }
+  .sp-card-best:hover { border-color: rgba(16,185,129,0.5); border-left-color: var(--green); }
+  .sp-card.picked { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(37,99,235,0.16); }
+  .sp-card-name { font-size: 15px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+  .sp-card-tag { font-size: 12px; color: var(--text-muted); line-height: 1.35; }
+  .sp-card-go { margin-top: 6px; font-size: 12.5px; font-weight: 700; color: var(--blue); white-space: nowrap; }
+  .sp-grid-sm { grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); }
+  .sp-grid-sm .sp-card { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 15px; }
+  .sp-grid-sm .sp-card-name { white-space: nowrap; }
+  .sp-grid-sm .sp-card-go { margin-top: 0; }
+  .sp-foot { max-width: 940px; margin: 22px auto 0; padding: 16px 20px; display: flex; align-items: center; justify-content: center; gap: 16px 22px; flex-wrap: wrap; text-align: center; }
+  .sp-foot-text { font-size: 14px; color: var(--text-dark); font-weight: 500; }
+  .sp-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--navy); color: #fff; border: none; border-radius: var(--radius-sm); padding: 12px 20px; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: background 0.15s ease, transform 0.12s ease; }
+  .sp-cta:hover { background: #16305c; transform: translateY(-1px); }
+  .sp-cta.pulse { animation: spPulse 1.4s ease 2; }
+  @keyframes spPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); } 50% { box-shadow: 0 0 0 6px rgba(37,99,235,0.18); } }
+  .field-glow { box-shadow: 0 0 0 3px rgba(37,99,235,0.25) !important; border-color: var(--blue) !important; transition: box-shadow 0.3s ease; }
+  @media (max-width: 560px) {
+    .sp-foot { flex-direction: column; gap: 12px; }
+    .sp-cta { width: 100%; justify-content: center; }
+  }
+
+  /* ── RECOMMENDED PROPERTY WEBSITES — minimalist dark marquee (retired) ── */
   .ticker-section {
     background: #0B1A3A;
     background-image:
@@ -3750,40 +3788,71 @@
     </div>
   </section>
 
-  <!-- ═══ RECOMMENDED PROPERTY WEBSITES (auto-scrolling marquee) ═══ -->
-  <section class="ticker-section" aria-label="Recommended property websites">
-    <div class="ticker-header">
-      <span class="ticker-eyebrow" data-i18n="ticker.eyebrow">Browse · Find · Analyze</span>
-      <h2 class="ticker-title" data-i18n="ticker.title">Recommended property websites</h2>
-      <p class="ticker-sub" data-i18n="ticker.sub">Browse a listing, copy the URL, paste it into the analyser.</p>
-    </div>
-    <div class="ticker-track">
-      <div class="ticker-inner">
-        <!-- Set A -->
-        <a class="ticker-card ticker-card--ejendomstorvet" href="https://www.ejendomstorvet.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">Ejendomstorvet</span></a>
-        <a class="ticker-card ticker-card--boligsiden" href="https://www.boligsiden.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">Boligsiden</span></a>
-        <a class="ticker-card ticker-card--edc" href="https://www.edc.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">EDC</span></a>
-        <a class="ticker-card ticker-card--home" href="https://home.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">Home</span></a>
-        <a class="ticker-card ticker-card--nybolig" href="https://www.nybolig.dk" target="_blank" rel="noopener nofollow"><span class="ticker-name">Nybolig</span></a>
-        <a class="ticker-card ticker-card--finn" href="https://www.finn.no/realestate" target="_blank" rel="noopener nofollow"><span class="ticker-name">finn</span></a>
-        <a class="ticker-card ticker-card--em1" href="https://www.em1.no" target="_blank" rel="noopener nofollow"><span class="ticker-name">EiendomsMegler</span></a>
-        <a class="ticker-card ticker-card--krogsveen" href="https://krogsveen.no" target="_blank" rel="noopener nofollow"><span class="ticker-name">Krogsveen</span></a>
-        <a class="ticker-card ticker-card--hemnet" href="https://www.hemnet.se" target="_blank" rel="noopener nofollow"><span class="ticker-name">Hemnet</span></a>
-        <a class="ticker-card ticker-card--bovision" href="https://www.bovision.se" target="_blank" rel="noopener nofollow"><span class="ticker-name">Bovision</span></a>
-        <a class="ticker-card ticker-card--booli" href="https://www.booli.se" target="_blank" rel="noopener nofollow"><span class="ticker-name">Booli</span></a>
+  <!-- ═══ TRIN 1 · FIND EN BOLIG — interaktiv kildevælger ═══ -->
+  <section class="source-picker" id="source-picker" aria-label="Find en investeringsbolig">
+    <div class="container">
+      <div class="sp-head">
+        <span class="sp-eyebrow">Trin 1 · Find en bolig</span>
+        <h2 class="sp-title">Hvor leder du efter din næste investering?</h2>
+        <p class="sp-sub">Vi kan ikke hente boliger til salg for dig — men vi kan sende dig de rigtige steder hen. Vælg en portal, find en bolig, og kom tilbage med linket. <strong>De skarpeste investeringsboliger ligger på investerings- og erhvervsportaler</strong> — ikke altid på de almindelige boligsider.</p>
+      </div>
 
-        <!-- Set B (duplicate for seamless loop — aria-hidden so screen readers ignore) -->
-        <a class="ticker-card ticker-card--ejendomstorvet" href="https://www.ejendomstorvet.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">Ejendomstorvet</span></a>
-        <a class="ticker-card ticker-card--boligsiden" href="https://www.boligsiden.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">Boligsiden</span></a>
-        <a class="ticker-card ticker-card--edc" href="https://www.edc.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">EDC</span></a>
-        <a class="ticker-card ticker-card--home" href="https://home.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">Home</span></a>
-        <a class="ticker-card ticker-card--nybolig" href="https://www.nybolig.dk" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">Nybolig</span></a>
-        <a class="ticker-card ticker-card--finn" href="https://www.finn.no/realestate" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">finn</span></a>
-        <a class="ticker-card ticker-card--em1" href="https://www.em1.no" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">EiendomsMegler</span></a>
-        <a class="ticker-card ticker-card--krogsveen" href="https://krogsveen.no" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">Krogsveen</span></a>
-        <a class="ticker-card ticker-card--hemnet" href="https://www.hemnet.se" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">Hemnet</span></a>
-        <a class="ticker-card ticker-card--bovision" href="https://www.bovision.se" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">Bovision</span></a>
-        <a class="ticker-card ticker-card--booli" href="https://www.booli.se" target="_blank" rel="noopener nofollow" aria-hidden="true" tabindex="-1"><span class="ticker-name">Booli</span></a>
+      <!-- Tier 1: bedst til investering -->
+      <div class="sp-tier">
+        <div class="sp-tier-head">
+          <span class="sp-badge sp-badge-best">★ Bedst til investering</span>
+          <span class="sp-tier-desc">Specialiseret i udlejnings-, projekt- og investeringsejendomme</span>
+        </div>
+        <div class="sp-grid">
+          <a class="sp-card sp-card-best" href="https://www.ejendomstorvet.dk" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'Ejendomstorvet')">
+            <span class="sp-card-name">Ejendomstorvet</span>
+            <span class="sp-card-tag">Investering & erhverv · hele DK</span>
+            <span class="sp-card-go">Åbn portal →</span>
+          </a>
+          <a class="sp-card sp-card-best" href="https://sixtenpartners.dk" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'Sixten Partners')">
+            <span class="sp-card-name">Sixten Partners</span>
+            <span class="sp-card-tag">Udlejningsejendomme til salg</span>
+            <span class="sp-card-go">Åbn portal →</span>
+          </a>
+          <a class="sp-card sp-card-best" href="https://www.nyboligerhverv.dk" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'Nybolig Erhverv')">
+            <span class="sp-card-name">Nybolig Erhverv</span>
+            <span class="sp-card-tag">Bolig- & investeringsudlejning</span>
+            <span class="sp-card-go">Åbn portal →</span>
+          </a>
+          <a class="sp-card sp-card-best" href="https://www.nordicals.dk" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'Nordicals')">
+            <span class="sp-card-name">Nordicals</span>
+            <span class="sp-card-tag">Erhverv & investering</span>
+            <span class="sp-card-go">Åbn portal →</span>
+          </a>
+          <a class="sp-card sp-card-best" href="https://www.edc.dk/erhverv/" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'EDC Erhverv')">
+            <span class="sp-card-name">EDC Erhverv</span>
+            <span class="sp-card-tag">Poul Erik Bech · investering</span>
+            <span class="sp-card-go">Åbn portal →</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Tier 2: også OK -->
+      <div class="sp-tier">
+        <div class="sp-tier-head">
+          <span class="sp-badge">Også OK</span>
+          <span class="sp-tier-desc">Almindelige boligportaler — vi accepterer også links herfra</span>
+        </div>
+        <div class="sp-grid sp-grid-sm">
+          <a class="sp-card" href="https://www.boligsiden.dk" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'Boligsiden')"><span class="sp-card-name">Boligsiden</span><span class="sp-card-go">Åbn →</span></a>
+          <a class="sp-card" href="https://www.boliga.dk" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'Boliga')"><span class="sp-card-name">Boliga</span><span class="sp-card-go">Åbn →</span></a>
+          <a class="sp-card" href="https://www.edc.dk" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'EDC')"><span class="sp-card-name">EDC</span><span class="sp-card-go">Åbn →</span></a>
+          <a class="sp-card" href="https://home.dk" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'Home')"><span class="sp-card-name">Home</span><span class="sp-card-go">Åbn →</span></a>
+          <a class="sp-card" href="https://www.nybolig.dk" target="_blank" rel="noopener nofollow" onclick="pickSource(this,'Nybolig')"><span class="sp-card-name">Nybolig</span><span class="sp-card-go">Åbn →</span></a>
+        </div>
+      </div>
+
+      <div class="sp-foot" id="sp-foot">
+        <div class="sp-foot-text" id="sp-foot-text">Fundet en bolig, du vil regne på? Kopiér linket fra portalen og sæt det ind nedenfor.</div>
+        <button type="button" class="sp-cta" onclick="goToPaste()">
+          Indsæt link & analysér
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+        </button>
       </div>
     </div>
   </section>
@@ -3838,7 +3907,7 @@
             <!-- STEP 1 — STRATEGY -->
             <div class="strategy-chooser" role="group" aria-label="Investment strategy">
               <div class="strategy-label">
-                <span class="strategy-step">1</span>
+                <span class="strategy-step">2</span>
                 <span data-i18n="strategy.label">Pick your strategy</span>
               </div>
               <div class="strategy-cards">
@@ -3870,7 +3939,7 @@
                   </div>
                 </button>
               </div>
-              <div class="strategy-step-divider"><span class="strategy-step">2</span><span data-i18n="strategy.step2">Enter the property</span></div>
+              <div class="strategy-step-divider"><span class="strategy-step">3</span><span data-i18n="strategy.step2">Enter the property</span></div>
             </div>
 
             <!-- TABS -->
@@ -6640,6 +6709,32 @@ function switchFormTab(tab) {
     document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
     document.getElementById('tab-' + t).classList.toggle('active', t === tab);
   });
+}
+
+// ── TRIN 1 · KILDEVÆLGER ──────────────────────
+// User clicked a portal card: highlight it, remember the choice, and nudge the
+// footer CTA so it's obvious what to do when they come back with a link.
+function pickSource(el, name) {
+  try {
+    document.querySelectorAll('.sp-card.picked').forEach(c => c.classList.remove('picked'));
+    if (el) el.classList.add('picked');
+    const foot = document.getElementById('sp-foot-text');
+    if (foot) foot.innerHTML = `Du åbnede <strong>${name}</strong> i en ny fane. Find en bolig, kopiér linket, og sæt det ind her ↓`;
+    const cta = document.getElementById('sp-foot') && document.querySelector('.sp-cta');
+    if (cta) { cta.classList.remove('pulse'); void cta.offsetWidth; cta.classList.add('pulse'); }
+    localStorage.setItem('ni_source', name);
+  } catch (_) {}
+}
+
+// Jump from the source picker into the paste field, ready to analyse.
+function goToPaste() {
+  try { switchFormTab('url'); } catch (_) {}
+  const sec = document.getElementById('analyze-section');
+  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => {
+    const inp = document.getElementById('listing-url');
+    if (inp) { inp.focus({ preventScroll: true }); inp.classList.add('field-glow'); setTimeout(() => inp.classList.remove('field-glow'), 1600); }
+  }, 520);
 }
 
 // ── AUTOCOMPLETE ──────────────────────────────
