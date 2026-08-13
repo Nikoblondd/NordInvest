@@ -1,13 +1,20 @@
 {
+  "redirects": [
+    { "source": "/property-investment-copenhagen", "destination": "/investering-i-ejendom-koebenhavn", "permanent": true },
+    { "source": "/property-investment-copenhagen.html", "destination": "/investering-i-ejendom-koebenhavn", "permanent": true },
+    { "source": "/property-investment-stockholm", "destination": "/investering-i-ejendom-stockholm", "permanent": true },
+    { "source": "/property-investment-stockholm.html", "destination": "/investering-i-ejendom-stockholm", "permanent": true },
+    { "source": "/property-investment-oslo", "destination": "/investering-i-ejendom-oslo", "permanent": true },
+    { "source": "/property-investment-oslo.html", "destination": "/investering-i-ejendom-oslo", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/methodology", "destination": "/methodology.html" },
     { "source": "/investment-models", "destination": "/investment-models.html" },
     { "source": "/glossary", "destination": "/glossary.html" },
     { "source": "/portfolio", "destination": "/portfolio.html" },
-    { "source": "/property-investment-copenhagen", "destination": "/property-investment-copenhagen.html" },
-    { "source": "/property-investment-stockholm", "destination": "/property-investment-stockholm.html" },
-    { "source": "/property-investment-oslo", "destination": "/property-investment-oslo.html" },
+    { "source": "/investering-i-ejendom-stockholm", "destination": "/investering-i-ejendom-stockholm.html" },
+    { "source": "/investering-i-ejendom-oslo", "destination": "/investering-i-ejendom-oslo.html" },
     { "source": "/investering-i-ejendom-koebenhavn", "destination": "/investering-i-ejendom-koebenhavn.html" },
     { "source": "/investering-i-ejendom-aarhus", "destination": "/investering-i-ejendom-aarhus.html" },
     { "source": "/investering-i-ejendom-fyn", "destination": "/investering-i-ejendom-fyn.html" },
