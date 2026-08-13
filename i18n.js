@@ -18,13 +18,12 @@
   let currentLang = DEFAULT_LANG;
 
   function detectLang() {
+    // NordInvest is a Danish-only product now. English is served ONLY when an
+    // explicit ?lang=en is present in the URL (for SEO/hreflang crawlers). We no
+    // longer honour a stale stored 'en' — normal visitors always get Danish.
     const url = new URL(window.location.href);
     const urlLang = url.searchParams.get('lang');
     if (urlLang && SUPPORTED.includes(urlLang)) return urlLang;
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && SUPPORTED.includes(stored)) return stored;
-    } catch (_) {}
     return DEFAULT_LANG;
   }
 
