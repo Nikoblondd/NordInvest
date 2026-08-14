@@ -19,13 +19,12 @@
   var STORAGE_KEY = 'ni_lang';
 
   function detect() {
+    // NordInvest is Danish-only now. English is served ONLY when an explicit
+    // ?lang=en is present (for SEO/hreflang crawlers). A stale stored 'en' is
+    // ignored — normal visitors always get Danish.
     try {
       var u = new URLSearchParams(window.location.search).get('lang');
       if (u && SUPPORTED.indexOf(u) >= 0) return u;
-    } catch (e) {}
-    try {
-      var s = localStorage.getItem(STORAGE_KEY);
-      if (s && SUPPORTED.indexOf(s) >= 0) return s;
     } catch (e) {}
     return DEFAULT_LANG;
   }
@@ -89,7 +88,13 @@
     apply(lang);
   };
 
-  function init() { apply(detect()); }
+  function init() {
+    // Danish-only: retire the per-tool EN/DA switcher.
+    try {
+      document.querySelectorAll('.lang-toggle').forEach(function (t) { t.style.display = 'none'; });
+    } catch (e) {}
+    apply(detect());
+  }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
