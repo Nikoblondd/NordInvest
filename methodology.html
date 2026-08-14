@@ -45,8 +45,8 @@
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home",        "item": "https://www.nordinvest.io/" },
-    { "@type": "ListItem", "position": 2, "name": "Methodology", "item": "https://www.nordinvest.io/methodology" }
+    { "@type": "ListItem", "position": 1, "name": "Forside", "item": "https://www.nordinvest.io/" },
+    { "@type": "ListItem", "position": 2, "name": "Metode",  "item": "https://www.nordinvest.io/methodology" }
   ]
 }
 </script>
@@ -56,8 +56,8 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "How we source market data",
-  "description": "How NordInvest sources market data — direct citations from Danmarks Statistik (DST), Statistics Sweden (SCB), and Statistics Norway (SSB). Every figure traceable; no fabricated numbers.",
+  "headline": "Sådan finder vi vores markedsdata",
+  "description": "Sådan finder NordInvest markedsdata — direkte citeret fra Danmarks Statistik (DST), Statistiska centralbyrån (SCB) og Statistisk sentralbyrå (SSB). Hvert tal kan spores; ingen opdigtede tal.",
   "url": "https://www.nordinvest.io/methodology",
   "datePublished": "2026-06-15",
   "dateModified": "2026-06-18",
@@ -82,42 +82,42 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Where does NordInvest get its property market data?",
+      "name": "Hvor får NordInvest sine boligmarkedsdata fra?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Directly from national statistics agencies: Danmarks Statistik (DST) table EJ55 for Denmark, Statistics Sweden (SCB) table BO0501 for Sweden, and Statistics Norway (SSB) table 06035 for Norway. Every figure is linked to its source and tagged with the last-updated date and a confidence badge."
+        "text": "Direkte fra nationale statistikbureauer: Danmarks Statistik (DST) tabel EJ55 for Danmark, Statistiska centralbyrån (SCB) tabel BO0501 for Sverige og Statistisk sentralbyrå (SSB) tabel 06035 for Norge. Hvert tal er koblet til sin kilde og mærket med dato for seneste opdatering samt et konfidensmærke."
       }
     },
     {
       "@type": "Question",
-      "name": "Does NordInvest scrape Boligsiden, Hemnet, or Finn.no?",
+      "name": "Scraper NordInvest Boligsiden, Hemnet eller Finn.no?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Scraping listings portals breaks against terms of service and the data isn't worth the maintenance cost. NordInvest only uses publicly cited statistics agencies."
+        "text": "Nej. At scrape annonceportaler er i strid med brugsvilkårene, og dataene er ikke vedligeholdelsen værd. NordInvest bruger kun offentligt citerede statistikbureauer."
       }
     },
     {
       "@type": "Question",
-      "name": "Why is rent per m² often listed as Not available?",
+      "name": "Hvorfor står leje pr. m² ofte som Ikke tilgængelig?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "None of the Nordic national statistics agencies publish a unified per-m² monthly rent series at the municipality level. Denmark's BL11, Sweden's BO0405, and Norway's 07241 are rental indices (relative), not price levels. Rather than synthesize rent from yield assumptions, we mark it Not available and surface the underlying reason."
+        "text": "Ingen af de nordiske statistikbureauer offentliggør en samlet serie for månedlig leje pr. m² på kommuneniveau. Danmarks BL11, Sveriges BO0405 og Norges 07241 er lejeindeks (relative), ikke prisniveauer. I stedet for at fabrikere leje ud fra afkastantagelser markerer vi det Ikke tilgængelig og viser den underliggende årsag."
       }
     },
     {
       "@type": "Question",
-      "name": "What do the confidence badges mean?",
+      "name": "Hvad betyder konfidensmærkerne?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "High: sourced directly from a national statistics agency, refreshed within 18 months. Medium: either a national average used as fallback for an unknown municipality, or data older than 18 months. Low: reserved for derived/estimated data — we never ship Low; if a metric is only estimable, we mark it Not available instead."
+        "text": "Høj: hentet direkte fra et nationalt statistikbureau, opdateret inden for 18 måneder. Mellem: enten et landsgennemsnit brugt som reserve for en ukendt kommune, eller data ældre end 18 måneder. Lav: forbeholdt udledte/estimerede data — vi viser aldrig Lav; kan et tal kun estimeres, markerer vi det Ikke tilgængelig i stedet."
       }
     },
     {
       "@type": "Question",
-      "name": "How often is the data refreshed?",
+      "name": "Hvor ofte opdateres dataene?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The bundled dataset at /data/market-stats.json is refreshed quarterly by running scripts/update-market-data.mjs, which refetches DST, SCB, and SSB live. If a specific entry can't be refreshed, the old value is kept and flagged with last_attempted so the gap is visible."
+        "text": "Det medfølgende datasæt i /data/market-stats.json opdateres kvartalsvis ved at køre scripts/update-market-data.mjs, som henter DST, SCB og SSB live. Kan en bestemt post ikke opdateres, beholdes den gamle værdi og markeres med last_attempted, så hullet er synligt."
       }
     }
   ]
@@ -338,43 +338,43 @@
   <div class="nav-inner">
     <a href="/" class="logo">NordInvest</a>
     <div class="nav-links">
-      <a href="/">Home</a>
+      <a href="/">Forside</a>
       <a href="/blog">Blog</a>
-      <a href="/#analyze-section">Analyze a property</a>
+      <a href="/#analyze-section">Analysér en bolig</a>
     </div>
   </div>
 </nav>
 
 <main>
-  <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+  <nav class="breadcrumb-nav" aria-label="Brødkrumme">
     <ol class="breadcrumb-list">
-      <li><a href="/">Home</a></li>
-      <li aria-current="page">Methodology</li>
+      <li><a href="/">Forside</a></li>
+      <li aria-current="page">Metode</li>
     </ol>
   </nav>
 
-  <span class="eyebrow">Data methodology</span>
-  <h1>How we source market data</h1>
+  <span class="eyebrow">Datametode</span>
+  <h1>Sådan finder vi vores markedsdata</h1>
   <p class="lede">
-    Every per-square-metre figure NordInvest displays must trace to a named, publicly-citable
-    source. When we don't have a defensible source for a given area, we say so — we do not
-    fabricate numbers to fill the gap.
+    Hvert tal pr. kvadratmeter, NordInvest viser, skal kunne spores til en navngiven, offentligt
+    tilgængelig kilde. Når vi ikke har en holdbar kilde for et bestemt område, siger vi det —
+    vi opdigter ikke tal for at fylde hullet.
   </p>
 
   <div class="principle">
-    <strong>The rule:</strong> if a metric can't link to a real dataset, the UI shows
-    <em>"Reliable local market data unavailable for this area"</em>. Never an invented number,
-    never a guess dressed up as a benchmark.
+    <strong>Reglen:</strong> hvis et tal ikke kan kobles til et rigtigt datasæt, viser
+    siden <em>"Pålidelige lokale markedsdata er ikke tilgængelige for dette område"</em>.
+    Aldrig et opfundet tal, aldrig et gæt forklædt som et benchmark.
   </div>
 
-  <h2>Where the numbers come from</h2>
+  <h2>Hvor tallene kommer fra</h2>
 
   <div class="source-card">
-    <h3>🇩🇰 Denmark — Danmarks Statistik (DST)</h3>
-    <div class="source-card-meta">Table EJ55 · refreshed quarterly via the official statbank API</div>
+    <h3>🇩🇰 Danmark — Danmarks Statistik (DST)</h3>
+    <div class="source-card-meta">Tabel EJ55 · opdateres kvartalsvis via det officielle Statistikbank-API</div>
     <p>
-      Average realised sale price per m² by municipality (kommunenummer), for owner-occupied
-      apartments. National appreciation rates derived from the same series.
+      Gennemsnitlig realiseret salgspris pr. m² efter kommune (kommunenummer) for ejerlejligheder.
+      Landsdækkende værdistigningstakter er udledt af samme dataserie.
     </p>
     <a href="https://www.statbank.dk/EJ55" target="_blank" rel="noopener">
       statbank.dk/EJ55 ↗
@@ -382,12 +382,12 @@
   </div>
 
   <div class="source-card">
-    <h3>🇸🇪 Sweden — Statistics Sweden (SCB)</h3>
-    <div class="source-card-meta">Table BO0501 (Fastighetspriser) · refreshed quarterly via SCB PXWeb API</div>
+    <h3>🇸🇪 Sverige — Statistiska centralbyrån (SCB)</h3>
+    <div class="source-card-meta">Tabel BO0501 (Fastighetspriser) · opdateres kvartalsvis via SCB PXWeb-API</div>
     <p>
-      Average sale price per m² by län and major municipalities. Sweden's free per-m²
-      rental series at municipality level is limited, so rent figures may be unavailable
-      in many regions.
+      Gennemsnitlig salgspris pr. m² efter län og større kommuner. Sveriges gratis serie for
+      leje pr. m² på kommuneniveau er begrænset, så lejetal kan være utilgængelige i mange
+      områder.
     </p>
     <a href="https://www.scb.se/en/finding-statistics/statistics-by-subject-area/housing-construction-and-building/real-estate-prices-and-registrations-of-title/real-estate-prices-and-registrations-of-title/" target="_blank" rel="noopener">
       scb.se/en/...real-estate-prices ↗
@@ -395,89 +395,89 @@
   </div>
 
   <div class="source-card">
-    <h3>🇳🇴 Norway — Statistics Norway (SSB)</h3>
-    <div class="source-card-meta">Table 06035 (Boligpriser) · refreshed quarterly via SSB PXWeb API</div>
+    <h3>🇳🇴 Norge — Statistisk sentralbyrå (SSB)</h3>
+    <div class="source-card-meta">Tabel 06035 (Boligpriser) · opdateres kvartalsvis via SSB PXWeb-API</div>
     <p>
-      Average sale price per m² by municipality (kommune). Appreciation rates derived
-      from SSB's published housing price index.
+      Gennemsnitlig salgspris pr. m² efter kommune. Værdistigningstakter er udledt af SSB's
+      offentliggjorte boligprisindeks.
     </p>
     <a href="https://www.ssb.no/en/statbank/table/06035" target="_blank" rel="noopener">
       ssb.no/en/statbank/table/06035 ↗
     </a>
   </div>
 
-  <h2>Confidence levels</h2>
-  <p>Every metric displayed in NordInvest carries a confidence badge:</p>
+  <h2>Konfidensniveauer</h2>
+  <p>Hvert tal i NordInvest bærer et konfidensmærke:</p>
 
   <table class="conf-table">
     <thead>
-      <tr><th>Badge</th><th>Meaning</th></tr>
+      <tr><th>Mærke</th><th>Betydning</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><span class="conf-badge conf-high">High</span></td>
-        <td>Sourced directly from a national statistics agency, refreshed within the last 18 months.</td>
+        <td><span class="conf-badge conf-high">Høj</span></td>
+        <td>Hentet direkte fra et nationalt statistikbureau, opdateret inden for de seneste 18 måneder.</td>
       </tr>
       <tr>
-        <td><span class="conf-badge conf-medium">Medium</span></td>
-        <td>Either (a) a national average used as a fallback because we don't have a municipality-level figure, or (b) authoritative data that is older than 18 months.</td>
+        <td><span class="conf-badge conf-medium">Mellem</span></td>
+        <td>Enten (a) et landsgennemsnit brugt som reserve, fordi vi ikke har et tal på kommuneniveau, eller (b) autoritative data, der er ældre end 18 måneder.</td>
       </tr>
       <tr>
-        <td><span class="conf-badge conf-low">Low</span></td>
-        <td>Reserved for derived or estimated data. <strong>We never ship "Low" — if the only source is an estimate, the field is set to "Not available" instead.</strong></td>
+        <td><span class="conf-badge conf-low">Lav</span></td>
+        <td>Forbeholdt udledte eller estimerede data. <strong>Vi viser aldrig "Lav" — hvis den eneste kilde er et estimat, sættes feltet til "Ikke tilgængelig" i stedet.</strong></td>
       </tr>
       <tr>
-        <td><span class="conf-badge conf-unavailable">Unavailable</span></td>
-        <td>We don't have a citable source for this metric in this area. The UI is explicit about why.</td>
+        <td><span class="conf-badge conf-unavailable">Ikke tilgængelig</span></td>
+        <td>Vi har ikke en citerbar kilde for dette tal i dette område. Siden er tydelig om hvorfor.</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Why rent-per-m² is often unavailable</h2>
+  <h2>Hvorfor leje pr. m² ofte ikke er tilgængelig</h2>
   <p>
-    Sale-price data per municipality is well-published across the Nordics. Direct rent
-    figures per m² are not. Denmark's BL11 rental series is an <em>index</em>, not a price
-    level. Sweden and Norway publish similar indices. Private rent data from Boligportal,
-    Hemnet, or Boligsiden is collected from listings — useful but commercial and not
-    something we license today.
+    Salgsprisdata pr. kommune er godt offentliggjort i hele Norden. Direkte lejetal pr. m²
+    er det ikke. Danmarks BL11-lejeserie er et <em>indeks</em>, ikke et prisniveau. Sverige
+    og Norge offentliggør lignende indeks. Private lejedata fra Boligportal, Hemnet eller
+    Boligsiden er indsamlet fra annoncer — nyttige, men kommercielle og ikke noget, vi
+    licenserer i dag.
   </p>
   <p>
-    Rather than synthesize rent figures from yield assumptions (which is what many real
-    estate tools do), we show <strong>"Not available"</strong> with the underlying reason.
-    If you need a rent benchmark for a specific neighbourhood, we recommend pulling 5–10
-    comparable listings manually.
+    I stedet for at fabrikere lejetal ud fra afkastantagelser (hvilket mange ejendomsværktøjer
+    gør) viser vi <strong>"Ikke tilgængelig"</strong> med den underliggende årsag. Har du brug
+    for et lejebenchmark for et bestemt kvarter, anbefaler vi at hente 5–10 sammenlignelige
+    annoncer manuelt.
   </p>
 
   <div class="never-list">
-    <h3>What we will not do</h3>
+    <h3>Det gør vi ikke</h3>
     <ul>
-      <li>Scrape Boliga, Hemnet, Finn.no, or any other listings portal — those datasets are scraped against the terms of service and break frequently.</li>
-      <li>Invent rent-per-m² by deriving it from "typical area yield × sale price".</li>
-      <li>Cite a source without a working link.</li>
-      <li>Show a number without a confidence badge.</li>
+      <li>Scraper Boliga, Hemnet, Finn.no eller andre annonceportaler — de datasæt er scrapet i strid med brugsvilkårene og går ofte i stykker.</li>
+      <li>Opfinder leje pr. m² ved at udlede den af "typisk områdeafkast × salgspris".</li>
+      <li>Citerer en kilde uden et fungerende link.</li>
+      <li>Viser et tal uden et konfidensmærke.</li>
     </ul>
   </div>
 
-  <h2>How to refresh the dataset</h2>
+  <h2>Sådan opdaterer du datasættet</h2>
   <p>
-    The bundled dataset lives at <code>/data/market-stats.json</code>. A script at
-    <code>/scripts/update-market-data.mjs</code> refetches the latest figures from
-    DST, SCB, and SSB.
+    Det medfølgende datasæt ligger i <code>/data/market-stats.json</code>. Et script i
+    <code>/scripts/update-market-data.mjs</code> henter de nyeste tal fra DST, SCB og SSB.
   </p>
   <pre style="background:var(--navy); color:#fff; padding:14px 18px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; overflow-x:auto;">node scripts/update-market-data.mjs</pre>
   <p>
-    Run this once a quarter. The script reports which entries were updated, which were
-    kept (no remote feed configured), and which failed — so the data file always reflects
-    the freshest signal we can pull.
+    Kør det én gang i kvartalet. Scriptet rapporterer, hvilke poster der blev opdateret,
+    hvilke der blev beholdt (intet fjern-feed konfigureret), og hvilke der fejlede — så
+    datafilen altid afspejler det friskeste signal, vi kan hente.
   </p>
 
-  <h2>Found a wrong figure?</h2>
+  <h2>Fundet et forkert tal?</h2>
   <p>
-    If a published statistic in our dataset doesn't match the underlying source, please
-    file an issue or email us — we'll fix it the same day. Our credibility depends on it.
+    Hvis en offentliggjort statistik i vores datasæt ikke stemmer med den underliggende
+    kilde, så opret en fejlrapport eller skriv til os — vi retter det samme dag. Vores
+    troværdighed afhænger af det.
   </p>
 
-  <p class="last-updated">Last updated: 2026-06-15</p>
+  <p class="last-updated">Sidst opdateret: 15-06-2026</p>
 </main>
 
 <!-- i18n.js moved to head with defer for parallel download -->
@@ -492,7 +492,7 @@
       np.style.display = 'inline-flex';
       const av = document.getElementById('nav-profile-avatar');
       if (av) av.textContent = (u.name || '?').trim().split(/\s+/).slice(0,2).map(s => s[0]?.toUpperCase() || '').join('') || '?';
-      np.setAttribute('title', `${u.name} · View portfolio`);
+      np.setAttribute('title', `${u.name} · Se din profil`);
     }
   } catch (_) {}
 })();
