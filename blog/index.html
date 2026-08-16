@@ -532,15 +532,15 @@
 </div>
 
 <div class="filters-bar" id="filtersBar">
-  <span class="filter-label">Filter:</span>
-  <button class="tag-filter active" data-tag="all">All Posts</button>
+  <span class="filter-label">Filtrér:</span>
+  <button class="tag-filter active" data-tag="all">Alle indlæg</button>
 </div>
 
 <main id="main-content">
   <div class="posts-grid" id="postsGrid">
     <div class="posts-empty">
       <div class="spinner"></div>
-      <p>Loading posts…</p>
+      <p>Indlæser indlæg…</p>
     </div>
   </div>
 </main>
@@ -550,7 +550,7 @@
     <img src="/N (4).png" class="logo-img" alt="NordInvest logo">
     NordInvest
   </a>
-  <p>&copy; 2026 NordInvest. All rights reserved.</p>
+  <p>&copy; 2026 NordInvest. Alle rettigheder forbeholdes.</p>
 </footer>
 
 <script>
@@ -595,7 +595,7 @@
     const tags = (post.tags || []).slice(0, 3)
       .map(t => `<span class="tag-pill">${escHtml(formatTag(t))}</span>`).join('');
 
-    const featuredBadge = isFeatured ? `<div class="featured-badge">★ Latest</div>` : '';
+    const featuredBadge = isFeatured ? `<div class="featured-badge">★ Nyeste</div>` : '';
 
     return `
       <a class="post-card${isFeatured ? ' featured-card' : ''}" href="/blog/${post.slug}" data-tags="${(post.tags||[]).join(',')}">

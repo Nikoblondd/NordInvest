@@ -78,6 +78,19 @@ export default {
     ],
     "translation": "property-investment-denmark-for-foreigners"
   },
+  "ejendomsinvestering": {
+    "title": "Ejendomsinvestering i Danmark 2026 — den komplette guide til afkast, finansiering og strategi",
+    "description": "Alt om ejendomsinvestering i Danmark 2026 — afkast, finansiering, skat, strategier og de bedste byer. Komplet guide med regneeksempler og gratis analyseværktøj.",
+    "date": "2026-08-16",
+    "image": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&auto=format&fit=crop&q=80",
+    "author": "NordInvest",
+    "lang": "da",
+    "tags": [
+      "danmark",
+      "guide"
+    ],
+    "translation": null
+  },
   "ejendomsskat-investeringsejendom-2026": {
     "title": "Ejendomsskat på investeringsejendom 2026 — det du betaler og de fradrag der flytter regningen",
     "description": "Hvad du betaler i grundskyld og skat på lejeindtægt, plus de 9 fradrag investorer ofte glemmer. Konkret 2026-eksempel og VSO, ApS eller personligt regi.",
