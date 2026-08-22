@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { analyze, kr, krMd, pct } from "@/lib/analysis";
+import { analyze, krMd, pct } from "@/lib/analysis";
 import { clsx } from "@/lib/clsx";
 
 export function HeroTerminal() {
