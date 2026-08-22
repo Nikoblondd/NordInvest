@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nordinvest-v2",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "nordinvest-v2", "run", "dev"],
+      "port": 3000
+    }
+  ]
+}
