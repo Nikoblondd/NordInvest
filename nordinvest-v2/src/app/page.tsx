@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { DashboardMockup } from "@/components/DashboardMockup";
 import { PricingCards } from "@/components/PricingCards";
+import { HeroTerminal } from "@/components/HeroTerminal";
 import { site } from "@/lib/site";
 
 const problems = [
@@ -45,53 +46,77 @@ export default function Home() {
     <main>
       <Nav theme="dark" />
 
-      {/* 1 — HERO */}
-      <section className="grain relative flex min-h-[88vh] items-center bg-navy-900 text-cream-100">
-        <div className="container-x py-32 text-center">
-          <Reveal>
-            <p className="micro text-gold-400">
+      {/* 1 — HERO (editorial terminal) */}
+      <section className="grain relative bg-navy-900 text-cream-100">
+        <div className="container-x pt-36 pb-0">
+          {/* eyebrow row with hairline */}
+          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-gold-400">
               Data-drevne beslutninger for danske ejendomsinvestorer
-            </p>
-          </Reveal>
-          <Reveal delay={0.05}>
-            <h1 className="mx-auto mt-6 max-w-4xl font-serif text-5xl font-light leading-[0.95] tracking-tight md:text-7xl lg:text-8xl">
-              Analysér enhver dansk ejendom på under{" "}
-              <span className="italic text-gold-400">60 sekunder.</span>
-            </h1>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="mx-auto mt-8 max-w-2xl text-lg text-cream-100/70">
-              Ingen regneark. Ingen mæglere. Bare tal du kan stole på — og en klar
-              dom om hvorvidt ejendommen er værd at investere i.
-            </p>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button href="/auth/signup" size="lg">
-                Prøv Analyseren gratis
-              </Button>
-              <Button
-                href="#saadan"
-                variant="secondary"
-                size="lg"
-                className="text-cream-100"
-              >
-                Se hvordan det virker
-              </Button>
+            </span>
+            <span className="hidden font-mono text-[11px] uppercase tracking-[0.22em] text-cream-100/30 md:block">
+              DK · 2026
+            </span>
+          </div>
+
+          <div className="grid items-center gap-12 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
+            {/* left — headline */}
+            <div>
+              <Reveal>
+                <h1 className="font-serif text-5xl font-light leading-[0.95] tracking-tight md:text-7xl lg:text-8xl">
+                  Analysér enhver
+                  <br />
+                  dansk ejendom på
+                  <br />
+                  under <span className="italic text-gold-400">60 sekunder.</span>
+                </h1>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <p className="mt-8 max-w-lg text-lg text-cream-100/70">
+                  Ingen regneark. Ingen mæglere. Bare tal du kan stole på — og en
+                  klar dom om hvorvidt ejendommen er værd at investere i.
+                </p>
+              </Reveal>
+              <Reveal delay={0.15}>
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+                  <Button href="/auth/signup" size="lg">
+                    Prøv Analyseren gratis
+                  </Button>
+                  <Button
+                    href="#saadan"
+                    variant="secondary"
+                    size="lg"
+                    className="text-cream-100"
+                  >
+                    Se hvordan det virker
+                  </Button>
+                </div>
+              </Reveal>
             </div>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <div className="mt-14">
-              <p className="micro text-cream-100/40">Data hentet fra</p>
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-cream-100/50">
-                <span>Danmarks Statistik</span>
-                <span className="text-cream-100/20">·</span>
-                <span>Finanstilsynet</span>
-                <span className="text-cream-100/20">·</span>
-                <span>CVR</span>
+
+            {/* right — live terminal */}
+            <Reveal delay={0.2}>
+              <HeroTerminal />
+            </Reveal>
+          </div>
+
+          {/* giant-numeral stat band with hairlines */}
+          <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10">
+            {[
+              { n: "60", u: "sek. til en dom" },
+              { n: "0", u: "kr for at starte" },
+              { n: "6", u: "analyser i én rapport" },
+            ].map((s) => (
+              <div key={s.u} className="px-2 py-8 first:pl-0">
+                <div className="font-mono text-5xl font-light text-cream-100 tnum md:text-6xl">
+                  {s.n}
+                </div>
+                <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-cream-100/40">
+                  {s.u}
+                </div>
               </div>
-            </div>
-          </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
