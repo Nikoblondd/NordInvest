@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { DashboardMockup } from "@/components/DashboardMockup";
 import { PricingCards } from "@/components/PricingCards";
+import { site } from "@/lib/site";
 
 const problems = [
   {
@@ -170,7 +171,7 @@ export default function Home() {
       <section id="saadan" className="grain scroll-mt-24 bg-navy-900 py-24 text-cream-100">
         <div className="container-x">
           <Reveal>
-            <h2 className="text-3xl md:text-5xl">Fire trin. Tres sekunder.</h2>
+            <h2 className="text-3xl md:text-5xl">Fire trin. Treds sekunder.</h2>
           </Reveal>
           <div className="mt-14 grid gap-8 md:grid-cols-4">
             {steps.map((s, i) => (
@@ -203,7 +204,7 @@ export default function Home() {
               </p>
               <p className="mt-4 text-stone-600">Følg med, hvis det interesserer dig.</p>
               <Button
-                href="https://www.linkedin.com/"
+                href={site.linkedin}
                 className="mt-8"
               >
                 Følg på LinkedIn →
@@ -225,7 +226,7 @@ export default function Home() {
               </div>
               <div className="mt-6 border-t border-stone-100 pt-6">
                 <Button
-                  href="https://www.linkedin.com/"
+                  href={site.linkedin}
                   variant="secondary"
                   className="w-full"
                 >

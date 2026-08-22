@@ -269,7 +269,7 @@ export function AnalyzerApp() {
                   width={56}
                 />
                 <Tooltip
-                  formatter={(v: number) => [kr(v), "Værdi"]}
+                  formatter={(v) => [kr(Number(v)), "Værdi"]}
                   labelFormatter={(y) => `År ${y}`}
                 />
                 <Line

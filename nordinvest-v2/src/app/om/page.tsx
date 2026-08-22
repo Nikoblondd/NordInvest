@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/Button";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Om NordInvest",
@@ -44,7 +45,7 @@ export default function OmPage() {
           </div>
 
           <div className="mt-12">
-            <Button href="https://www.linkedin.com/">Følg rejsen på LinkedIn →</Button>
+            <Button href={site.linkedin}>Følg rejsen på LinkedIn →</Button>
           </div>
         </div>
       </article>

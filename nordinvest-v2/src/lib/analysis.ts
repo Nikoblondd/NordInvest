@@ -26,6 +26,14 @@ export type AnalysisResult = {
   forecast: { year: number; value: number }[]; // 5-yr value (DKK)
 };
 
+export function monthlyPayment(
+  loan: number,
+  annualRatePct: number,
+  termYears: number,
+): number {
+  return annuity(loan, annualRatePct, termYears);
+}
+
 function annuity(loan: number, annualRatePct: number, termYears: number): number {
   const r = annualRatePct / 100 / 12;
   const n = termYears * 12;
