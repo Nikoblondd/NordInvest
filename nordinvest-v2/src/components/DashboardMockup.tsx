@@ -2,11 +2,11 @@ import { analyze, kr, krMd, pct } from "@/lib/analysis";
 
 // A realistic sample analysis rendered as a styled panel (not a screenshot).
 const sample = analyze({
-  price: 4_300_000,
+  price: 3_200_000,
   monthlyRent: 21_500,
   downPaymentPct: 20,
   interestRate: 5.0,
-  monthlyExpenses: 3_800,
+  monthlyExpenses: 3_000,
 });
 
 export function DashboardMockup() {
