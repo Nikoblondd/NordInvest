@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  display: "swap",
-  axes: ["opsz"],
-});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,20 +8,14 @@ const inter = Inter({
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://nordinvest.io"),
   title: {
-    default: "NordInvest — Analysér enhver dansk ejendom på 60 sekunder",
+    default: "NordInvest — Analyser ejendomsinvesteringer på under 60 sekunder",
     template: "%s · NordInvest",
   },
   description:
-    "Data-drevne beslutninger for danske ejendomsinvestorer. Indsæt et link, få en klar dom om afkast, cash flow og risiko — på under 60 sekunder.",
+    "Analyser danske ejendomsinvesteringer på under 60 sekunder. Få cashflow, afkast og rentestress-test — indsæt et link fra en dansk boligside og få en klar dom.",
   openGraph: {
     type: "website",
     locale: "da_DK",
@@ -42,10 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="da"
-      className={`${fraunces.variable} ${inter.variable} ${jetbrains.variable}`}
-    >
+    <html lang="da" className={inter.variable}>
       <body>{children}</body>
     </html>
   );

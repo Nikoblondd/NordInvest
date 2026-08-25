@@ -1,22 +1,23 @@
 import Link from "next/link";
 import { clsx } from "@/lib/clsx";
 
-type Variant = "primary" | "secondary";
+type Variant = "primary" | "dark" | "secondary";
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center rounded-full font-medium tracking-tight transition-all duration-200 ease-standard focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2";
+  "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 ease-standard focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-60";
 
 const sizes: Record<Size, string> = {
-  md: "px-6 py-3 text-sm",
-  lg: "px-8 py-4 text-base",
+  md: "px-5 py-2.5 text-sm rounded-full",
+  lg: "px-8 py-3.5 text-base rounded-full",
 };
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-gold-500 text-navy-900 hover:bg-gold-600 hover:scale-[1.02] shadow-[0_8px_30px_-12px_rgba(184,147,90,0.6)]",
+    "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20",
+  dark: "bg-slate-900 text-white hover:bg-slate-800",
   secondary:
-    "bg-transparent border border-current hover:opacity-80",
+    "bg-slate-100 text-slate-900 hover:bg-slate-200",
 };
 
 type Props = {
@@ -37,12 +38,12 @@ export function Button({
 }: Props) {
   const cls = clsx(base, sizes[size], variants[variant], className);
   if (href) {
-    const external = href.startsWith("http");
+    const external = href.startsWith("http") || href.startsWith("mailto") || href.startsWith("tel");
     return (
       <Link
         href={href}
         className={cls}
-        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        {...(external ? { target: href.startsWith("http") ? "_blank" : undefined, rel: "noopener noreferrer" } : {})}
       >
         {children}
       </Link>

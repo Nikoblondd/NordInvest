@@ -1,43 +1,47 @@
 import type { Config } from "tailwindcss";
 
+// NordInvest brand = light + blue (slate/blue/indigo/emerald).
+// Legacy token names (navy/gold/cream/stone) are remapped to the new palette so
+// every existing page adopts the rebrand without per-file rewrites.
 const config: Config = {
   content: ["./src/**/*.{ts,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
         navy: {
-          900: "#0F1F3D",
-          800: "#1A2D52",
-          700: "#2A3F6B",
+          900: "#0f172a", // slate-900 — dark surfaces, featured card
+          800: "#1e293b", // slate-800
+          700: "#334155", // slate-700
         },
         gold: {
-          400: "#D4AF75",
-          500: "#B8935A",
-          600: "#9B7B48",
+          400: "#60a5fa", // blue-400
+          500: "#2563eb", // blue-600 — primary accent
+          600: "#1d4ed8", // blue-700 — hover
         },
         cream: {
-          50: "#FAF7F2",
-          100: "#F1EBE0",
+          50: "#f8fafc", // slate-50 — page background
+          100: "#f1f5f9", // slate-100
         },
         stone: {
-          200: "#E7E1D6",
-          400: "#A8A29E",
-          600: "#57534E",
-          900: "#1C1917",
+          200: "#e2e8f0", // slate-200 — borders
+          400: "#94a3b8", // slate-400 — muted
+          600: "#475569", // slate-600 — secondary text
+          900: "#0f172a", // slate-900 — body text
         },
         data: {
-          pos: "#10B981",
-          warn: "#F59E0B",
-          neg: "#F43F5E",
+          pos: "#10b981", // emerald-500
+          warn: "#f59e0b", // amber-500
+          neg: "#f43f5e", // rose-500
         },
       },
       fontFamily: {
-        serif: ["var(--font-fraunces)", "Georgia", "serif"],
-        sans: ["var(--font-inter)", "-apple-system", "sans-serif"],
-        mono: ["var(--font-jetbrains)", "monospace"],
+        // All roles map to Inter — single bold grotesque brand voice.
+        sans: ["var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
+        serif: ["var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
+        mono: ["var(--font-inter)", "ui-monospace", "monospace"],
       },
       letterSpacing: {
-        micro: "0.2em",
+        micro: "0.12em",
       },
       maxWidth: {
         "7xl": "80rem",

@@ -2,101 +2,76 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "./ui/Button";
-import { clsx } from "@/lib/clsx";
+import { ArrowRight, Menu, X } from "lucide-react";
+import { Logo } from "./Logo";
 
 const links = [
   { href: "/analyseren", label: "Analyseren" },
+  { href: "/#hvordan", label: "Sådan virker det" },
   { href: "/priser", label: "Priser" },
   { href: "/vaerktoejer", label: "Værktøjer" },
   { href: "/blog", label: "Blog" },
-  { href: "/om", label: "Om" },
 ];
 
-export function Nav({ theme = "light" }: { theme?: "light" | "dark" }) {
+export function Nav() {
   const [open, setOpen] = useState(false);
-  const onDark = theme === "dark";
-  const text = onDark ? "text-cream-100" : "text-stone-900";
-  const muted = onDark ? "text-cream-100/70" : "text-stone-600";
 
   return (
-    <header
-      className={clsx(
-        "absolute inset-x-0 top-0 z-50",
-        onDark ? "text-cream-100" : "text-stone-900",
-      )}
-    >
-      <nav className="container-x flex h-20 items-center justify-between">
-        <Link
-          href="/"
-          className={clsx("font-serif text-xl tracking-tight", text)}
-        >
-          NordInvest
-        </Link>
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-slate-50/80 backdrop-blur-lg">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+        <Logo />
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
           {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={clsx(
-                "text-sm transition-colors hover:opacity-70",
-                muted,
-              )}
-            >
+            <Link key={l.href} href={l.href} className="transition-colors hover:text-blue-600">
               {l.label}
             </Link>
           ))}
-          <Button href="/auth/login" variant="secondary" size="md">
-            Log ind
-          </Button>
-          <Button href="/auth/signup" size="md">
-            Prøv gratis
-          </Button>
         </div>
 
-        <button
-          aria-label="Menu"
-          className={clsx("md:hidden", text)}
-          onClick={() => setOpen((v) => !v)}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            {open ? (
-              <path
-                d="M6 6l12 12M18 6L6 18"
-                stroke="currentColor"
-                strokeWidth="1.6"
-              />
-            ) : (
-              <path
-                d="M4 7h16M4 12h16M4 17h16"
-                stroke="currentColor"
-                strokeWidth="1.6"
-              />
-            )}
-          </svg>
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/auth/login"
+            className="hidden text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 md:block"
+          >
+            Log ind
+          </Link>
+          <Link
+            href="/auth/signup"
+            className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-slate-800"
+          >
+            Start gratis <ArrowRight size={16} />
+          </Link>
+          <button
+            aria-label="Menu"
+            className="text-slate-700 md:hidden"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </nav>
 
       {open && (
-        <div className="border-t border-stone-200/20 bg-navy-900 px-6 py-6 md:hidden">
+        <div className="border-t border-slate-200 bg-slate-50 px-6 py-5 md:hidden">
           <div className="flex flex-col gap-4">
             {links.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-cream-100 text-lg"
+                className="text-base font-medium text-slate-700"
                 onClick={() => setOpen(false)}
               >
                 {l.label}
               </Link>
             ))}
-            <div className="mt-2 flex flex-col gap-3">
-              <Button href="/auth/login" variant="secondary" className="text-cream-100">
-                Log ind
-              </Button>
-              <Button href="/auth/signup">Prøv gratis</Button>
-            </div>
+            <Link
+              href="/auth/login"
+              className="text-base font-medium text-slate-700"
+              onClick={() => setOpen(false)}
+            >
+              Log ind
+            </Link>
           </div>
         </div>
       )}

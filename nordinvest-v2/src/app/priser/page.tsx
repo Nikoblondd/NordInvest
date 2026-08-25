@@ -7,7 +7,7 @@ import { Accordion } from "@/components/Accordion";
 export const metadata: Metadata = {
   title: "Priser",
   description:
-    "Betal for det du bruger. Gratis til 3 analyser om måneden, Starter fra 129 kr/md. Uden binding — opsig når som helst.",
+    "Gennemsigtige priser for seriøse ejendomsinvestorer. Gratis til 3 analyser om måneden, Starter fra 129 kr/md. Uden binding.",
 };
 
 const faq = [
@@ -21,7 +21,7 @@ const faq = [
   },
   {
     q: "Hvor kommer jeres data fra?",
-    a: "Prisudvikling bygger på Danmarks Statistiks EJ55-data. Renter afspejler aktuelle realkreditrenter. Alle antagelser er dokumenteret i hver rapport.",
+    a: "Prisudvikling bygger på Danmarks Statistiks EJ55-data og offentlige registre som BBR. Renter afspejler aktuelle realkreditrenter. Alle antagelser er dokumenteret i hver analyse.",
   },
   {
     q: "Er der en gratis prøveperiode?",
@@ -35,42 +35,32 @@ const faq = [
     q: "Hvordan betaler jeg?",
     a: "Via Stripe — betalingskort eller MobilePay. Betalingen er sikker, og vi gemmer aldrig dine kortoplysninger selv.",
   },
-  {
-    q: "Er mine data sikre?",
-    a: "Dine analyser er private og knyttet til din konto. Vi sælger ikke data videre. Se privatlivspolitikken for detaljer.",
-  },
-  {
-    q: "Kan jeg få faktura til firmaet?",
-    a: "Ja. Pro- og Ubegrænset-planer kan få EAN-faktura. Kontakt os, så sætter vi det op.",
-  },
 ];
 
 export default function PriserPage() {
   return (
-    <main>
-      <Nav theme="dark" />
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <Nav />
 
-      <section className="grain bg-navy-900 pt-32 text-cream-100">
-        <div className="container-x pb-20 text-center">
-          <p className="micro text-gold-400">Priser</p>
-          <h1 className="mx-auto mt-6 max-w-3xl text-4xl md:text-6xl">
-            Betal for det du bruger. Ikke en krone mere.
-          </h1>
-          <p className="mt-5 text-lg text-cream-100/70">
-            Uden binding. Opsig når som helst.
-          </p>
+      <section className="px-6 pt-24 pb-16 text-center">
+        <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
+          Gennemsigtige priser for seriøse investorer
+        </h1>
+        <p className="mx-auto mt-5 max-w-xl text-lg text-slate-600">
+          Vælg den pakke, der passer til dit investeringsniveau. Uden binding — opsig
+          når som helst.
+        </p>
+      </section>
+
+      <section className="px-6 pb-24">
+        <div className="mx-auto flex max-w-7xl flex-col items-center">
+          <PricingCards />
         </div>
       </section>
 
-      <section className="bg-cream-50 py-20">
-        <div className="container-x">
-          <PricingCards theme="light" />
-        </div>
-      </section>
-
-      <section className="bg-cream-100 py-20">
-        <div className="container-x max-w-3xl">
-          <h2 className="text-3xl md:text-4xl">Ofte stillede spørgsmål</h2>
+      <section className="bg-white px-6 py-24">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-3xl font-bold tracking-tight">Ofte stillede spørgsmål</h2>
           <div className="mt-8">
             <Accordion items={faq} />
           </div>
@@ -78,6 +68,6 @@ export default function PriserPage() {
       </section>
 
       <Footer />
-    </main>
+    </div>
   );
 }

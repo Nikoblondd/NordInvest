@@ -3,9 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --font-fraunces: "Fraunces", Georgia, serif;
-  --font-inter: "Inter", -apple-system, sans-serif;
-  --font-jetbrains: "JetBrains Mono", monospace;
+  /* All font roles resolve to Inter (set on <html> by next/font). */
+  --font-inter: "Inter", -apple-system, system-ui, sans-serif;
+  --font-fraunces: var(--font-inter);
+  --font-jetbrains: var(--font-inter);
 }
 
 @layer base {
@@ -14,15 +15,15 @@
   }
   body {
     @apply bg-cream-50 text-stone-900 font-sans antialiased;
-    font-feature-settings: "ss01";
+  }
+  ::selection {
+    @apply bg-blue-200/70;
   }
   h1,
   h2,
   h3 {
-    @apply font-serif;
-    font-optical-sizing: auto;
+    @apply font-sans font-bold tracking-tight;
   }
-  /* Tabular numbers everywhere we render data */
   .tnum {
     font-feature-settings: "tnum" 1;
   }
@@ -30,33 +31,37 @@
 
 @layer components {
   .micro {
-    @apply font-mono text-[11px] font-medium uppercase tracking-micro;
+    @apply text-xs font-semibold uppercase tracking-micro;
   }
-  /* hairline divider, broadsheet-style */
   .rule {
-    @apply border-t border-stone-200;
+    @apply border-t border-slate-200;
   }
   .container-x {
     @apply mx-auto max-w-7xl px-6 md:px-12;
   }
+  /* grain overlay retired in the light rebrand — no-op to keep existing markup safe */
+  .grain {
+    position: relative;
+  }
+
   /* Rendered markdown article */
   .article {
-    @apply text-lg leading-relaxed text-stone-700;
+    @apply text-lg leading-relaxed text-slate-700;
   }
   .article > * + * {
     @apply mt-6;
   }
   .article h2 {
-    @apply mt-12 text-2xl md:text-3xl text-stone-900;
+    @apply mt-12 text-2xl md:text-3xl text-slate-900;
   }
   .article h3 {
-    @apply mt-8 text-xl text-stone-900;
+    @apply mt-8 text-xl text-slate-900;
   }
   .article a {
-    @apply text-gold-600 underline underline-offset-2 hover:text-gold-500;
+    @apply text-blue-600 underline underline-offset-2 hover:text-blue-700;
   }
   .article strong {
-    @apply font-semibold text-stone-900;
+    @apply font-semibold text-slate-900;
   }
   .article ul {
     @apply list-disc space-y-2 pl-6;
@@ -65,36 +70,22 @@
     @apply list-decimal space-y-2 pl-6;
   }
   .article img {
-    @apply my-8 w-full rounded-2xl border border-stone-200;
+    @apply my-8 w-full rounded-3xl border border-slate-200;
   }
   .article blockquote {
-    @apply border-l-2 border-gold-500 pl-5 italic text-stone-600;
+    @apply border-l-2 border-blue-500 pl-5 italic text-slate-600;
   }
   .article table {
     @apply my-6 w-full border-collapse text-base;
   }
   .article th,
   .article td {
-    @apply border border-stone-200 px-3 py-2 text-left;
+    @apply border border-slate-200 px-3 py-2 text-left;
   }
   .article th {
-    @apply bg-cream-100 font-medium text-stone-900;
+    @apply bg-slate-100 font-medium text-slate-900;
   }
   .article code {
-    @apply rounded bg-cream-100 px-1.5 py-0.5 font-mono text-sm;
-  }
-
-  /* Subtle film-grain overlay for navy sections */
-  .grain {
-    position: relative;
-  }
-  .grain::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
+    @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm;
   }
 }
