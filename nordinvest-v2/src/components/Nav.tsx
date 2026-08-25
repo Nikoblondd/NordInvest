@@ -9,7 +9,6 @@ const links = [
   { href: "/analyseren", label: "Analyseren" },
   { href: "/#hvordan", label: "Sådan virker det" },
   { href: "/priser", label: "Priser" },
-  { href: "/vaerktoejer", label: "Værktøjer" },
   { href: "/blog", label: "Blog" },
 ];
 

@@ -1,44 +1,75 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { clsx } from "@/lib/clsx";
+
+// Drop your real logo at:
+//   public/nordinvest-logo.png        (dark mark — for light backgrounds)
+//   public/nordinvest-logo-white.png  (white mark — for dark backgrounds)
+// It swaps in automatically; until then a clean "Ni" mark shows.
+function useImageExists(src: string) {
+  const [ok, setOk] = useState(false);
+  useEffect(() => {
+    const img = new window.Image();
+    img.onload = () => setOk(true);
+    img.src = src;
+  }, [src]);
+  return ok;
+}
+
+function Mark({ size, variant }: { size: number; variant: "dark" | "light" }) {
+  const src = variant === "light" ? "/nordinvest-logo-white.png" : "/nordinvest-logo.png";
+  const hasPng = useImageExists(src);
+
+  if (hasPng) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt="NordInvest" width={size} height={size} className="object-contain" />;
+  }
+
+  const color = variant === "light" ? "text-white" : "text-slate-900";
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" aria-hidden="true">
+      {/* bold N */}
+      <path
+        d="M16 104V40h13l46 47V40h13v64H75L29 57v47H16z"
+        className={clsx("fill-current", color)}
+      />
+      {/* i dot */}
+      <circle cx="99" cy="30" r="13" className={clsx("fill-current", color)} />
+    </svg>
+  );
+}
 
 export function Logo({
   className,
-  size = 32,
+  size = 30,
   href = "/",
+  variant = "dark",
 }: {
   className?: string;
   size?: number;
   href?: string | null;
+  variant?: "dark" | "light";
 }) {
-  const mark = (
+  const content = (
     <span className={clsx("flex items-center gap-2", className)}>
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 32 32"
-        fill="none"
-        aria-hidden="true"
+      <Mark size={size} variant={variant} />
+      <span
+        className={clsx(
+          "text-xl font-bold tracking-tight",
+          variant === "light" ? "text-white" : "text-slate-900",
+        )}
       >
-        <rect width="32" height="32" rx="8" className="fill-slate-900" />
-        <path
-          d="M9 23V9h2.6l9 10.2V9H23v14h-2.6l-9-10.2V23H9z"
-          className="fill-white"
-        />
-        <path
-          d="M24.5 7.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z"
-          className="fill-blue-500"
-        />
-      </svg>
-      <span className="text-xl font-bold tracking-tight text-slate-900">
         NordInvest
       </span>
     </span>
   );
 
-  if (href === null) return mark;
+  if (href === null) return content;
   return (
     <Link href={href} aria-label="NordInvest">
-      {mark}
+      {content}
     </Link>
   );
 }
