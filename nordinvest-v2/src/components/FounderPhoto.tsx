@@ -35,7 +35,7 @@ export function FounderPhoto() {
     <img
       src={photo}
       alt={`${site.founder.name}, ${site.founder.role} hos NordInvest`}
-      className="aspect-[4/3] w-full object-cover"
+      className="aspect-[4/5] w-full object-cover object-[center_top]"
     />
   );
 }
