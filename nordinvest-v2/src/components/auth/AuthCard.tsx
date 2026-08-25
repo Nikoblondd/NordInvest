@@ -1,5 +1,10 @@
+"use client";
+
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 function LinkedInIcon() {
   return (
@@ -8,7 +13,6 @@ function LinkedInIcon() {
     </svg>
   );
 }
-
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
@@ -20,17 +24,77 @@ function GoogleIcon() {
   );
 }
 
-export function AuthCard({
-  mode,
-}: {
-  mode: "login" | "signup";
-}) {
-  const isSignup = mode === "signup";
+function Input(props: React.InputHTMLAttributes<HTMLInputElement> & { label: string }) {
+  const { label, ...rest } = props;
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
+    <label className="block text-left">
+      <span className="text-sm font-medium text-slate-600">{label}</span>
+      <input
+        {...rest}
+        className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      />
+    </label>
+  );
+}
+
+export function AuthCard({ mode }: { mode: "login" | "signup" }) {
+  const isSignup = mode === "signup";
+  const router = useRouter();
+  const supabase = createClient();
+
+  const [showEmail, setShowEmail] = useState(false);
+  const [loading, setLoading] = useState<null | "linkedin" | "google" | "email">(null);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const redirectTo =
+    typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined;
+
+  const oauth = async (provider: "linkedin_oidc" | "google") => {
+    if (!supabase) return setError("Login er ikke aktiveret endnu.");
+    setError(null);
+    setLoading(provider === "linkedin_oidc" ? "linkedin" : "google");
+    const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } });
+    if (error) {
+      setError(error.message);
+      setLoading(null);
+    }
+  };
+
+  const submitEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!supabase) return setError("Login er ikke aktiveret endnu.");
+    setError(null);
+    setNotice(null);
+    setLoading("email");
+    if (isSignup) {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name, phone }, emailRedirectTo: redirectTo },
+      });
+      if (error) setError(error.message);
+      else setNotice("Tjek din mail for at bekræfte din konto, så er du klar.");
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) setError(error.message);
+      else router.push("/dashboard");
+    }
+    setLoading(null);
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-16">
       <div className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
-          <Logo />
+          <Link href="/" className="text-2xl font-bold tracking-tight text-slate-900">
+            NordInvest
+          </Link>
         </div>
 
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50">
@@ -38,50 +102,85 @@ export function AuthCard({
             {isSignup ? "Opret din gratis konto" : "Log ind på NordInvest"}
           </h1>
           <p className="mt-2 text-center text-sm text-slate-500">
-            {isSignup
-              ? "3 gratis analyser om måneden — intet kreditkort."
-              : "Velkommen tilbage. Fortsæt med din konto."}
+            {isSignup ? "3 gratis analyser om måneden — intet kreditkort." : "Velkommen tilbage."}
           </p>
 
-          <div className="mt-8 space-y-3">
-            <button className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#0A66C2] px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90">
-              <LinkedInIcon />
+          {error && (
+            <div className="mt-5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-center text-sm text-rose-700">
+              {error}
+            </div>
+          )}
+          {notice && (
+            <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-sm text-emerald-800">
+              {notice}
+            </div>
+          )}
+
+          <div className="mt-6 space-y-3">
+            <button
+              onClick={() => oauth("linkedin_oidc")}
+              disabled={!!loading}
+              className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#0A66C2] px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+            >
+              {loading === "linkedin" ? <Loader2 size={18} className="animate-spin" /> : <LinkedInIcon />}
               Fortsæt med LinkedIn
             </button>
-            <button className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-50">
-              <GoogleIcon />
+            <button
+              onClick={() => oauth("google")}
+              disabled={!!loading}
+              className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-50 disabled:opacity-60"
+            >
+              {loading === "google" ? <Loader2 size={18} className="animate-spin" /> : <GoogleIcon />}
               Fortsæt med Google
             </button>
           </div>
 
+          <div className="my-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span className="text-xs text-slate-400">eller</span>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          {!showEmail ? (
+            <button
+              onClick={() => setShowEmail(true)}
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            >
+              Fortsæt med email
+            </button>
+          ) : (
+            <form onSubmit={submitEmail} className="space-y-3">
+              {isSignup && (
+                <>
+                  <Input label="Fulde navn" value={name} onChange={(e) => setName(e.target.value)} required autoComplete="name" placeholder="Fornavn Efternavn" />
+                  <Input label="Telefonnummer" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required autoComplete="tel" placeholder="+45 12 34 56 78" />
+                </>
+              )}
+              <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" placeholder="dig@email.dk" />
+              <Input label="Adgangskode" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete={isSignup ? "new-password" : "current-password"} minLength={8} placeholder="Mindst 8 tegn" />
+              <button
+                type="submit"
+                disabled={!!loading}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition-colors hover:bg-blue-700 disabled:opacity-60"
+              >
+                {loading === "email" && <Loader2 size={18} className="animate-spin" />}
+                {isSignup ? "Opret konto" : "Log ind"}
+              </button>
+            </form>
+          )}
+
           <p className="mt-6 text-center text-xs text-slate-400">
             Ved at fortsætte accepterer du vores{" "}
-            <Link href="/juridisk/vilkaar" className="underline hover:text-slate-600">
-              vilkår
-            </Link>{" "}
-            og{" "}
-            <Link href="/juridisk/privatlivspolitik" className="underline hover:text-slate-600">
-              privatlivspolitik
-            </Link>
-            .
+            <Link href="/juridisk/vilkaar" className="underline hover:text-slate-600">vilkår</Link> og{" "}
+            <Link href="/juridisk/privatlivspolitik" className="underline hover:text-slate-600">privatlivspolitik</Link>.
           </p>
         </div>
 
         <p className="mt-6 text-center text-sm text-slate-500">
           {isSignup ? (
-            <>
-              Har du allerede en konto?{" "}
-              <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-700">
-                Log ind
-              </Link>
-            </>
+            <>Har du allerede en konto? <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-700">Log ind</Link></>
           ) : (
-            <>
-              Ny hos NordInvest?{" "}
-              <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-700">
-                Opret gratis
-              </Link>
-            </>
+            <>Ny hos NordInvest? <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-700">Opret gratis</Link></>
           )}
         </p>
       </div>

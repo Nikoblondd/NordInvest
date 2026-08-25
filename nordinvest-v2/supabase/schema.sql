@@ -6,6 +6,7 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text unique not null,
   full_name text,
+  phone text,
   linkedin_url text unique,
   device_fingerprint text,
   signup_ip inet,
@@ -23,6 +24,9 @@ create table if not exists public.profiles (
   analyses_used_this_month integer default 0,
   analyses_reset_at timestamptz default now() + interval '1 month'
 );
+
+-- ensure phone exists if the table predates this column
+alter table public.profiles add column if not exists phone text;
 
 -- ── analyses ────────────────────────────────────────────────
 create table if not exists public.analyses (
@@ -54,9 +58,17 @@ create policy "own analyses" on public.analyses
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
-  insert into public.profiles (id, email, full_name)
-  values (new.id, new.email, new.raw_user_meta_data->>'full_name')
+  insert into public.profiles (id, email, full_name, phone)
+  values (
+    new.id,
+    new.email,
+    new.raw_user_meta_data->>'full_name',
+    new.raw_user_meta_data->>'phone'
+  )
   on conflict (id) do nothing;
+
+  -- add the phone column if an older schema is already deployed
+  -- (safe no-op otherwise)
   return new;
 end;
 $$;
