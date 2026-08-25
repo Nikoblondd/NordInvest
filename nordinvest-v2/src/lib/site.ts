@@ -6,7 +6,7 @@ export const site = {
   phone: "+45 20 99 37 97",
   phoneHref: "tel:+4520993797",
   founder: {
-    name: "Nikolaj",
+    name: "Nikolaj Blond",
     role: "Start-up founder",
     // Drop a photo at nordinvest-v2/public/founder.jpg to replace the placeholder.
     photo: "/founder.jpg",

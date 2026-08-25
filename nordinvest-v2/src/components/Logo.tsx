@@ -24,7 +24,15 @@ function Mark({ size, variant }: { size: number; variant: "dark" | "light" }) {
 
   if (hasPng) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt="NordInvest" width={size} height={size} className="object-contain" />;
+    return (
+      <img
+        src={src}
+        alt="NordInvest"
+        width={size}
+        height={size}
+        className={clsx("object-contain", variant === "dark" && "mix-blend-multiply")}
+      />
+    );
   }
 
   const color = variant === "light" ? "text-white" : "text-slate-900";
