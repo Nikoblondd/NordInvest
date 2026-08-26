@@ -4,10 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
 } from "recharts";
-import { Loader2, CheckCircle2, AlertCircle, Sparkles, FileSpreadsheet, ChevronDown, HelpCircle, X } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, Sparkles, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check } from "lucide-react";
 import { analyze, kr, krMd, pct, num, type Strategy } from "@/lib/analysis";
 import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
+import { createClient } from "@/lib/supabase/client";
+import { limits } from "@/lib/pricing";
 
 type Inputs = {
   price: number; monthlyRent: number; downPaymentPct: number; interestRate: number;
@@ -100,6 +102,7 @@ export function AnalyzerApp() {
   const [ran, setRan] = useState(false);
   const [advanced, setAdvanced] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [save, setSave] = useState<{ status: "idle" | "saving" | "saved" | "limit" | "error"; msg?: string }>({ status: "idle" });
   const [ex, setEx] = useState<Extract>({ status: "idle" });
   const set = (patch: Partial<Inputs>) => setInputs((p) => ({ ...p, ...patch }));
 
@@ -164,6 +167,58 @@ export function AnalyzerApp() {
     } finally {
       setExporting(false);
     }
+  };
+
+  const saveToPortfolio = async () => {
+    const supabase = createClient();
+    if (!supabase) {
+      window.location.href = "/auth/signup";
+      return;
+    }
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      window.location.href = "/auth/signup?next=/analyseren";
+      return;
+    }
+    setSave({ status: "saving" });
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("subscription_tier")
+      .eq("id", user.id)
+      .single();
+    const tier = (profile?.subscription_tier ?? "free") as keyof typeof limits;
+    const max = limits[tier] ?? 3;
+    const { count } = await supabase
+      .from("analyses")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("saved_to_portfolio", true);
+    if ((count ?? 0) >= max) {
+      setSave({ status: "limit" });
+      return;
+    }
+    const { error } = await supabase.from("analyses").insert({
+      user_id: user.id,
+      property_url: address ?? null,
+      property_data: { ...inputs, address },
+      strategy: inputs.strategy,
+      analysis_result: {
+        capRate: r.capRate,
+        cashOnCash: r.cashOnCash,
+        dscr: r.dscr,
+        cashFlow: r.cashFlow,
+        irr: r.irr,
+        grossYield: r.grossYield,
+        equityMultiple: r.equityMultiple,
+      },
+      investment_score: r.score,
+      verdict: r.verdict,
+      saved_to_portfolio: true,
+    });
+    if (error) setSave({ status: "error", msg: error.message });
+    else setSave({ status: "saved" });
   };
 
   return (
@@ -368,16 +423,39 @@ export function AnalyzerApp() {
         </div>
 
         {/* actions */}
-        <div className="flex flex-wrap items-center gap-3 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <button onClick={exportExcel} disabled={exporting}
-            className="flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition-colors hover:bg-blue-700 disabled:opacity-60">
-            {exporting ? <Loader2 size={18} className="animate-spin" /> : <FileSpreadsheet size={18} />}
-            Eksportér til Excel
-          </button>
-          <Button href="/auth/signup" variant="secondary">Gem til portefølje</Button>
-          <span className="flex items-center gap-1.5 text-xs text-slate-400">
-            <Sparkles size={13} /> Excel-modellen er redigerbar — ret antagelserne og alt regner sig selv.
-          </span>
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-wrap items-center gap-3">
+            <button onClick={exportExcel} disabled={exporting}
+              className="flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition-colors hover:bg-blue-700 disabled:opacity-60">
+              {exporting ? <Loader2 size={18} className="animate-spin" /> : <FileSpreadsheet size={18} />}
+              Eksportér til Excel
+            </button>
+            {save.status === "saved" ? (
+              <a href="/dashboard" className="flex items-center gap-2 rounded-full bg-emerald-50 px-6 py-3 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-200 hover:bg-emerald-100">
+                <Check size={18} /> Gemt — se portefølje
+              </a>
+            ) : (
+              <button onClick={saveToPortfolio} disabled={save.status === "saving"}
+                className="flex items-center gap-2 rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-200 disabled:opacity-60">
+                {save.status === "saving" ? <Loader2 size={18} className="animate-spin" /> : <Bookmark size={18} />}
+                Gem til portefølje
+              </button>
+            )}
+            <span className="flex items-center gap-1.5 text-xs text-slate-400">
+              <Sparkles size={13} /> Excel-modellen er redigerbar — ret antagelserne og alt regner sig selv.
+            </span>
+          </div>
+          {save.status === "limit" && (
+            <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Du har gemt {limits.free} boliger på gratis-planen.{" "}
+              <a href="/priser" className="font-semibold underline">Opgradér</a> for at gemme flere.
+            </div>
+          )}
+          {save.status === "error" && (
+            <div className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+              Kunne ikke gemme: {save.msg}
+            </div>
+          )}
         </div>
       </div>
     </div>
