@@ -15,7 +15,7 @@ export default function AnalyserenPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <Nav />
       <section className="px-6 pt-24">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1440px]">
           <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
             Analyseren
           </p>
@@ -33,7 +33,7 @@ export default function AnalyserenPage() {
       </section>
 
       <section className="px-6 py-12">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1440px]">
           <AnalyzerApp />
         </div>
       </section>

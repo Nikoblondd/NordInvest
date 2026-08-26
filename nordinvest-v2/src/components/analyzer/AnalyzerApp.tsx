@@ -59,7 +59,7 @@ function Metric({
   return (
     <div className="group relative flex flex-col rounded-2xl border border-slate-200 bg-slate-50 p-4">
       <div className="flex items-start justify-between gap-2">
-        <div className="text-[11px] font-medium uppercase leading-tight tracking-wide text-slate-400">{label}</div>
+        <div className="min-w-0 text-[11px] font-medium uppercase leading-tight tracking-normal text-slate-400">{label}</div>
         {explain && (
           <button
             onClick={() => setOpen((v) => !v)}
@@ -252,7 +252,7 @@ export function AnalyzerApp() {
         </div>
 
         {/* headline metrics — what an investor checks first */}
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
           <Metric
             label="Nettoafkast (cap rate)" value={num(r.capRate)} unit="%"
             explain={`Hvor mange procent af prisen ejendommen tjener om året — efter driftsudgifter, men før lån. Ligesom renten på en opsparing. ${num(r.capRate)} % betyder, at ejendommen selv (uden lån) giver ${num(r.capRate)} % af sin pris tilbage hvert år. Højere = bedre.`}
@@ -275,7 +275,7 @@ export function AnalyzerApp() {
             how="Driftsresultatet (NOI) delt med den årlige ydelse på lånet."
           />
         </div>
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
           <Metric
             label="Bruttoafkast" value={num(r.grossYield)} unit="%"
             explain={`Årlig leje i forhold til prisen — FØR udgifter. Et hurtigt førstetjek. ${num(r.grossYield)} % betyder, at lejen svarer til ${num(r.grossYield)} % af prisen om året. Nettoafkastet er det mere ærlige tal, fordi det trækker udgifter fra.`}
@@ -300,7 +300,7 @@ export function AnalyzerApp() {
         </div>
 
         {/* budget + financing + stress */}
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 xl:grid-cols-3">
           <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="text-sm font-semibold text-slate-900">Driftsbudget (år 1)</div>
             <dl className="mt-3 space-y-2 text-sm">
@@ -332,7 +332,7 @@ export function AnalyzerApp() {
             <dl className="mt-3 space-y-2 text-sm">
               <Row l="Cash flow nu" v={krMd(r.cashFlow)} pos={r.cashFlow >= 0} />
               {r.stress.map((s) => (
-                <Row key={s.rate} l={`Ved ${pct(s.rate, 1)} rente`} v={krMd(s.cashFlow)} pos={s.cashFlow >= 0} />
+                <Row key={s.rate} l={`Ved ${pct(s.rate, 1)}`} v={krMd(s.cashFlow)} pos={s.cashFlow >= 0} />
               ))}
               <div className="border-t border-slate-200 pt-2"><Row l="Break-even rente" v={pct(r.breakEvenRate, 1)} strong /></div>
               <Row l="DSCR" v={num(r.dscr)} />
@@ -359,7 +359,7 @@ export function AnalyzerApp() {
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4 sm:grid-cols-4">
+          <div className="mt-4 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4 xl:grid-cols-4">
             <Metric label="Nettoprovenu ved salg" value={dk(r.netSaleProceeds)} unit="kr" />
             <Metric label="Samlet gevinst" value={dk(r.totalProfit)} unit="kr" tone={r.totalProfit >= 0 ? "text-emerald-600" : "text-rose-500"} />
             <Metric label="Equity multiple" value={num(r.equityMultiple)} unit="x" />
