@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, Menu, X, LayoutDashboard } from "lucide-react";
 import { Logo } from "./Logo";
+import { createClient } from "@/lib/supabase/client";
 
 const links = [
   { href: "/analyseren", label: "Analyseren" },
@@ -14,6 +15,17 @@ const links = [
 
 export function Nav() {
   const [open, setOpen] = useState(false);
+  const [authed, setAuthed] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return;
+    supabase.auth.getUser().then(({ data }) => setAuthed(!!data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
+      setAuthed(!!session),
+    );
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-slate-50/80 backdrop-blur-lg">
@@ -29,18 +41,29 @@ export function Nav() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/auth/login"
-            className="hidden text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 md:block"
-          >
-            Log ind
-          </Link>
-          <Link
-            href="/auth/signup"
-            className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-slate-800"
-          >
-            Start gratis <ArrowRight size={16} />
-          </Link>
+          {authed ? (
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-slate-800"
+            >
+              <LayoutDashboard size={16} /> Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="hidden text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 md:block"
+              >
+                Log ind
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-slate-800"
+              >
+                Start gratis <ArrowRight size={16} />
+              </Link>
+            </>
+          )}
           <button
             aria-label="Menu"
             className="text-slate-700 md:hidden"
@@ -55,21 +78,16 @@ export function Nav() {
         <div className="border-t border-slate-200 bg-slate-50 px-6 py-5 md:hidden">
           <div className="flex flex-col gap-4">
             {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-base font-medium text-slate-700"
-                onClick={() => setOpen(false)}
-              >
+              <Link key={l.href} href={l.href} className="text-base font-medium text-slate-700" onClick={() => setOpen(false)}>
                 {l.label}
               </Link>
             ))}
             <Link
-              href="/auth/login"
+              href={authed ? "/dashboard" : "/auth/login"}
               className="text-base font-medium text-slate-700"
               onClick={() => setOpen(false)}
             >
-              Log ind
+              {authed ? "Dashboard" : "Log ind"}
             </Link>
           </div>
         </div>
