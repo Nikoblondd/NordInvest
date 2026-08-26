@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
 } from "recharts";
-import { Loader2, CheckCircle2, AlertCircle, Sparkles, FileSpreadsheet, ChevronDown } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, Sparkles, FileSpreadsheet, ChevronDown, HelpCircle, X } from "lucide-react";
 import { analyze, kr, krMd, pct, num, type Strategy } from "@/lib/analysis";
 import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
@@ -50,12 +50,46 @@ function Field({ label, value, onChange, suffix, step = 1 }: {
   );
 }
 
-function Metric({ label, value, tone = "text-slate-900", hint }: { label: string; value: string; tone?: string; hint?: string }) {
+function Metric({
+  label, value, unit = "", tone = "text-slate-900", hint, explain, how,
+}: {
+  label: string; value: string; unit?: string; tone?: string; hint?: string; explain?: string; how?: string;
+}) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <div className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</div>
-      <div className={clsx("mt-1 text-xl font-bold tnum", tone)}>{value}</div>
+    <div className="group relative flex flex-col rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <div className="flex items-start justify-between gap-2">
+        <div className="text-[11px] font-medium uppercase leading-tight tracking-wide text-slate-400">{label}</div>
+        {explain && (
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="-mr-1 -mt-1 flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium text-slate-400 opacity-70 transition-all hover:bg-blue-50 hover:text-blue-600 group-hover:opacity-100"
+          >
+            <HelpCircle size={13} />
+            <span className="hidden sm:inline">Forklar</span>
+          </button>
+        )}
+      </div>
+      <div className={clsx("mt-1 whitespace-nowrap font-bold tnum", tone)}>
+        <span className="text-xl">{value}</span>
+        {unit && <span className="ml-1 text-sm font-semibold text-slate-400">{unit}</span>}
+      </div>
       {hint && <div className="mt-0.5 text-[11px] text-slate-400">{hint}</div>}
+
+      {open && explain && (
+        <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-xl shadow-slate-900/10">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-bold text-slate-900">{label}</div>
+            <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-700"><X size={15} /></button>
+          </div>
+          <p className="mt-2 text-sm leading-relaxed text-slate-600">{explain}</p>
+          {how && (
+            <p className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">
+              <span className="font-semibold text-slate-700">Sådan regnes det: </span>{how}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -111,6 +145,7 @@ export function AnalyzerApp() {
   const scoreColor = r.score >= 65 ? "text-emerald-600" : r.score >= 45 ? "text-blue-600" : "text-rose-500";
   const cfTone = r.cashFlow >= 0 ? "text-emerald-600" : "text-rose-500";
   const dscrTone = r.dscr >= 1.2 ? "text-emerald-600" : r.dscr >= 1 ? "text-blue-600" : "text-rose-500";
+  const dk = (n: number) => Math.round(n).toLocaleString("da-DK");
 
   const chartData = r.projection.map((y) => ({ year: y.year, Friværdi: y.equity, "Kumuleret cash flow": y.cumulativeCashFlow }));
 
@@ -218,16 +253,50 @@ export function AnalyzerApp() {
 
         {/* headline metrics — what an investor checks first */}
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <Metric label="Nettoafkast (cap rate)" value={pct(r.capRate)} />
-          <Metric label="Cash flow / md." value={krMd(r.cashFlow)} tone={cfTone} />
-          <Metric label="Kontantafkast" value={pct(r.cashOnCash)} tone={r.cashOnCash >= 0 ? "text-slate-900" : "text-rose-500"} hint="cash-on-cash, år 1" />
-          <Metric label="DSCR" value={num(r.dscr)} tone={dscrTone} hint="gældsdækning" />
+          <Metric
+            label="Nettoafkast (cap rate)" value={num(r.capRate)} unit="%"
+            explain={`Hvor mange procent af prisen ejendommen tjener om året — efter driftsudgifter, men før lån. Ligesom renten på en opsparing. ${num(r.capRate)} % betyder, at ejendommen selv (uden lån) giver ${num(r.capRate)} % af sin pris tilbage hvert år. Højere = bedre.`}
+            how="Driftsresultatet (leje minus tomgang, vedligehold og faste udgifter) delt med købsprisen."
+          />
+          <Metric
+            label="Cash flow / md." value={dk(r.cashFlow)} unit="kr/md." tone={cfTone}
+            explain="Det, der reelt lander på din konto hver måned, når lejen har betalt lånet og alle udgifter. Positivt = ejendommen betaler dig. Negativt = du lægger penge til hver måned."
+            how="Månedlig leje minus ydelsen på lånet minus alle driftsudgifter."
+          />
+          <Metric
+            label="Kontantafkast" value={num(r.cashOnCash)} unit="%" hint="cash-on-cash, år 1"
+            tone={r.cashOnCash >= 0 ? "text-slate-900" : "text-rose-500"}
+            explain={`Hvor meget dine EGNE penge tjener om året. Du lagde ${dk(r.cashInvested)} kr (udbetaling + købsomkostninger) og får ${dk(r.annualCashFlow)} kr tilbage i cash flow — det er ${num(r.cashOnCash)} %. Tænk på det som renten på præcis de penge, du selv puttede i.`}
+            how="Årligt cash flow delt med de penge, du selv lagde."
+          />
+          <Metric
+            label="DSCR" value={num(r.dscr)} tone={dscrTone} hint="gældsdækning"
+            explain={`Kan lejen betale lånet? 1,0 er lige akkurat. ${num(r.dscr)} betyder, at ejendommen tjener ${num(r.dscr)} gange så meget som ydelsen — masser af luft. Banker vil typisk gerne se mindst 1,25.`}
+            how="Driftsresultatet (NOI) delt med den årlige ydelse på lånet."
+          />
         </div>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <Metric label="Bruttoafkast" value={pct(r.grossYield)} />
-          <Metric label={`IRR (${r.holdYears} år)`} value={pct(r.irr)} tone={isFinite(r.irr) && r.irr >= 8 ? "text-emerald-600" : "text-slate-900"} />
-          <Metric label="Equity multiple" value={num(r.equityMultiple) + "x"} />
-          <Metric label="Break-even belægning" value={pct(r.breakEvenOccupancy, 0)} hint="tomgang før nul" />
+          <Metric
+            label="Bruttoafkast" value={num(r.grossYield)} unit="%"
+            explain={`Årlig leje i forhold til prisen — FØR udgifter. Et hurtigt førstetjek. ${num(r.grossYield)} % betyder, at lejen svarer til ${num(r.grossYield)} % af prisen om året. Nettoafkastet er det mere ærlige tal, fordi det trækker udgifter fra.`}
+            how="Årlig leje delt med købsprisen."
+          />
+          <Metric
+            label={`IRR (${r.holdYears} år)`} value={num(r.irr)} unit="%"
+            tone={isFinite(r.irr) && r.irr >= 8 ? "text-emerald-600" : "text-slate-900"}
+            explain="Det samlede årlige afkast på dine penge over hele perioden — cash flow OG værdistigning lagt sammen til én procent. Hvis du satte pengene i banken til denne rente, ville du ende samme sted. Over 8–10 % er stærkt."
+            how="Alle pengestrømme (udbetaling ud nu, cash flow ind hvert år, salg til sidst) regnet om til én årlig rente."
+          />
+          <Metric
+            label="Equity multiple" value={num(r.equityMultiple)} unit="x"
+            explain={`Hvor mange gange du får dine penge igen i alt. ${num(r.equityMultiple)}x betyder: for hver 1 krone du lagde, får du ${num(r.equityMultiple)} kr tilbage over perioden — cash flow undervejs plus gevinsten, når du sælger.`}
+            how="Alt du får ud (samlet cash flow + nettoprovenu ved salg) delt med det, du selv lagde."
+          />
+          <Metric
+            label="Break-even belægning" value={num(r.breakEvenOccupancy, 0)} unit="%" hint="tomgang før nul"
+            explain={`Hvor tom ejendommen må stå, før du taber penge. ${num(r.breakEvenOccupancy, 0)} % betyder: selv hvis den kun er udlejet ${num(r.breakEvenOccupancy, 0)} % af tiden, går det lige op. Lavere tal = mere sikkerhed og buffer.`}
+            how="Hvor stor en del af lejen, der skal til for at dække lån og udgifter."
+          />
         </div>
 
         {/* budget + financing + stress */}
@@ -240,7 +309,7 @@ export function AnalyzerApp() {
               <Row l="− Vedligehold" v={"−" + kr(r.opex.maintenance)} />
               <Row l="− Faste udgifter" v={"−" + kr(r.opex.fixed)} />
               <div className="border-t border-slate-200 pt-2"><Row l="= NOI" v={kr(r.noi)} strong /></div>
-              <Row l="− Ydelse (realkredit)" v={"−" + kr(r.monthlyMortgage * 12)} />
+              <Row l="− Ydelse" v={"−" + kr(r.monthlyMortgage * 12)} />
               <div className="border-t border-slate-200 pt-2"><Row l="= Cash flow (år)" v={kr(r.annualCashFlow)} strong pos={r.annualCashFlow >= 0} /></div>
             </dl>
           </div>
@@ -250,10 +319,10 @@ export function AnalyzerApp() {
             <dl className="mt-3 space-y-2 text-sm">
               <Row l="Købspris" v={kr(inputs.price)} />
               <Row l="Udbetaling" v={kr(r.downPayment)} />
-              <Row l="Købsomkostninger" v={kr(r.cashInvested - r.downPayment)} />
-              <div className="border-t border-slate-200 pt-2"><Row l="Investeret kapital" v={kr(r.cashInvested)} strong /></div>
-              <Row l="Lån (realkredit)" v={kr(r.loan)} />
-              <Row l="Belåningsgrad (LTV)" v={pct(r.ltv, 0)} />
+              <Row l="Købsomk." v={kr(r.cashInvested - r.downPayment)} />
+              <div className="border-t border-slate-200 pt-2"><Row l="Investeret" v={kr(r.cashInvested)} strong /></div>
+              <Row l="Lån" v={kr(r.loan)} />
+              <Row l="Belåningsgrad" v={pct(r.ltv, 0)} />
               <Row l="Månedlig ydelse" v={krMd(r.monthlyMortgage)} />
             </dl>
           </div>
@@ -266,7 +335,7 @@ export function AnalyzerApp() {
                 <Row key={s.rate} l={`Ved ${pct(s.rate, 1)} rente`} v={krMd(s.cashFlow)} pos={s.cashFlow >= 0} />
               ))}
               <div className="border-t border-slate-200 pt-2"><Row l="Break-even rente" v={pct(r.breakEvenRate, 1)} strong /></div>
-              <Row l="Gældsdækning (DSCR)" v={num(r.dscr)} />
+              <Row l="DSCR" v={num(r.dscr)} />
             </dl>
           </div>
         </div>
@@ -291,10 +360,10 @@ export function AnalyzerApp() {
             </ResponsiveContainer>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4 sm:grid-cols-4">
-            <Metric label="Nettoprovenu ved salg" value={kr(r.netSaleProceeds)} />
-            <Metric label="Samlet gevinst" value={kr(r.totalProfit)} tone={r.totalProfit >= 0 ? "text-emerald-600" : "text-rose-500"} />
-            <Metric label="Equity multiple" value={num(r.equityMultiple) + "x"} />
-            <Metric label={`IRR (${r.holdYears} år)`} value={pct(r.irr)} />
+            <Metric label="Nettoprovenu ved salg" value={dk(r.netSaleProceeds)} unit="kr" />
+            <Metric label="Samlet gevinst" value={dk(r.totalProfit)} unit="kr" tone={r.totalProfit >= 0 ? "text-emerald-600" : "text-rose-500"} />
+            <Metric label="Equity multiple" value={num(r.equityMultiple)} unit="x" />
+            <Metric label={`IRR (${r.holdYears} år)`} value={num(r.irr)} unit="%" />
           </div>
         </div>
 
@@ -317,9 +386,9 @@ export function AnalyzerApp() {
 
 function Row({ l, v, pos, strong }: { l: string; v: string; pos?: boolean; strong?: boolean }) {
   return (
-    <div className="flex items-center justify-between">
-      <dt className={clsx("text-slate-500", strong && "font-semibold text-slate-900")}>{l}</dt>
-      <dd className={clsx("tnum font-semibold", pos === true && "text-emerald-600", pos === false && "text-rose-500", pos === undefined && "text-slate-900")}>{v}</dd>
+    <div className="flex items-baseline justify-between gap-3">
+      <dt className={clsx("min-w-0 text-slate-500", strong && "font-semibold text-slate-900")}>{l}</dt>
+      <dd className={clsx("shrink-0 whitespace-nowrap tnum font-semibold tabular-nums", pos === true && "text-emerald-600", pos === false && "text-rose-500", pos === undefined && "text-slate-900")}>{v}</dd>
     </div>
   );
 }
