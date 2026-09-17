@@ -11,6 +11,7 @@
 import { getAnalytics, type Analytics } from "@/lib/analytics-data";
 import { reference } from "@/lib/reference";
 import { getPsiReport } from "@/lib/psi";
+import { getWebVitalsSummary } from "@/lib/web-vitals";
 
 export type CheckStatus = "green" | "amber" | "red" | "waiting";
 
@@ -79,12 +80,15 @@ function check(
 }
 
 export async function getLaunchReadiness(): Promise<ReadinessReport> {
-  const [a, boligLive, erhvervLive, psi] = await Promise.all([
+  const [a, boligLive, erhvervLive, psi, rum] = await Promise.all([
     getAnalytics(),
     marketCount("bolig"),
     marketCount("investering"),
     getPsiReport().catch(
       () => ({ overall: { lcpGreen: false, inpGreen: false, clsGreen: false, allGreen: false, landingLcpMs: null }, results: [], updatedAt: "" } as Awaited<ReturnType<typeof getPsiReport>>),
+    ),
+    getWebVitalsSummary().catch(
+      () => ({ configured: false, windowDays: 28, totalSamples: 0, perPath: [], overall: { lcpP75: null, inpP75: null, clsP75: null, lcpGreen: false, inpGreen: false, clsGreen: false, allGreen: false } } as Awaited<ReturnType<typeof getWebVitalsSummary>>),
     ),
   ]);
 
@@ -237,30 +241,35 @@ export async function getLaunchReadiness(): Promise<ReadinessReport> {
   const perf: ReadinessCheck[] = [
     check("perf.mobile", "Ingen horizontal overflow på mobil (375 px)", "Verificeret manuelt på analyseren, deal-motor, dashboard.", "green", "0 overflowing elements"),
     check("perf.console", "0 console errors på nogen offentlig side", "Verificeret på landing + analyseren + /data + /priser + /methodology.", "green"),
-    check(
-      "perf.lcp",
-      "Landing LCP under 2,5 s (Googles \"godt\"-tærskel)",
-      psi.overall.landingLcpMs != null
-        ? `Målt ${(psi.overall.landingLcpMs / 1000).toFixed(2)} s på nordinvest.io via PageSpeed Insights.`
-        : "Ingen PageSpeed-måling tilgængelig endnu.",
-      psi.overall.landingLcpMs != null
-        ? psi.overall.landingLcpMs <= 2500
-          ? "green"
-          : psi.overall.landingLcpMs <= 4000
-          ? "amber"
-          : "red"
-        : "waiting",
-      "LCP ≤ 2,5 s",
-    ),
-    check(
-      "perf.cwv",
-      "Core Web Vitals grønne på alle nøglesider",
-      psi.results.length
-        ? `${psi.results.filter((r) => r.ok).length}/${psi.results.length} sider målt · LCP ${psi.overall.lcpGreen ? "✓" : "✗"} · INP ${psi.overall.inpGreen ? "✓" : "✗"} · CLS ${psi.overall.clsGreen ? "✓" : "✗"}`
-        : "PageSpeed Insights ikke tilgængelig.",
-      psi.overall.allGreen ? "green" : psi.results.some((r) => r.ok) ? "amber" : "waiting",
-      "LCP + INP + CLS alle grønne",
-    ),
+    (() => {
+      // Prefer our own real-user metrics (RUM via PostHog) — with enough samples
+      // it beats Google's synthetic lab. Fall back to PSI field/lab when we're
+      // still ramping traffic.
+      const rumLcp = rum.overall.lcpP75;
+      const rumInpG = rum.overall.inpGreen;
+      const psiLcp = psi.overall.landingLcpMs;
+      const source = rumLcp != null ? `RUM (${rum.totalSamples} målinger, ${rum.windowDays}d)` : psiLcp != null ? "PageSpeed Insights" : null;
+      const val = rumLcp ?? psiLcp;
+      const detail = val != null
+        ? `Målt ${(val / 1000).toFixed(2)} s p75 via ${source}.`
+        : "Afventer trafik til RUM eller PSI-nøgle.";
+      const status: CheckStatus = val == null ? "waiting" : val <= 2500 ? "green" : val <= 4000 ? "amber" : "red";
+      return check("perf.lcp", "Landing LCP p75 under 2,5 s", detail, status, "LCP ≤ 2,5 s");
+    })(),
+    (() => {
+      const rumAll = rum.overall.allGreen;
+      const rumSome = rum.totalSamples > 0;
+      const psiSome = psi.results.some((r) => r.ok);
+      const preferRum = rum.totalSamples > 0;
+      const allGreen = preferRum ? rumAll : psi.overall.allGreen;
+      const detail = preferRum
+        ? `RUM: LCP ${rum.overall.lcpGreen ? "✓" : "✗"} · INP ${rum.overall.inpGreen ? "✓" : "✗"} · CLS ${rum.overall.clsGreen ? "✓" : "✗"} · ${rum.totalSamples} målinger`
+        : psi.results.length
+        ? `PSI-fallback: ${psi.results.filter((r) => r.ok).length}/${psi.results.length} sider · LCP ${psi.overall.lcpGreen ? "✓" : "✗"} · INP ${psi.overall.inpGreen ? "✓" : "✗"} · CLS ${psi.overall.clsGreen ? "✓" : "✗"}`
+        : "Afventer trafik til RUM eller PSI-nøgle.";
+      const status: CheckStatus = allGreen ? "green" : rumSome || psiSome ? "amber" : "waiting";
+      return check("perf.cwv", "Core Web Vitals grønne på alle nøglesider", detail, status, "LCP + INP + CLS alle grønne");
+    })(),
     check("perf.deploy", "Deploy pipeline stabil (Vercel prod)", "Vercel CLI-auth stabil, ingen build-fejl.", "green"),
   ];
 
