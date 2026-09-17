@@ -1,51 +1,31 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import { clsx } from "@/lib/clsx";
 
-// Drop your real logo at:
-//   public/nordinvest-logo.png        (dark mark — for light backgrounds)
-//   public/nordinvest-logo-white.png  (white mark — for dark backgrounds)
-// It swaps in automatically; until then a clean "Ni" mark shows.
-function useImageExists(src: string) {
-  const [ok, setOk] = useState(false);
-  useEffect(() => {
-    const img = new window.Image();
-    img.onload = () => setOk(true);
-    img.src = src;
-  }, [src]);
-  return ok;
-}
+// Server component — no client JS, no runtime "does this file exist?" probe.
+// Statically references /public/nordinvest-logo.png so Next optimizes it once
+// (AVIF/WebP) and inlines the correct <img> markup on every page.
 
 function Mark({ size, variant }: { size: number; variant: "dark" | "light" }) {
-  const src = variant === "light" ? "/nordinvest-logo-white.png" : "/nordinvest-logo.png";
-  const hasPng = useImageExists(src);
-
-  if (hasPng) {
-    // eslint-disable-next-line @next/next/no-img-element
+  // Only the dark mark exists as a PNG today. The light variant falls back to
+  // the inline SVG so a dark-navbar page still shows a mark instead of a 404.
+  if (variant === "light") {
     return (
-      <img
-        src={src}
-        alt="NordInvest"
-        width={size}
-        height={size}
-        className={clsx("object-contain", variant === "dark" && "mix-blend-multiply")}
-      />
+      <svg width={size} height={size} viewBox="0 0 120 120" fill="none" aria-hidden="true">
+        <path d="M16 104V40h13l46 47V40h13v64H75L29 57v47H16z" className="fill-current text-white" />
+        <circle cx="99" cy="30" r="13" className="fill-current text-white" />
+      </svg>
     );
   }
-
-  const color = variant === "light" ? "text-white" : "text-slate-900";
   return (
-    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" aria-hidden="true">
-      {/* bold N */}
-      <path
-        d="M16 104V40h13l46 47V40h13v64H75L29 57v47H16z"
-        className={clsx("fill-current", color)}
-      />
-      {/* i dot */}
-      <circle cx="99" cy="30" r="13" className={clsx("fill-current", color)} />
-    </svg>
+    <Image
+      src="/nordinvest-logo.png"
+      alt="NordInvest"
+      width={size}
+      height={size}
+      priority
+      className="object-contain mix-blend-multiply"
+    />
   );
 }
 
