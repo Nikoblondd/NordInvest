@@ -246,7 +246,6 @@ export async function getLaunchReadiness(): Promise<ReadinessReport> {
       // it beats Google's synthetic lab. Fall back to PSI field/lab when we're
       // still ramping traffic.
       const rumLcp = rum.overall.lcpP75;
-      const rumInpG = rum.overall.inpGreen;
       const psiLcp = psi.overall.landingLcpMs;
       const source = rumLcp != null ? `RUM (${rum.totalSamples} målinger, ${rum.windowDays}d)` : psiLcp != null ? "PageSpeed Insights" : null;
       const val = rumLcp ?? psiLcp;
