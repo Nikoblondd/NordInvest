@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,17 +20,36 @@ type Fields = {
 };
 
 export async function GET(req: NextRequest) {
+  // Anonymous analyses are the entire free-tier promise ("3 gratis analyser
+  // om måneden — kræver intet kreditkort"). Extract must therefore work
+  // without a session. Rate-limit / usage-counting lives on /api/usage.
+  const _supabase = createClient();
+  void _supabase;
+
   const url = req.nextUrl.searchParams.get("url");
   if (!url || !/^https?:\/\//i.test(url)) {
     return NextResponse.json({ ok: false, error: "invalid_url" }, { status: 400 });
   }
+  let host = "";
   try {
-    const host = new URL(url).hostname;
+    host = new URL(url).hostname;
     if (/^(localhost|127\.|10\.|192\.168\.|169\.254\.|0\.0\.0\.0)/.test(host)) {
       return NextResponse.json({ ok: false, error: "blocked_host" }, { status: 400 });
     }
   } catch {
     return NextResponse.json({ ok: false, error: "invalid_url" }, { status: 400 });
+  }
+
+  // Portal-specific fast paths bypass Cloudflare bot-protection by hitting the
+  // portal's own public JSON API instead of scraping the SPA shell. Falls back
+  // to generic HTML extraction if the API misses.
+  if (/(^|\.)boligsiden\.dk$/i.test(host)) {
+    const via = await fromBoligsiden(url);
+    if (via && via.ok) return NextResponse.json(via);
+    // Boligsiden's page shell is Cloudflare-guarded; don't waste a round-trip
+    // trying to scrape it after the API missed. Return a clear message so the
+    // UI can tell the user the listing isn't active on Boligsiden anymore.
+    return NextResponse.json({ ok: false, error: "boligsiden_not_active" });
   }
 
   let html = "";
@@ -68,10 +88,189 @@ export async function GET(req: NextRequest) {
     .filter(([, v]) => v !== undefined && v !== null && v !== "")
     .map(([k]) => k);
 
+  const images = collectImages(html, url);
+
   if (!f.price && !f.monthlyRent && !f.area) {
-    return NextResponse.json({ ok: false, error: "nothing_found" });
+    return NextResponse.json({ ok: false, error: "nothing_found", images });
   }
-  return NextResponse.json({ ok: true, fields: f, found });
+  return NextResponse.json({ ok: true, fields: f, found, images });
+}
+
+/* ---------------- Boligsiden public API ---------------- */
+// Boligsiden's page shell is behind a Cloudflare bot check that returns 403
+// on plain fetches, so we go through their JSON API instead. The single-case
+// endpoint is protected, but /search/cases with a zipCode filter returns full
+// case data and stays open. We parse the URL slug, hit the search, and pick
+// the case whose house number and floor/side match.
+
+type BsAddress = { street: string; number: string; letter?: string; zip: string; floor?: string; side?: string };
+
+function parseBoligsidenSlug(url: string): BsAddress | null {
+  try {
+    const u = new URL(url);
+    // Path shapes:
+    //   /adresse/vesterbrogade-42-2-tv-1620-koebenhavn-v
+    //   /adresse/vesterbrogade-42-1620-koebenhavn-v
+    //   /bolig/... (some listings)
+    const parts = u.pathname.replace(/^\//, "").split("/").filter(Boolean);
+    const seg = parts.find((s) => /-\d{4}-/.test(s)) || parts[parts.length - 1];
+    if (!seg) return null;
+    const tokens = seg.split("-");
+    // Find the 4-digit zip
+    const zipIdx = tokens.findIndex((t) => /^\d{4}$/.test(t));
+    if (zipIdx < 2) return null;
+    const zip = tokens[zipIdx];
+    // Street + number [+ letter] live before the zip. House number is the
+    // first purely-numeric token (with optional letter suffix on the following
+    // token like "42-a"). Floor/side may sit between number and zip.
+    let numIdx = -1;
+    for (let i = 0; i < zipIdx; i++) {
+      if (/^\d+[a-z]?$/i.test(tokens[i])) {
+        numIdx = i;
+        break;
+      }
+    }
+    if (numIdx < 1) return null;
+    const street = tokens.slice(0, numIdx).join(" ").replace(/\bkoebenhavn\b/i, "København");
+    const numTok = tokens[numIdx];
+    const numMatch = numTok.match(/^(\d+)([a-z]?)$/i);
+    const number = numMatch?.[1] ?? numTok;
+    const letter = numMatch?.[2] || undefined;
+    const between = tokens.slice(numIdx + 1, zipIdx);
+    const floor = between[0];
+    const side = between[1];
+    return { street, number, letter, zip, floor, side };
+  } catch {
+    return null;
+  }
+}
+
+async function fromBoligsiden(url: string): Promise<{ ok: boolean; fields?: Fields; found?: string[]; images?: string[] } | null> {
+  const parsed = parseBoligsidenSlug(url);
+  if (!parsed) return null;
+  const q = `${parsed.street} ${parsed.number}${parsed.letter ?? ""}`.trim();
+  const api = `https://api.boligsiden.dk/search/cases?addressSearch=${encodeURIComponent(q)}&zipCodes=${parsed.zip}&per_page=10`;
+  try {
+    const res = await fetch(api, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
+        Accept: "application/json,*/*;q=0.1",
+        "Accept-Language": "da-DK,da;q=0.9,en;q=0.8",
+      },
+    });
+    if (!res.ok) return null;
+    const j = (await res.json()) as { cases?: BsCase[] };
+    const cases = Array.isArray(j.cases) ? j.cases : [];
+    if (cases.length === 0) return null;
+
+    // Pick best match: same house number + letter, and if we know floor/side prefer those.
+    const targetNum = parsed.number;
+    const targetLetter = (parsed.letter || "").toLowerCase();
+    const targetFloor = (parsed.floor || "").toLowerCase();
+    const targetSide = (parsed.side || "").toLowerCase();
+    const scored = cases
+      .map((c) => {
+        const a = c.address || {};
+        let score = 0;
+        if (String(a.houseNumber ?? "") === targetNum) score += 3;
+        if (targetLetter && (a.letter || "").toLowerCase() === targetLetter) score += 2;
+        if (targetFloor && (a.floor || "").toLowerCase().includes(targetFloor)) score += 1;
+        if (targetSide && (a.door || "").toLowerCase().includes(targetSide)) score += 1;
+        return { c, score };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    const winner = scored[0];
+    if (!winner || winner.score < 3) return null; // require at least house-number match
+    // If the URL specifies a floor or door, require the winning case to match
+    // BOTH — otherwise we'd silently swap the user's requested unit for a
+    // different apartment at the same street number (e.g. 2.tv → 5.tv).
+    const winFloor = (winner.c.address?.floor || "").toLowerCase();
+    const winDoor = (winner.c.address?.door || "").toLowerCase();
+    if (targetFloor && !winFloor.includes(targetFloor) && !targetFloor.includes(winFloor)) return null;
+    if (targetSide && !winDoor.includes(targetSide) && !targetSide.includes(winDoor)) return null;
+    const c = winner.c;
+    const a = c.address || {};
+
+    const f: Fields = {};
+    if (typeof c.priceCash === "number" && c.priceCash > 100000) f.price = c.priceCash;
+    if (typeof c.housingArea === "number" && c.housingArea >= 10) f.area = c.housingArea;
+    if (typeof c.numberOfRooms === "number" && c.numberOfRooms > 0) f.rooms = c.numberOfRooms;
+    if (typeof c.yearBuilt === "number" && c.yearBuilt > 1700) f.yearBuilt = c.yearBuilt;
+    if (c.energyLabel && /^[A-G]\d?$/i.test(c.energyLabel)) f.energyLabel = c.energyLabel.toUpperCase();
+    if (typeof c.monthlyExpense === "number" && c.monthlyExpense > 0) f.monthlyExpenses = c.monthlyExpense;
+    if (c.addressType) f.propertyType = c.addressType;
+    const parts = [
+      a.roadName,
+      [a.houseNumber, a.letter].filter(Boolean).join(""),
+      [a.floor, a.door].filter(Boolean).join("."),
+    ].filter(Boolean);
+    const cityParts = [a.zipCode, a.cityName].filter(Boolean).join(" ");
+    const addr = [parts.join(" "), cityParts].filter(Boolean).join(", ");
+    if (addr) f.address = addr.slice(0, 120);
+
+    const images: string[] = [];
+    if (c.defaultImage?.url) images.push(c.defaultImage.url);
+    for (const img of c.images ?? []) if (img.url) images.push(img.url);
+
+    const found = Object.entries(f)
+      .filter(([, v]) => v !== undefined && v !== null && v !== "")
+      .map(([k]) => k);
+
+    if (!f.price && !f.area) return null;
+    return { ok: true, fields: f, found, images: images.slice(0, 8) };
+  } catch {
+    return null;
+  }
+}
+
+type BsCase = {
+  priceCash?: number;
+  housingArea?: number;
+  numberOfRooms?: number;
+  yearBuilt?: number;
+  energyLabel?: string;
+  monthlyExpense?: number;
+  addressType?: string;
+  defaultImage?: { url?: string };
+  images?: { url?: string }[];
+  address?: {
+    roadName?: string;
+    houseNumber?: string | number;
+    letter?: string;
+    floor?: string;
+    door?: string;
+    zipCode?: string | number;
+    cityName?: string;
+  };
+};
+
+/* ---------------- listing photos (for AI condition analysis) ---------------- */
+
+function collectImages(html: string, pageUrl: string): string[] {
+  const urls = new Set<string>();
+  // OpenGraph / twitter hero images first (most reliable, publicly fetchable).
+  for (const re of [
+    /<meta[^>]+property=["']og:image(?::url)?["'][^>]+content=["']([^"']+)["']/gi,
+    /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/gi,
+  ]) {
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(html))) urls.add(m[1]);
+  }
+  // Then any image-file URLs in the markup / embedded JSON.
+  const re = /https?:\\?\/\\?\/[^"'\s<>()]+?\.(?:jpe?g|webp|png)(?:\?[^"'\s<>]*)?/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(html)) && urls.size < 40) urls.add(m[0].replace(/\\\//g, "/"));
+
+  const bad = /(logo|icon|sprite|favicon|avatar|placeholder|badge|pixel|1x1|blank|map|flag)/i;
+  const base = (() => { try { return new URL(pageUrl).origin; } catch { return ""; } })();
+
+  return Array.from(urls)
+    .map((u) => decode(u).trim())
+    .map((u) => (u.startsWith("//") ? "https:" + u : u.startsWith("/") ? base + u : u))
+    .filter((u) => /^https?:\/\//.test(u) && !bad.test(u))
+    .slice(0, 8);
 }
 
 /* ---------------- JSON sources ---------------- */
