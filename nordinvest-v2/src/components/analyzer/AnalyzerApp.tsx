@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
 } from "recharts";
-import { Loader2, CheckCircle2, AlertCircle, Sparkles, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, ExternalLink } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, ExternalLink } from "lucide-react";
 import { analyze, kr, krMd, pct, num, type Strategy } from "@/lib/analysis";
 import { runUncertainty } from "@/lib/uncertainty";
 import { assessInvestment } from "@/lib/deals";
