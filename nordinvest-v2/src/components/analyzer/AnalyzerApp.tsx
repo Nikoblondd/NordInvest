@@ -92,6 +92,26 @@ const FIELD_LABELS: Record<string, string> = {
 
 type Extract = { status: "idle" | "loading" | "ok" | "fail"; stage?: string; msg?: string; found?: string[]; estimated?: string[] };
 
+// Section separator styled like a spreadsheet tab-header — small alt-caps
+// label with a right-side hint, plus a subtle hairline below. Groups the
+// results into named zones (Vurdering · Marked · Datagrundlag · Prognose ·
+// Værktøjer) so an investor can scan the analysis the way they scan the
+// tabs of an Excel model instead of a wall of cards.
+function ZoneHeader({ label, hint }: { label: string; hint?: string }) {
+  return (
+    <div className="flex items-baseline gap-3 pt-2">
+      <div className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+        {label}
+      </div>
+      {hint && (
+        <div className="hidden min-w-0 flex-1 truncate text-[11px] text-slate-400 sm:block">
+          {hint}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Field({ label, value, onChange, suffix, step = 1 }: {
   label: string; value: number; onChange: (n: number) => void; suffix: string; step?: number;
 }) {
@@ -765,7 +785,8 @@ export function AnalyzerApp() {
           />
         ) : (
         <>
-        {/* HERO — the deal in five seconds: score, verdict, four numbers */}
+        {/* Zone: VURDERING — the 5-second read */}
+        <ZoneHeader label="Vurdering" hint="Overblik, score og de fire tal alle andre tal fører til" />
         <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 md:p-8">
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
             {address && <div className="min-w-0 truncate text-sm text-slate-400">{address}</div>}
@@ -833,29 +854,31 @@ export function AnalyzerApp() {
           </div>
         </section>
 
-        {/* documented market comparisons — price/m² vs. rent/m² for the region */}
+        {/* Zone header: MARKED — everything that compares this deal to the region */}
         {!isInvestment && (priceBench || rentBench) && (
-          <div className="grid gap-4 md:grid-cols-2">
-            {priceBench && propertyPriceM2 && (
-              <MarketBenchmark propertyPriceM2={propertyPriceM2} benchmark={priceBench} />
-            )}
-            {rentBench && (
-              <RentBenchmark
-                benchmark={rentBench}
-                currentRent={inputs.monthlyRent}
-                region={rentBench.region}
-                type={rentBench.type}
-                analysisId={usageRowIdRef.current}
-                areaM2={area}
-              />
-            )}
-          </div>
+          <>
+            <ZoneHeader label="Marked" hint="Denne bolig vs. sammenlignelige boliger i regionen" />
+            <div className="grid gap-4 md:grid-cols-2">
+              {priceBench && propertyPriceM2 && (
+                <MarketBenchmark propertyPriceM2={propertyPriceM2} benchmark={priceBench} />
+              )}
+              {rentBench && (
+                <RentBenchmark
+                  benchmark={rentBench}
+                  currentRent={inputs.monthlyRent}
+                  region={rentBench.region}
+                  type={rentBench.type}
+                  analysisId={usageRowIdRef.current}
+                  areaM2={area}
+                />
+              )}
+            </div>
+          </>
         )}
 
-        {/* datagrundlag — what's documented, estimated, or must be checked */}
+        {/* Zone: DATAGRUNDLAG — always-shown, but compact */}
+        <ZoneHeader label="Datagrundlag" hint="Hvor tallene kommer fra — dokumenteret, estimeret eller skal undersøges" />
         <DataProvenance rows={provenanceRows} rentRule={rentRule} showRentCaveat={!isInvestment} />
-
-        {/* quiet context — where the numbers come from */}
         <BrainBadge
           regionName={regionLabel(cal.region)}
           tier={cal.tier}
@@ -866,7 +889,8 @@ export function AnalyzerApp() {
         />
         {bbr && <BbrPanel data={bbr} />}
 
-        {/* prognose — the one visual worth keeping up front */}
+        {/* Zone: PROGNOSE — chart + long-term details */}
+        <ZoneHeader label="Prognose" hint={`Cashflow og friværdi over ${r.holdYears} år`} />
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-sm font-semibold text-slate-900">{r.holdYears}-årig prognose</h3>
@@ -976,7 +1000,8 @@ export function AnalyzerApp() {
           )}
         </div>
 
-        {/* Fase 1 — value-add / BRRR renovation engine */}
+        {/* Zone: VÆRKTØJER — value-add sim + downloads + save */}
+        <ZoneHeader label="Værktøjer" hint="Byg om, gem eller download til bank" />
         <RenovationModule
           price={inputs.price}
           downPaymentPct={inputs.downPaymentPct}
@@ -992,46 +1017,47 @@ export function AnalyzerApp() {
           onSnapshot={setRenoSnap}
         />
 
-        {/* actions */}
+        {/* actions — one visual family: primary (dark) for "Gem", secondary (light)
+            for everything else. Prior version had four different palettes competing
+            for attention — this reads as one row of tools instead of a rainbow. */}
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex flex-wrap items-center gap-3">
-            <button onClick={exportExcel} disabled={exporting}
-              className="flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-colors hover:bg-blue-700 disabled:opacity-60">
-              {exporting ? <Loader2 size={18} className="animate-spin" /> : <FileSpreadsheet size={18} />}
-              Eksportér til Excel
-            </button>
-            <button onClick={openBankReport}
-              className="flex items-center gap-2 rounded-full bg-[#0f1f3d] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-colors hover:bg-[#16294f]">
-              <FileText size={18} />
-              Download bankrapport
-            </button>
-            {listingUrl && (
-              watch.status === "saved" ? (
-                <a href="/dashboard" className="flex items-center gap-2 rounded-full bg-emerald-50 px-6 py-3 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-200 hover:bg-emerald-100">
-                  <BellRing size={18} /> Vagt aktiv — se på dashboard
-                </a>
-              ) : (
-                <button onClick={startWatch} disabled={watch.status === "saving"}
-                  className="flex items-center gap-2 rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-200 disabled:opacity-60">
-                  {watch.status === "saving" ? <Loader2 size={18} className="animate-spin" /> : <Bell size={18} />}
-                  Overvåg for prisændringer
-                </button>
-              )
-            )}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {/* Primary — the action most investors take */}
             {save.status === "saved" ? (
-              <a href="/dashboard" className="flex items-center gap-2 rounded-full bg-emerald-50 px-6 py-3 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-200 hover:bg-emerald-100">
-                <Check size={18} /> Gemt — se portefølje
+              <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 sm:px-5">
+                <Check size={16} /> Gemt — se portefølje
               </a>
             ) : (
               <button onClick={saveToPortfolio} disabled={save.status === "saving"}
-                className="flex items-center gap-2 rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-200 disabled:opacity-60">
-                {save.status === "saving" ? <Loader2 size={18} className="animate-spin" /> : <Bookmark size={18} />}
+                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 disabled:opacity-60 sm:px-5">
+                {save.status === "saving" ? <Loader2 size={16} className="animate-spin" /> : <Bookmark size={16} />}
                 Gem til portefølje
               </button>
             )}
-            <span className="flex items-center gap-1.5 text-xs text-slate-400">
-              <Sparkles size={13} /> Excel-modellen er redigerbar — ret antagelserne og alt regner sig selv.
-            </span>
+            {/* Secondary family — all the same slate outline */}
+            <button onClick={exportExcel} disabled={exporting}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60 sm:px-5">
+              {exporting ? <Loader2 size={16} className="animate-spin" /> : <FileSpreadsheet size={16} />}
+              Excel
+            </button>
+            <button onClick={openBankReport}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 sm:px-5">
+              <FileText size={16} />
+              Bankrapport
+            </button>
+            {listingUrl && (
+              watch.status === "saved" ? (
+                <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 sm:px-5">
+                  <BellRing size={16} /> Vagt aktiv
+                </a>
+              ) : (
+                <button onClick={startWatch} disabled={watch.status === "saving"}
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60 sm:px-5">
+                  {watch.status === "saving" ? <Loader2 size={16} className="animate-spin" /> : <Bell size={16} />}
+                  Overvåg pris
+                </button>
+              )
+            )}
           </div>
           {save.status === "limit" && (
             <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
