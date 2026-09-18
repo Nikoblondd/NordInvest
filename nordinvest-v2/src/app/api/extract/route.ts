@@ -70,6 +70,10 @@ export async function GET(req: NextRequest) {
   }
 
   const f: Fields = {};
+  // Source 0: schema.org RealEstateListing (Home, EDC, Danbolig — same shape).
+  // Runs before the generic walker so the listing's own address/price/area
+  // beat the mægler's postal address / a lot-size floorArea.
+  for (const obj of collectJson(html)) mergeFromRealEstateListing(f, obj);
   // Source 1: embedded JSON (JSON-LD, __NEXT_DATA__, __NUXT__, application/json, window.__X=)
   for (const obj of collectJson(html)) mergeFromJson(f, obj);
   // Source 2: OpenGraph + <title>
@@ -318,6 +322,131 @@ const K = {
 
 function norm(k: string): string {
   return k.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/* ---------------- schema.org RealEstateListing fast path ---------------- */
+// Home, EDC, Danbolig, and most portal-in-a-box builds emit the same nested
+// shape: RealEstateListing.offers.price + RealEstateListing.itemOffered
+// (House/Apartment/Residence) with address, floorSize, numberOfRooms,
+// yearBuilt, additionalProperty[]. Pulling from THAT tree (not the mægler
+// PostalAddress or a plot-area value) gives us the right listing every time.
+
+type SchemaNode = Record<string, unknown> & { "@type"?: string | string[] };
+
+function typeOf(n: unknown): string[] {
+  if (!n || typeof n !== "object") return [];
+  const t = (n as SchemaNode)["@type"];
+  return Array.isArray(t) ? t.map(String) : t ? [String(t)] : [];
+}
+function hasType(n: unknown, ...names: string[]): boolean {
+  const ts = typeOf(n);
+  return ts.some((t) => names.includes(t));
+}
+
+function findFirst<T = unknown>(root: unknown, match: (n: unknown) => boolean): T | null {
+  const seen = new Set<unknown>();
+  const stack: unknown[] = [root];
+  while (stack.length) {
+    const n = stack.pop();
+    if (!n || typeof n !== "object" || seen.has(n)) continue;
+    seen.add(n);
+    if (match(n)) return n as T;
+    if (Array.isArray(n)) stack.push(...n);
+    else stack.push(...Object.values(n as Record<string, unknown>));
+  }
+  return null;
+}
+
+function quantity(n: unknown): number | null {
+  if (n == null) return null;
+  if (typeof n === "number") return isFinite(n) ? n : null;
+  if (typeof n === "string") return daNum(n);
+  if (typeof n === "object") {
+    const v = (n as SchemaNode).value ?? (n as SchemaNode)["@value"];
+    if (typeof v === "number") return isFinite(v) ? v : null;
+    if (typeof v === "string") return daNum(v);
+  }
+  return null;
+}
+
+function streetAddressOf(node: unknown): string | null {
+  if (!node) return null;
+  if (typeof node === "string") return node.length > 3 ? node : null;
+  if (typeof node !== "object") return null;
+  const a = node as Record<string, unknown>;
+  const s = a.streetAddress;
+  if (typeof s === "string" && s.length > 3) {
+    const loc = typeof a.addressLocality === "string" ? a.addressLocality : "";
+    const zip = typeof a.postalCode === "string" ? a.postalCode : "";
+    // Some feeds already include zip + city in streetAddress; don't double it up.
+    if (/\d{4}/.test(s)) return s;
+    const tail = [zip, loc].filter(Boolean).join(" ");
+    return tail ? `${s}, ${tail}` : s;
+  }
+  return null;
+}
+
+function mergeFromRealEstateListing(f: Fields, root: unknown): void {
+  const listing = findFirst(root, (n) => {
+    if (!hasType(n, "RealEstateListing", "Product")) return false;
+    const s = n as SchemaNode;
+    return Boolean(s.offers || s.itemOffered || s.mainEntity);
+  });
+  if (!listing) return;
+  const L = listing as SchemaNode;
+  // Price — offers can be an object or an array of offers. Some portals
+  // (Nybolig) emit the field with a capitalised "Price" instead of the
+  // schema.org-canonical "price", so read both.
+  const offers = Array.isArray(L.offers) ? L.offers : L.offers ? [L.offers] : [];
+  for (const o of offers) {
+    const oo = o as SchemaNode;
+    const price = quantity(oo?.price ?? (oo as Record<string, unknown>)?.Price);
+    // Guard: Nybolig also lists RENTALS under /ejerlejlighed/, where the
+    // Price field holds a monthly rent (~kr 5.000-30.000). Only accept as
+    // sale price when it's above 100 k.
+    if (price && price > 100000 && !f.price) f.price = price;
+  }
+  // itemOffered lives EITHER on the RealEstateListing itself (schema.org
+  // canonical), OR nested inside offers (Home.dk), OR at mainEntity (Nybolig).
+  // Try each in turn, then fall back to reading from the listing node itself.
+  const item =
+    (L.itemOffered as SchemaNode | undefined) ??
+    (offers
+      .map((o) => (o as SchemaNode)?.itemOffered as SchemaNode | undefined)
+      .find(Boolean)) ??
+    (L.mainEntity as SchemaNode | undefined);
+  const container: SchemaNode = item ?? L;
+  // Address — prefer itemOffered.address, not the mægler's postal address.
+  if (!f.address) {
+    const addr = streetAddressOf((container as SchemaNode).address ?? (container as SchemaNode).location);
+    if (addr) f.address = addr.slice(0, 120);
+  }
+  // Living area — accommodationFloorPlan.floorSize.value is the reliable one;
+  // fall back to floorSize on the accommodation itself.
+  if (!f.area) {
+    const plan = (container as SchemaNode).accommodationFloorPlan as SchemaNode | undefined;
+    const fs = plan?.floorSize ?? (container as SchemaNode).floorSize;
+    const v = quantity(fs);
+    if (v && v >= 10 && v <= 5000) f.area = v;
+  }
+  const rooms = quantity((container as SchemaNode).numberOfRooms);
+  if (rooms && rooms > 0 && rooms < 50 && !f.rooms) f.rooms = Math.round(rooms);
+  const yb = quantity((container as SchemaNode).yearBuilt);
+  if (yb && yb >= 1700 && yb <= 2100 && !f.yearBuilt) f.yearBuilt = Math.round(yb);
+  // Energy rating rides on additionalProperty[]{name:"EnergyRating"|"Energy label", value:"C"}
+  if (!f.energyLabel) {
+    const props = (container as SchemaNode).additionalProperty as unknown[] | undefined;
+    if (Array.isArray(props)) {
+      for (const p of props) {
+        const pn = p as SchemaNode;
+        const nm = String(pn.name ?? "").toLowerCase();
+        if (/energ/.test(nm)) {
+          const val = String(pn.value ?? "").trim().toUpperCase();
+          if (/^[A-G]\d?$/.test(val)) { f.energyLabel = val; break; }
+        }
+      }
+    }
+  }
 }
 
 function mergeFromJson(f: Fields, root: unknown) {
