@@ -7,25 +7,80 @@
   --font-inter: "Inter", -apple-system, system-ui, sans-serif;
   --font-fraunces: var(--font-inter);
   --font-jetbrains: var(--font-inter);
+
+  /* Real layered shadows — Tailwind's `shadow-sm` reads as flat and generic on
+     every surface. These stack a tight contact shadow with a diffused drop, so
+     cards actually have weight. */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04),
+                 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-card-lift: 0 4px 8px -2px rgba(15, 23, 42, 0.06),
+                      0 12px 24px -8px rgba(15, 23, 42, 0.08);
+  --shadow-btn: 0 1px 1px rgba(15, 23, 42, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Inter's stylistic sets: cv11 = single-storey a, ss01 = alt letterforms.
+       Small details, but the whole UI reads more like a considered wordmark. */
+    font-feature-settings: "cv11", "ss01", "ss03", "cv02";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Site-wide safety net: no page can ever accidentally scroll sideways on
+       mobile. Long content inside a table / chart / code block should scroll
+       inside its own overflow-x: auto container instead. */
+    overflow-x: hidden;
   }
   body {
     @apply bg-cream-50 text-stone-900 font-sans antialiased;
+    overflow-x: hidden;
   }
   ::selection {
-    @apply bg-blue-200/70;
+    /* A warmer selection tint reads considered vs. the default blue-200. */
+    background: rgba(37, 99, 235, 0.14);
+    color: inherit;
   }
   h1,
   h2,
   h3 {
     @apply font-sans font-bold tracking-tight;
+    /* Tighten headings past what tracking-tight does — real editorial polish. */
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+  h1 { letter-spacing: -0.028em; }
+  /* Considered focus ring: a single subtle offset ring, not the default browser
+     halo or the ubiquitous blue-500 double-ring you see on every AI site. */
+  :focus-visible {
+    outline: 2px solid rgba(37, 99, 235, 0.55);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
   .tnum {
-    font-feature-settings: "tnum" 1;
+    font-feature-settings: "tnum" 1, "cv11", "ss01";
+  }
+}
+
+@layer utilities {
+  /* Real card shadow used across the app. Replaces the flat `shadow-sm` look. */
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-card-lift {
+    box-shadow: var(--shadow-card-lift);
+  }
+  /* Hairline top-highlight — a real design detail that makes a card feel
+     physical. Legit typographers/UI designers use this constantly. */
+  .card-highlight {
+    box-shadow: var(--shadow-card),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  /* Button shadow: subtle contact drop + a hair of inner highlight.
+     Replaces the AI-signature `shadow-lg shadow-blue-600/20` glow. */
+  .shadow-btn {
+    box-shadow: var(--shadow-btn);
   }
 }
 
@@ -75,8 +130,22 @@
   .article blockquote {
     @apply border-l-2 border-blue-500 pl-5 italic text-slate-600;
   }
+  /* wide tables scroll inside their own box on mobile, not the page */
+  .table-scroll {
+    @apply my-6 w-full overflow-x-auto rounded-xl border border-slate-200;
+  }
+  .table-scroll table {
+    @apply w-full min-w-[36rem] border-collapse text-sm md:text-base;
+  }
+  .table-scroll + *,
+  * + .table-scroll {
+    margin-top: 1.5rem;
+  }
   .article table {
-    @apply my-6 w-full border-collapse text-base;
+    @apply w-full border-collapse text-base;
+  }
+  .article pre {
+    @apply overflow-x-auto rounded-xl bg-slate-900 p-4 text-sm text-slate-100;
   }
   .article th,
   .article td {
@@ -88,4 +157,13 @@
   .article code {
     @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm;
   }
+  .article pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+}
+
+/* Dark map: invert the light OSM tiles into a modern dark basemap. Applied only
+   to the deal-motor map tiles (markers/popups are in other panes, unaffected). */
+.ni-dark-map .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(185deg) brightness(0.92) contrast(0.9) saturate(0.85);
 }

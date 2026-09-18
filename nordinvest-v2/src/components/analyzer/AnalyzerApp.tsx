@@ -116,22 +116,22 @@ function KeyStat({
 }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="group relative">
+    <div className="group relative min-w-0">
       <div className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">
-        <span>{label}</span>
+        <span className="truncate">{label}</span>
         {explain && (
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label="Forklar"
-            className="text-slate-300 opacity-50 transition-colors hover:text-blue-600 group-hover:opacity-100"
+            className="shrink-0 text-slate-300 opacity-50 transition-colors hover:text-blue-600 group-hover:opacity-100"
           >
             <HelpCircle size={12} />
           </button>
         )}
       </div>
-      <div className={clsx("mt-1.5 whitespace-nowrap font-bold leading-none tnum", tone)}>
-        <span className="text-2xl md:text-[26px]">{value}</span>
-        {unit && <span className="ml-1 text-sm font-semibold text-slate-400">{unit}</span>}
+      <div className={clsx("mt-1.5 flex items-baseline gap-1 font-bold leading-none tnum", tone)}>
+        <span className="truncate text-xl sm:text-2xl md:text-[26px]">{value}</span>
+        {unit && <span className="text-sm font-semibold text-slate-400">{unit}</span>}
       </div>
 
       {open && explain && (
@@ -670,9 +670,9 @@ export function AnalyzerApp() {
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
+    <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-8">
       {/* INPUT PANEL */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24 lg:self-start">
+      <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 lg:sticky lg:top-24 lg:self-start">
         <h2 className="text-xl font-bold">Ejendommens tal</h2>
         <p className="mt-1 text-sm text-slate-500">Indsæt et boliglink på forsiden, eller ret tallene her.</p>
 
@@ -695,12 +695,30 @@ export function AnalyzerApp() {
           </div>
         )}
 
-        <div className="mt-6 space-y-4">
-          <Field label="Købspris" value={inputs.price} onChange={(n) => set({ price: n })} suffix="kr" step={25000} />
-          <Field label={isInvestment ? "Driftsindtægt/md. (netto)" : "Månedlig leje"} value={inputs.monthlyRent} onChange={(n) => set({ monthlyRent: n })} suffix="kr/md." step={500} />
-          <Field label="Udbetaling" value={inputs.downPaymentPct} onChange={(n) => set({ downPaymentPct: n })} suffix="%" />
-          <Field label="Rente" value={inputs.interestRate} onChange={(n) => set({ interestRate: n })} suffix="% p.a." step={0.25} />
-          <Field label="Faste udgifter" value={inputs.monthlyOpex} onChange={(n) => set({ monthlyOpex: n })} suffix="kr/md." step={250} />
+        <div className="mt-6 space-y-5">
+          {/* Grouped like a spreadsheet: Ejendom → Finansiering → Drift.
+              Tiny headers give the panel a mental scan-order instead of a
+              flat list of a dozen fields. */}
+          <div>
+            <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Ejendom</div>
+            <div className="space-y-3">
+              <Field label="Købspris" value={inputs.price} onChange={(n) => set({ price: n })} suffix="kr" step={25000} />
+              <Field label={isInvestment ? "Driftsindtægt/md. (netto)" : "Månedlig leje"} value={inputs.monthlyRent} onChange={(n) => set({ monthlyRent: n })} suffix="kr/md." step={500} />
+            </div>
+          </div>
+          <div>
+            <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Finansiering</div>
+            <div className="space-y-3">
+              <Field label="Udbetaling" value={inputs.downPaymentPct} onChange={(n) => set({ downPaymentPct: n })} suffix="%" />
+              <Field label="Rente" value={inputs.interestRate} onChange={(n) => set({ interestRate: n })} suffix="% p.a." step={0.25} />
+            </div>
+          </div>
+          <div>
+            <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Drift</div>
+            <div className="space-y-3">
+              <Field label="Faste udgifter" value={inputs.monthlyOpex} onChange={(n) => set({ monthlyOpex: n })} suffix="kr/md." step={250} />
+            </div>
+          </div>
         </div>
 
         <button onClick={() => setAdvanced((v) => !v)} className="mt-5 flex w-full items-center justify-between text-sm font-medium text-slate-600 hover:text-slate-900">
@@ -736,7 +754,7 @@ export function AnalyzerApp() {
       </div>
 
       {/* RESULTS */}
-      <div className={clsx("space-y-6 transition-opacity", ran ? "opacity-100" : "opacity-70")}>
+      <div className={clsx("min-w-0 space-y-4 transition-opacity sm:space-y-6", ran ? "opacity-100" : "opacity-70")}>
         {gated ? (
           <PaywallGate
             score={displayScore}
@@ -748,15 +766,15 @@ export function AnalyzerApp() {
         ) : (
         <>
         {/* HERO — the deal in five seconds: score, verdict, four numbers */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5">
-            {address && <div className="text-sm text-slate-400">{address}</div>}
+        <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 md:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
+            {address && <div className="min-w-0 truncate text-sm text-slate-400">{address}</div>}
             {listingUrl && (
               <a
                 href={listingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 transition-colors hover:border-blue-300 hover:text-blue-600"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition-colors hover:border-blue-300 hover:text-blue-600 sm:px-3 sm:text-xs"
                 title={`Åbn det oprindelige opslag på ${sourceName(listingUrl)}`}
               >
                 Se opslaget på {sourceName(listingUrl)}
@@ -764,30 +782,30 @@ export function AnalyzerApp() {
               </a>
             )}
           </div>
-          <div className="mt-1 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-            <div className="md:max-w-md">
+          <div className="mt-1 flex min-w-0 flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-6">
+            <div className="min-w-0 md:max-w-md">
               <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Investment Score</div>
               <div className="mt-1 flex items-end gap-2.5">
-                <span className={clsx("text-7xl font-bold leading-none tnum", scoreColor)}>{displayScore}</span>
+                <span className={clsx("text-6xl font-bold leading-none tnum sm:text-7xl", scoreColor)}>{displayScore}</span>
                 <span className="mb-1.5 text-sm font-medium text-slate-400">/ 100 · {displayRating}</span>
               </div>
               <div className="mt-4 h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-slate-100">
                 <div className={clsx("h-full rounded-full", scoreBar)} style={{ width: `${Math.max(3, Math.min(100, displayScore))}%` }} />
               </div>
-              <p className="mt-5 text-base leading-relaxed text-slate-600">{displayVerdict}</p>
+              <p className="mt-4 text-[15px] leading-relaxed text-slate-600 sm:mt-5 sm:text-base">{displayVerdict}</p>
               {inv?.note && <p className="mt-2 text-sm leading-relaxed text-amber-700">{inv.note}</p>}
               {!isInvestment && rentEstimated && (
                 <p className="mt-2 text-sm leading-relaxed text-amber-700">
-                  Bemærk: vurderingen bygger på en <b>estimeret leje</b> — bekræft den før du handler. Se datagrundlaget nedenfor.
+                  Bemærk: vurderingen bygger på en <b>estimeret leje</b> — bekræft den før du handler.
                 </p>
               )}
             </div>
-            <span className="inline-flex shrink-0 self-start rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-500">
+            <span className="inline-flex shrink-0 self-start rounded-full border border-slate-200 px-2.5 py-1 text-[11px] font-medium text-slate-500 sm:px-3 sm:text-xs">
               {isInvestment ? `Investeringsejendom${subcatParam ? ` · ${subcatParam}` : ""}` : strategies.find((s) => s.id === inputs.strategy)?.label}
             </span>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-7 border-t border-slate-100 pt-7 sm:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-slate-100 pt-6 sm:mt-8 sm:gap-x-6 sm:gap-y-7 sm:pt-7 sm:grid-cols-4">
             <KeyStat
               label="Cash flow / md." value={dk(r.cashFlow)} unit="kr" tone={cfTone}
               explain="Det, der reelt lander på din konto hver måned, når lejen har betalt lånet og alle udgifter. Positivt = ejendommen betaler dig. Negativt = du lægger penge til hver måned."
@@ -849,7 +867,7 @@ export function AnalyzerApp() {
         {bbr && <BbrPanel data={bbr} />}
 
         {/* prognose — the one visual worth keeping up front */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-sm font-semibold text-slate-900">{r.holdYears}-årig prognose</h3>
             <span className="text-xs text-slate-400">Værdistigning {pct(inputs.appreciationPct, 0)}/år · lejevækst {pct(inputs.rentGrowthPct, 0)}/år</span>
@@ -875,7 +893,7 @@ export function AnalyzerApp() {
         </section>
 
         {/* progressive deep-dive — the detail stays out of the 5-second read */}
-        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <button onClick={() => setDetails((v) => !v)} className="flex w-full items-center justify-between gap-3 p-6 text-left">
             <span>
               <span className="text-sm font-semibold text-slate-900">Detaljeret analyse</span>
@@ -975,7 +993,7 @@ export function AnalyzerApp() {
         />
 
         {/* actions */}
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="flex flex-wrap items-center gap-3">
             <button onClick={exportExcel} disabled={exporting}
               className="flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-colors hover:bg-blue-700 disabled:opacity-60">
