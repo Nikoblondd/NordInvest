@@ -46,9 +46,26 @@ export async function GET(req: NextRequest) {
   if (/(^|\.)boligsiden\.dk$/i.test(host)) {
     const via = await fromBoligsiden(url);
     if (via && via.ok) return NextResponse.json(via);
-    // Boligsiden's page shell is Cloudflare-guarded; don't waste a round-trip
-    // trying to scrape it after the API missed. Return a clear message so the
-    // UI can tell the user the listing isn't active on Boligsiden anymore.
+    // If Boligsiden's API didn't have this listing but we got a mægler URL out
+    // of the case data, fetch that page instead. The mæglers (Home, EDC, Estate,
+    // Danbolig, Nybolig) all return real HTML for us.
+    if (via && via.followUrl) {
+      const followed = await extractFromMaeglerUrl(via.followUrl);
+      if (followed.ok) return NextResponse.json(followed);
+    }
+    // Last fallback: hand the parsed address back so the analyzer can still
+    // prefill the address field, trigger BBR enrichment, and let the user
+    // type the numbers themselves — always better than an empty state.
+    if (via && via.fallbackAddress) {
+      return NextResponse.json({
+        ok: true,
+        fields: { address: via.fallbackAddress },
+        found: ["address"],
+        images: [],
+        partial: true,
+        source: "boligsiden_slug",
+      });
+    }
     return NextResponse.json({ ok: false, error: "boligsiden_not_active" });
   }
 
@@ -149,11 +166,44 @@ function parseBoligsidenSlug(url: string): BsAddress | null {
   }
 }
 
-async function fromBoligsiden(url: string): Promise<{ ok: boolean; fields?: Fields; found?: string[]; images?: string[] } | null> {
+// Slugify a Boligsiden roadName so it compares apples-to-apples with the tokens
+// we pulled from the URL slug (aa/oe/ae, no punctuation, spaces → hyphens).
+function slugifyRoadName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/å/g, "aa")
+    .replace(/ø/g, "oe")
+    .replace(/æ/g, "ae")
+    .replace(/[.,]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}
+
+type BsResult = {
+  ok: boolean;
+  fields?: Fields;
+  found?: string[];
+  images?: string[];
+  followUrl?: string; // mægler URL to fall through to if API had no rich data
+  fallbackAddress?: string; // parsed address string when nothing else works
+};
+
+async function fromBoligsiden(url: string): Promise<BsResult | null> {
   const parsed = parseBoligsidenSlug(url);
   if (!parsed) return null;
-  const q = `${parsed.street} ${parsed.number}${parsed.letter ?? ""}`.trim();
-  const api = `https://api.boligsiden.dk/search/cases?addressSearch=${encodeURIComponent(q)}&zipCodes=${parsed.zip}&per_page=10`;
+
+  // Always produce a fallback address from the slug so even a total miss lets
+  // the analyzer prefill the address for BBR and let the user type the rest.
+  const streetPretty = parsed.street
+    .replace(/\bkoebenhavn\b/i, "København")
+    .replace(/\baabenraa\b/i, "Aabenraa")
+    .split(" ")
+    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
+    .join(" ");
+  const fallbackAddress = `${streetPretty} ${parsed.number}${parsed.letter ?? ""}, ${parsed.zip}`;
+
+  const api = `https://api.boligsiden.dk/search/cases?zipCodes=${parsed.zip}&per_page=200`;
+  let cases: BsCase[] = [];
   try {
     const res = await fetch(api, {
       headers: {
@@ -163,69 +213,145 @@ async function fromBoligsiden(url: string): Promise<{ ok: boolean; fields?: Fiel
         "Accept-Language": "da-DK,da;q=0.9,en;q=0.8",
       },
     });
-    if (!res.ok) return null;
-    const j = (await res.json()) as { cases?: BsCase[] };
-    const cases = Array.isArray(j.cases) ? j.cases : [];
-    if (cases.length === 0) return null;
+    if (res.ok) {
+      const j = (await res.json()) as { cases?: BsCase[] };
+      cases = Array.isArray(j.cases) ? j.cases : [];
+    }
+  } catch {
+    /* fall through to fallback */
+  }
 
-    // Pick best match: same house number + letter, and if we know floor/side prefer those.
-    const targetNum = parsed.number;
-    const targetLetter = (parsed.letter || "").toLowerCase();
-    const targetFloor = (parsed.floor || "").toLowerCase();
-    const targetSide = (parsed.side || "").toLowerCase();
-    const scored = cases
-      .map((c) => {
-        const a = c.address || {};
-        let score = 0;
-        if (String(a.houseNumber ?? "") === targetNum) score += 3;
-        if (targetLetter && (a.letter || "").toLowerCase() === targetLetter) score += 2;
-        if (targetFloor && (a.floor || "").toLowerCase().includes(targetFloor)) score += 1;
-        if (targetSide && (a.door || "").toLowerCase().includes(targetSide)) score += 1;
-        return { c, score };
+  if (cases.length === 0) return { ok: false, fallbackAddress };
+
+  // Local match — the API's addressSearch parameter is ignored by the backend,
+  // so filter every case at that zip against the slug ourselves.
+  const targetStreetSlug = parsed.street.replace(/\s+/g, "-");
+  const targetNum = parsed.number;
+  const targetLetter = (parsed.letter || "").toLowerCase();
+  const targetFloor = (parsed.floor || "").toLowerCase();
+  const targetSide = (parsed.side || "").toLowerCase();
+
+  const roadMatches = cases.filter((c) => {
+    const rn = c.address?.roadName;
+    if (!rn) return false;
+    const s = slugifyRoadName(rn);
+    return s === targetStreetSlug || s.startsWith(targetStreetSlug) || targetStreetSlug.startsWith(s);
+  });
+
+  // Street matches but nothing on that houseNumber? Try to find EXACT unit.
+  const numMatches = roadMatches.filter(
+    (c) => String(c.address?.houseNumber ?? "") === targetNum,
+  );
+  const withLetter = targetLetter
+    ? numMatches.filter((c) => (c.address?.letter || "").toLowerCase() === targetLetter)
+    : numMatches;
+  const withFloor = targetFloor
+    ? withLetter.filter((c) => {
+        const fl = (c.address?.floor || "").toLowerCase();
+        return fl === targetFloor || fl.includes(targetFloor) || targetFloor.includes(fl);
       })
-      .sort((a, b) => b.score - a.score);
+    : withLetter;
+  const withDoor = targetSide
+    ? withFloor.filter((c) => {
+        const dr = (c.address?.door || "").toLowerCase();
+        return dr === targetSide || dr.includes(targetSide) || targetSide.includes(dr);
+      })
+    : withFloor;
 
-    const winner = scored[0];
-    if (!winner || winner.score < 3) return null; // require at least house-number match
-    // If the URL specifies a floor or door, require the winning case to match
-    // BOTH — otherwise we'd silently swap the user's requested unit for a
-    // different apartment at the same street number (e.g. 2.tv → 5.tv).
-    const winFloor = (winner.c.address?.floor || "").toLowerCase();
-    const winDoor = (winner.c.address?.door || "").toLowerCase();
-    if (targetFloor && !winFloor.includes(targetFloor) && !targetFloor.includes(winFloor)) return null;
-    if (targetSide && !winDoor.includes(targetSide) && !targetSide.includes(winDoor)) return null;
-    const c = winner.c;
-    const a = c.address || {};
+  // Strict matching: if the URL specifies a floor/side, the winning case MUST
+  // match — otherwise we'd swap the user's requested unit (2.tv) for a different
+  // one on the same street (5.tv). Fall back to the address-only path instead
+  // of silently returning the wrong apartment's numbers.
+  let winner: BsCase | undefined;
+  if (targetFloor && targetSide) {
+    winner = withDoor[0];
+  } else if (targetFloor) {
+    winner = withFloor[0];
+  } else if (targetLetter) {
+    winner = withLetter[0];
+  } else {
+    // No floor/door in the URL means the URL points to a whole-property record
+    // (villa, terraced house, single-address condo). Any case at that number is fine.
+    winner = numMatches[0];
+  }
+  if (!winner) {
+    // The exact unit isn't actively listed on Boligsiden. Don't invent numbers.
+    return { ok: false, fallbackAddress };
+  }
 
+  const c = winner;
+  const a = c.address || {};
+  const f: Fields = {};
+  if (typeof c.priceCash === "number" && c.priceCash > 100000) f.price = c.priceCash;
+  if (typeof c.housingArea === "number" && c.housingArea >= 10) f.area = c.housingArea;
+  if (typeof c.numberOfRooms === "number" && c.numberOfRooms > 0) f.rooms = c.numberOfRooms;
+  if (typeof c.yearBuilt === "number" && c.yearBuilt > 1700) f.yearBuilt = c.yearBuilt;
+  if (c.energyLabel && /^[A-G]\d?$/i.test(c.energyLabel)) f.energyLabel = c.energyLabel.toUpperCase();
+  if (typeof c.monthlyExpense === "number" && c.monthlyExpense > 0) f.monthlyExpenses = c.monthlyExpense;
+  if (c.addressType) f.propertyType = c.addressType;
+  const parts = [
+    a.roadName,
+    [a.houseNumber, a.letter].filter(Boolean).join(""),
+    [a.floor, a.door].filter(Boolean).join("."),
+  ].filter(Boolean);
+  const cityParts = [a.zipCode, a.cityName].filter(Boolean).join(" ");
+  const addr = [parts.join(" "), cityParts].filter(Boolean).join(", ");
+  if (addr) f.address = addr.slice(0, 120);
+
+  const images: string[] = [];
+  if (c.defaultImage?.url) images.push(c.defaultImage.url);
+  for (const img of c.images ?? []) if (img.url) images.push(img.url);
+
+  const found = Object.entries(f)
+    .filter(([, v]) => v !== undefined && v !== null && v !== "")
+    .map(([k]) => k);
+
+  if (f.price || f.area) {
+    return { ok: true, fields: f, found, images: images.slice(0, 8) };
+  }
+
+  // We have a matched case but no price/area (data-sparse case). Try the
+  // mægler URL as a fallthrough — Estate, Home, Nybolig all return the JSON-LD
+  // we can parse. The fallback address is still returned so the caller keeps
+  // context if the mægler fetch also fails.
+  return {
+    ok: false,
+    followUrl: c.caseUrl,
+    fallbackAddress: f.address ?? fallbackAddress,
+  };
+}
+
+// Fetch the mægler's own page (Home, EDC, Estate, Nybolig, Danbolig) and run
+// the same JSON-LD path we already use for direct portal URLs. Follows the
+// short redirects those portals emit for case IDs.
+async function extractFromMaeglerUrl(mUrl: string): Promise<{ ok: boolean; fields?: Fields; found?: string[]; images?: string[] }> {
+  try {
+    const res = await fetch(mUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "da-DK,da;q=0.9,en;q=0.8",
+      },
+      redirect: "follow",
+    });
+    if (!res.ok) return { ok: false };
+    const html = await res.text();
     const f: Fields = {};
-    if (typeof c.priceCash === "number" && c.priceCash > 100000) f.price = c.priceCash;
-    if (typeof c.housingArea === "number" && c.housingArea >= 10) f.area = c.housingArea;
-    if (typeof c.numberOfRooms === "number" && c.numberOfRooms > 0) f.rooms = c.numberOfRooms;
-    if (typeof c.yearBuilt === "number" && c.yearBuilt > 1700) f.yearBuilt = c.yearBuilt;
-    if (c.energyLabel && /^[A-G]\d?$/i.test(c.energyLabel)) f.energyLabel = c.energyLabel.toUpperCase();
-    if (typeof c.monthlyExpense === "number" && c.monthlyExpense > 0) f.monthlyExpenses = c.monthlyExpense;
-    if (c.addressType) f.propertyType = c.addressType;
-    const parts = [
-      a.roadName,
-      [a.houseNumber, a.letter].filter(Boolean).join(""),
-      [a.floor, a.door].filter(Boolean).join("."),
-    ].filter(Boolean);
-    const cityParts = [a.zipCode, a.cityName].filter(Boolean).join(" ");
-    const addr = [parts.join(" "), cityParts].filter(Boolean).join(", ");
-    if (addr) f.address = addr.slice(0, 120);
-
-    const images: string[] = [];
-    if (c.defaultImage?.url) images.push(c.defaultImage.url);
-    for (const img of c.images ?? []) if (img.url) images.push(img.url);
-
+    for (const obj of collectJson(html)) mergeFromRealEstateListing(f, obj);
+    for (const obj of collectJson(html)) mergeFromJson(f, obj);
+    f.address ??= metaContent(html, ["og:title"]) ?? titleTag(html) ?? undefined;
+    fromText(f, htmlToText(html));
+    if (f.annualRent && !f.monthlyRent) f.monthlyRent = Math.round(f.annualRent / 12);
+    if (f.monthlyRent && !f.annualRent) f.annualRent = Math.round(f.monthlyRent * 12);
     const found = Object.entries(f)
       .filter(([, v]) => v !== undefined && v !== null && v !== "")
       .map(([k]) => k);
-
-    if (!f.price && !f.area) return null;
-    return { ok: true, fields: f, found, images: images.slice(0, 8) };
+    const images = collectImages(html, mUrl);
+    if (!f.price && !f.monthlyRent && !f.area) return { ok: false };
+    return { ok: true, fields: f, found, images };
   } catch {
-    return null;
+    return { ok: false };
   }
 }
 
@@ -237,6 +363,7 @@ type BsCase = {
   energyLabel?: string;
   monthlyExpense?: number;
   addressType?: string;
+  caseUrl?: string;
   defaultImage?: { url?: string };
   images?: { url?: string }[];
   address?: {
