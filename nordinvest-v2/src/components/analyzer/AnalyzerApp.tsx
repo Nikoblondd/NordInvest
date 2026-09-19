@@ -24,7 +24,9 @@ import { AnalystChat } from "@/components/analyzer/AnalystChat";
 import { DataProvenance } from "@/components/analyzer/DataProvenance";
 import { MarketBenchmark } from "@/components/analyzer/MarketBenchmark";
 import { RentBenchmark } from "@/components/analyzer/RentBenchmark";
+import { RentReserve } from "@/components/analyzer/RentReserve";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
+import { computeRentReserve } from "@/lib/rent-reserve";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
 import { TimeSavingsCapture } from "@/components/analyzer/TimeSavingsCapture";
 import { captureEvent } from "@/lib/analytics-events";
@@ -873,6 +875,32 @@ export function AnalyzerApp() {
                 />
               )}
             </div>
+
+            {/* Lejereserve — the single metric pro DK-investors optimize for.
+                Only renders when we have a market rent + a real area + it's
+                a rental case. Not tied to rentEstimated: even estimated rents
+                still surface the reserve gap. */}
+            {(() => {
+              if (!rentBench || !area || area <= 10) return null;
+              // Fall back to a 5 % regional cap rate — we don't yet compute
+              // per-region cap rates, but the RentBenchmark card already
+              // provides the growth trajectory.
+              const reserve = computeRentReserve({
+                currentMonthlyRent: inputs.monthlyRent,
+                marketRentPerM2Month: rentBench.value,
+                areaM2: area,
+                yearBuilt: byggeaar,
+                zip,
+                regionalCapRate: 5.0,
+                propertyType: propType,
+              });
+              if (!reserve) return null;
+              return (
+                <div className="mt-4">
+                  <RentReserve reserve={reserve} />
+                </div>
+              );
+            })()}
           </>
         )}
 
