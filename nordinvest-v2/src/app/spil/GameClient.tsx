@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import "./game.css";
+import { calculateRoundScores } from "./gameLogic";
 
 /* ---------- types ---------- */
 
@@ -91,14 +92,6 @@ function parseGuess(raw: string): number | null {
   return Math.round(n);
 }
 
-// Score curve: closest wins, points scale with % accuracy.
-// 100 base points, minus 5× the % diff — so 0% off = 100 pts, 10% off = 50 pts,
-// 20% off = 0 pts. Only the closest player wins the round bonus.
-function scoreForDiffPct(pctDiff: number): number {
-  const raw = 100 - Math.round(pctDiff * 5);
-  return Math.max(0, Math.min(100, raw));
-}
-
 /* ============================================================
    Root component
 ============================================================ */
@@ -121,6 +114,7 @@ export default function GameClient() {
   const [revealed, setRevealed] = useState<Set<HintKey>>(new Set());
   const [guesses, setGuesses] = useState<Record<number, PlayerGuess>>({});
   const [imageIdx, setImageIdx] = useState<number>(0);
+  const [roundHintCost, setRoundHintCost] = useState<number>(0);
 
   /* ---------- start game ---------- */
   async function startGame() {
@@ -141,6 +135,7 @@ export default function GameClient() {
       setCurrentRound(0);
       setRevealed(new Set());
       setImageIdx(0);
+      setRoundHintCost(0);
       setGuesses(
         Object.fromEntries(players.map((p) => [p.id, { raw: "", value: null, locked: false }])),
       );
@@ -169,13 +164,15 @@ export default function GameClient() {
   /* ---------- hints ---------- */
   function revealHint(key: HintKey) {
     if (revealed.has(key)) return;
+    const hint = HINTS.find((h) => h.key === key);
+    if (!hint) return;
     const next = new Set(revealed);
     next.add(key);
     setRevealed(next);
-    // Everyone pays the cost — clamped at 0 so nobody goes negative from hints
-    setPlayers((ps) =>
-      ps.map((p) => ({ ...p, score: Math.max(0, p.score - HINTS.find((h) => h.key === key)!.cost) })),
-    );
+    // A hint is a real cost for every player, including when their score is 0.
+    // Negative totals are intentional: the scoreboard must reflect every cost.
+    setRoundHintCost((cost) => cost + hint.cost);
+    setPlayers((ps) => ps.map((p) => ({ ...p, score: p.score - hint.cost })));
   }
 
   /* ---------- guessing ---------- */
@@ -211,20 +208,12 @@ export default function GameClient() {
 
   function revealPrice() {
     if (!currentProperty || !allLocked) return;
-    // find closest guess — winner gets score-for-diff, others get 0 bonus
-    const actual = currentProperty.price;
-    const scored = players
-      .map((p) => {
-        const g = guesses[p.id]!;
-        const diff = Math.abs((g.value ?? 0) - actual);
-        const pct = (diff / actual) * 100;
-        return { p, guess: g.value!, diff, pct };
-      })
-      .sort((a, b) => a.diff - b.diff);
-    const winner = scored[0];
-    const winnerBonus = scoreForDiffPct(winner.pct);
+    const scored = calculateRoundScores(players, guesses, currentProperty.price);
     setPlayers((ps) =>
-      ps.map((p) => (p.id === winner.p.id ? { ...p, score: p.score + winnerBonus } : p)),
+      ps.map((p) => {
+        const round = scored.find((row) => row.playerId === p.id);
+        return round ? { ...p, score: p.score + round.points } : p;
+      }),
     );
     setPhase("roundResult");
   }
@@ -238,6 +227,7 @@ export default function GameClient() {
     setCurrentRound(next);
     setRevealed(new Set());
     setImageIdx(0);
+    setRoundHintCost(0);
     setGuesses(
       Object.fromEntries(players.map((p) => [p.id, { raw: "", value: null, locked: false }])),
     );
@@ -250,6 +240,7 @@ export default function GameClient() {
     setCurrentRound(0);
     setRevealed(new Set());
     setGuesses({});
+    setRoundHintCost(0);
     setPlayers(players.map((p) => ({ ...p, score: 0 })));
   }
 
@@ -343,6 +334,7 @@ export default function GameClient() {
               totalRounds={properties.length}
               players={players}
               guesses={guesses}
+              hintCost={roundHintCost}
               onNext={nextRound}
               isFinal={currentRound === properties.length - 1}
             />
@@ -529,18 +521,7 @@ function GuessingScreen(props: {
   const p = props.property;
   return (
     <>
-      <div className="round-bar">
-        <div className="round-label">Runde <strong>{props.roundIdx + 1}</strong> af {props.totalRounds}</div>
-        <div className="mini-scoreboard">
-          {props.players.map((pl, i) => (
-            <div key={pl.id} className="mini-score">
-              <span className="mini-badge" style={{ background: playerColor(i) }}>{i + 1}</span>
-              <span className="mini-name">{pl.name}</span>
-              <span className="mini-pts">{pl.score} p</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <RoundHeader roundIdx={props.roundIdx} totalRounds={props.totalRounds} players={props.players} />
 
       <div className="stage">
         <div className="gallery-wrap">
@@ -708,35 +689,17 @@ function RoundResultScreen(props: {
   totalRounds: number;
   players: Player[];
   guesses: Record<number, PlayerGuess>;
+  hintCost: number;
   onNext: () => void;
   isFinal: boolean;
 }) {
   const p = props.property;
-  const scored = props.players
-    .map((pl, i) => {
-      const g = props.guesses[pl.id]!;
-      const diff = Math.abs((g.value ?? 0) - p.price);
-      const pct = (diff / p.price) * 100;
-      return { pl, i, guess: g.value!, diff, pct };
-    })
-    .sort((a, b) => a.diff - b.diff);
-  const winner = scored[0];
-  const winnerPts = scoreForDiffPct(winner.pct);
+  const scored = calculateRoundScores(props.players, props.guesses, p.price);
+  const winners = scored.filter((row) => row.isWinner);
 
   return (
     <>
-      <div className="round-bar">
-        <div className="round-label">Runde <strong>{props.roundIdx + 1}</strong> af {props.totalRounds}</div>
-        <div className="mini-scoreboard">
-          {props.players.map((pl, i) => (
-            <div key={pl.id} className="mini-score">
-              <span className="mini-badge" style={{ background: playerColor(i) }}>{i + 1}</span>
-              <span className="mini-name">{pl.name}</span>
-              <span className="mini-pts">{pl.score} p</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <RoundHeader roundIdx={props.roundIdx} totalRounds={props.totalRounds} players={props.players} />
 
       <div className="result-hero">
         <div className="result-actual-label">Boligens rigtige pris</div>
@@ -751,35 +714,51 @@ function RoundResultScreen(props: {
         </div>
       </div>
 
+      <div className="round-score-summary" role="status">
+        <strong>{winners.length > 1 ? "Tæt på!" : "Rundens vinder"}</strong>
+        <span>
+          {winners.map((row) => props.players.find((pl) => pl.id === row.playerId)?.name).join(" & ")} +
+          {winners[0]?.points ?? 0} point
+        </span>
+        <span>{props.hintCost ? `Hints: −${props.hintCost} point pr. spiller` : "Ingen hints brugt"}</span>
+      </div>
+
       <div className="result-table">
         <div className="result-table-head">
           <span>Spiller</span>
           <span>Gæt</span>
           <span>Difference</span>
           <span>%</span>
-          <span>Point</span>
+          <span>Netto</span>
         </div>
-        {scored.map((row, place) => (
-          <div
-            key={row.pl.id}
-            className={`result-table-row ${place === 0 ? "result-table-row-winner" : ""}`}
-          >
-            <span>
-              <span className="mini-badge" style={{ background: playerColor(row.i) }}>{row.i + 1}</span>
-              {row.pl.name}
-              {place === 0 && <span className="badge-winner">Tættest på!</span>}
-            </span>
-            <span>{kr(row.guess)}</span>
-            <span className={row.diff === 0 ? "diff-perfect" : ""}>
-              {row.guess > p.price ? "+" : row.guess < p.price ? "−" : ""}
-              {kr(row.diff)}
-            </span>
-            <span>{row.pct.toFixed(1)} %</span>
-            <span className="pts-cell">
-              {place === 0 ? `+${winnerPts}` : "0"}
-            </span>
-          </div>
-        ))}
+        {scored.map((row) => {
+          const player = props.players.find((pl) => pl.id === row.playerId)!;
+          const net = row.points - props.hintCost;
+          return (
+            <div
+              key={player.id}
+              className={`result-table-row ${row.isWinner ? "result-table-row-winner" : ""}`}
+            >
+              <span>
+                <span className="mini-badge" style={{ background: playerColor(row.playerIndex) }}>{row.playerIndex + 1}</span>
+                {player.name}
+                {row.isWinner && <span className="badge-winner">Tættest på!</span>}
+              </span>
+              <span>{kr(row.guess)}</span>
+              <span className={row.diff === 0 ? "diff-perfect" : ""}>
+                {row.guess > p.price ? "+" : row.guess < p.price ? "−" : ""}
+                {kr(row.diff)}
+              </span>
+              <span>{row.pct.toFixed(1)} %</span>
+              <span className="pts-cell">
+                <strong className={net < 0 ? "score-negative" : ""}>
+                  {net > 0 ? `+${net}` : net < 0 ? `−${Math.abs(net)}` : "0"}
+                </strong>
+                <small>{row.points > 0 ? `+${row.points} bonus` : "Ingen bonus"}</small>
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
@@ -814,24 +793,55 @@ function FinalScreen({ players, onPlayAgain }: { players: Player[]; onPlayAgain:
         {winner.score} <span>point</span>
       </div>
 
-      <div className="final-board">
-        {sorted.map((p, idx) => {
-          const orig = players.findIndex((pl) => pl.id === p.id);
-          return (
-            <div key={p.id} className={`final-row ${idx === 0 ? "final-row-first" : ""}`}>
-              <span className="final-place">{idx + 1}</span>
-              <span className="mini-badge" style={{ background: playerColor(orig) }}>{orig + 1}</span>
-              <span className="final-row-name">{p.name}</span>
-              <span className="final-row-pts">{p.score} p</span>
-            </div>
-          );
-        })}
-      </div>
+      <Scoreboard players={players} />
 
       <button className="btn btn-primary btn-big" onClick={onPlayAgain}>
         SPIL IGEN →
       </button>
     </div>
+  );
+}
+
+function RoundHeader({
+  roundIdx,
+  totalRounds,
+  players,
+}: {
+  roundIdx: number;
+  totalRounds: number;
+  players: Player[];
+}) {
+  return (
+    <div className="round-bar">
+      <div className="round-label">Runde <strong>{roundIdx + 1}</strong> af {totalRounds}</div>
+      <Scoreboard players={players} compact />
+    </div>
+  );
+}
+
+function Scoreboard({ players, compact = false }: { players: Player[]; compact?: boolean }) {
+  const ranked = [...players].sort((a, b) => b.score - a.score || a.id - b.id);
+
+  return (
+    <section className={`scoreboard ${compact ? "scoreboard-compact" : ""}`} aria-label="Scoreboard" aria-live="polite">
+      <div className="scoreboard-heading">
+        <span>Scoreboard</span>
+        <span>Samlet score</span>
+      </div>
+      <ol className="scoreboard-list">
+        {ranked.map((player, rank) => {
+          const playerIndex = players.findIndex((p) => p.id === player.id);
+          return (
+            <li key={player.id} className="scoreboard-row">
+              <span className="scoreboard-rank">{rank + 1}</span>
+              <span className="mini-badge" style={{ background: playerColor(playerIndex) }}>{playerIndex + 1}</span>
+              <span className="scoreboard-name">{player.name}</span>
+              <span className={`scoreboard-score ${player.score < 0 ? "score-negative" : ""}`}>{player.score} p</span>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
   );
 }
 
@@ -850,4 +860,3 @@ function playerColor(idx: number): string {
   ];
   return palette[idx % palette.length];
 }
-

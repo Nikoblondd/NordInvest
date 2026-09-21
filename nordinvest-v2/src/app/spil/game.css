@@ -400,6 +400,98 @@
 .mini-name { font-weight: 600; }
 .mini-pts { color: var(--gp-text-soft); font-variant-numeric: tabular-nums; }
 
+/* ---------------- Scoreboard ---------------- */
+.scoreboard {
+  background: var(--gp-panel);
+  border: 1px solid var(--gp-border);
+  border-top: 3px solid var(--gp-blue);
+  border-radius: 3px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.scoreboard-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--gp-border);
+  color: var(--gp-text-soft);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.scoreboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.scoreboard-row {
+  display: grid;
+  grid-template-columns: 28px 20px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 4px 6px;
+  border: 1px solid var(--gp-border);
+  background: #f8fafc;
+  border-radius: 3px;
+}
+.scoreboard-row:first-child {
+  background: #fff7e0;
+  border-color: var(--gp-yellow);
+}
+.scoreboard-rank {
+  color: var(--gp-text-soft);
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.scoreboard-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.scoreboard-score {
+  color: var(--gp-green-dark);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.score-negative { color: var(--gp-red-dark); }
+.scoreboard-compact {
+  flex: 1 1 360px;
+  min-width: 280px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+.scoreboard-compact .scoreboard-heading { display: none; }
+.scoreboard-compact .scoreboard-list {
+  flex-direction: row;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.scoreboard-compact .scoreboard-row {
+  display: inline-flex;
+  min-height: 0;
+  padding: 3px 9px 3px 4px;
+  gap: 6px;
+  border-radius: 20px;
+  background: #f4f6f9;
+}
+.scoreboard-compact .scoreboard-row:first-child { border-color: var(--gp-yellow); }
+.scoreboard-compact .scoreboard-rank { display: none; }
+.scoreboard-compact .scoreboard-name { font-size: 12px; }
+.scoreboard-compact .scoreboard-score { font-size: 12px; }
+
 /* ---------------- Stage (game layout) ---------------- */
 .stage {
   display: grid;
@@ -594,6 +686,21 @@
   padding: 28px 24px;
   margin-bottom: 16px;
 }
+.round-score-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: -4px 0 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--gp-border);
+  border-left: 3px solid var(--gp-yellow);
+  background: #fdfaf0;
+  color: var(--gp-text-soft);
+  font-size: 13px;
+}
+.round-score-summary strong { color: var(--gp-text); }
 .result-actual-label {
   font-size: 13px;
   color: var(--gp-text-soft);
@@ -671,7 +778,19 @@
   letter-spacing: 0.05em;
   margin-left: 4px;
 }
-.pts-cell { font-weight: 700; color: var(--gp-green-dark); }
+.pts-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-weight: 700;
+  color: var(--gp-green-dark);
+}
+.pts-cell small {
+  color: var(--gp-text-soft);
+  font-size: 10px;
+  font-weight: 400;
+  white-space: nowrap;
+}
 .result-table-row:not(.result-table-row-winner) .pts-cell { color: var(--gp-text-soft); font-weight: 400; }
 .diff-perfect { color: var(--gp-green-dark); font-weight: 700; }
 
