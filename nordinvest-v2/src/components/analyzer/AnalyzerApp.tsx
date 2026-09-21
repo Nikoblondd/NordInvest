@@ -25,6 +25,7 @@ import { DataProvenance } from "@/components/analyzer/DataProvenance";
 import { MarketBenchmark } from "@/components/analyzer/MarketBenchmark";
 import { RentBenchmark } from "@/components/analyzer/RentBenchmark";
 import { RentReserve } from "@/components/analyzer/RentReserve";
+import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
@@ -916,6 +917,15 @@ export function AnalyzerApp() {
           observedAppreciationPct={cal.observedAppreciationPct}
         />
         {bbr && <BbrPanel data={bbr} />}
+
+        {/* Zone: FREMTIDIGE BYRDER — planning data (lokalplaner, kloak, rammer)
+            no other DK analyzer surfaces. Only renders when we have an address. */}
+        {address && (
+          <>
+            <ZoneHeader label="Fremtidige byrder" hint="Lokalplan-forslag, kloak-status og planer der kan påvirke ejendommen" />
+            <FutureBurdens address={address} />
+          </>
+        )}
 
         {/* Zone: PROGNOSE — chart + long-term details */}
         <ZoneHeader label="Prognose" hint={`Cashflow og friværdi over ${r.holdYears} år`} />
