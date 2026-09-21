@@ -31,45 +31,38 @@
   box-sizing: border-box;
 }
 
-/* ---------------- Header ---------------- */
-.game-header {
+/* ---------------- Game-specific subheader (below the site Nav) ---------------- */
+.game-subheader {
   background: linear-gradient(180deg, #ffffff 0%, #f2f4f8 100%);
   border-bottom: 2px solid var(--gp-border-strong);
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.04);
 }
-.game-header-inner {
-  max-width: 1300px;
+.game-subheader-inner {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 14px 20px 10px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 20px;
-}
-.brand-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--gp-text);
-  text-decoration: none;
-  font-weight: 600;
-}
-.brand-mark {
-  color: var(--gp-blue);
-  font-size: 20px;
-}
-.brand-name {
-  letter-spacing: 0.02em;
+  padding: 24px 20px 12px;
+  text-align: center;
 }
 .page-title {
   margin: 0;
-  text-align: center;
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: -0.02em;
   color: var(--gp-text);
-  text-shadow: 0 1px 0 #fff;
+  line-height: 1.05;
 }
+.page-subtitle {
+  margin: 10px auto 0;
+  max-width: 640px;
+  font-size: 15px;
+  color: var(--gp-text-soft);
+  line-height: 1.55;
+}
+/* Legacy classes kept in the DOM by past sessions — harmless no-ops. */
+.game-header-inner { display: block; }
+.brand-link { display: none; }
+.brand-mark { display: none; }
+.brand-name { display: none; }
 .header-back {
   justify-self: end;
   color: var(--gp-text-soft);
@@ -116,34 +109,20 @@
   position: sticky;
   top: 12px;
 }
+/* Decorative side panels — the yellow blocks stay as an intentional visual
+   frame around the game. Text chrome ("Reklame", size hint) removed 2026-09-21
+   per Niko: the boxes read as design; the "Reklame" label read as unsold ads. */
 .ad-slot {
   background: var(--gp-ad-bg);
   border: 1.5px dashed var(--gp-ad-border);
-  color: #7c6a2b;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-style: italic;
-  font-size: 12px;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 .ad-160x600 { width: 160px; height: 600px; }
 .ad-160x300 { width: 160px; height: 300px; }
 .ad-728x90 { width: 100%; max-width: 728px; height: 90px; margin: 20px auto 24px; }
-.ad-label {
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-style: normal;
-  font-size: 11px;
-}
-.ad-hint {
-  font-size: 11px;
-  color: #9c8a4a;
-}
+/* Legacy label/hint classes kept as no-ops; the DOM no longer renders them,
+   but any cached CSS lookup won't blow up. */
+.ad-label, .ad-hint { display: none; }
 .ad-banner-wrap {
   max-width: 1300px;
   margin: 0 auto;
@@ -881,6 +860,65 @@
 }
 .game-footer a { color: var(--gp-blue); text-decoration: none; }
 .game-footer a:hover { text-decoration: underline; }
+
+/* ---------------- Reveal → Boligsiden listing link ---------------- */
+.result-listing-link {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+.result-listing-link a {
+  font-size: 13px;
+  padding: 8px 16px;
+}
+
+/* ---------------- SEO content strip below the game shell ----------------
+   Real content — search engines see this on first paint, so pages queries
+   like "gæt boligprisen", "gæt ejendomsprisen" or "boligpris quiz" have a
+   ranking signal beyond metadata alone. */
+.game-seo-strip {
+  background: #fff;
+  border-top: 1px solid var(--gp-border);
+  padding: 40px 20px 32px;
+}
+.game-seo-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  color: var(--gp-text);
+  line-height: 1.65;
+}
+.game-seo-inner h2 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+.game-seo-inner h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 22px 0 6px;
+  color: var(--gp-text);
+}
+.game-seo-inner p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--gp-text-soft);
+}
+.game-seo-inner ul {
+  margin: 4px 0 12px 20px;
+  padding: 0;
+  font-size: 14px;
+  color: var(--gp-text-soft);
+}
+.game-seo-inner ul li { margin: 4px 0; }
+.game-seo-inner a { color: var(--gp-blue); text-decoration: none; }
+.game-seo-inner a:hover { text-decoration: underline; }
+.game-seo-links {
+  padding-top: 10px;
+  border-top: 1px solid var(--gp-border);
+  font-size: 13px;
+  color: var(--gp-text-soft);
+}
 
 /* ==========================================================
    RESPONSIVE — hide ads on small screens, stack layout

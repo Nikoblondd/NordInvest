@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import "./game.css";
 import { calculateRoundScores } from "./gameLogic";
+import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
 
 /* ---------- types ---------- */
 
@@ -249,16 +251,19 @@ export default function GameClient() {
   ========================================================= */
   return (
     <div className="game-page">
-      <header className="game-header">
-        <div className="game-header-inner">
-          <a href="/" className="brand-link">
-            <span className="brand-mark" aria-hidden>◆</span>
-            <span className="brand-name">NordInvest</span>
-          </a>
-          <h1 className="page-title">GÆT BOLIGPRISEN</h1>
-          <a href="/" className="header-back">← Analyseren</a>
+      {/* Site-wide navigation — same Nav component used across all pages, so
+          the /spil tab uses the real NordInvest logo + navigation instead of
+          a bespoke ◆ mark. */}
+      <Nav />
+
+      <header className="game-subheader">
+        <div className="game-subheader-inner">
+          <h1 className="page-title">Gæt Boligprisen</h1>
+          <p className="page-subtitle">
+            Danmarks første multiplayer prisspil — se billeder af rigtige danske boliger fra Boligsiden og gæt salgsprisen. Gratis, ingen login.
+          </p>
         </div>
-        <nav className="crumb-bar" aria-label="Menu">
+        <nav className="crumb-bar" aria-label="Om spillet">
           <span className="crumb">Multiplayer</span>
           <span className="crumb-sep">·</span>
           <span className="crumb">Rigtige danske boliger</span>
@@ -268,16 +273,11 @@ export default function GameClient() {
       </header>
 
       <div className="game-shell">
-        {/* LEFT AD RAIL */}
-        <aside className="ad-rail ad-rail-left" aria-label="Reklame">
-          <div className="ad-slot ad-160x600">
-            <span className="ad-label">Reklame</span>
-            <span className="ad-hint">160 × 600</span>
-          </div>
-          <div className="ad-slot ad-160x300">
-            <span className="ad-label">Reklame</span>
-            <span className="ad-hint">160 × 300</span>
-          </div>
+        {/* LEFT AD RAIL — yellow slots kept, "Reklame" chrome removed so it
+            reads as a design element, not an unfilled ad. */}
+        <aside className="ad-rail ad-rail-left" aria-hidden="true">
+          <div className="ad-slot ad-160x600" />
+          <div className="ad-slot ad-160x300" />
         </aside>
 
         {/* MAIN GAME AREA */}
@@ -345,36 +345,57 @@ export default function GameClient() {
           )}
         </main>
 
-        {/* RIGHT AD RAIL */}
-        <aside className="ad-rail ad-rail-right" aria-label="Reklame">
-          <div className="ad-slot ad-160x600">
-            <span className="ad-label">Reklame</span>
-            <span className="ad-hint">160 × 600</span>
-          </div>
-          <div className="ad-slot ad-160x300">
-            <span className="ad-label">Reklame</span>
-            <span className="ad-hint">160 × 300</span>
-          </div>
+        {/* RIGHT AD RAIL — yellow slots kept as design; label chrome removed. */}
+        <aside className="ad-rail ad-rail-right" aria-hidden="true">
+          <div className="ad-slot ad-160x600" />
+          <div className="ad-slot ad-160x300" />
         </aside>
       </div>
 
-      {/* Bottom banner ad */}
+      {/* Bottom banner slot — no "Reklame" text, just the color block. */}
       <div className="ad-banner-wrap">
-        <div className="ad-slot ad-728x90">
-          <span className="ad-label">Reklame</span>
-          <span className="ad-hint">728 × 90</span>
-        </div>
+        <div className="ad-slot ad-728x90" aria-hidden="true" />
       </div>
 
-      <footer className="game-footer">
-        <div>
-          Data fra <a href="https://boligsiden.dk" target="_blank" rel="noopener">Boligsiden</a> ·
-          Priser vist er aktuelle udbudspriser · Spillet er gratis og gemmer ingenting.
+      {/* SEO content strip — real prose so search engines can match queries
+          like "gæt boligprisen", "gæt ejendomsprisen", "boligpris quiz",
+          "ejendomsspil danske boliger" against genuine content, not just
+          metadata. Rendered inside the game shell so bots see it on first paint. */}
+      <section className="game-seo-strip">
+        <div className="game-seo-inner">
+          <h2>Danmarks største gæt-boligprisen-spil</h2>
+          <p>
+            Gæt Boligprisen er et gratis multiplayer prisspil på danske boliger.
+            Vi trækker rigtige, aktive salgsopstillinger fra Boligsiden og lader
+            2-8 spillere gætte kontantprisen. Spil enten som ejendomsspil for
+            hele Danmark, eller vælg en specifik by som København, Aarhus,
+            Odense eller Aalborg — hver runde viser et nyt boligopslag med
+            billeder, byggeår og areal.
+          </p>
+          <h3>Hvordan spiller man gæt ejendomsprisen?</h3>
+          <ul>
+            <li>Vælg spillere og område — spillet er 100 % gratis, ingen login</li>
+            <li>Se billederne af boligen og gæt kontantprisen</li>
+            <li>Køb hints (areal, byggeår, energimærke, ejerudgift) mod point</li>
+            <li>Tættest på vinder rundens bonus — alle får point for at være tæt på</li>
+          </ul>
+          <h3>Hvorfor spille boligpris-quizzen?</h3>
+          <p>
+            Det er den sjoveste måde at træne sit boligmarkedsintuition på.
+            Vores kernebrugere er kommende boligkøbere, ejendomsinvestorer og
+            mæglerbranchen — spillet giver ærlig feedback på hvor godt du læser
+            det danske boligmarked. Alt data kommer fra <a href="https://boligsiden.dk" target="_blank" rel="noopener">Boligsiden</a>{" "}
+            og opdateres løbende.
+          </p>
+          <p className="game-seo-links">
+            <a href="/analyseren">Prøv analyseren</a> ·{" "}
+            <a href="/deals">Deal-motoren</a> ·{" "}
+            <a href="/blog">Blog om ejendomsinvestering</a>
+          </p>
         </div>
-        <div>
-          <a href="/">← Tilbage til NordInvest analyseren</a>
-        </div>
-      </footer>
+      </section>
+
+      <Footer />
     </div>
   );
 }
@@ -729,7 +750,7 @@ function RoundResultScreen(props: {
           <span>Gæt</span>
           <span>Difference</span>
           <span>%</span>
-          <span>Netto</span>
+          <span>Point</span>
         </div>
         {scored.map((row) => {
           const player = props.players.find((pl) => pl.id === row.playerId)!;
@@ -752,13 +773,31 @@ function RoundResultScreen(props: {
               <span>{row.pct.toFixed(1)} %</span>
               <span className="pts-cell">
                 <strong className={net < 0 ? "score-negative" : ""}>
-                  {net > 0 ? `+${net}` : net < 0 ? `−${Math.abs(net)}` : "0"}
+                  {net >= 0 ? `+${net}` : `−${Math.abs(net)}`}
                 </strong>
-                <small>{row.points > 0 ? `+${row.points} bonus` : "Ingen bonus"}</small>
+                <small>
+                  {row.basePoints}
+                  {row.winnerBonus > 0 ? ` + ${row.winnerBonus} bonus` : ""}
+                  {props.hintCost > 0 ? ` − ${props.hintCost} hints` : ""}
+                </small>
               </span>
             </div>
           );
         })}
+      </div>
+
+      {/* Property listing link — once the price is revealed, players should be
+          able to jump to the actual Boligsiden listing to inspect the property
+          themselves. Slugifies the address into Boligsiden's URL format. */}
+      <div className="result-listing-link">
+        <a
+          href={boligsidenListingUrl(p)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-outline btn-sm"
+        >
+          Se opslaget på Boligsiden ↗
+        </a>
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
@@ -846,6 +885,29 @@ function Scoreboard({ players, compact = false }: { players: Player[]; compact?:
 }
 
 /* ---------- shared ---------- */
+
+/**
+ * Rebuild the property's Boligsiden URL from its address + zip. Boligsiden uses
+ * dash-slug URLs at `/adresse/<street-number-zip-city>` with æ→ae, ø→oe, å→aa
+ * (and København→koebenhavn). Good enough that at least the /adresse/ path
+ * lands on the right adressekort, even when the exact match slug isn't known.
+ */
+function boligsidenListingUrl(p: GameProperty): string {
+  const slugify = (s: string) =>
+    (s || "")
+      .toLowerCase()
+      .replace(/å/g, "aa")
+      .replace(/ø/g, "oe")
+      .replace(/æ/g, "ae")
+      .replace(/\./g, "")
+      .replace(/,/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+  const street = slugify(p.address);
+  const city = slugify(p.city);
+  const slug = [street, p.zipCode, city].filter(Boolean).join("-");
+  return `https://www.boligsiden.dk/adresse/${slug}`;
+}
 
 function playerColor(idx: number): string {
   const palette = [

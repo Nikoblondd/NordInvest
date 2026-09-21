@@ -18,7 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/om", priority: 0.5, freq: "monthly" },
     { path: "/kontakt", priority: 0.5, freq: "monthly" },
     { path: "/blog", priority: 0.8, freq: "weekly" },
-    { path: "/spil", priority: 0.6, freq: "monthly" },
+    { path: "/spil", priority: 0.9, freq: "weekly" },
     { path: "/juridisk", priority: 0.3, freq: "yearly" },
     { path: "/juridisk/fortrydelsesret", priority: 0.3, freq: "yearly" },
     { path: "/juridisk/privatlivspolitik", priority: 0.3, freq: "yearly" },
