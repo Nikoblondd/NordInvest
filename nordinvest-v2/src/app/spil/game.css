@@ -87,49 +87,18 @@
   opacity: 0.4;
 }
 
-/* ---------------- Shell (3 cols) ---------------- */
+/* ---------------- Shell (single column, ad rails removed 2026-09-22) ---------------- */
 .game-shell {
-  max-width: 1300px;
+  max-width: 1100px;
   margin: 16px auto 0;
   padding: 0 12px;
-  display: grid;
-  grid-template-columns: 180px 1fr 180px;
-  gap: 16px;
-  align-items: flex-start;
 }
 .game-main {
   min-width: 0;
 }
 
-/* ---------------- Ads ---------------- */
-.ad-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  position: sticky;
-  top: 12px;
-}
-/* Decorative side panels — the yellow blocks stay as an intentional visual
-   frame around the game. Text chrome ("Reklame", size hint) removed 2026-09-21
-   per Niko: the boxes read as design; the "Reklame" label read as unsold ads. */
-.ad-slot {
-  background: var(--gp-ad-bg);
-  border: 1.5px dashed var(--gp-ad-border);
-  border-radius: 4px;
-}
-.ad-160x600 { width: 160px; height: 600px; }
-.ad-160x300 { width: 160px; height: 300px; }
-.ad-728x90 { width: 100%; max-width: 728px; height: 90px; margin: 20px auto 24px; }
-/* Legacy label/hint classes kept as no-ops; the DOM no longer renders them,
-   but any cached CSS lookup won't blow up. */
-.ad-label, .ad-hint { display: none; }
-.ad-banner-wrap {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 0 12px;
-  display: flex;
-  justify-content: center;
-}
+/* Legacy ad classes fully retired — hidden in case a cached DOM still emits them. */
+.ad-rail, .ad-slot, .ad-banner-wrap, .ad-label, .ad-hint { display: none !important; }
 
 /* ---------------- Panels ---------------- */
 .panel {
@@ -879,19 +848,21 @@
 .game-seo-strip {
   background: #fff;
   border-top: 1px solid var(--gp-border);
-  padding: 40px 20px 32px;
+  padding: 24px 20px 20px;
 }
 .game-seo-inner {
-  max-width: 760px;
+  max-width: 620px;
   margin: 0 auto;
   color: var(--gp-text);
-  line-height: 1.65;
+  line-height: 1.55;
+  text-align: center;
 }
 .game-seo-inner h2 {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  margin: 0 0 6px;
+  color: var(--gp-text);
 }
 .game-seo-inner h3 {
   font-size: 15px;
@@ -900,8 +871,8 @@
   color: var(--gp-text);
 }
 .game-seo-inner p {
-  margin: 0 0 12px;
-  font-size: 14px;
+  margin: 0 0 8px;
+  font-size: 13px;
   color: var(--gp-text-soft);
 }
 .game-seo-inner ul {
@@ -914,9 +885,10 @@
 .game-seo-inner a { color: var(--gp-blue); text-decoration: none; }
 .game-seo-inner a:hover { text-decoration: underline; }
 .game-seo-links {
-  padding-top: 10px;
+  padding-top: 8px;
+  margin-top: 4px;
   border-top: 1px solid var(--gp-border);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--gp-text-soft);
 }
 
@@ -924,10 +896,6 @@
    RESPONSIVE — hide ads on small screens, stack layout
 ========================================================== */
 @media (max-width: 1100px) {
-  .game-shell {
-    grid-template-columns: 1fr;
-  }
-  .ad-rail { display: none; }
   .stage {
     grid-template-columns: 1fr;
   }

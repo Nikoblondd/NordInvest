@@ -260,27 +260,12 @@ export default function GameClient() {
         <div className="game-subheader-inner">
           <h1 className="page-title">Gæt Boligprisen</h1>
           <p className="page-subtitle">
-            Danmarks første multiplayer prisspil — se billeder af rigtige danske boliger fra Boligsiden og gæt salgsprisen. Gratis, ingen login.
+            Gæt prisen på rigtige boliger fra Boligsiden. 2-8 spillere, gratis.
           </p>
         </div>
-        <nav className="crumb-bar" aria-label="Om spillet">
-          <span className="crumb">Multiplayer</span>
-          <span className="crumb-sep">·</span>
-          <span className="crumb">Rigtige danske boliger</span>
-          <span className="crumb-sep">·</span>
-          <span className="crumb">Gratis</span>
-        </nav>
       </header>
 
       <div className="game-shell">
-        {/* LEFT AD RAIL — yellow slots kept, "Reklame" chrome removed so it
-            reads as a design element, not an unfilled ad. */}
-        <aside className="ad-rail ad-rail-left" aria-hidden="true">
-          <div className="ad-slot ad-160x600" />
-          <div className="ad-slot ad-160x300" />
-        </aside>
-
-        {/* MAIN GAME AREA */}
         <main className="game-main">
           {phase === "setup" && (
             <SetupScreen
@@ -344,53 +329,22 @@ export default function GameClient() {
             <FinalScreen players={players} onPlayAgain={playAgain} />
           )}
         </main>
-
-        {/* RIGHT AD RAIL — yellow slots kept as design; label chrome removed. */}
-        <aside className="ad-rail ad-rail-right" aria-hidden="true">
-          <div className="ad-slot ad-160x600" />
-          <div className="ad-slot ad-160x300" />
-        </aside>
       </div>
 
-      {/* Bottom banner slot — no "Reklame" text, just the color block. */}
-      <div className="ad-banner-wrap">
-        <div className="ad-slot ad-728x90" aria-hidden="true" />
-      </div>
-
-      {/* SEO content strip — real prose so search engines can match queries
-          like "gæt boligprisen", "gæt ejendomsprisen", "boligpris quiz",
-          "ejendomsspil danske boliger" against genuine content, not just
-          metadata. Rendered inside the game shell so bots see it on first paint. */}
+      {/* SEO content strip — kept short for bots to match "gæt boligprisen" &
+          "ejendomsspil" queries; collapsed visually so humans don't drown in text. */}
       <section className="game-seo-strip">
         <div className="game-seo-inner">
-          <h2>Danmarks største gæt-boligprisen-spil</h2>
+          <h2>Gæt Boligprisen — dansk boligpris quiz</h2>
           <p>
-            Gæt Boligprisen er et gratis multiplayer prisspil på danske boliger.
-            Vi trækker rigtige, aktive salgsopstillinger fra Boligsiden og lader
-            2-8 spillere gætte kontantprisen. Spil enten som ejendomsspil for
-            hele Danmark, eller vælg en specifik by som København, Aarhus,
-            Odense eller Aalborg — hver runde viser et nyt boligopslag med
-            billeder, byggeår og areal.
-          </p>
-          <h3>Hvordan spiller man gæt ejendomsprisen?</h3>
-          <ul>
-            <li>Vælg spillere og område — spillet er 100 % gratis, ingen login</li>
-            <li>Se billederne af boligen og gæt kontantprisen</li>
-            <li>Køb hints (areal, byggeår, energimærke, ejerudgift) mod point</li>
-            <li>Tættest på vinder rundens bonus — alle får point for at være tæt på</li>
-          </ul>
-          <h3>Hvorfor spille boligpris-quizzen?</h3>
-          <p>
-            Det er den sjoveste måde at træne sit boligmarkedsintuition på.
-            Vores kernebrugere er kommende boligkøbere, ejendomsinvestorer og
-            mæglerbranchen — spillet giver ærlig feedback på hvor godt du læser
-            det danske boligmarked. Alt data kommer fra <a href="https://boligsiden.dk" target="_blank" rel="noopener">Boligsiden</a>{" "}
-            og opdateres løbende.
+            Gratis multiplayer prisspil på rigtige boliger fra Boligsiden.
+            2-8 spillere gætter kontantprisen — ingen login, spil hele Danmark
+            eller vælg by som København, Aarhus, Odense eller Aalborg.
           </p>
           <p className="game-seo-links">
-            <a href="/analyseren">Prøv analyseren</a> ·{" "}
+            <a href="/analyseren">Analyseren</a> ·{" "}
             <a href="/deals">Deal-motoren</a> ·{" "}
-            <a href="/blog">Blog om ejendomsinvestering</a>
+            <a href="/blog">Blog</a>
           </p>
         </div>
       </section>
@@ -489,10 +443,9 @@ function SetupScreen(props: {
         <div className="rules-box">
           <div className="rules-title">Sådan spiller I</div>
           <ol>
-            <li>Alle ser billederne af boligen — ingen tal, ingen adresse.</li>
-            <li>Har I brug for hjælp? Tryk på et hint — hele holdet mister <strong>2 point</strong>.</li>
-            <li>Hver spiller skriver sit gæt i kroner og trykker <strong>LÅS</strong>.</li>
-            <li>Når alle har låst, afsløres prisen. Tættest på scorer op til <strong>100 point</strong>.</li>
+            <li>Se boligen. Gæt prisen. Lås.</li>
+            <li>Hints koster <strong>2 point</strong> — brug dem klogt.</li>
+            <li>Tættest på vinder <strong>op til 150 point</strong>.</li>
           </ol>
         </div>
 
@@ -591,7 +544,7 @@ function GuessingScreen(props: {
         </div>
 
         <aside className="side-panel">
-          <div className="panel-title panel-title-tight">Hints (koster 2 point pr. stk.)</div>
+          <div className="panel-title panel-title-tight">Hints <span className="panel-title-sub">(−2 point pr. stk.)</span></div>
           <div className="hint-list">
             {HINTS.map((h) => {
               const isRevealed = props.revealed.has(h.key);
@@ -664,7 +617,7 @@ function GuessingScreen(props: {
             disabled={!props.allLocked}
             onClick={props.onRevealPrice}
           >
-            {props.allLocked ? "AFSLØR PRIS →" : "Alle skal låse deres gæt først"}
+            {props.allLocked ? "AFSLØR PRIS →" : "Lås alle gæt for at afsløre"}
           </button>
         </aside>
       </div>
