@@ -39,7 +39,7 @@ export default function Home() {
       <Nav />
 
       {/* Hero */}
-      <section className="relative flex flex-col items-center justify-center px-6 pb-20 pt-16 text-center sm:pb-32 sm:pt-24">
+      <section className="relative flex flex-col items-center justify-center px-4 pb-14 pt-12 text-center sm:px-6 sm:pb-32 sm:pt-24">
         {/* subtle textured backdrop — a soft top wash, not the AI-signature
             radial-ellipse-from-blue-100 gradient. */}
         <div
@@ -101,7 +101,7 @@ export default function Home() {
       <FeaturedDeals />
 
       {/* How it works */}
-      <section id="hvordan" className="relative overflow-hidden bg-white px-6 py-24">
+      <section id="hvordan" className="relative overflow-hidden bg-white px-4 py-14 sm:px-6 sm:py-24">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[60%] opacity-60"
@@ -129,7 +129,7 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section id="priser" className="relative overflow-hidden bg-slate-50 px-6 py-24">
+      <section id="priser" className="relative overflow-hidden bg-slate-50 px-4 py-14 sm:px-6 sm:py-24">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[70%] opacity-60"
@@ -157,7 +157,7 @@ export default function Home() {
 
       {/* FAQ — real accordion component, native <details>. Cards have hover +
           open state so the section reads like a live product, not a printout. */}
-      <section id="faq" className="relative overflow-hidden bg-white px-6 py-24">
+      <section id="faq" className="relative overflow-hidden bg-white px-4 py-14 sm:px-6 sm:py-24">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-40"
