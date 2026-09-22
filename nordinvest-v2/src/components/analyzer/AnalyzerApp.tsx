@@ -26,6 +26,7 @@ import { MarketBenchmark } from "@/components/analyzer/MarketBenchmark";
 import { RentBenchmark } from "@/components/analyzer/RentBenchmark";
 import { RentReserve } from "@/components/analyzer/RentReserve";
 import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
+import { Comparables } from "@/components/analyzer/Comparables";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
@@ -902,6 +903,21 @@ export function AnalyzerApp() {
                 </div>
               );
             })()}
+
+            {/* Comparables — active Boligsiden listings in the same zip that
+                match this property's type + area (±30 %). The single best
+                sanity-check on the asking price; only renders when we have
+                all four required inputs. */}
+            {zip && area && area > 10 && inputs.price > 0 && (
+              <div className="mt-4">
+                <Comparables
+                  zip={String(zip)}
+                  type={propType}
+                  areaM2={area}
+                  askingPrice={inputs.price}
+                />
+              </div>
+            )}
           </>
         )}
 
