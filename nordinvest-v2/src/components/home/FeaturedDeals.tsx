@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Building2, Home as HomeIcon, TrendingUp } from "lucide-react";
 import {
