@@ -27,6 +27,7 @@ import { RentBenchmark } from "@/components/analyzer/RentBenchmark";
 import { RentReserve } from "@/components/analyzer/RentReserve";
 import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import { Comparables } from "@/components/analyzer/Comparables";
+import { ExpenseCheck } from "@/components/analyzer/ExpenseCheck";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
@@ -915,6 +916,16 @@ export function AnalyzerApp() {
                   type={propType}
                   areaM2={area}
                   askingPrice={inputs.price}
+                />
+                {/* Udgifts-tjek — benchmarks the stated faste udgifter against
+                    comparable listings. Directly answers the #1 insight from
+                    the r/investering research: broker expense budgets are
+                    frequently under-stated. */}
+                <ExpenseCheck
+                  zip={String(zip)}
+                  type={propType}
+                  areaM2={area}
+                  statedExpense={inputs.monthlyOpex}
                 />
               </div>
             )}
