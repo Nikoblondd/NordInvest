@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { X, ChevronLeft, ChevronRight, Images as ImagesIcon } from "lucide-react";
 
 /**
@@ -171,7 +172,7 @@ function MobilePager({
 
 /* ---------------- Lightbox ---------------- */
 
-function Lightbox({
+export function Lightbox({
   images,
   startIdx,
   onClose,
@@ -187,10 +188,16 @@ function Lightbox({
 
   useEffect(() => {
     // Lock body scroll while the modal is open.
-    const prev = document.body.style.overflow;
+    // html is the scroller (body overflow isn't propagated since html uses
+    // overflow-x: clip), so lock both.
+    const root = document.documentElement;
+    const prevRoot = root.style.overflow;
+    const prevBody = document.body.style.overflow;
+    root.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = prev;
+      root.style.overflow = prevRoot;
+      document.body.style.overflow = prevBody;
     };
   }, []);
 
@@ -204,12 +211,15 @@ function Lightbox({
     return () => window.removeEventListener("keydown", onKey);
   }, [total, onClose]);
 
-  return (
+  // Portal to <body> so no ancestor transform/filter can turn `fixed` into
+  // "fixed inside that card".
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-label={address ? `Billeder af ${address}` : "Billeder"}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/92 p-3 sm:p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/95 p-3 sm:p-6"
       onClick={(e) => {
         // Click on the backdrop (not the image or controls) closes.
         if (e.target === e.currentTarget) onClose();
@@ -278,6 +288,7 @@ function Lightbox({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

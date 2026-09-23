@@ -2,10 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
-} from "recharts";
-import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, ExternalLink, TrendingUp, Wallet, Percent, ShieldCheck } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, TrendingUp, Wallet, Percent, ShieldCheck, Scale, ShieldAlert, Sparkle, LineChart as LineChartIcon, Database, ArrowRight } from "lucide-react";
 import { analyze, kr, krMd, pct, num, type Strategy } from "@/lib/analysis";
 import { runUncertainty } from "@/lib/uncertainty";
 import { assessInvestment } from "@/lib/deals";
@@ -28,7 +25,12 @@ import { RentReserve } from "@/components/analyzer/RentReserve";
 import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import { Comparables } from "@/components/analyzer/Comparables";
 import { ExpenseCheck } from "@/components/analyzer/ExpenseCheck";
-import { PropertyGallery } from "@/components/analyzer/PropertyGallery";
+import { DealHero, type HeroMetric } from "@/components/analyzer/story/DealHero";
+import { Chapter, ChapterNav, Details, Panel, type ChapterAnswer, type NavItem } from "@/components/analyzer/story/Chapter";
+import { CashflowWaterfall } from "@/components/analyzer/story/CashflowWaterfall";
+import { RateStress } from "@/components/analyzer/story/RateStress";
+import { ProjectionStory } from "@/components/analyzer/story/ProjectionStory";
+import type { Tone } from "@/components/analyzer/story/tone";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
@@ -103,21 +105,6 @@ type Extract = { status: "idle" | "loading" | "ok" | "fail"; stage?: string; msg
 // results into named zones (Vurdering · Marked · Datagrundlag · Prognose ·
 // Værktøjer) so an investor can scan the analysis the way they scan the
 // tabs of an Excel model instead of a wall of cards.
-function ZoneHeader({ label, hint }: { label: string; hint?: string }) {
-  return (
-    <div className="flex items-baseline gap-3 pt-2">
-      <div className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-        {label}
-      </div>
-      {hint && (
-        <div className="hidden min-w-0 flex-1 truncate text-[11px] text-slate-400 sm:block">
-          {hint}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function Field({ label, value, onChange, suffix, step = 1 }: {
   label: string; value: number; onChange: (n: number) => void; suffix: string; step?: number;
 }) {
@@ -159,7 +146,7 @@ function KeyStat({
   return (
     <div className="group relative min-w-0 rounded-xl bg-slate-50/60 p-3 ring-1 ring-slate-100 transition-colors hover:bg-slate-50 sm:p-4">
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500">
+        <div className="flex min-w-0 items-center gap-1 text-xs font-medium text-slate-500">
           <span className="truncate">{label}</span>
           {explain && (
             <button
@@ -177,8 +164,8 @@ function KeyStat({
           </span>
         )}
       </div>
-      <div className={clsx("mt-2 flex items-baseline gap-1 font-bold leading-none tnum", tone)}>
-        <span className="truncate text-xl sm:text-2xl md:text-[26px]">{value}</span>
+      <div className={clsx("mt-2 flex items-baseline gap-1 font-display font-bold leading-none tabular-nums tracking-[-0.02em]", tone)}>
+        <span className="whitespace-nowrap text-xl sm:text-2xl md:text-[26px]">{value}</span>
         {unit && <span className="text-sm font-semibold text-slate-400">{unit}</span>}
       </div>
       {sub && (
@@ -229,7 +216,6 @@ export function AnalyzerApp() {
   const [address, setAddress] = useState<string | null>(null);
   const [ran, setRan] = useState(false);
   const [advanced, setAdvanced] = useState(false);
-  const [details, setDetails] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [save, setSave] = useState<{ status: "idle" | "saving" | "saved" | "limit" | "error"; msg?: string }>({ status: "idle" });
   const [watch, setWatch] = useState<{ status: "idle" | "saving" | "saved" | "error"; msg?: string }>({ status: "idle" });
@@ -464,7 +450,6 @@ export function AnalyzerApp() {
   const displayRating = inv ? inv.rating : r.rating;
   const displayVerdict = inv ? inv.verdict : r.verdict;
   const scoreColor = displayScore >= 65 ? "text-emerald-600" : displayScore >= 45 ? "text-blue-600" : "text-rose-500";
-  const scoreBar = displayScore >= 65 ? "bg-emerald-500" : displayScore >= 45 ? "bg-blue-500" : "bg-rose-400";
 
   // Log each distinct analysis once (best-effort; anonymous users are a no-op on
   // the server). Restored saved analyses are already counted, so skip them.
@@ -511,8 +496,6 @@ export function AnalyzerApp() {
   const cfTone = r.cashFlow >= 0 ? "text-emerald-600" : "text-rose-500";
   const dscrTone = r.dscr >= 1.2 ? "text-emerald-600" : r.dscr >= 1 ? "text-blue-600" : "text-rose-500";
   const dk = (n: number) => (Number.isFinite(n) ? Math.round(n).toLocaleString("da-DK") : "–");
-
-  const chartData = r.projection.map((y) => ({ year: y.year, Friværdi: y.equity, "Kumuleret cash flow": y.cumulativeCashFlow }));
 
   // Datagrundlag — honest per-figure provenance + rent-regulation caveat. The
   // validation review flagged "tillid til tallene" as the #1 product risk, so we
@@ -573,6 +556,100 @@ export function AnalyzerApp() {
     [priceParam, listingUrl, ex.found, ex.estimated, rentEstimated, isInvestment, hasArea, byggeaar, priceBench, rentBench],
   );
   const rentRule = useMemo(() => rentRegulationRule(byggeaar), [byggeaar]);
+
+  // Lejereserve — residential rental cases with a market rent + real area.
+  const rentReserve = useMemo(() => {
+    if (isInvestment || !rentBench || !area || area <= 10) return null;
+    return computeRentReserve({
+      currentMonthlyRent: inputs.monthlyRent,
+      marketRentPerM2Month: rentBench.value,
+      areaM2: area,
+      yearBuilt: byggeaar,
+      zip,
+      regionalCapRate: 5.0,
+      propertyType: propType,
+    });
+  }, [isInvestment, rentBench, area, inputs.monthlyRent, byggeaar, zip, propType]);
+
+  /* ---------- The story: one answer per question ---------- */
+  const p1 = (n: number) => n.toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  const heroTone: Tone = displayScore >= 65 ? "good" : displayScore >= 45 ? "warn" : "bad";
+  const heroHeadline =
+    displayScore >= 80 ? "Stærk handel." : displayScore >= 65 ? "God handel." : displayScore >= 45 ? "Tvivlsom handel." : "Svag handel.";
+  const heroNotes = [
+    ...(inv?.note ? [inv.note] : []),
+    ...(!isInvestment && rentEstimated ? ["Bygger på en estimeret leje — bekræft den, før du handler."] : []),
+  ];
+  const heroMetrics: HeroMetric[] = [
+    {
+      label: "Cash flow pr. md.",
+      value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`,
+      unit: "kr",
+      tone: r.cashFlow >= 500 ? "good" : r.cashFlow >= 0 ? "warn" : "bad",
+    },
+    { label: "Nettoafkast", value: num(r.capRate), unit: "%", tone: r.capRate >= 5 ? "good" : r.capRate >= 3.5 ? "warn" : "bad" },
+    { label: "Kontantafkast", value: num(r.cashOnCash), unit: "%", tone: r.cashOnCash >= 8 ? "good" : r.cashOnCash >= 0 ? "warn" : "bad" },
+    { label: "Gældsdækning", value: num(r.dscr), tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
+  ];
+
+  const cashAnswer: ChapterAnswer =
+    r.cashFlow >= 0
+      ? { tone: r.cashFlow >= 500 ? "good" : "warn", text: `Ja — ${dk(r.cashFlow)} kr i overskud hver måned` }
+      : { tone: "bad", text: `Nej — du lægger ${dk(Math.abs(r.cashFlow))} kr til hver måned` };
+
+  const priceDelta = priceBench && propertyPriceM2 ? ((propertyPriceM2 - priceBench.value) / priceBench.value) * 100 : null;
+  const showPriceChapter = !isInvestment && (!!priceBench || !!rentBench || (!!zip && !!area && area > 10));
+  const priceAnswer: ChapterAnswer =
+    priceDelta == null
+      ? { tone: "neutral", text: "Se hvad lignende boliger koster" }
+      : priceDelta <= -3
+      ? { tone: "good", text: `Ja — ${Math.round(Math.abs(priceDelta))} % under markedet pr. m²` }
+      : priceDelta <= 3
+      ? { tone: "good", text: "Ja — på niveau med markedet pr. m²" }
+      : priceDelta <= 15
+      ? { tone: "warn", text: `Lidt dyr — ${Math.round(priceDelta)} % over markedet pr. m²` }
+      : { tone: "bad", text: `Nej — ${Math.round(priceDelta)} % over markedet pr. m²` };
+
+  const headroom = Number.isFinite(r.breakEvenRate) ? r.breakEvenRate - inputs.interestRate : 0;
+  const riskAnswer: ChapterAnswer =
+    headroom >= 2
+      ? { tone: "good", text: `Robust — tåler ${p1(headroom)} %-point højere rente` }
+      : headroom >= 0
+      ? { tone: "warn", text: `Sårbar — kun ${p1(headroom)} %-point rentebuffer` }
+      : { tone: "bad", text: "Taber allerede penge ved din rente" };
+
+  const potentialAnswer: ChapterAnswer =
+    rentReserve?.verdict === "reserve"
+      ? { tone: "good", text: `Ja — +${dk(rentReserve.realisticMonthlyUplift)} kr/md i lejereserve` }
+      : rentReserve?.verdict === "over-market"
+      ? { tone: "warn", text: "Lejen ligger over markedet — risiko ved genudlejning" }
+      : { tone: "neutral", text: "Regn på istandsættelse og værdiskabelse" };
+
+  const futureAnswer: ChapterAnswer =
+    r.totalProfit > 0
+      ? {
+          tone: Number.isFinite(r.irr) && r.irr >= 8 ? "good" : "warn",
+          text: `+${dk(r.totalProfit)} kr efter ${r.holdYears} år${Number.isFinite(r.irr) ? ` · ${num(r.irr)} % om året` : ""}`,
+        }
+      : { tone: "bad", text: `${dk(r.totalProfit)} kr efter ${r.holdYears} år` };
+
+  const docCount = provenanceRows.filter((row) => row.tier === "doc").length;
+  const dataShare = provenanceRows.length ? docCount / provenanceRows.length : 0;
+  const dataAnswer: ChapterAnswer = {
+    tone: dataShare >= 0.6 ? "good" : dataShare >= 0.3 ? "warn" : "bad",
+    text: `${docCount} af ${provenanceRows.length} nøgletal er dokumenteret`,
+  };
+
+  const navItems: NavItem[] = [
+    { id: "overblik", label: "Dommen", tone: heroTone },
+    { id: "oekonomi", label: "Økonomi", tone: cashAnswer.tone },
+    ...(showPriceChapter ? [{ id: "pris", label: "Pris", tone: priceAnswer.tone }] : []),
+    { id: "risici", label: "Risici", tone: riskAnswer.tone },
+    { id: "potentiale", label: "Potentiale", tone: potentialAnswer.tone },
+    { id: "fremtid", label: "Fremtid", tone: futureAnswer.tone },
+    { id: "data", label: "Data", tone: dataAnswer.tone },
+  ];
 
   const exportExcel = async () => {
     setExporting(true);
@@ -723,9 +800,14 @@ export function AnalyzerApp() {
   return (
     <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-8">
       {/* INPUT PANEL */}
-      <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 lg:sticky lg:top-24 lg:self-start">
-        <h2 className="text-xl font-bold">Ejendommens tal</h2>
-        <p className="mt-1 text-sm text-slate-500">Indsæt et boliglink på forsiden, eller ret tallene her.</p>
+      <div className={clsx(
+        // Sticky with its own scroll so the bottom ("Analysér nu") is never cut off on short screens.
+        "min-w-0 rounded-2xl border border-slate-200/80 bg-white p-4 card-highlight sm:p-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:self-start lg:overflow-y-auto lg:[scrollbar-width:thin]",
+        // On phones the verdict comes first; the form follows as "tweak the numbers".
+        ran && "order-2 lg:order-none",
+      )}>
+        <h2 className="font-display text-xl font-bold tracking-[-0.02em]">{ran ? "Justér tallene" : "Ejendommens tal"}</h2>
+        <p className="mt-1 text-sm text-slate-500">{ran ? "Ret et tal, og hele analysen regnes om med det samme." : "Indsæt et boliglink på forsiden, eller ret tallene her."}</p>
 
         {ex.status !== "idle" && (
           <div className={clsx("mt-4 flex items-start gap-2 rounded-xl border p-3 text-xs",
@@ -805,7 +887,7 @@ export function AnalyzerApp() {
       </div>
 
       {/* RESULTS */}
-      <div className={clsx("min-w-0 space-y-4 transition-opacity sm:space-y-6", ran ? "opacity-100" : "opacity-70")}>
+      <div className={clsx("min-w-0 space-y-4 transition-opacity sm:space-y-6", ran ? "order-1 opacity-100 lg:order-none" : "opacity-70")}>
         {gated ? (
           <PaywallGate
             score={displayScore}
@@ -816,251 +898,102 @@ export function AnalyzerApp() {
           />
         ) : (
         <>
-        {/* Property photo hero — Airbnb-style split gallery with lightbox.
-            Renders above the score so the analyzer feels like a real listing
-            you're inspecting, not a spreadsheet. Skipped silently when the
-            extractor didn't return any images. */}
-        {images.length > 0 && (
-          <PropertyGallery images={images} address={address} />
-        )}
-
-        {/* Zone: VURDERING — the 5-second read */}
-        <ZoneHeader label="Vurdering" hint="Overblik, score og de fire tal alle andre tal fører til" />
-        <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 md:p-8">
-          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
-            {address && <div className="min-w-0 truncate text-sm text-slate-400">{address}</div>}
-            {listingUrl && (
-              <a
-                href={listingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition-colors hover:border-blue-300 hover:text-blue-600 sm:px-3 sm:text-xs"
-                title={`Åbn det oprindelige opslag på ${sourceName(listingUrl)}`}
-              >
-                Se opslaget på {sourceName(listingUrl)}
-                <ExternalLink size={13} />
-              </a>
-            )}
-          </div>
-          <div className="mt-1 flex min-w-0 flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-6">
-            <div className="min-w-0 md:max-w-md">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Investment Score</div>
-              <div className="mt-1 flex items-end gap-2.5">
-                <span className={clsx("text-6xl font-bold leading-none tnum sm:text-7xl", scoreColor)}>{displayScore}</span>
-                <span className="mb-1.5 text-sm font-medium text-slate-400">/ 100 · {displayRating}</span>
-              </div>
-              <div className="mt-4 h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-slate-100">
-                <div className={clsx("h-full rounded-full", scoreBar)} style={{ width: `${Math.max(3, Math.min(100, displayScore))}%` }} />
-              </div>
-              <p className="mt-4 text-[15px] leading-relaxed text-slate-600 sm:mt-5 sm:text-base">{displayVerdict}</p>
-              {inv?.note && <p className="mt-2 text-sm leading-relaxed text-amber-700">{inv.note}</p>}
-              {!isInvestment && rentEstimated && (
-                <p className="mt-2 text-sm leading-relaxed text-amber-700">
-                  Bemærk: vurderingen bygger på en <b>estimeret leje</b> — bekræft den før du handler.
-                </p>
-              )}
-            </div>
-            <span className="inline-flex shrink-0 self-start rounded-full border border-slate-200 px-2.5 py-1 text-[11px] font-medium text-slate-500 sm:px-3 sm:text-xs">
-              {isInvestment ? `Investeringsejendom${subcatParam ? ` · ${subcatParam}` : ""}` : strategies.find((s) => s.id === inputs.strategy)?.label}
-            </span>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 gap-2.5 sm:mt-8 sm:gap-3 sm:grid-cols-4">
-            <KeyStat
-              label="Cash flow / md." value={dk(r.cashFlow)} unit="kr" tone={cfTone} Icon={Wallet}
-              sub={r.cashFlow >= 0 ? `+${dk(r.annualCashFlow)} kr/år` : `−${dk(Math.abs(r.annualCashFlow))} kr/år`}
-              explain="Det, der reelt lander på din konto hver måned, når lejen har betalt lånet og alle udgifter. Positivt = ejendommen betaler dig. Negativt = du lægger penge til hver måned."
-              how="Månedlig leje minus ydelsen på lånet minus alle driftsudgifter."
-            />
-            <KeyStat
-              label="Nettoafkast" value={num(r.capRate)} unit="%" Icon={Percent}
-              tone={r.capRate >= 5 ? "text-emerald-600" : r.capRate >= 3 ? "text-slate-900" : "text-rose-500"}
-              sub="Før lån · pr. år"
-              explain={`Hvor mange procent af prisen ejendommen tjener om året — efter driftsudgifter, men før lån. ${num(r.capRate)} % betyder, at ejendommen selv (uden lån) giver ${num(r.capRate)} % af sin pris tilbage hvert år. Højere = bedre.`}
-              how="Driftsresultatet (leje minus tomgang, vedligehold og faste udgifter) delt med købsprisen."
-            />
-            <KeyStat
-              label="Kontantafkast" value={num(r.cashOnCash)} unit="%" Icon={TrendingUp}
-              tone={r.cashOnCash >= 8 ? "text-emerald-600" : r.cashOnCash >= 0 ? "text-slate-900" : "text-rose-500"}
-              sub={`På ${dk(r.cashInvested)} kr investeret`}
-              explain={`Hvor meget dine EGNE penge tjener om året. Du lagde ${dk(r.cashInvested)} kr (udbetaling + købsomkostninger) og får ${dk(r.annualCashFlow)} kr tilbage i cash flow — det er ${num(r.cashOnCash)} %.`}
-              how="Årligt cash flow delt med de penge, du selv lagde."
-            />
-            <KeyStat
-              label="Gældsdækning" value={num(r.dscr)} tone={dscrTone} Icon={ShieldCheck}
-              sub={r.dscr >= 1.25 ? "Banken siger ja" : r.dscr >= 1 ? "På kanten" : "For lavt"}
-              explain={`Kan lejen betale lånet? 1,0 er lige akkurat. ${num(r.dscr)} betyder, at ejendommen tjener ${num(r.dscr)} gange så meget som ydelsen. Banker vil typisk gerne se mindst 1,25.`}
-              how="Driftsresultatet (NOI) delt med den årlige ydelse på lånet."
-            />
-          </div>
-          <div className="mt-5 text-xs text-slate-400">
-            {Math.round(uncertainty.pCashFlowPositive * 100)} % sandsynlighed for positivt cash flow på tværs af {uncertainty.runs.toLocaleString("da-DK")} scenarier
-          </div>
-        </section>
-
-        {/* Zone header: MARKED — everything that compares this deal to the region */}
-        {!isInvestment && (priceBench || rentBench) && (
-          <>
-            <ZoneHeader label="Marked" hint="Denne bolig vs. sammenlignelige boliger i regionen" />
-            <div className="grid gap-4 md:grid-cols-2">
-              {priceBench && propertyPriceM2 && (
-                <MarketBenchmark propertyPriceM2={propertyPriceM2} benchmark={priceBench} />
-              )}
-              {rentBench && (
-                <RentBenchmark
-                  benchmark={rentBench}
-                  currentRent={inputs.monthlyRent}
-                  region={rentBench.region}
-                  type={rentBench.type}
-                  analysisId={usageRowIdRef.current}
-                  areaM2={area}
-                />
-              )}
-            </div>
-
-            {/* Lejereserve — the single metric pro DK-investors optimize for.
-                Only renders when we have a market rent + a real area + it's
-                a rental case. Not tied to rentEstimated: even estimated rents
-                still surface the reserve gap. */}
-            {(() => {
-              if (!rentBench || !area || area <= 10) return null;
-              // Fall back to a 5 % regional cap rate — we don't yet compute
-              // per-region cap rates, but the RentBenchmark card already
-              // provides the growth trajectory.
-              const reserve = computeRentReserve({
-                currentMonthlyRent: inputs.monthlyRent,
-                marketRentPerM2Month: rentBench.value,
-                areaM2: area,
-                yearBuilt: byggeaar,
-                zip,
-                regionalCapRate: 5.0,
-                propertyType: propType,
-              });
-              if (!reserve) return null;
-              return (
-                <div className="mt-4">
-                  <RentReserve reserve={reserve} />
-                </div>
-              );
-            })()}
-
-            {/* Comparables — active Boligsiden listings in the same zip that
-                match this property's type + area (±30 %). The single best
-                sanity-check on the asking price; only renders when we have
-                all four required inputs. */}
-            {zip && area && area > 10 && inputs.price > 0 && (
-              <div className="mt-4">
-                <Comparables
-                  zip={String(zip)}
-                  type={propType}
-                  areaM2={area}
-                  askingPrice={inputs.price}
-                />
-                {/* Udgifts-tjek — benchmarks the stated faste udgifter against
-                    comparable listings. Directly answers the #1 insight from
-                    the r/investering research: broker expense budgets are
-                    frequently under-stated. */}
-                <ExpenseCheck
-                  zip={String(zip)}
-                  type={propType}
-                  areaM2={area}
-                  statedExpense={inputs.monthlyOpex}
-                />
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Zone: DATAGRUNDLAG — always-shown, but compact */}
-        <ZoneHeader label="Datagrundlag" hint="Hvor tallene kommer fra — dokumenteret, estimeret eller skal undersøges" />
-        <DataProvenance rows={provenanceRows} rentRule={rentRule} showRentCaveat={!isInvestment} />
-        <BrainBadge
-          regionName={regionLabel(cal.region)}
-          tier={cal.tier}
-          regionCount={cal.regionCount}
-          globalCount={cal.globalCount}
-          avgRating={cal.avgRating}
-          observedAppreciationPct={cal.observedAppreciationPct}
+        {/* ================= THE STORY =================
+            Hero verdict → sticky chapter nav → one chapter per question an
+            investor asks. Every chapter answers in one coloured line first;
+            the cards underneath are the evidence. Nothing was removed — the
+            deep numbers moved behind "Se detaljer". */}
+        <DealHero
+          images={images}
+          address={address}
+          score={displayScore}
+          rating={displayRating}
+          headline={heroHeadline}
+          verdict={displayVerdict}
+          tone={heroTone}
+          notes={heroNotes}
+          metrics={heroMetrics}
+          probability={{ pct: Math.round(uncertainty.pCashFlowPositive * 100), runs: uncertainty.runs }}
+          listingUrl={listingUrl}
+          sourceLabel={sourceName(listingUrl)}
+          kindLabel={isInvestment ? `Investeringsejendom${subcatParam ? ` · ${subcatParam}` : ""}` : `Strategi: ${strategies.find((s) => s.id === inputs.strategy)?.label ?? ""}`}
         />
-        {bbr && <BbrPanel data={bbr} />}
 
-        {/* Zone: FREMTIDIGE BYRDER — planning data (lokalplaner, kloak, rammer)
-            no other DK analyzer surfaces. Only renders when we have an address. */}
-        {address && (
-          <>
-            <ZoneHeader label="Fremtidige byrder" hint="Lokalplan-forslag, kloak-status og planer der kan påvirke ejendommen" />
-            <FutureBurdens address={address} />
-          </>
-        )}
+        <ChapterNav items={navItems} />
 
-        {/* Zone: PROGNOSE — chart + long-term details */}
-        <ZoneHeader label="Prognose" hint={`Cashflow og friværdi over ${r.holdYears} år`} />
-        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="text-sm font-semibold text-slate-900">{r.holdYears}-årig prognose</h3>
-            <span className="text-xs text-slate-400">Værdistigning {pct(inputs.appreciationPct, 0)}/år · lejevækst {pct(inputs.rentGrowthPct, 0)}/år</span>
-          </div>
-          <div className="mt-5 h-60">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ left: 8, right: 8, top: 8 }}>
-                <CartesianGrid strokeDasharray="2 6" stroke="#eef2f7" vertical={false} />
-                <XAxis dataKey="year" tickFormatter={(y) => `År ${y}`} stroke="#cbd5e1" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis tickFormatter={(v) => `${Math.round(v / 1000).toLocaleString("da-DK")}k`} stroke="#cbd5e1" fontSize={11} width={44} tickLine={false} axisLine={false} />
-                <Tooltip formatter={(v) => kr(Number(v))} labelFormatter={(y) => `År ${y}`} />
-                <Legend iconType="plainline" wrapperStyle={{ fontSize: 12 }} />
-                <Line type="monotone" dataKey="Friværdi" stroke="#2563eb" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="Kumuleret cash flow" stroke="#10b981" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="mt-5 flex flex-wrap gap-x-8 gap-y-2 border-t border-slate-100 pt-4 text-sm">
-            <span className="text-slate-500">Samlet gevinst <b className={clsx("ml-1 font-semibold tnum", r.totalProfit >= 0 ? "text-emerald-600" : "text-rose-500")}>{dk(r.totalProfit)} kr</b></span>
-            <span className="text-slate-500">Nettoprovenu ved salg <b className="ml-1 font-semibold tnum text-slate-900">{dk(r.netSaleProceeds)} kr</b></span>
-            <span className="text-slate-500">IRR <b className="ml-1 font-semibold tnum text-slate-900">{num(r.irr)} %</b></span>
-          </div>
-        </section>
-
-        {/* progressive deep-dive — the detail stays out of the 5-second read */}
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <button onClick={() => setDetails((v) => !v)} className="flex w-full items-center justify-between gap-3 p-6 text-left">
-            <span>
-              <span className="text-sm font-semibold text-slate-900">Detaljeret analyse</span>
-              <span className="ml-2 hidden text-xs text-slate-400 sm:inline">budget · finansiering · stresstest · konfidens</span>
-            </span>
-            <ChevronDown size={18} className={clsx("shrink-0 text-slate-400 transition-transform", details && "rotate-180")} />
-          </button>
-
-          {details && (
-            <div className="space-y-8 border-t border-slate-100 p-6">
-              {/* secondary ratios */}
-              <div className="grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-4">
+        <div className="space-y-12 pt-2 sm:space-y-16">
+          {/* 1 — Økonomi */}
+          <Chapter id="oekonomi" kicker="Økonomi" question="Tjener den penge?" answer={cashAnswer} Icon={Wallet}>
+            <Panel>
+              <CashflowWaterfall
+                rent={r.annualRent / 12}
+                vacancy={r.opex.vacancy / 12}
+                maintenance={r.opex.maintenance / 12}
+                fixed={r.opex.fixed / 12}
+                mortgage={r.monthlyMortgage}
+                cashFlow={r.cashFlow}
+              />
+            </Panel>
+            <Panel>
+              <div className="mb-4 text-sm font-semibold text-slate-900">Alle nøgletal <span className="font-normal text-slate-400">· tryk på ? for en forklaring</span></div>
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+                <KeyStat
+                  label="Cash flow / md." value={dk(r.cashFlow)} unit="kr" tone={cfTone} Icon={Wallet}
+                  sub={r.cashFlow >= 0 ? `+${dk(r.annualCashFlow)} kr/år` : `−${dk(Math.abs(r.annualCashFlow))} kr/år`}
+                  explain="Det, der reelt lander på din konto hver måned, når lejen har betalt lånet og alle udgifter. Positivt = ejendommen betaler dig. Negativt = du lægger penge til hver måned."
+                  how="Månedlig leje minus ydelsen på lånet minus alle driftsudgifter."
+                />
+                <KeyStat
+                  label="Nettoafkast" value={num(r.capRate)} unit="%" Icon={Percent}
+                  tone={r.capRate >= 5 ? "text-emerald-600" : r.capRate >= 3 ? "text-slate-900" : "text-rose-500"}
+                  sub="Før lån · pr. år"
+                  explain={`Hvor mange procent af prisen ejendommen tjener om året — efter driftsudgifter, men før lån. ${num(r.capRate)} % betyder, at ejendommen selv (uden lån) giver ${num(r.capRate)} % af sin pris tilbage hvert år. Højere = bedre.`}
+                  how="Driftsresultatet (leje minus tomgang, vedligehold og faste udgifter) delt med købsprisen."
+                />
+                <KeyStat
+                  label="Kontantafkast" value={num(r.cashOnCash)} unit="%" Icon={TrendingUp}
+                  tone={r.cashOnCash >= 8 ? "text-emerald-600" : r.cashOnCash >= 0 ? "text-slate-900" : "text-rose-500"}
+                  sub={`På ${dk(r.cashInvested)} kr investeret`}
+                  explain={`Hvor meget dine EGNE penge tjener om året. Du lagde ${dk(r.cashInvested)} kr (udbetaling + købsomkostninger) og får ${dk(r.annualCashFlow)} kr tilbage i cash flow — det er ${num(r.cashOnCash)} %.`}
+                  how="Årligt cash flow delt med de penge, du selv lagde."
+                />
+                <KeyStat
+                  label="Gældsdækning" value={num(r.dscr)} tone={dscrTone} Icon={ShieldCheck}
+                  sub={r.dscr >= 1.25 ? "Banken siger ja" : r.dscr >= 1 ? "På kanten" : "For lavt"}
+                  explain={`Kan lejen betale lånet? 1,0 er lige akkurat. ${num(r.dscr)} betyder, at ejendommen tjener ${num(r.dscr)} gange så meget som ydelsen. Banker vil typisk gerne se mindst 1,25.`}
+                  how="Driftsresultatet (NOI) delt med den årlige ydelse på lånet."
+                />
                 <KeyStat
                   label="Bruttoafkast" value={num(r.grossYield)} unit="%"
+                  sub="Før udgifter"
                   explain="Årlig leje i forhold til prisen — FØR udgifter. Et hurtigt førstetjek. Nettoafkastet er det mere ærlige tal, fordi det trækker udgifter fra."
                   how="Årlig leje delt med købsprisen."
                 />
                 <KeyStat
                   label={`IRR (${r.holdYears} år)`} value={num(r.irr)} unit="%"
                   tone={isFinite(r.irr) && r.irr >= 8 ? "text-emerald-600" : "text-slate-900"}
+                  sub="Cash flow + værdistigning"
                   explain="Det samlede årlige afkast på dine penge over hele perioden — cash flow OG værdistigning lagt sammen til én procent. Over 8–10 % er stærkt."
                   how="Alle pengestrømme (udbetaling ud nu, cash flow ind hvert år, salg til sidst) regnet om til én årlig rente."
                 />
                 <KeyStat
                   label="Equity multiple" value={num(r.equityMultiple)} unit="x"
+                  sub="Penge tilbage pr. krone"
                   explain={`Hvor mange gange du får dine penge igen i alt. ${num(r.equityMultiple)}x betyder: for hver 1 krone du lagde, får du ${num(r.equityMultiple)} kr tilbage over perioden.`}
                   how="Alt du får ud (samlet cash flow + nettoprovenu ved salg) delt med det, du selv lagde."
                 />
                 <KeyStat
                   label="Break-even belægning" value={num(r.breakEvenOccupancy, 0)} unit="%"
+                  sub="Lavere = mere buffer"
                   explain={`Hvor tom ejendommen må stå, før du taber penge. ${num(r.breakEvenOccupancy, 0)} % betyder: selv hvis den kun er udlejet ${num(r.breakEvenOccupancy, 0)} % af tiden, går det lige op. Lavere = mere buffer.`}
                   how="Hvor stor en del af lejen, der skal til for at dække lån og udgifter."
                 />
               </div>
-
-              {/* budget · financing · stress — grouped by whitespace, no nested cards */}
-              <div className="grid gap-8 border-t border-slate-100 pt-7 md:grid-cols-3">
+            </Panel>
+            <Details label="hele budgettet, finansieringen og usikkerheden">
+              <div className="grid gap-8 md:grid-cols-2">
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Driftsbudget (år 1)</div>
+                  <div className="text-sm font-semibold text-slate-900">Driftsbudget (år 1)</div>
                   <dl className="mt-3 space-y-2 text-sm">
                     <Row l="Lejeindtægt" v={kr(r.annualRent)} pos />
                     <Row l="− Tomgang" v={"−" + kr(r.opex.vacancy)} />
@@ -1072,7 +1005,7 @@ export function AnalyzerApp() {
                   </dl>
                 </div>
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Finansiering</div>
+                  <div className="text-sm font-semibold text-slate-900">Finansiering</div>
                   <dl className="mt-3 space-y-2 text-sm">
                     <Row l="Købspris" v={kr(inputs.price)} />
                     <Row l="Udbetaling" v={kr(r.downPayment)} />
@@ -1083,44 +1016,116 @@ export function AnalyzerApp() {
                     <Row l="Månedlig ydelse" v={krMd(r.monthlyMortgage)} />
                   </dl>
                 </div>
-                <div>
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">Rentestress-test</div>
-                  <dl className="mt-3 space-y-2 text-sm">
-                    <Row l="Cash flow nu" v={krMd(r.cashFlow)} pos={r.cashFlow >= 0} />
-                    {r.stress.map((s) => (
-                      <Row key={s.rate} l={`Ved ${pct(s.rate, 1)}`} v={krMd(s.cashFlow)} pos={s.cashFlow >= 0} />
-                    ))}
-                    <div className="border-t border-slate-100 pt-2"><Row l="Break-even rente" v={pct(r.breakEvenRate, 1)} strong /></div>
-                    <Row l="DSCR" v={num(r.dscr)} />
-                  </dl>
-                </div>
               </div>
-
-              {/* full Monte Carlo confidence bands */}
-              <div className="border-t border-slate-100 pt-7">
+              <div className="mt-8 border-t border-slate-100 pt-7">
                 <ConfidenceBands u={uncertainty} />
               </div>
-            </div>
+            </Details>
+          </Chapter>
+
+          {/* 2 — Pris */}
+          {showPriceChapter && (
+            <Chapter id="pris" kicker="Pris & marked" question="Er prisen fair?" answer={priceAnswer} Icon={Scale}>
+              {(priceBench || rentBench) && (
+                <div className="grid gap-4 md:grid-cols-2">
+                  {priceBench && propertyPriceM2 && (
+                    <MarketBenchmark propertyPriceM2={propertyPriceM2} benchmark={priceBench} />
+                  )}
+                  {rentBench && (
+                    <RentBenchmark
+                      benchmark={rentBench}
+                      currentRent={inputs.monthlyRent}
+                      region={rentBench.region}
+                      type={rentBench.type}
+                      analysisId={usageRowIdRef.current}
+                      areaM2={area}
+                    />
+                  )}
+                </div>
+              )}
+              {zip && area && area > 10 && inputs.price > 0 && (
+                <div>
+                  <Comparables zip={String(zip)} type={propType} areaM2={area} askingPrice={inputs.price} />
+                  <ExpenseCheck zip={String(zip)} type={propType} areaM2={area} statedExpense={inputs.monthlyOpex} />
+                </div>
+              )}
+            </Chapter>
           )}
-        </div>
 
-        {/* Zone: VÆRKTØJER — value-add sim + downloads + save */}
-        <ZoneHeader label="Værktøjer" hint="Byg om, gem eller download til bank" />
-        <RenovationModule
-          price={inputs.price}
-          downPaymentPct={inputs.downPaymentPct}
-          interestRate={inputs.interestRate}
-          termYears={inputs.termYears}
-          monthlyRent={inputs.monthlyRent}
-          monthlyOpex={inputs.monthlyOpex}
-          images={images}
-          address={address}
-          byggeaar={bbr?.bbr?.byggeaar ?? null}
-          area={propMeta.area ?? bbr?.bbr?.enhedsareal_m2 ?? null}
-          rooms={propMeta.rooms ?? bbr?.bbr?.antalVaerelser ?? null}
-          onSnapshot={setRenoSnap}
-        />
+          {/* 3 — Risici */}
+          <Chapter id="risici" kicker="Risici" question="Hvad kan gå galt?" answer={riskAnswer} Icon={ShieldAlert}>
+            <Panel>
+              <RateStress
+                rate={inputs.interestRate}
+                breakEvenRate={r.breakEvenRate}
+                cashFlowNow={r.cashFlow}
+                stress={r.stress}
+              />
+            </Panel>
+            {address && <FutureBurdens address={address} />}
+          </Chapter>
 
+          {/* 4 — Potentiale */}
+          <Chapter id="potentiale" kicker="Potentiale" question="Er der skjult potentiale?" answer={potentialAnswer} Icon={Sparkle}>
+            {rentReserve && <RentReserve reserve={rentReserve} />}
+            <RenovationModule
+              price={inputs.price}
+              downPaymentPct={inputs.downPaymentPct}
+              interestRate={inputs.interestRate}
+              termYears={inputs.termYears}
+              monthlyRent={inputs.monthlyRent}
+              monthlyOpex={inputs.monthlyOpex}
+              images={images}
+              address={address}
+              byggeaar={bbr?.bbr?.byggeaar ?? null}
+              area={propMeta.area ?? bbr?.bbr?.enhedsareal_m2 ?? null}
+              rooms={propMeta.rooms ?? bbr?.bbr?.antalVaerelser ?? null}
+              onSnapshot={setRenoSnap}
+            />
+          </Chapter>
+
+          {/* 5 — Fremtid */}
+          <Chapter id="fremtid" kicker={`Prognose · ${r.holdYears} år`} question="Hvad bliver det til?" answer={futureAnswer} Icon={LineChartIcon}>
+            <Panel>
+              <ProjectionStory
+                data={r.projection.map((y) => ({ year: y.year, equity: y.equity, cumulativeCashFlow: y.cumulativeCashFlow }))}
+                holdYears={r.holdYears}
+                totalProfit={r.totalProfit}
+                netSaleProceeds={r.netSaleProceeds}
+                irr={r.irr}
+                appreciationLabel={pct(inputs.appreciationPct, 0)}
+                rentGrowthLabel={pct(inputs.rentGrowthPct, 0)}
+              />
+            </Panel>
+          </Chapter>
+
+          {/* 6 — Data */}
+          <Chapter id="data" kicker="Datagrundlag" question="Kan du stole på tallene?" answer={dataAnswer} Icon={Database}>
+            <DataProvenance rows={provenanceRows} rentRule={rentRule} showRentCaveat={!isInvestment} />
+            <BrainBadge
+              regionName={regionLabel(cal.region)}
+              tier={cal.tier}
+              regionCount={cal.regionCount}
+              globalCount={cal.globalCount}
+              avgRating={cal.avgRating}
+              observedAppreciationPct={cal.observedAppreciationPct}
+            />
+            {bbr && <BbrPanel data={bbr} />}
+          </Chapter>
+
+          {/* Next steps */}
+          <section id="naeste" className="scroll-mt-36">
+            <div className="mb-4 flex items-start gap-3 sm:mb-5">
+              <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-btn ring-1 ring-inset ring-white/10">
+                <ArrowRight size={18} strokeWidth={1.8} />
+              </span>
+              <div>
+                <div className="text-xs font-semibold text-slate-500">Næste skridt</div>
+                <h3 className="font-display text-2xl font-bold leading-tight tracking-[-0.02em] text-slate-900 sm:text-[30px]">
+                  Gem, del eller tag den med i banken
+                </h3>
+              </div>
+            </div>
         {/* actions — one visual family: primary (dark) for "Gem", secondary (light)
             for everything else. Prior version had four different palettes competing
             for attention — this reads as one row of tools instead of a rainbow. */}
@@ -1196,6 +1201,8 @@ export function AnalyzerApp() {
           </div>
         </div>
 
+          </section>
+
         {/* Real-outcome reporting — only when viewing a saved analysis */}
         {savedParam && (
           <OutcomeForm
@@ -1204,6 +1211,7 @@ export function AnalyzerApp() {
             predicted={{ price: inputs.price, monthlyRent: inputs.monthlyRent, appreciationPct: inputs.appreciationPct }}
           />
         )}
+        </div>
         </>
         )}
       </div>

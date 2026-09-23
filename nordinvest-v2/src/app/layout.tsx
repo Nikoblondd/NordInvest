@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { AuthCodeHandler } from "@/components/auth/AuthCodeHandler";
@@ -15,6 +15,18 @@ const inter = Inter({
   // the LCP element. adjustFontFallback prevents CLS during the swap.
   preload: true,
   adjustFontFallback: true,
+  fallback: ["-apple-system", "system-ui", "sans-serif"],
+});
+
+// Display face for big numbers and chapter headings — gives the analyzer a
+// voice of its own instead of Inter-everywhere. Not preloaded: it's used below
+// the fold on most pages, so it shouldn't compete with the LCP font.
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  weight: ["500", "600", "700", "800"],
+  preload: false,
   fallback: ["-apple-system", "system-ui", "sans-serif"],
 });
 
@@ -128,7 +140,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="da" className={inter.variable}>
+    <html lang="da" className={`${inter.variable} ${outfit.variable}`}>
       <body>
         <script
           type="application/ld+json"

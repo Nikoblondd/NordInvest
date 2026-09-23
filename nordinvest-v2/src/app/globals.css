@@ -30,12 +30,16 @@
     text-rendering: optimizeLegibility;
     /* Site-wide safety net: no page can ever accidentally scroll sideways on
        mobile. Long content inside a table / chart / code block should scroll
-       inside its own overflow-x: auto container instead. */
+       inside its own overflow-x: auto container instead.
+       `clip` (not `hidden`) so html/body don't become scroll containers —
+       `hidden` silently broke every position: sticky on the site. */
     overflow-x: hidden;
+    overflow-x: clip;
   }
   body {
     @apply bg-cream-50 text-stone-900 font-sans antialiased;
     overflow-x: hidden;
+    overflow-x: clip;
   }
   ::selection {
     /* A warmer selection tint reads considered vs. the default blue-200. */
