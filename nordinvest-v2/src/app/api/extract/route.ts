@@ -45,7 +45,26 @@ export async function GET(req: NextRequest) {
   // to generic HTML extraction if the API misses.
   if (/(^|\.)boligsiden\.dk$/i.test(host)) {
     const via = await fromBoligsiden(url);
-    if (via && via.ok) return NextResponse.json(via);
+    if (via && via.ok) {
+      // Boligsiden's search API only returns ~5 photos per case. Enrich the
+      // gallery by ALSO fetching the mægler page (Home/EDC/Danbolig/Nybolig
+      // etc.) in parallel and merging its image set with what BS gave us —
+      // typical result: 15-30 photos instead of 5. Doesn't block on failure.
+      if (via.followUrl) {
+        try {
+          const followed = await extractFromMaeglerUrl(via.followUrl);
+          if (followed.ok && followed.images && followed.images.length) {
+            const merged = Array.from(
+              new Set([...(via.images ?? []), ...followed.images]),
+            ).slice(0, 30);
+            return NextResponse.json({ ...via, images: merged });
+          }
+        } catch {
+          /* mægler enrichment is best-effort */
+        }
+      }
+      return NextResponse.json(via);
+    }
     // If Boligsiden's API didn't have this listing but we got a mægler URL out
     // of the case data, fetch that page instead. The mæglers (Home, EDC, Estate,
     // Danbolig, Nybolig) all return real HTML for us.
@@ -298,16 +317,33 @@ async function fromBoligsiden(url: string): Promise<BsResult | null> {
   const addr = [parts.join(" "), cityParts].filter(Boolean).join(", ");
   if (addr) f.address = addr.slice(0, 120);
 
-  const images: string[] = [];
-  if (c.defaultImage?.url) images.push(c.defaultImage.url);
-  for (const img of c.images ?? []) if (img.url) images.push(img.url);
+  // Boligsiden emits each image as an `imageSources[]` array with 5-6 size
+  // variants; pull the largest for each unique photo, dedupe, then also
+  // pass caseUrl as `followUrl` so the mægler HTML can add more photos to
+  // the set (Boligsiden's search API only returns 5 photos per case; the
+  // mægler site typically has 15-30).
+  const imgSet = new Set<string>();
+  const heroUrl = largestImageUrl(c.defaultImage);
+  if (heroUrl) imgSet.add(heroUrl);
+  for (const img of c.images ?? []) {
+    const u = largestImageUrl(img);
+    if (u) imgSet.add(u);
+  }
+  const images = Array.from(imgSet);
 
   const found = Object.entries(f)
     .filter(([, v]) => v !== undefined && v !== null && v !== "")
     .map(([k]) => k);
 
   if (f.price || f.area) {
-    return { ok: true, fields: f, found, images: images.slice(0, 8) };
+    return {
+      ok: true,
+      fields: f,
+      found,
+      images: images.slice(0, 30),
+      // Pass mægler URL along so the caller can merge in more photos.
+      followUrl: c.caseUrl,
+    };
   }
 
   // We have a matched case but no price/area (data-sparse case). Try the
@@ -355,6 +391,23 @@ async function extractFromMaeglerUrl(mUrl: string): Promise<{ ok: boolean; field
   }
 }
 
+type BsImageSource = { url?: string; size?: { width?: number; height?: number } };
+type BsImageObj = { url?: string; imageSources?: BsImageSource[] };
+
+/** Pick the largest URL out of a Boligsiden image object's imageSources array. */
+function largestImageUrl(img: BsImageObj | undefined): string | null {
+  if (!img) return null;
+  const sources = img.imageSources ?? [];
+  let best = "";
+  let bestPx = 0;
+  for (const s of sources) {
+    if (!s.url) continue;
+    const px = (s.size?.width ?? 0) * (s.size?.height ?? 0);
+    if (px > bestPx) { best = s.url; bestPx = px; }
+  }
+  return best || img.url || null;
+}
+
 type BsCase = {
   priceCash?: number;
   housingArea?: number;
@@ -364,8 +417,8 @@ type BsCase = {
   monthlyExpense?: number;
   addressType?: string;
   caseUrl?: string;
-  defaultImage?: { url?: string };
-  images?: { url?: string }[];
+  defaultImage?: BsImageObj;
+  images?: BsImageObj[];
   address?: {
     roadName?: string;
     houseNumber?: string | number;
@@ -389,19 +442,66 @@ function collectImages(html: string, pageUrl: string): string[] {
     let m: RegExpExecArray | null;
     while ((m = re.exec(html))) urls.add(m[1]);
   }
+  // <img src=""> and data-src/data-lazy variants (SPAs often lazy-load).
+  const attrRe =
+    /<img[^>]+(?:src|data-src|data-lazy|data-original|data-lazy-src)=["']([^"']+?\.(?:jpe?g|webp|png)(?:\?[^"']*)?)["']/gi;
+  let a: RegExpExecArray | null;
+  while ((a = attrRe.exec(html)) && urls.size < 200) urls.add(a[1]);
+  // srcset — largest candidate wins. Format: "url1 320w, url2 640w, url3 1280w".
+  const srcsetRe = /<img[^>]+srcset=["']([^"']+)["']/gi;
+  let s: RegExpExecArray | null;
+  while ((s = srcsetRe.exec(html)) && urls.size < 200) {
+    const set = s[1]
+      .split(",")
+      .map((p) => p.trim())
+      .filter(Boolean);
+    // Pick the widest — the last one is usually the biggest, but be defensive.
+    let best = "";
+    let bestW = 0;
+    for (const p of set) {
+      const [u, w] = p.split(/\s+/);
+      const wn = Number((w || "0").replace("w", "").replace("x", ""));
+      if (!best || wn > bestW) { best = u; bestW = wn; }
+    }
+    if (best) urls.add(best);
+  }
   // Then any image-file URLs in the markup / embedded JSON.
   const re = /https?:\\?\/\\?\/[^"'\s<>()]+?\.(?:jpe?g|webp|png)(?:\?[^"'\s<>]*)?/gi;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(html)) && urls.size < 40) urls.add(m[0].replace(/\\\//g, "/"));
+  while ((m = re.exec(html)) && urls.size < 300) urls.add(m[0].replace(/\\\//g, "/"));
 
-  const bad = /(logo|icon|sprite|favicon|avatar|placeholder|badge|pixel|1x1|blank|map|flag)/i;
+  const bad = /(logo|icon|sprite|favicon|avatar|placeholder|badge|pixel|1x1|blank|flag|thumb_small|watermark|banner_ad)/i;
   const base = (() => { try { return new URL(pageUrl).origin; } catch { return ""; } })();
 
-  return Array.from(urls)
-    .map((u) => decode(u).trim())
-    .map((u) => (u.startsWith("//") ? "https:" + u : u.startsWith("/") ? base + u : u))
-    .filter((u) => /^https?:\/\//.test(u) && !bad.test(u))
-    .slice(0, 8);
+  // Deduplicate by the "underlying" image — many portals emit 6-10 size variants
+  // of the same photo (e.g. `_Size100x60`, `_Size620x400`, `_Size1920x1080`).
+  // Group by the stem (URL with size/dimensions stripped), keep the largest.
+  const byStem = new Map<string, { url: string; score: number }>();
+  for (const raw of urls) {
+    const u = decode(raw).trim();
+    const absolute = u.startsWith("//") ? "https:" + u : u.startsWith("/") ? base + u : u;
+    if (!/^https?:\/\//.test(absolute) || bad.test(absolute)) continue;
+    // Score = the biggest number we can find in size hints — bigger = higher-res.
+    const dims =
+      absolute.match(/Size(\d+)x(\d+)/i) ||
+      absolute.match(/(\d{3,4})x(\d{3,4})/) ||
+      absolute.match(/[?&](?:w|width)=(\d+)/i);
+    const score = dims ? Number(dims[1] || 0) : 0;
+    // Stem = URL with size tokens stripped so all variants of the same photo
+    // collapse to one bucket. Covers `_Size100x60`, `?w=800`, `-320x200`.
+    const stem = absolute
+      .replace(/(_Size\d+x\d+)/i, "_SIZE")
+      .replace(/(-\d{2,4}x\d{2,4})(?=\.\w+$)/i, "-DIM")
+      .replace(/[?&](?:w|width|h|height|size|quality|q)=\d+/gi, "")
+      .replace(/[?&]$/, "");
+    const cur = byStem.get(stem);
+    if (!cur || score > cur.score) byStem.set(stem, { url: absolute, score });
+  }
+
+  return Array.from(byStem.values())
+    .sort((a, b) => b.score - a.score)
+    .map((x) => x.url)
+    .slice(0, 30);
 }
 
 /* ---------------- JSON sources ---------------- */

@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
 } from "recharts";
-import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, ExternalLink } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, ExternalLink, TrendingUp, Wallet, Percent, ShieldCheck } from "lucide-react";
 import { analyze, kr, krMd, pct, num, type Strategy } from "@/lib/analysis";
 import { runUncertainty } from "@/lib/uncertainty";
 import { assessInvestment } from "@/lib/deals";
@@ -28,6 +28,7 @@ import { RentReserve } from "@/components/analyzer/RentReserve";
 import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import { Comparables } from "@/components/analyzer/Comparables";
 import { ExpenseCheck } from "@/components/analyzer/ExpenseCheck";
+import { PropertyGallery } from "@/components/analyzer/PropertyGallery";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
@@ -135,29 +136,54 @@ function Field({ label, value, onChange, suffix, step = 1 }: {
 // A single quiet metric: label, big number, optional inline explanation. No box,
 // no border — grouping comes from whitespace, keeping the results calm and scannable.
 function KeyStat({
-  label, value, unit = "", tone = "text-slate-900", explain, how,
+  label, value, unit = "", tone = "text-slate-900", explain, how, Icon, sub,
 }: {
-  label: string; value: string; unit?: string; tone?: string; explain?: string; how?: string;
+  label: string;
+  value: string;
+  unit?: string;
+  tone?: string;
+  explain?: string;
+  how?: string;
+  Icon?: typeof HelpCircle;
+  /** Optional one-liner under the number ("+1.240 kr vs. medianen") — keeps the tile scannable without a popup. */
+  sub?: string;
 }) {
   const [open, setOpen] = useState(false);
+  // Map text-color tone → subtle icon-badge tint so the tile carries meaning
+  // at a glance without the number itself changing size.
+  const badgeTint =
+    tone.includes("emerald") ? "bg-emerald-50 text-emerald-600 ring-emerald-100" :
+    tone.includes("rose") ? "bg-rose-50 text-rose-600 ring-rose-100" :
+    tone.includes("blue") ? "bg-blue-50 text-blue-600 ring-blue-100" :
+    "bg-slate-50 text-slate-500 ring-slate-100";
   return (
-    <div className="group relative min-w-0">
-      <div className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">
-        <span className="truncate">{label}</span>
-        {explain && (
-          <button
-            onClick={() => setOpen((v) => !v)}
-            aria-label="Forklar"
-            className="shrink-0 text-slate-300 opacity-50 transition-colors hover:text-blue-600 group-hover:opacity-100"
-          >
-            <HelpCircle size={12} />
-          </button>
+    <div className="group relative min-w-0 rounded-xl bg-slate-50/60 p-3 ring-1 ring-slate-100 transition-colors hover:bg-slate-50 sm:p-4">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500">
+          <span className="truncate">{label}</span>
+          {explain && (
+            <button
+              onClick={() => setOpen((v) => !v)}
+              aria-label="Forklar"
+              className="shrink-0 text-slate-300 opacity-70 transition-colors hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            >
+              <HelpCircle size={12} />
+            </button>
+          )}
+        </div>
+        {Icon && (
+          <span className={clsx("inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md ring-1", badgeTint)}>
+            <Icon size={13} />
+          </span>
         )}
       </div>
-      <div className={clsx("mt-1.5 flex items-baseline gap-1 font-bold leading-none tnum", tone)}>
+      <div className={clsx("mt-2 flex items-baseline gap-1 font-bold leading-none tnum", tone)}>
         <span className="truncate text-xl sm:text-2xl md:text-[26px]">{value}</span>
         {unit && <span className="text-sm font-semibold text-slate-400">{unit}</span>}
       </div>
+      {sub && (
+        <div className="mt-1.5 truncate text-[11px] font-medium text-slate-500">{sub}</div>
+      )}
 
       {open && explain && (
         <div className="absolute left-0 top-full z-30 mt-2 w-64 max-w-[80vw] rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-xl shadow-slate-900/10">
@@ -790,6 +816,14 @@ export function AnalyzerApp() {
           />
         ) : (
         <>
+        {/* Property photo hero — Airbnb-style split gallery with lightbox.
+            Renders above the score so the analyzer feels like a real listing
+            you're inspecting, not a spreadsheet. Skipped silently when the
+            extractor didn't return any images. */}
+        {images.length > 0 && (
+          <PropertyGallery images={images} address={address} />
+        )}
+
         {/* Zone: VURDERING — the 5-second read */}
         <ZoneHeader label="Vurdering" hint="Overblik, score og de fire tal alle andre tal fører til" />
         <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 md:p-8">
@@ -831,25 +865,30 @@ export function AnalyzerApp() {
             </span>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-slate-100 pt-6 sm:mt-8 sm:gap-x-6 sm:gap-y-7 sm:pt-7 sm:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-2.5 sm:mt-8 sm:gap-3 sm:grid-cols-4">
             <KeyStat
-              label="Cash flow / md." value={dk(r.cashFlow)} unit="kr" tone={cfTone}
+              label="Cash flow / md." value={dk(r.cashFlow)} unit="kr" tone={cfTone} Icon={Wallet}
+              sub={r.cashFlow >= 0 ? `+${dk(r.annualCashFlow)} kr/år` : `−${dk(Math.abs(r.annualCashFlow))} kr/år`}
               explain="Det, der reelt lander på din konto hver måned, når lejen har betalt lånet og alle udgifter. Positivt = ejendommen betaler dig. Negativt = du lægger penge til hver måned."
               how="Månedlig leje minus ydelsen på lånet minus alle driftsudgifter."
             />
             <KeyStat
-              label="Nettoafkast" value={num(r.capRate)} unit="%"
+              label="Nettoafkast" value={num(r.capRate)} unit="%" Icon={Percent}
+              tone={r.capRate >= 5 ? "text-emerald-600" : r.capRate >= 3 ? "text-slate-900" : "text-rose-500"}
+              sub="Før lån · pr. år"
               explain={`Hvor mange procent af prisen ejendommen tjener om året — efter driftsudgifter, men før lån. ${num(r.capRate)} % betyder, at ejendommen selv (uden lån) giver ${num(r.capRate)} % af sin pris tilbage hvert år. Højere = bedre.`}
               how="Driftsresultatet (leje minus tomgang, vedligehold og faste udgifter) delt med købsprisen."
             />
             <KeyStat
-              label="Kontantafkast" value={num(r.cashOnCash)} unit="%"
-              tone={r.cashOnCash >= 0 ? "text-slate-900" : "text-rose-500"}
+              label="Kontantafkast" value={num(r.cashOnCash)} unit="%" Icon={TrendingUp}
+              tone={r.cashOnCash >= 8 ? "text-emerald-600" : r.cashOnCash >= 0 ? "text-slate-900" : "text-rose-500"}
+              sub={`På ${dk(r.cashInvested)} kr investeret`}
               explain={`Hvor meget dine EGNE penge tjener om året. Du lagde ${dk(r.cashInvested)} kr (udbetaling + købsomkostninger) og får ${dk(r.annualCashFlow)} kr tilbage i cash flow — det er ${num(r.cashOnCash)} %.`}
               how="Årligt cash flow delt med de penge, du selv lagde."
             />
             <KeyStat
-              label="Gældsdækning" value={num(r.dscr)} tone={dscrTone}
+              label="Gældsdækning" value={num(r.dscr)} tone={dscrTone} Icon={ShieldCheck}
+              sub={r.dscr >= 1.25 ? "Banken siger ja" : r.dscr >= 1 ? "På kanten" : "For lavt"}
               explain={`Kan lejen betale lånet? 1,0 er lige akkurat. ${num(r.dscr)} betyder, at ejendommen tjener ${num(r.dscr)} gange så meget som ydelsen. Banker vil typisk gerne se mindst 1,25.`}
               how="Driftsresultatet (NOI) delt med den årlige ydelse på lånet."
             />
