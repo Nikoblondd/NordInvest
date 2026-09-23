@@ -258,9 +258,9 @@ export default function GameClient() {
 
       <header className="game-subheader">
         <div className="game-subheader-inner">
-          <h1 className="page-title">Gæt Boligprisen</h1>
+          <h1 className="page-title">Boligpris Spil — Gæt Prisen på Boligen</h1>
           <p className="page-subtitle">
-            Gæt prisen på rigtige boliger fra Boligsiden. 2-8 spillere, gratis.
+            Danmarks største bolig-quiz — gæt prisen på rigtige huse og lejligheder fra Boligsiden. 2-8 spillere, gratis, ingen login.
           </p>
         </div>
       </header>
@@ -331,20 +331,77 @@ export default function GameClient() {
         </main>
       </div>
 
-      {/* SEO content strip — kept short for bots to match "gæt boligprisen" &
-          "ejendomsspil" queries; collapsed visually so humans don't drown in text. */}
+      {/* SEO content strip — dense real prose so search engines pick up every
+          way a Dane might phrase this query: "boligpris spil", "bolig spil",
+          "gæt prisen på boligen", "gæt husets pris", "boligquiz", "prisspil",
+          "ejendomsspil", "boligmarked spil", etc. Every H2/H3 anchors a
+          distinct query variant. */}
       <section className="game-seo-strip">
         <div className="game-seo-inner">
-          <h2>Gæt Boligprisen — dansk boligpris quiz</h2>
+          <h2>Boligpris Spil — Danmarks største bolig-quiz</h2>
           <p>
-            Gratis multiplayer prisspil på rigtige boliger fra Boligsiden.
-            2-8 spillere gætter kontantprisen — ingen login, spil hele Danmark
-            eller vælg by som København, Aarhus, Odense eller Aalborg.
+            <strong>Gæt Boligprisen</strong> er et gratis <strong>boligpris spil</strong> hvor
+            2-8 spillere gætter kontantprisen på rigtige danske boliger fra Boligsiden.
+            Det er også kendt som <em>bolig spil</em>, <em>boligquiz</em>, <em>prisspil</em>{" "}
+            og <em>ejendomsspil</em> — samme koncept: se boligen, gæt prisen, vind runden.
+            Ingen login, ingen betaling, ingen download.
           </p>
+
+          <h3>Gæt prisen på boligen — hus, lejlighed eller villa</h3>
+          <p>
+            Uanset om du vil <strong>gætte prisen på et hus</strong>, en{" "}
+            <strong>lejlighed</strong> eller en villa, dækker boligquizzen alle
+            boligtyper. Vi trækker aktive salgsopstillinger direkte fra Boligsiden —
+            parcelhuse, ejerlejligheder, rækkehuse, villaer, andelsboliger og
+            fritidshuse. Hver runde viser dig billeder af boligen, og du gætter{" "}
+            <strong>kontantprisen</strong>. Tættest på vinder.
+          </p>
+
+          <h3>Sådan spiller du bolig-quizzen</h3>
+          <ol>
+            <li>Vælg 2-8 spillere — spil med familien, kollegaerne eller vennerne</li>
+            <li>Vælg område: hele Danmark, en landsdel eller specifik by</li>
+            <li>Se billederne af boligen og gæt kontantprisen</li>
+            <li>Køb evt. hints om areal, byggeår, energimærke — koster 2 point</li>
+            <li>Tættest på vinder rundens bonus, alle får point for at være tæt på</li>
+          </ol>
+
+          <h3>Boligpris spil i din by</h3>
+          <p>
+            Spil <strong>Gæt Boligprisen i København</strong>, Aarhus, Odense, Aalborg,
+            Esbjerg, Vejle, Randers, Kolding, Horsens, Roskilde, Silkeborg, Herning,
+            Helsingør, Næstved eller Hillerød — eller test dig selv på hele
+            Danmark. Prisniveauerne er vidt forskellige, og det er en overraskende
+            god måde at træne sin intuition for det danske boligmarked.
+          </p>
+
+          <h3>Hvorfor spille Gæt Boligprisen?</h3>
+          <p>
+            Boligmarkedet er svært at aflæse. Prisspillet er den sjoveste måde at
+            teste hvor godt du kender det danske boligmarked. Kernebrugerne er
+            <strong> kommende boligkøbere, ejendomsinvestorer og mæglerbranchen</strong> —
+            men det fungerer også som selskabsspil, familieaften, eller onboarding
+            for nye kolleger i ejendomsbranchen. Alt data kommer fra{" "}
+            <a href="https://boligsiden.dk" target="_blank" rel="noopener">Boligsiden</a>{" "}
+            og opdateres løbende, så udbuddet altid afspejler det aktuelle
+            boligmarked.
+          </p>
+
+          <h3>Andre gratis værktøjer til boliginvestering</h3>
+          <p>
+            Vil du analysere en konkret bolig i stedet for at gætte prisen? Prøv{" "}
+            <a href="/analyseren">Analyseren</a> — indsæt et boliglink og få cashflow,
+            afkast og risiko-vurdering. Vil du se de bedste deals i hele Danmark
+            lige nu? Åbn <a href="/deals">Deal-motoren</a>. Vil du lære om
+            ejendomsinvestering? Læs vores <a href="/blog">blog</a>.
+          </p>
+
           <p className="game-seo-links">
-            <a href="/analyseren">Analyseren</a> ·{" "}
+            Se også: <a href="/analyseren">Boliganalyse</a> ·{" "}
             <a href="/deals">Deal-motoren</a> ·{" "}
-            <a href="/blog">Blog</a>
+            <a href="/blog">Blog om ejendomsinvestering</a> ·{" "}
+            <a href="/investering-i-ejendom-koebenhavn">Investering i København</a> ·{" "}
+            <a href="/investering-i-ejendom-aarhus">Investering i Aarhus</a>
           </p>
         </div>
       </section>
