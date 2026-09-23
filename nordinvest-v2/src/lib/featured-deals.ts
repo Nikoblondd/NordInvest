@@ -28,9 +28,31 @@ export type FeaturedDeal = {
 };
 
 /** URL to jump straight into the analyzer for a given deal. */
-function analyzeFor(url: string, price: number, area?: number): string {
+function analyzeFor(
+  url: string,
+  price: number,
+  area?: number,
+  opts?: { commercial?: boolean; yieldPct?: number; addr?: string; subcat?: string },
+): string {
   const q = new URLSearchParams({ url, price: String(price) });
   if (area) q.set("area", String(area));
+  if (opts?.addr) q.set("addr", opts.addr);
+  if (opts?.commercial) {
+    // Erhverv path — mirror the deal-motor's investment handoff so the
+    // analyzer computes the right numbers. Without this, the analyzer treats
+    // it as a bolig and defaults monthlyRent to 15.000 kr on a multi-million
+    // warehouse → nonsense score and cashflow.
+    q.set("market", "investering");
+    q.set("downPaymentPct", "30");
+    q.set("interestRate", "5");
+    // Rent param IS the net NOI/12 (analyzer zeroes vacancy/opex when
+    // market=investering, so no double-count).
+    if (opts.yieldPct && opts.yieldPct > 0) {
+      const monthlyNoi = Math.round((price * (opts.yieldPct / 100)) / 12);
+      q.set("rent", String(monthlyNoi));
+    }
+    if (opts.subcat) q.set("subcat", opts.subcat);
+  }
   return `/analyseren?${q.toString()}`;
 }
 
@@ -122,6 +144,7 @@ export const FEATURED_COMMERCIAL: FeaturedDeal[] = [
       "https://www.ejendomstorvet.dk/investering/oestsjaelland/koege/lager-produktion/baf97298-7e90-4018-8c98-6752428d8f5c",
       44_100_000,
       4805,
+      { commercial: true, yieldPct: 7.3, addr: "Theilgaards Alle 4, 4600 Køge", subcat: "lager" },
     ),
     highlight: "7,3 % afkast på Sjælland — Køge ligger midt i logistikkorridoren",
   },
@@ -143,6 +166,7 @@ export const FEATURED_COMMERCIAL: FeaturedDeal[] = [
       "https://www.ejendomstorvet.dk/investering/fyn/assens/lager-produktion/0cd3e159-20c9-4849-a3b0-40aae3b9abd0",
       24_850_000,
       10032,
+      { commercial: true, yieldPct: 8.6, addr: "Glasvænget 9, 5492 Vissenbjerg", subcat: "lager" },
     ),
     highlight: "8,6 % afkast på 10.000 m² — kvadratmeterprisen er halv af Sjælland",
   },
@@ -164,6 +188,7 @@ export const FEATURED_COMMERCIAL: FeaturedDeal[] = [
       "https://www.ejendomstorvet.dk/investering/nordjylland/hjoerring/boligudlejning/3a6856bf-24bd-4d6e-8d8c-c179097f0db5",
       1_875_000,
       256,
+      { commercial: true, yieldPct: 8.5, addr: "Tørholmsvej 39, 9800 Hjørring", subcat: "boligudlejning" },
     ),
     highlight: "1,88 mio. entry på boligudlejning — 8,5 % afkast i Nordjylland",
   },

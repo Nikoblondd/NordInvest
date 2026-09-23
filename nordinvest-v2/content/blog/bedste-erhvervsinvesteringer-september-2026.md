@@ -19,7 +19,7 @@ Fælles for de tre: **afkast mellem 7,3 % og 8,6 %**, hvilket er betydeligt høj
 - **Areal:** 4.805 m² lager / produktion
 - **Afkast:** 7,3 %
 - **Se opslag:** [ejendomstorvet.dk](https://www.ejendomstorvet.dk/investering/oestsjaelland/koege/lager-produktion/baf97298-7e90-4018-8c98-6752428d8f5c)
-- **Fuld analyse:** [Kør igennem Analyseren](/analyseren?url=https%3A%2F%2Fwww.ejendomstorvet.dk%2Finvestering%2Foestsjaelland%2Fkoege%2Flager-produktion%2Fbaf97298-7e90-4018-8c98-6752428d8f5c&price=44100000&area=4805)
+- **Fuld analyse:** [Kør igennem Analyseren](/analyseren?url=https%3A%2F%2Fwww.ejendomstorvet.dk%2Finvestering%2Foestsjaelland%2Fkoege%2Flager-produktion%2Fbaf97298-7e90-4018-8c98-6752428d8f5c&price=44100000&area=4805&market=investering&downPaymentPct=30&interestRate=5&rent=268275&subcat=lager&addr=Theilgaards+Alle+4%2C+4600+K%C3%B8ge)
 
 Månedens topscorer på erhverv. Køge ligger midt i **logistikkorridoren mellem København og Femern Bælt-forbindelsen**, som åbner i 2029. Efterspørgslen på lager- og distributionsplads i regionen stiger allerede nu, og 7,3 % på en ejendom af denne størrelse på Sjælland er usædvanligt højt.
 
@@ -31,7 +31,7 @@ Månedens topscorer på erhverv. Køge ligger midt i **logistikkorridoren mellem
 - **Areal:** 10.032 m² lager / produktion
 - **Afkast:** 8,6 %
 - **Se opslag:** [ejendomstorvet.dk](https://www.ejendomstorvet.dk/investering/fyn/assens/lager-produktion/0cd3e159-20c9-4849-a3b0-40aae3b9abd0)
-- **Fuld analyse:** [Kør igennem Analyseren](/analyseren?url=https%3A%2F%2Fwww.ejendomstorvet.dk%2Finvestering%2Ffyn%2Fassens%2Flager-produktion%2F0cd3e159-20c9-4849-a3b0-40aae3b9abd0&price=24850000&area=10032)
+- **Fuld analyse:** [Kør igennem Analyseren](/analyseren?url=https%3A%2F%2Fwww.ejendomstorvet.dk%2Finvestering%2Ffyn%2Fassens%2Flager-produktion%2F0cd3e159-20c9-4849-a3b0-40aae3b9abd0&price=24850000&area=10032&market=investering&downPaymentPct=30&interestRate=5&rent=178092&subcat=lager&addr=Glasv%C3%A6nget+9%2C+5492+Vissenbjerg)
 
 **Månedens højeste afkast blandt de sikreste deals** — 8,6 % på 10.000 m². Kvadratmeterprisen er 2.477 kr/m², under halvdelen af hvad en sammenlignelig ejendom koster på Østsjælland. Vissenbjerg ligger direkte ved E20, hvilket gør lokationen brugbar til distribution mod hele Fyn, Jylland og Sjælland.
 
@@ -43,7 +43,7 @@ Månedens topscorer på erhverv. Køge ligger midt i **logistikkorridoren mellem
 - **Areal:** 256 m² boligudlejning
 - **Afkast:** 8,5 %
 - **Se opslag:** [ejendomstorvet.dk](https://www.ejendomstorvet.dk/investering/nordjylland/hjoerring/boligudlejning/3a6856bf-24bd-4d6e-8d8c-c179097f0db5)
-- **Fuld analyse:** [Kør igennem Analyseren](/analyseren?url=https%3A%2F%2Fwww.ejendomstorvet.dk%2Finvestering%2Fnordjylland%2Fhjoerring%2Fboligudlejning%2F3a6856bf-24bd-4d6e-8d8c-c179097f0db5&price=1875000&area=256)
+- **Fuld analyse:** [Kør igennem Analyseren](/analyseren?url=https%3A%2F%2Fwww.ejendomstorvet.dk%2Finvestering%2Fnordjylland%2Fhjoerring%2Fboligudlejning%2F3a6856bf-24bd-4d6e-8d8c-c179097f0db5&price=1875000&area=256&market=investering&downPaymentPct=30&interestRate=5&rent=13281&subcat=boligudlejning&addr=T%C3%B8rholmsvej+39%2C+9800+Hj%C3%B8rring)
 
 **Månedens entry-level erhvervsdeal.** Boligudlejningsejendom med 8,5 % afkast til under 2 mio. kr — det er i det prisleje mange private investorer kan gå ind uden institutional finansiering. Nordjylland er ikke det hotteste vækstmarked, men lejemarkedet i Hjørring er stabilt, og den lave købspris giver et rentestress-friplads som storbyer ikke tilbyder.
 
