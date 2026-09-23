@@ -186,6 +186,98 @@ type GameProperty = {
   images: string[];
 };
 
+/**
+ * Round-robin over landsdele (first zip digit) so a whole-country game visits
+ * København, Sjælland, Fyn and Jylland instead of three zips in one city.
+ * Within a landsdel, prefer zips from neighbourhoods (first two digits) not
+ * used yet.
+ */
+function spreadZips(pool: string[], n: number): string[] {
+  const byDigit = new Map<string, string[]>();
+  for (const z of shuffle(pool)) {
+    const k = z[0];
+    if (!byDigit.has(k)) byDigit.set(k, []);
+    byDigit.get(k)!.push(z);
+  }
+  const groups = shuffle(Array.from(byDigit.values()));
+  const usedPrefix = new Set<string>();
+  const out: string[] = [];
+  while (out.length < n && groups.some((g) => g.length)) {
+    for (const g of groups) {
+      if (out.length >= n || g.length === 0) continue;
+      const i = g.findIndex((z) => !usedPrefix.has(z.slice(0, 2)));
+      const [z] = g.splice(i >= 0 ? i : 0, 1);
+      usedPrefix.add(z.slice(0, 2));
+      out.push(z);
+    }
+  }
+  return out;
+}
+
+function priceBand(price: number): number {
+  if (price < 1_500_000) return 0;
+  if (price < 3_000_000) return 1;
+  if (price < 5_000_000) return 2;
+  if (price < 8_000_000) return 3;
+  return 4;
+}
+
+/** Normalise Boligsiden's types so "villa" vs "villa apartment" etc. count right. */
+function typeKey(t: string | undefined): string {
+  const s = (t || "").toLowerCase();
+  if (s.includes("farm")) return "farm";
+  if (s.includes("holiday")) return "holiday";
+  if (s.includes("terraced")) return "terraced";
+  if (s.includes("cooperative")) return "cooperative";
+  if (s === "villa") return "villa";
+  return "apartment"; // condo, villa apartment
+}
+
+function pickDiverse(cands: GameProperty[], count: number): GameProperty[] {
+  const left = shuffle(cands);
+  const chosen: GameProperty[] = [];
+  const n = { zip: new Map<string, number>(), area: new Map<string, number>(), region: new Map<string, number>(), type: new Map<string, number>(), band: new Map<number, number>() };
+  const get = <K,>(m: Map<K, number>, k: K) => m.get(k) ?? 0;
+  const bump = <K,>(m: Map<K, number>, k: K) => m.set(k, get(m, k) + 1);
+
+  while (chosen.length < count && left.length) {
+    let best = 0;
+    let bestScore = Infinity;
+    for (let i = 0; i < left.length; i++) {
+      const p = left[i];
+      const score =
+        get(n.zip, p.zipCode) * 12 +
+        get(n.area, p.zipCode.slice(0, 2)) * 4 +
+        get(n.region, p.zipCode[0]) * 2 +
+        get(n.type, typeKey(p.propertyType)) * 3 +
+        get(n.band, priceBand(p.price)) * 3 +
+        Math.random(); // tie-break so games differ
+      if (score < bestScore) { bestScore = score; best = i; }
+    }
+    const [p] = left.splice(best, 1);
+    chosen.push(p);
+    bump(n.zip, p.zipCode);
+    bump(n.area, p.zipCode.slice(0, 2));
+    bump(n.region, p.zipCode[0]);
+    bump(n.type, typeKey(p.propertyType));
+    bump(n.band, priceBand(p.price));
+  }
+  return chosen;
+}
+
+async function mapLimit<T, R>(items: T[], limit: number, fn: (t: T) => Promise<R>): Promise<R[]> {
+  const out: R[] = new Array(items.length);
+  let next = 0;
+  async function worker() {
+    while (next < items.length) {
+      const i = next++;
+      out[i] = await fn(items[i]);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return out;
+}
+
 function shuffle<T>(arr: T[]): T[] {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -195,10 +287,10 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-async function fetchCases(zip: string): Promise<BsCase[]> {
+async function fetchCases(zip: string, extra = "", perPage = 80): Promise<BsCase[]> {
   try {
     const res = await fetch(
-      `https://api.boligsiden.dk/search/cases?zipCodes=${zip}&per_page=200`,
+      `https://api.boligsiden.dk/search/cases?zipCodes=${zip}&per_page=${perPage}${extra}`,
       {
         headers: {
           "User-Agent":
@@ -206,7 +298,7 @@ async function fetchCases(zip: string): Promise<BsCase[]> {
           Accept: "application/json,*/*;q=0.1",
           "Accept-Language": "da-DK,da;q=0.9,en;q=0.8",
         },
-        // Skip the fetch cache — the case-list responses are 5-12MB per zip,
+        // Skip the fetch cache — the case-list responses run 2-3MB per zip,
         // above Next's 2MB cache limit, and each game already picks a random
         // subset so cache hits wouldn't help much.
         cache: "no-store",
@@ -220,7 +312,11 @@ async function fetchCases(zip: string): Promise<BsCase[]> {
   }
 }
 
+// Bare land has nothing to look at — keep it out of the game.
+const EXCLUDED_TYPES = new Set(["full year plot", "plot", "allotment"]);
+
 function toProperty(c: BsCase): GameProperty | null {
+  if (c.addressType && EXCLUDED_TYPES.has(c.addressType)) return null;
   const price = typeof c.priceCash === "number" ? c.priceCash : 0;
   const area = typeof c.housingArea === "number" ? c.housingArea : 0;
   if (price < 200000 || price > 50000000) return null;
@@ -277,33 +373,35 @@ export async function GET(req: NextRequest) {
   const count = Math.max(3, Math.min(30, Math.floor(countParam)));
 
   const pool = ZIP_POOLS[region] || ZIP_POOLS["hele-dk"];
-  const shuffledZips = shuffle(pool);
 
-  const chosen: GameProperty[] = [];
-  const seenIds = new Set<string>();
-  const seenAddresses = new Set<string>();
+  // 1) Pick a geographically spread set of zips — more zips than rounds, so
+  //    no area has to supply more than one home.
+  const zips = spreadZips(pool, Math.min(pool.length, count + 4));
 
-  // Fetch zips one at a time, keeping the good ones, until we hit `count`.
-  // A single zip typically yields 40-200 cases; most rounds are complete
-  // after 3-6 fetches. Cap at 20 zips to avoid runaway on empty regions.
-  for (const zip of shuffledZips.slice(0, 20)) {
-    if (chosen.length >= count) break;
-    const cases = await fetchCases(zip);
-    const usable: GameProperty[] = [];
-    for (const c of shuffle(cases)) {
+  // 2) Fetch every zip in parallel: the default listing (mixed, but city zips
+  //    are mostly condos) plus a villa-only slice so houses always show up.
+  const perZip = await mapLimit(zips, 8, async (zip) => {
+    const [mixed, villas] = await Promise.all([
+      fetchCases(zip, "", 80),
+      fetchCases(zip, "&addressTypes=villa", 20),
+    ]);
+    const seen = new Set<string>();
+    const props: GameProperty[] = [];
+    for (const c of shuffle([...mixed, ...villas])) {
       const p = toProperty(c);
-      if (!p) continue;
-      if (seenIds.has(p.id) || seenAddresses.has(p.address)) continue;
-      usable.push(p);
-      if (usable.length >= 4) break; // take up to 4 per zip so region isn't all-Aarhus
+      if (!p || seen.has(p.id) || seen.has(p.address)) continue;
+      seen.add(p.id);
+      seen.add(p.address);
+      props.push(p);
+      if (props.length >= 8) break;
     }
-    for (const p of usable) {
-      if (chosen.length >= count) break;
-      chosen.push(p);
-      seenIds.add(p.id);
-      seenAddresses.add(p.address);
-    }
-  }
+    return props;
+  });
+
+  // 3) Greedy pick for variety: every pick is penalised for repeating a zip,
+  //    a neighbourhood, a landsdel, a property type or a price band.
+  const candidates = perZip.flat();
+  const chosen = pickDiverse(candidates, count);
 
   if (chosen.length < 3) {
     return NextResponse.json(
