@@ -54,9 +54,12 @@ export async function GET(req: NextRequest) {
         try {
           const followed = await extractFromMaeglerUrl(via.followUrl);
           if (followed.ok && followed.images && followed.images.length) {
-            const merged = Array.from(
-              new Set([...(via.images ?? []), ...followed.images]),
-            ).slice(0, 30);
+            const seen = new Set<string>();
+            const merged: string[] = [];
+            for (const u of [...(via.images ?? []), ...followed.images]) {
+              if (!seen.has(u)) { seen.add(u); merged.push(u); }
+              if (merged.length >= 30) break;
+            }
             return NextResponse.json({ ...via, images: merged });
           }
         } catch {
@@ -322,14 +325,13 @@ async function fromBoligsiden(url: string): Promise<BsResult | null> {
   // pass caseUrl as `followUrl` so the mægler HTML can add more photos to
   // the set (Boligsiden's search API only returns 5 photos per case; the
   // mægler site typically has 15-30).
-  const imgSet = new Set<string>();
-  const heroUrl = largestImageUrl(c.defaultImage);
-  if (heroUrl) imgSet.add(heroUrl);
-  for (const img of c.images ?? []) {
-    const u = largestImageUrl(img);
-    if (u) imgSet.add(u);
-  }
-  const images = Array.from(imgSet);
+  const imgSeen = Object.create(null) as Record<string, true>;
+  const images: string[] = [];
+  const pushImg = (u: string | null) => {
+    if (u && !imgSeen[u]) { imgSeen[u] = true; images.push(u); }
+  };
+  pushImg(largestImageUrl(c.defaultImage));
+  for (const img of c.images ?? []) pushImg(largestImageUrl(img));
 
   const found = Object.entries(f)
     .filter(([, v]) => v !== undefined && v !== null && v !== "")
@@ -433,29 +435,35 @@ type BsCase = {
 /* ---------------- listing photos (for AI condition analysis) ---------------- */
 
 function collectImages(html: string, pageUrl: string): string[] {
-  const urls = new Set<string>();
+  // Plain-array accumulator + a seen-map to dedupe; avoids iterating a Set
+  // (which the project's tsc target doesn't allow spreading without a flag).
+  const seenRaw = Object.create(null) as Record<string, true>;
+  const raws: string[] = [];
+  const add = (u: string) => {
+    if (!seenRaw[u] && raws.length < 300) { seenRaw[u] = true; raws.push(u); }
+  };
+
   // OpenGraph / twitter hero images first (most reliable, publicly fetchable).
   for (const re of [
     /<meta[^>]+property=["']og:image(?::url)?["'][^>]+content=["']([^"']+)["']/gi,
     /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/gi,
   ]) {
     let m: RegExpExecArray | null;
-    while ((m = re.exec(html))) urls.add(m[1]);
+    while ((m = re.exec(html))) add(m[1]);
   }
   // <img src=""> and data-src/data-lazy variants (SPAs often lazy-load).
   const attrRe =
     /<img[^>]+(?:src|data-src|data-lazy|data-original|data-lazy-src)=["']([^"']+?\.(?:jpe?g|webp|png)(?:\?[^"']*)?)["']/gi;
   let a: RegExpExecArray | null;
-  while ((a = attrRe.exec(html)) && urls.size < 200) urls.add(a[1]);
+  while ((a = attrRe.exec(html))) add(a[1]);
   // srcset — largest candidate wins. Format: "url1 320w, url2 640w, url3 1280w".
   const srcsetRe = /<img[^>]+srcset=["']([^"']+)["']/gi;
   let s: RegExpExecArray | null;
-  while ((s = srcsetRe.exec(html)) && urls.size < 200) {
+  while ((s = srcsetRe.exec(html))) {
     const set = s[1]
       .split(",")
       .map((p) => p.trim())
       .filter(Boolean);
-    // Pick the widest — the last one is usually the biggest, but be defensive.
     let best = "";
     let bestW = 0;
     for (const p of set) {
@@ -463,43 +471,42 @@ function collectImages(html: string, pageUrl: string): string[] {
       const wn = Number((w || "0").replace("w", "").replace("x", ""));
       if (!best || wn > bestW) { best = u; bestW = wn; }
     }
-    if (best) urls.add(best);
+    if (best) add(best);
   }
   // Then any image-file URLs in the markup / embedded JSON.
   const re = /https?:\\?\/\\?\/[^"'\s<>()]+?\.(?:jpe?g|webp|png)(?:\?[^"'\s<>]*)?/gi;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(html)) && urls.size < 300) urls.add(m[0].replace(/\\\//g, "/"));
+  while ((m = re.exec(html))) add(m[0].replace(/\\\//g, "/"));
 
   const bad = /(logo|icon|sprite|favicon|avatar|placeholder|badge|pixel|1x1|blank|flag|thumb_small|watermark|banner_ad)/i;
   const base = (() => { try { return new URL(pageUrl).origin; } catch { return ""; } })();
 
   // Deduplicate by the "underlying" image — many portals emit 6-10 size variants
-  // of the same photo (e.g. `_Size100x60`, `_Size620x400`, `_Size1920x1080`).
-  // Group by the stem (URL with size/dimensions stripped), keep the largest.
-  const byStem = new Map<string, { url: string; score: number }>();
-  for (const raw of urls) {
+  // of the same photo. Group by stem, keep the highest-res URL per group.
+  const stems = Object.create(null) as Record<string, { url: string; score: number }>;
+  const stemOrder: string[] = [];
+  for (const raw of raws) {
     const u = decode(raw).trim();
     const absolute = u.startsWith("//") ? "https:" + u : u.startsWith("/") ? base + u : u;
     if (!/^https?:\/\//.test(absolute) || bad.test(absolute)) continue;
-    // Score = the biggest number we can find in size hints — bigger = higher-res.
     const dims =
       absolute.match(/Size(\d+)x(\d+)/i) ||
       absolute.match(/(\d{3,4})x(\d{3,4})/) ||
       absolute.match(/[?&](?:w|width)=(\d+)/i);
     const score = dims ? Number(dims[1] || 0) : 0;
-    // Stem = URL with size tokens stripped so all variants of the same photo
-    // collapse to one bucket. Covers `_Size100x60`, `?w=800`, `-320x200`.
     const stem = absolute
       .replace(/(_Size\d+x\d+)/i, "_SIZE")
       .replace(/(-\d{2,4}x\d{2,4})(?=\.\w+$)/i, "-DIM")
       .replace(/[?&](?:w|width|h|height|size|quality|q)=\d+/gi, "")
       .replace(/[?&]$/, "");
-    const cur = byStem.get(stem);
-    if (!cur || score > cur.score) byStem.set(stem, { url: absolute, score });
+    const cur = stems[stem];
+    if (!cur) { stems[stem] = { url: absolute, score }; stemOrder.push(stem); }
+    else if (score > cur.score) { cur.url = absolute; cur.score = score; }
   }
 
-  return Array.from(byStem.values())
-    .sort((a, b) => b.score - a.score)
+  return stemOrder
+    .map((k) => stems[k])
+    .sort((x, y) => y.score - x.score)
     .map((x) => x.url)
     .slice(0, 30);
 }
