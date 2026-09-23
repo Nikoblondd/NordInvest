@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import "./game.css";
 import { calculateRoundScores } from "./gameLogic";
 import { Nav } from "@/components/Nav";
@@ -79,20 +79,6 @@ const fmt = (n: number) =>
 
 const kr = (n: number) => `${fmt(n)} kr`;
 const krMd = (n: number) => `${fmt(n)} kr/md.`;
-
-// Parse Danish-style number input: "4.300.000 kr" / "4300000" / "4,3 mio" → number
-function parseGuess(raw: string): number | null {
-  if (!raw) return null;
-  const s = raw.toLowerCase().replace(/kr|\.|\s|dkk/g, "").replace(/,/g, ".");
-  const mio = /mio|m/.test(s);
-  const cleaned = s.replace(/[^0-9.]/g, "");
-  if (!cleaned) return null;
-  let n = Number(cleaned);
-  if (!isFinite(n)) return null;
-  if (mio && n < 100) n = n * 1_000_000;
-  if (n < 1000) return null;
-  return Math.round(n);
-}
 
 /* ============================================================
    Root component
@@ -178,12 +164,17 @@ export default function GameClient() {
   }
 
   /* ---------- guessing ---------- */
-  function setGuess(playerId: number, raw: string) {
-    const value = parseGuess(raw);
+  /** Live-formats the field as the player types (4300000 → 4.300.000) and returns the formatted string. */
+  function setGuess(playerId: number, input: string): string {
+    const digits = input.replace(/\D/g, "").replace(/^0+/, "").slice(0, 10);
+    const n = digits ? Number(digits) : null;
+    const raw = n != null ? fmt(n) : "";
+    const value = n != null && n >= 1000 ? n : null;
     setGuesses((g) => ({
       ...g,
       [playerId]: { ...(g[playerId] ?? { raw: "", value: null, locked: false }), raw, value },
     }));
+    return raw;
   }
   function lockGuess(playerId: number) {
     setGuesses((g) => {
@@ -541,7 +532,7 @@ function GuessingScreen(props: {
   onReveal: (k: HintKey) => void;
   players: Player[];
   guesses: Record<number, PlayerGuess>;
-  onGuess: (id: number, raw: string) => void;
+  onGuess: (id: number, raw: string) => string;
   onLock: (id: number) => void;
   onUnlock: (id: number) => void;
   onRevealPrice: () => void;
@@ -633,40 +624,17 @@ function GuessingScreen(props: {
             Jeres gæt
           </div>
           <div className="guess-list">
-            {props.players.map((pl, i) => {
-              const g = props.guesses[pl.id];
-              return (
-                <div key={pl.id} className={`guess-row ${g?.locked ? "guess-row-locked" : ""}`}>
-                  <span className="mini-badge" style={{ background: playerColor(i) }}>{i + 1}</span>
-                  <span className="guess-name">{pl.name}</span>
-                  <div className="guess-input-wrap">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      className="input guess-input"
-                      placeholder="fx 4300000"
-                      disabled={g?.locked}
-                      value={g?.raw ?? ""}
-                      onChange={(e) => props.onGuess(pl.id, e.target.value)}
-                    />
-                    <span className="guess-suffix">kr</span>
-                  </div>
-                  {g?.locked ? (
-                    <button className="btn btn-ghost btn-sm" onClick={() => props.onUnlock(pl.id)}>
-                      Åbn
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => props.onLock(pl.id)}
-                      disabled={!g || g.value == null}
-                    >
-                      LÅS
-                    </button>
-                  )}
-                </div>
-              );
-            })}
+            {props.players.map((pl, i) => (
+              <GuessRow
+                key={pl.id}
+                player={pl}
+                index={i}
+                guess={props.guesses[pl.id]}
+                onGuess={props.onGuess}
+                onLock={props.onLock}
+                onUnlock={props.onUnlock}
+              />
+            ))}
           </div>
 
           <button
@@ -679,6 +647,125 @@ function GuessingScreen(props: {
         </aside>
       </div>
     </>
+  );
+}
+
+/**
+ * One player's guess. Typing is live-formatted (4.300.000) with the caret
+ * kept in place; Enter locks. Once locked the number is hidden behind dots so
+ * the other players can't copy it — "Hold for at se" shows it only while held.
+ */
+function GuessRow({
+  player,
+  index,
+  guess,
+  onGuess,
+  onLock,
+  onUnlock,
+}: {
+  player: Player;
+  index: number;
+  guess: PlayerGuess | undefined;
+  onGuess: (id: number, raw: string) => string;
+  onLock: (id: number) => void;
+  onUnlock: (id: number) => void;
+}) {
+  const [peek, setPeek] = useState(false);
+  const locked = !!guess?.locked;
+  const inputRef = useRef<HTMLInputElement>(null);
+  const caretRef = useRef<number | null>(null);
+
+  // Restore the caret synchronously after the formatted value renders, so
+  // editing in the middle of "4.350.000" never jumps to the end.
+  useLayoutEffect(() => {
+    const el = inputRef.current;
+    if (caretRef.current != null && el && document.activeElement === el) {
+      el.setSelectionRange(caretRef.current, caretRef.current);
+    }
+    caretRef.current = null;
+  });
+
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    const el = e.target;
+    const prev = guess?.raw ?? "";
+    let digits = el.value.replace(/\D/g, "");
+    let digitsBefore = el.value.slice(0, el.selectionStart ?? el.value.length).replace(/\D/g, "").length;
+    // Backspace over a thousands dot removes only the dot, which formatting
+    // would put straight back — delete the digit in front of it instead.
+    if (digits === prev.replace(/\D/g, "") && el.value.length < prev.length && digitsBefore > 0) {
+      digits = digits.slice(0, digitsBefore - 1) + digits.slice(digitsBefore);
+      digitsBefore -= 1;
+    }
+    const formatted = onGuess(player.id, digits);
+    let pos = 0;
+    let seen = 0;
+    while (pos < formatted.length && seen < digitsBefore) {
+      if (/\d/.test(formatted[pos])) seen++;
+      pos++;
+    }
+    caretRef.current = pos;
+  }
+
+  return (
+    <div className={`guess-row ${locked ? "guess-row-locked" : ""}`}>
+      <span className="mini-badge" style={{ background: playerColor(index) }}>{index + 1}</span>
+      <span className="guess-name">{player.name}</span>
+      <div className="guess-input-wrap">
+        {locked ? (
+          <button
+            type="button"
+            className="guess-hidden"
+            aria-label={`${player.name}s gæt er skjult. Hold for at se det.`}
+            onPointerDown={() => setPeek(true)}
+            onPointerUp={() => setPeek(false)}
+            onPointerLeave={() => setPeek(false)}
+            onPointerCancel={() => setPeek(false)}
+            onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") setPeek(true); }}
+            onKeyUp={() => setPeek(false)}
+            onContextMenu={(e) => e.preventDefault()}
+          >
+            {peek ? (
+              <span className="guess-hidden-value">{guess?.raw} kr</span>
+            ) : (
+              <>
+                <span className="guess-hidden-dots" aria-hidden>••••••</span>
+                <span className="guess-hidden-hint">Hold for at se</span>
+              </>
+            )}
+          </button>
+        ) : (
+          <>
+            <input
+              ref={inputRef}
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              className="input guess-input"
+              placeholder="fx 4.300.000"
+              value={guess?.raw ?? ""}
+              onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && guess?.value != null) onLock(player.id);
+              }}
+            />
+            <span className="guess-suffix">kr</span>
+          </>
+        )}
+      </div>
+      {locked ? (
+        <button className="btn btn-ghost btn-sm" onClick={() => { setPeek(false); onUnlock(player.id); }}>
+          Ret
+        </button>
+      ) : (
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => onLock(player.id)}
+          disabled={!guess || guess.value == null}
+        >
+          LÅS
+        </button>
+      )}
+    </div>
   );
 }
 
