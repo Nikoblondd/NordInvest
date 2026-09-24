@@ -5,14 +5,18 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 // Curated zip pools per region. Boligsiden's /search/cases requires a
-// zipCode filter, so for "whole country" we sample from a diverse pool
-// covering the biggest housing markets in each Danish region.
+// zipCode filter, so every region is an explicit list of postnumre — and a
+// property is only accepted if its own zip is in that list (see toProperty).
+//
+// Landsdele follow the geography a player expects: "Sjælland" is the island
+// (+ København, Lolland-Falster, Møn) — NOT Bornholm; "Jylland" excludes the
+// ferry islands Fanø, Samsø and Læsø. Cities are the city's own kommune only.
 const ZIP_POOLS: Record<string, string[]> = {
   "hele-dk": [
     // Storkøbenhavn
     "1050", "1600", "2100", "2200", "2300", "2400", "2500", "2600", "2700",
     "2800", "2820", "2860", "2900", "2920", "2960",
-    // Sjælland øvrige
+    // Sjælland øvrige + Bornholm
     "3000", "3400", "3450", "3480", "3500", "3520", "3700",
     "4000", "4200", "4300", "4400", "4600", "4700", "4800", "4900",
     // Fyn
@@ -31,8 +35,7 @@ const ZIP_POOLS: Record<string, string[]> = {
     "2950", "2960", "2970", "2980", "2990",
     "3000", "3050", "3060", "3070", "3100", "3140", "3150", "3200", "3230",
     "3300", "3400", "3450", "3460", "3480", "3500", "3520", "3540", "3550",
-    "3600", "3630", "3660", "3670", "3700", "3720", "3730", "3740", "3751",
-    "3760", "3770", "3782", "3790",
+    "3600", "3630", "3660", "3670",
     "4000", "4030", "4040", "4050", "4060", "4070", "4100", "4130", "4140",
     "4160", "4171", "4174", "4180", "4190", "4200", "4220", "4230", "4241",
     "4243", "4250", "4261", "4270", "4281", "4291", "4293", "4295", "4296",
@@ -63,7 +66,7 @@ const ZIP_POOLS: Record<string, string[]> = {
     "6320", "6330", "6340", "6360", "6372", "6392", "6400", "6430", "6440",
     "6470", "6500", "6510", "6520", "6534", "6535", "6541", "6560", "6580",
     "6600", "6621", "6622", "6623", "6630", "6640", "6650", "6660", "6670",
-    "6682", "6683", "6690", "6700", "6705", "6710", "6715", "6720", "6731",
+    "6682", "6683", "6690", "6700", "6705", "6710", "6715", "6731",
     "6740", "6752", "6753", "6760", "6771", "6780", "6792", "6800", "6818",
     "6823", "6830", "6840", "6851", "6852", "6853", "6855", "6857", "6862",
     "6870", "6880", "6893", "6900", "6920", "6933", "6940", "6950", "6960",
@@ -77,7 +80,7 @@ const ZIP_POOLS: Record<string, string[]> = {
     "7850", "7860", "7870", "7884", "7900", "7950", "7960", "7970", "7980",
     "7990",
     "8000", "8200", "8210", "8220", "8230", "8240", "8250", "8260", "8270",
-    "8300", "8305", "8310", "8320", "8330", "8340", "8350", "8355", "8361",
+    "8300", "8310", "8320", "8330", "8340", "8350", "8355", "8361",
     "8362", "8380", "8381", "8382", "8400", "8410", "8420", "8444", "8450",
     "8462", "8464", "8471", "8472", "8500", "8520", "8530", "8541", "8543",
     "8544", "8550", "8560", "8570", "8581", "8585", "8586", "8592", "8600",
@@ -92,7 +95,7 @@ const ZIP_POOLS: Record<string, string[]> = {
     "9490", "9492", "9493", "9500", "9510", "9520", "9530", "9541", "9550",
     "9560", "9574", "9575", "9600", "9610", "9620", "9631", "9632", "9640",
     "9670", "9681", "9690", "9700", "9740", "9750", "9760", "9800", "9830",
-    "9850", "9870", "9881", "9900", "9940", "9970", "9981", "9982", "9990",
+    "9850", "9870", "9881", "9900", "9970", "9981", "9982", "9990",
   ],
   kbh: [
     "1050", "1051", "1150", "1200", "1250", "1300", "1350", "1400", "1450",
@@ -104,28 +107,35 @@ const ZIP_POOLS: Record<string, string[]> = {
     "2880", "2900", "2920", "2930", "2942", "2950", "2960", "2970", "2980",
     "2990",
   ],
-  aarhus: ["8000", "8200", "8210", "8220", "8230", "8240", "8250", "8260", "8270"],
+  aarhus: ["8000", "8200", "8210", "8220", "8230", "8240", "8250", "8260", "8270", "8310", "8361", "8381"],
   odense: ["5000", "5200", "5210", "5220", "5230", "5240", "5250", "5260", "5270"],
-  aalborg: ["9000", "9100", "9200", "9210", "9220", "9270", "9310", "9400"],
+  aalborg: ["9000", "9200", "9210", "9220", "9270", "9310", "9400"],
   esbjerg: ["6700", "6705", "6710", "6715"],
-  vejle: ["7100", "7120", "7160"],
+  vejle: ["7100", "7120", "7080", "7300"],
   randers: ["8900", "8920", "8930", "8940", "8960"],
-  kolding: ["6000", "6040", "6091"],
-  horsens: ["8700", "8721", "8722"],
-  roskilde: ["4000", "4030", "4040"],
+  kolding: ["6000", "6070", "6091", "6092", "6093"],
+  horsens: ["8700", "8740", "8751", "8752", "8762"],
+  roskilde: ["4000", "4040", "4130"],
   helsingoer: ["3000", "3050", "3060"],
-  fredensborg: ["3480", "2980"],
-  hilleroed: ["3400", "3450"],
-  koege: ["4600", "4623"],
-  naestved: ["4700", "4733", "4735", "4736"],
+  fredensborg: ["3480", "2980", "2990"],
+  hilleroed: ["3400", "3320"],
+  koege: ["4600", "4623", "4632", "4681"],
+  naestved: ["4700", "4736", "4160", "4171", "4684"],
   slagelse: ["4200", "4220", "4230"],
-  holbaek: ["4300", "4340"],
-  frederikshavn: ["9900", "9940", "9970"],
+  holbaek: ["4300", "4340", "4390", "4420", "4450"],
+  frederikshavn: ["9900", "9970", "9982"],
   silkeborg: ["8600", "8620", "8632", "8641", "8653"],
   viborg: ["8800", "8830", "8840", "8850"],
-  herning: ["7400", "7430", "7441"],
-  esbjerg_omraade: ["6700", "6705", "6710", "6715", "6720", "6731", "6740", "6760"],
+  herning: ["7400", "7451", "7480", "7490"],
 };
+
+const PER_PAGE = 60;
+const VILLA_PER_PAGE = 20;
+// Boligsiden occasionally stalls on deep pages. Cap each call, and stop
+// starting new ones once the game has been building for this long — a game
+// with slightly fewer candidates beats a spinner (and Vercel's 30s limit).
+const FETCH_TIMEOUT_MS = 6000;
+const BUILD_BUDGET_MS = 12000;
 
 type BsImageSource = { url?: string; size?: { width?: number; height?: number } };
 type BsImage = { url?: string; imageSources?: BsImageSource[] };
@@ -140,6 +150,7 @@ type BsCase = {
   addressType?: string;
   caseID?: string | number;
   caseUrl?: string;
+  slug?: string;
   defaultImage?: BsImage;
   images?: BsImage[];
   address?: {
@@ -155,7 +166,7 @@ type BsCase = {
 };
 
 // Boligsiden serves each photo in ~6 sizes (100x80 up to 1440x960) under
-// imageSources[]. Pick the biggest that's ≤1200px wide — high-quality enough
+// imageSources[]. Pick the biggest that's ≤1500px wide — high-quality enough
 // for the game gallery, not overkill on payload.
 function pickImageUrl(img: BsImage | undefined): string | null {
   if (!img) return null;
@@ -166,7 +177,6 @@ function pickImageUrl(img: BsImage | undefined): string | null {
     .filter((s) => typeof s.url === "string" && s.url)
     .map((s) => ({ url: s.url!, w: s.size?.width ?? 0 }));
   if (scored.length === 0) return null;
-  // Prefer largest ≤ 1440, otherwise the biggest we have
   const under = scored.filter((s) => s.w > 0 && s.w <= 1500).sort((a, b) => b.w - a.w);
   return (under[0] ?? scored[scored.length - 1]).url;
 }
@@ -184,7 +194,168 @@ type GameProperty = {
   city: string;
   zipCode: string;
   images: string[];
+  /** The real listing page (mægler), with Boligsiden as fallback. */
+  listingUrl?: string;
 };
+
+// Bare land has nothing to look at — keep it out of the game.
+const EXCLUDED_TYPES = new Set(["full year plot", "plot", "allotment"]);
+
+function toProperty(c: BsCase, requestedZip: string): GameProperty | null {
+  if (c.addressType && EXCLUDED_TYPES.has(c.addressType)) return null;
+  const price = typeof c.priceCash === "number" ? c.priceCash : 0;
+  const area = typeof c.housingArea === "number" ? c.housingArea : 0;
+  if (price < 200000 || price > 50000000) return null;
+  if (area < 15 || area > 2000) return null;
+
+  const a = c.address ?? {};
+  const zipCode = String(a.zipCode ?? a.zip?.zipCode ?? "");
+  // Only accept homes that are really in the zip we asked for, so a region
+  // can never leak listings from somewhere else.
+  if (zipCode !== requestedZip) return null;
+  const city = String(a.cityName ?? "");
+  if (!city) return null;
+
+  const images: string[] = [];
+  const hero = pickImageUrl(c.defaultImage);
+  if (hero) images.push(hero);
+  for (const img of c.images ?? []) {
+    const u = pickImageUrl(img);
+    if (u && !images.includes(u)) images.push(u);
+  }
+  // Games are visual — need at least 3 real photos to be fun to guess
+  if (images.length < 3) return null;
+
+  const streetParts = [
+    a.roadName,
+    [a.houseNumber, a.letter].filter(Boolean).join(""),
+    [a.floor, a.door].filter(Boolean).join("."),
+  ].filter(Boolean);
+  const address = `${streetParts.join(" ")}, ${zipCode} ${city}`.trim();
+
+  // Stable id — the same home always gets the same id, so "seen" lists work
+  // across games and devices.
+  const id =
+    typeof c.caseID === "string" || typeof c.caseID === "number"
+      ? `bs-${c.caseID}`
+      : `bs-${address.toLowerCase()}`;
+
+  const listingUrl =
+    typeof c.caseUrl === "string" && /^https?:\/\//.test(c.caseUrl)
+      ? c.caseUrl
+      : c.slug
+      ? `https://www.boligsiden.dk/adresse/${encodeURIComponent(c.slug)}`
+      : undefined;
+
+  return {
+    id,
+    price,
+    area,
+    rooms: typeof c.numberOfRooms === "number" && c.numberOfRooms > 0 ? c.numberOfRooms : undefined,
+    yearBuilt:
+      typeof c.yearBuilt === "number" && c.yearBuilt > 1700 && c.yearBuilt <= 2100
+        ? c.yearBuilt
+        : undefined,
+    energyLabel:
+      c.energyLabel && /^[A-G]\d?$/i.test(c.energyLabel) ? c.energyLabel.toUpperCase() : undefined,
+    monthlyExpenses:
+      typeof c.monthlyExpense === "number" && c.monthlyExpense > 0 ? c.monthlyExpense : undefined,
+    propertyType: c.addressType,
+    address: address.slice(0, 140),
+    city,
+    zipCode,
+    images: images.slice(0, 15),
+    listingUrl,
+  };
+}
+
+/* ---------------- fetching ---------------- */
+
+// totalHits per zip (+ type filter), remembered across requests on a warm
+// instance so we can jump straight to a random page instead of always page 1.
+const totals = new Map<string, { n: number; at: number }>();
+const TOTAL_TTL = 6 * 60 * 60 * 1000;
+
+async function fetchPage(zip: string, page: number, extra: string, perPage: number): Promise<{ cases: BsCase[]; total: number }> {
+  try {
+    const res = await fetch(
+      `https://api.boligsiden.dk/search/cases?zipCodes=${zip}&per_page=${perPage}&page=${page}${extra}`,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
+          Accept: "application/json,*/*;q=0.1",
+          "Accept-Language": "da-DK,da;q=0.9,en;q=0.8",
+        },
+        // Responses run 1-2MB; above Next's cache limit and every game wants
+        // a random slice anyway.
+        cache: "no-store",
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      },
+    );
+    if (!res.ok) return { cases: [], total: 0 };
+    const j = (await res.json()) as { cases?: BsCase[]; totalHits?: number };
+    return {
+      cases: Array.isArray(j.cases) ? j.cases : [],
+      total: typeof j.totalHits === "number" ? j.totalHits : 0,
+    };
+  } catch {
+    return { cases: [], total: 0 };
+  }
+}
+
+/**
+ * Up to `want` unseen homes from one zip. Starts on a random page of the
+ * zip's listings (so repeat games don't all draw from the same first page),
+ * walks further random pages while it keeps hitting homes the player has
+ * already seen, and adds a villa-only slice so city zips aren't all condos.
+ */
+async function candidatesForZip(zip: string, exclude: Set<string>, want: number, deadline: number): Promise<GameProperty[]> {
+  const out: GameProperty[] = [];
+  const seen = new Set<string>();
+  const take = (cases: BsCase[]) => {
+    for (const c of shuffle(cases)) {
+      if (out.length >= want) return;
+      const p = toProperty(c, zip);
+      if (!p || exclude.has(p.id) || seen.has(p.id) || seen.has(p.address)) continue;
+      seen.add(p.id);
+      seen.add(p.address);
+      out.push(p);
+    }
+  };
+
+  async function walk(extra: string, perPage: number, maxPages: number, target: number) {
+    const key = `${zip}${extra}`;
+    const cached = totals.get(key);
+    const known = cached && Date.now() - cached.at < TOTAL_TTL ? cached.n : null;
+    let pages = known != null ? Math.max(1, Math.ceil(known / perPage)) : null;
+    const tried = new Set<number>();
+    let page = pages ? 1 + Math.floor(Math.random() * pages) : 1;
+    for (let i = 0; i < maxPages && out.length < target && Date.now() < deadline; i++) {
+      tried.add(page);
+      const r = await fetchPage(zip, page, extra, perPage);
+      if (r.total) {
+        totals.set(key, { n: r.total, at: Date.now() });
+        pages = Math.max(1, Math.ceil(r.total / perPage));
+      }
+      take(r.cases);
+      if (!pages || tried.size >= pages) break;
+      const untried = Array.from({ length: pages }, (_, k) => k + 1).filter((k) => !tried.has(k));
+      if (!untried.length) break;
+      page = untried[Math.floor(Math.random() * untried.length)];
+    }
+  }
+
+  await Promise.all([
+    walk("", PER_PAGE, 3, Math.ceil(want * 0.7)),
+    walk("&addressTypes=villa", VILLA_PER_PAGE, 2, want),
+  ]);
+  // Top up from the mixed listing if the villa slice came up short.
+  if (out.length < want && Date.now() < deadline) await walk("", PER_PAGE, 2, want);
+  return out;
+}
+
+/* ---------------- variety ---------------- */
 
 /**
  * Round-robin over landsdele (first zip digit) so a whole-country game visits
@@ -287,126 +458,46 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-async function fetchCases(zip: string, extra = "", perPage = 80): Promise<BsCase[]> {
-  try {
-    const res = await fetch(
-      `https://api.boligsiden.dk/search/cases?zipCodes=${zip}&per_page=${perPage}${extra}`,
-      {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
-          Accept: "application/json,*/*;q=0.1",
-          "Accept-Language": "da-DK,da;q=0.9,en;q=0.8",
-        },
-        // Skip the fetch cache — the case-list responses run 2-3MB per zip,
-        // above Next's 2MB cache limit, and each game already picks a random
-        // subset so cache hits wouldn't help much.
-        cache: "no-store",
-      },
-    );
-    if (!res.ok) return [];
-    const j = (await res.json()) as { cases?: BsCase[] };
-    return Array.isArray(j.cases) ? j.cases : [];
-  } catch {
-    return [];
+/* ---------------- handler ---------------- */
+
+async function buildGame(region: string, count: number, exclude: Set<string>) {
+  const pool = ZIP_POOLS[region];
+  if (!pool) {
+    return NextResponse.json({ ok: false, error: "unknown_region" }, { status: 400 });
   }
-}
 
-// Bare land has nothing to look at — keep it out of the game.
-const EXCLUDED_TYPES = new Set(["full year plot", "plot", "allotment"]);
+  // Few zips (a single city) → each zip must supply several homes.
+  const perZipWant = Math.max(2, Math.ceil((count * 1.6) / Math.min(pool.length, count + 4)));
 
-function toProperty(c: BsCase): GameProperty | null {
-  if (c.addressType && EXCLUDED_TYPES.has(c.addressType)) return null;
-  const price = typeof c.priceCash === "number" ? c.priceCash : 0;
-  const area = typeof c.housingArea === "number" ? c.housingArea : 0;
-  if (price < 200000 || price > 50000000) return null;
-  if (area < 15 || area > 2000) return null;
+  const deadline = Date.now() + BUILD_BUDGET_MS;
+  const remaining = spreadZips(pool, pool.length);
+  const candidates: GameProperty[] = [];
+  const ids = new Set<string>();
+  let chosen: GameProperty[] = [];
 
-  const images: string[] = [];
-  const hero = pickImageUrl(c.defaultImage);
-  if (hero) images.push(hero);
-  for (const img of c.images ?? []) {
-    const u = pickImageUrl(img);
-    if (u && !images.includes(u)) images.push(u);
-  }
-  // Games are visual — need at least 3 real photos to be fun to guess
-  if (images.length < 3) return null;
-
-  const a = c.address ?? {};
-  const streetParts = [
-    a.roadName,
-    [a.houseNumber, a.letter].filter(Boolean).join(""),
-    [a.floor, a.door].filter(Boolean).join("."),
-  ].filter(Boolean);
-  const zipCode = String(a.zipCode ?? a.zip?.zipCode ?? "");
-  const city = String(a.cityName ?? "");
-  const address = `${streetParts.join(" ")}, ${zipCode} ${city}`.trim();
-  if (!zipCode || !city) return null;
-
-  const idBase =
-    (typeof c.caseID === "string" || typeof c.caseID === "number") ? String(c.caseID) : address;
-
-  return {
-    id: `bs-${idBase}`,
-    price,
-    area,
-    rooms: typeof c.numberOfRooms === "number" && c.numberOfRooms > 0 ? c.numberOfRooms : undefined,
-    yearBuilt:
-      typeof c.yearBuilt === "number" && c.yearBuilt > 1700 && c.yearBuilt <= 2100
-        ? c.yearBuilt
-        : undefined,
-    energyLabel:
-      c.energyLabel && /^[A-G]\d?$/i.test(c.energyLabel) ? c.energyLabel.toUpperCase() : undefined,
-    monthlyExpenses:
-      typeof c.monthlyExpense === "number" && c.monthlyExpense > 0 ? c.monthlyExpense : undefined,
-    propertyType: c.addressType,
-    address: address.slice(0, 140),
-    city,
-    zipCode,
-    images: images.slice(0, 15),
-  };
-}
-
-export async function GET(req: NextRequest) {
-  const region = (req.nextUrl.searchParams.get("region") || "hele-dk").toLowerCase();
-  const countParam = Number(req.nextUrl.searchParams.get("count") || "10");
-  const count = Math.max(3, Math.min(30, Math.floor(countParam)));
-
-  const pool = ZIP_POOLS[region] || ZIP_POOLS["hele-dk"];
-
-  // 1) Pick a geographically spread set of zips — more zips than rounds, so
-  //    no area has to supply more than one home.
-  const zips = spreadZips(pool, Math.min(pool.length, count + 4));
-
-  // 2) Fetch every zip in parallel: the default listing (mixed, but city zips
-  //    are mostly condos) plus a villa-only slice so houses always show up.
-  const perZip = await mapLimit(zips, 8, async (zip) => {
-    const [mixed, villas] = await Promise.all([
-      fetchCases(zip, "", 80),
-      fetchCases(zip, "&addressTypes=villa", 20),
-    ]);
-    const seen = new Set<string>();
-    const props: GameProperty[] = [];
-    for (const c of shuffle([...mixed, ...villas])) {
-      const p = toProperty(c);
-      if (!p || seen.has(p.id) || seen.has(p.address)) continue;
-      seen.add(p.id);
-      seen.add(p.address);
-      props.push(p);
-      if (props.length >= 8) break;
+  // Batches of zips until we can fill the game with unseen homes (or the
+  // region runs out). First batch is count+4 zips; later ones top up.
+  for (let batch = 0; batch < 3 && remaining.length && Date.now() < deadline; batch++) {
+    const size = batch === 0 ? Math.min(remaining.length, count + 4) : Math.min(remaining.length, 8);
+    const zips = remaining.splice(0, size);
+    const perZip = await mapLimit(zips, 8, (zip) => candidatesForZip(zip, exclude, perZipWant, deadline));
+    for (const p of perZip.flat()) {
+      if (ids.has(p.id)) continue;
+      ids.add(p.id);
+      candidates.push(p);
     }
-    return props;
-  });
-
-  // 3) Greedy pick for variety: every pick is penalised for repeating a zip,
-  //    a neighbourhood, a landsdel, a property type or a price band.
-  const candidates = perZip.flat();
-  const chosen = pickDiverse(candidates, count);
+    chosen = pickDiverse(candidates, count);
+    if (chosen.length >= count) break;
+  }
 
   if (chosen.length < 3) {
     return NextResponse.json(
-      { ok: false, error: "not_enough_properties", got: chosen.length },
-      { status: 502 },
+      {
+        ok: false,
+        error: exclude.size > 0 ? "exhausted" : "not_enough_properties",
+        got: chosen.length,
+      },
+      { status: 200 },
     );
   }
 
@@ -414,6 +505,35 @@ export async function GET(req: NextRequest) {
     ok: true,
     region,
     count: chosen.length,
-    properties: shuffle(chosen).slice(0, count),
+    // Fewer than asked for = the player has seen almost everything here.
+    exhausted: chosen.length < count,
+    properties: shuffle(chosen),
   });
+}
+
+function parseCount(v: unknown): number {
+  const n = Math.floor(Number(v) || 10);
+  return Math.max(3, Math.min(30, n));
+}
+
+export async function GET(req: NextRequest) {
+  const region = (req.nextUrl.searchParams.get("region") || "hele-dk").toLowerCase();
+  return buildGame(region, parseCount(req.nextUrl.searchParams.get("count")), new Set());
+}
+
+/** POST { region, count, exclude: string[] } — exclude = ids the player has already seen. */
+export async function POST(req: NextRequest) {
+  let body: { region?: unknown; count?: unknown; exclude?: unknown } = {};
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ ok: false, error: "bad_body" }, { status: 400 });
+  }
+  const region = String(body.region || "hele-dk").toLowerCase();
+  const exclude = new Set(
+    (Array.isArray(body.exclude) ? body.exclude : [])
+      .filter((x): x is string => typeof x === "string" && x.length < 120)
+      .slice(-5000),
+  );
+  return buildGame(region, parseCount(body.count), exclude);
 }

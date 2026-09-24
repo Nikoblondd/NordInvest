@@ -970,3 +970,38 @@
   .gallery-nav { width: 36px; height: 50px; font-size: 24px; }
   .thumb { flex: 0 0 60px; height: 44px; }
 }
+
+/* ---------------- Play history + notices ---------------- */
+.history-box {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--gp-border);
+  border-radius: 3px;
+  background: #fafbfc;
+  font-size: 13px;
+  color: var(--gp-text);
+}
+.history-sub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--gp-text-soft);
+}
+.history-reset {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--gp-blue);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.game-notice {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid #f3d27a;
+  border-left: 3px solid #e0a800;
+  border-radius: 3px;
+  background: #fff8e6;
+  font-size: 13px;
+  color: #6b4e00;
+}

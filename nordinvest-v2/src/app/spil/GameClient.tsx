@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import "./game.css";
 import { calculateRoundScores } from "./gameLogic";
 import { Nav } from "@/components/Nav";
@@ -21,9 +21,65 @@ type GameProperty = {
   city: string;
   zipCode: string;
   images: string[];
+  listingUrl?: string;
 };
 
 type Player = { id: number; name: string; score: number };
+
+/* ---------- play history (per browser) ----------
+   Every home a player has been shown is remembered, and sent to the API as an
+   exclude list, so a new game never repeats a home. Stored in localStorage —
+   no login needed; survives reloads, per device. */
+
+const SEEN_KEY = "ni_spil_seen_v1";
+const HISTORY_KEY = "ni_spil_history_v1";
+const MAX_SEEN = 5000;
+
+type GameRecord = {
+  at: string;
+  region: string;
+  rounds: number;
+  players: { name: string; score: number }[];
+};
+
+function readJson<T>(key: string, fallback: T): T {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+function writeJson(key: string, value: unknown) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* storage full or blocked — the game still works, it just can't remember */
+  }
+}
+function loadSeen(): string[] {
+  const v = readJson<unknown>(SEEN_KEY, []);
+  return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+}
+function markSeen(id: string): number {
+  const seen = loadSeen();
+  if (!seen.includes(id)) {
+    seen.push(id);
+    writeJson(SEEN_KEY, seen.slice(-MAX_SEEN));
+  }
+  return Math.min(seen.length, MAX_SEEN);
+}
+function loadHistory(): GameRecord[] {
+  const v = readJson<unknown>(HISTORY_KEY, []);
+  return Array.isArray(v) ? (v as GameRecord[]) : [];
+}
+
+type PlayStats = { seen: number; games: number; lastPlayed: string | null };
+
+function readStats(): PlayStats {
+  const history = loadHistory();
+  return { seen: loadSeen().length, games: history.length, lastPlayed: history[history.length - 1]?.at ?? null };
+}
 
 type HintKey = "address" | "area" | "rooms" | "year" | "energy" | "expense";
 
@@ -104,21 +160,46 @@ export default function GameClient() {
   const [imageIdx, setImageIdx] = useState<number>(0);
   const [roundHintCost, setRoundHintCost] = useState<number>(0);
 
+  // play history
+  const [stats, setStats] = useState<PlayStats>({ seen: 0, games: 0, lastPlayed: null });
+  const [exhausted, setExhausted] = useState(false); // this area has no unseen homes left
+  const [notice, setNotice] = useState("");
+  const recordedRef = useRef(false);
+
+  useEffect(() => {
+    setStats(readStats());
+  }, []);
+
+  const regionLabel = REGIONS.find((r) => r.key === region)?.label ?? region;
+
   /* ---------- start game ---------- */
   async function startGame() {
     setError("");
+    setNotice("");
+    setExhausted(false);
     setPhase("loading");
     try {
-      const res = await fetch(
-        `/api/game/properties?region=${encodeURIComponent(region)}&count=${roundCount}`,
-        { cache: "no-store" },
-      );
+      const res = await fetch("/api/game/properties", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({ region, count: roundCount, exclude: loadSeen() }),
+      });
       const j = await res.json();
       if (!j?.ok || !Array.isArray(j.properties) || j.properties.length < 3) {
-        setError("Kunne ikke hente nok boliger til dette område. Prøv en anden region.");
+        if (j?.error === "exhausted") {
+          setExhausted(true);
+          setError(`Du har allerede set alle de boliger, vi kan finde i ${regionLabel} lige nu. Vælg et andet område — eller nulstil din historik og start forfra.`);
+        } else {
+          setError("Kunne ikke hente nok boliger til dette område lige nu. Prøv igen eller vælg et andet område.");
+        }
         setPhase("error");
         return;
       }
+      if (j.exhausted) {
+        setNotice(`Der var kun ${j.properties.length} nye boliger tilbage i ${regionLabel}, så spillet har ${j.properties.length} runder.`);
+      }
+      recordedRef.current = false;
       setProperties(j.properties as GameProperty[]);
       setCurrentRound(0);
       setRevealed(new Set());
@@ -199,6 +280,35 @@ export default function GameClient() {
   /* ---------- reveal round result ---------- */
   const currentProperty = properties[currentRound];
 
+  // A home counts as "seen" the moment it's on screen — so quitting a game
+  // half-way doesn't burn the homes that were never shown.
+  useEffect(() => {
+    if (phase !== "guessing" || !currentProperty) return;
+    const seen = markSeen(currentProperty.id);
+    setStats((s) => ({ ...s, seen }));
+  }, [phase, currentProperty]);
+
+  // Log each finished game once.
+  useEffect(() => {
+    if (phase !== "final" || recordedRef.current) return;
+    recordedRef.current = true;
+    const history = loadHistory();
+    history.push({
+      at: new Date().toISOString(),
+      region,
+      rounds: properties.length,
+      players: players.map((p) => ({ name: p.name, score: p.score })),
+    });
+    writeJson(HISTORY_KEY, history.slice(-50));
+    setStats(readStats());
+  }, [phase, region, properties.length, players]);
+
+  function resetHistory() {
+    writeJson(SEEN_KEY, []);
+    writeJson(HISTORY_KEY, []);
+    setStats({ seen: 0, games: 0, lastPlayed: null });
+  }
+
   function revealPrice() {
     if (!currentProperty || !allLocked) return;
     const scored = calculateRoundScores(players, guesses, currentProperty.price);
@@ -269,6 +379,8 @@ export default function GameClient() {
               roundCount={roundCount}
               setRoundCount={setRoundCount}
               onStart={startGame}
+              stats={stats}
+              onReset={resetHistory}
             />
           )}
 
@@ -276,12 +388,29 @@ export default function GameClient() {
 
           {phase === "error" && (
             <div className="panel error-panel">
-              <div className="panel-title">Fejl</div>
+              <div className="panel-title">{exhausted ? "Du har set det hele her" : "Fejl"}</div>
               <p style={{ margin: "12px 0" }}>{error}</p>
-              <button className="btn btn-primary" onClick={() => setPhase("setup")}>
-                Tilbage
-              </button>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button className="btn btn-primary" onClick={() => setPhase("setup")}>
+                  Vælg andet område
+                </button>
+                {exhausted && (
+                  <button
+                    className="btn btn-outline"
+                    onClick={() => {
+                      resetHistory();
+                      startGame();
+                    }}
+                  >
+                    Nulstil historik og spil
+                  </button>
+                )}
+              </div>
             </div>
+          )}
+
+          {notice && (phase === "guessing" || phase === "roundResult") && (
+            <div className="game-notice" role="status">{notice}</div>
           )}
 
           {phase === "guessing" && currentProperty && (
@@ -416,6 +545,8 @@ function SetupScreen(props: {
   roundCount: number;
   setRoundCount: (n: number) => void;
   onStart: () => void;
+  stats: PlayStats;
+  onReset: () => void;
 }) {
   const groups = useMemo(() => {
     const g: Record<string, typeof REGIONS> = {};
@@ -500,6 +631,32 @@ function SetupScreen(props: {
         <button className="btn btn-primary btn-start" onClick={props.onStart}>
           START SPIL →
         </button>
+
+        {props.stats.seen > 0 && (
+          <div className="history-box">
+            <div>
+              <strong>{props.stats.seen.toLocaleString("da-DK")}</strong> boliger set
+              {props.stats.games > 0 && (
+                <> · <strong>{props.stats.games}</strong> spil spillet</>
+              )}
+              {props.stats.lastPlayed && (
+                <> · sidst {new Date(props.stats.lastPlayed).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</>
+              )}
+            </div>
+            <div className="history-sub">
+              Du får aldrig den samme bolig to gange.{" "}
+              <button
+                type="button"
+                className="history-reset"
+                onClick={() => {
+                  if (window.confirm("Nulstil din historik? Boliger du har set kan så dukke op igen.")) props.onReset();
+                }}
+              >
+                Nulstil
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );
@@ -888,12 +1045,12 @@ function RoundResultScreen(props: {
           themselves. Slugifies the address into Boligsiden's URL format. */}
       <div className="result-listing-link">
         <a
-          href={boligsidenListingUrl(p)}
+          href={p.listingUrl ?? boligsidenListingUrl(p)}
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn-outline btn-sm"
         >
-          Se opslaget på Boligsiden ↗
+          Se det rigtige opslag ↗
         </a>
       </div>
 
