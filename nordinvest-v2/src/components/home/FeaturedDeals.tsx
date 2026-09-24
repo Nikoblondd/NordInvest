@@ -85,15 +85,26 @@ function DealCard({ deal }: { deal: FeaturedDeal }) {
           </span>
           {/* External source link sits inside the card but stops event propagation
               so it doesn't hijack the whole-card tap. */}
-          <a
-            href={deal.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="relative z-10 text-xs text-slate-400 hover:text-slate-600"
+          {/* Not an <a>: an anchor inside the card's <Link> is invalid HTML
+              and broke hydration. A link-role span opens the listing instead. */}
+          <span
+            role="link"
+            tabIndex={0}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.open(deal.sourceUrl, "_blank", "noopener,noreferrer");
+            }}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter") return;
+              e.preventDefault();
+              e.stopPropagation();
+              window.open(deal.sourceUrl, "_blank", "noopener,noreferrer");
+            }}
+            className="relative z-10 cursor-pointer text-xs text-slate-400 hover:text-slate-600"
           >
             Se opslag ↗
-          </a>
+          </span>
         </div>
       </div>
     </Link>
@@ -108,15 +119,15 @@ function DealCard({ deal }: { deal: FeaturedDeal }) {
  */
 export function FeaturedDeals() {
   return (
-    <section id="maanedens-deals" className="bg-slate-50 px-4 py-14 sm:px-6 sm:py-24">
+    <section id="maanedens-deals" className="border-t border-slate-200/80 px-4 py-16 sm:px-6 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col items-center text-center sm:mb-10">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 sm:mb-4">
             <TrendingUp className="h-3 w-3 text-blue-500" />
             Deal-motoren · {FEATURED_MONTH_LABEL}
           </div>
-          <h2 className="max-w-3xl text-2xl font-bold tracking-[-0.02em] text-slate-900 sm:text-4xl">
-            Vi finder de bedste deals — så du ikke skal
+          <h2 className="max-w-3xl font-thesis text-[2.1rem] font-normal leading-[1.05] tracking-[-0.02em] text-[#0b1b33] [text-wrap:balance] sm:text-5xl">
+            Vi har læst hele markedet. <em className="text-blue-700">Her er de bedste.</em>
           </h2>
           <p className="mt-3 max-w-2xl text-base text-slate-500 sm:text-lg">
             Vi scanner hele det danske marked og rangerer på cashflow, afkast og risiko.
