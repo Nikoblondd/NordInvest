@@ -125,15 +125,15 @@ export function FacadeReveal() {
             <Sheet progress={progress} />
           </motion.div>
 
-          <Phase progress={progress} ready={ready} range={[0.1, 0.14, 0.37, 0.41]} className="row-start-2 self-start lg:row-start-1 lg:self-center">
+          <Phase progress={progress} ready={ready} range={[0.1, 0.14, 0.36, 0.385]} className="row-start-2 self-start lg:row-start-1 lg:self-center">
             <ScanCopy progress={progress} />
           </Phase>
 
-          <Phase progress={progress} ready={ready} range={[0.39, 0.43, 0.74, 0.78]} className="row-start-2 self-start lg:row-start-1 lg:self-center">
+          <Phase progress={progress} ready={ready} range={[0.39, 0.43, 0.745, 0.77]} className="row-start-2 self-start lg:row-start-1 lg:self-center">
             <LedgerCopy progress={progress} />
           </Phase>
 
-          <Phase progress={progress} ready={ready} range={[0.77, 0.81, 2, 3]} className="row-start-2 self-start lg:row-start-1 lg:self-center">
+          <Phase progress={progress} ready={ready} range={[0.775, 0.81, 2, 3]} className="row-start-2 self-start lg:row-start-1 lg:self-center">
             <VerdictCopy />
           </Phase>
 
