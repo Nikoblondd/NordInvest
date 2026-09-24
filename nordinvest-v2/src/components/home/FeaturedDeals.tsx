@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Building2, Home as HomeIcon, TrendingUp } from "lucide-react";
+import { ArrowRight, Building2, Home as HomeIcon } from "lucide-react";
 import {
   FEATURED_COMMERCIAL,
   FEATURED_MONTH_LABEL,
@@ -122,16 +122,13 @@ export function FeaturedDeals() {
     <section id="maanedens-deals" className="border-t border-slate-200/80 px-4 py-16 sm:px-6 sm:py-28">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col items-center text-center sm:mb-10">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 sm:mb-4">
-            <TrendingUp className="h-3 w-3 text-blue-500" />
-            Deal-motoren · {FEATURED_MONTH_LABEL}
-          </div>
-          <h2 className="max-w-3xl font-thesis text-[2.1rem] font-normal leading-[1.05] tracking-[-0.02em] text-[#0b1b33] [text-wrap:balance] sm:text-5xl">
-            Vi har læst hele markedet. <em className="text-blue-700">Her er de bedste.</em>
+          <p className="mb-4 text-sm font-medium text-blue-700">Deal-motoren, {FEATURED_MONTH_LABEL.toLowerCase()}</p>
+          <h2 className="max-w-3xl font-thesis text-[2.4rem] font-normal leading-[1.02] tracking-[-0.01em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.4rem]">
+            Månedens bedste handler
           </h2>
-          <p className="mt-3 max-w-2xl text-base text-slate-500 sm:text-lg">
-            Vi scanner hele det danske marked og rangerer på cashflow, afkast og risiko.
-            Her er top 3 for {FEATURED_MONTH_LABEL.toLowerCase()}.
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
+            Deal-motoren gennemgår boliger til salg i hele Danmark og sorterer dem efter cashflow,
+            afkast og risiko. Her er top 3 i hver kategori.
           </p>
         </div>
 
@@ -190,7 +187,7 @@ export function FeaturedDeals() {
             <ArrowRight className="h-4 w-4" />
           </Link>
           <p className="text-xs text-slate-500">
-            Filtrér på by, prisspænd, afkast, cashflow — hele markedet på ét sted.
+            Filtrér på by, pris, afkast og cashflow.
           </p>
         </div>
       </div>

@@ -6,12 +6,12 @@ import { FacadeReveal } from "@/components/home/FacadeReveal";
 import { QuestionsDemo } from "@/components/home/QuestionsDemo";
 import { FeaturedDeals } from "@/components/home/FeaturedDeals";
 import { PricingCards } from "@/components/PricingCards";
-import { drafting, serif } from "@/components/home/fonts";
+import { geist, serif } from "@/components/home/fonts";
 
 const FAQS: { q: string; a: string }[] = [
   {
     q: "Hvad er NordInvest?",
-    a: "NordInvest er et dansk analyseværktøj til ejendomsinvestering. Du indsætter et link fra en boligside eller indtaster tal, og får cashflow, afkast, ROI, DSCR og en objektiv investerings-score på under 60 sekunder — for både boliger og investerings-/erhvervsejendomme.",
+    a: "NordInvest er et dansk analyseværktøj til ejendomsinvestering. Du indsætter et link fra en boligside eller indtaster tal, og får cashflow, afkast, ROI, DSCR og en investerings-score på under 60 sekunder. Det virker for både boliger og investerings- og erhvervsejendomme.",
   },
   {
     q: "Er NordInvest gratis?",
@@ -19,7 +19,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Hvilke nøgletal beregner værktøjet?",
-    a: "NordInvest beregner bruttoafkast, nettoafkast (cap rate), kontantafkast (cash-on-cash), månedligt cashflow, DSCR (gældsdækning), break-even-rente, IRR og friværdi over ejerperioden — plus en rentestress-test.",
+    a: "NordInvest beregner bruttoafkast, nettoafkast (cap rate), kontantafkast (cash-on-cash), månedligt cashflow, DSCR (gældsdækning), break-even-rente, IRR og friværdi over ejerperioden. Derudover laver den en rentestress-test.",
   },
   {
     q: "Bruger NordInvest AI?",
@@ -57,11 +57,8 @@ function SectionHead({
   const center = align === "center";
   return (
     <div className={`mb-10 flex flex-col sm:mb-14 ${center ? "items-center text-center" : "items-start"}`}>
-      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-600 backdrop-blur">
-        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-blue-600" style={{ boxShadow: "0 0 0 3px rgba(37,99,235,.15)" }} />
-        {eyebrow}
-      </div>
-      <h2 className="max-w-3xl font-thesis text-[2.1rem] font-normal leading-[1.05] tracking-[-0.02em] text-[#0b1b33] [text-wrap:balance] sm:text-5xl">
+      <p className="mb-4 text-sm font-medium text-blue-700">{eyebrow}</p>
+      <h2 className="max-w-3xl font-thesis text-[2.4rem] font-normal leading-[1.02] tracking-[-0.01em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.4rem]">
         {children}
       </h2>
       {lead && <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">{lead}</p>}
@@ -71,7 +68,7 @@ function SectionHead({
 
 export default function Home() {
   return (
-    <div className={`${serif.variable} ${drafting.variable} min-h-screen overflow-x-clip bg-[#f4f6f9] text-slate-900`}>
+    <div className={`${serif.variable} ${geist.variable} min-h-screen overflow-x-clip bg-[#f4f6f9] font-geist text-slate-900`}>
       <Nav />
 
       {/* Opening scene: the facade is scanned into its economics. */}
@@ -82,15 +79,13 @@ export default function Home() {
         <div className="mx-auto max-w-6xl">
           <SectionHead
             eyebrow="Analysen"
-            lead="Hver analyse er bygget som de spørgsmål, en erfaren investor stiller — med et kort svar øverst og beviset nedenunder."
+            lead="Analysen er delt op i de spørgsmål, en erfaren investor stiller. Du får svaret først og tallene bagefter."
           >
-            Fem spørgsmål, <em className="text-blue-700">du ville stille selv.</em>
+            Svar på det, du selv ville <span className="text-slate-400">spørge om.</span>
           </SectionHead>
           <QuestionsDemo />
           <div className="mt-14 flex flex-col gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:gap-6">
-            <span className="shrink-0 font-drafting text-[11px] uppercase tracking-[0.14em] text-slate-500">
-              Bygget på
-            </span>
+            <span className="shrink-0 text-sm text-slate-500">Datakilder</span>
             <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium text-slate-700">
               {SOURCES.map((s) => (
                 <li key={s} className="flex items-center gap-2">
@@ -112,9 +107,9 @@ export default function Home() {
           <SectionHead
             eyebrow="Priser"
             align="center"
-            lead="Start gratis. Opgrader, når du analyserer mere end et par boliger om måneden."
+            lead="3 analyser om måneden er gratis. Har du brug for flere, kan du opgradere."
           >
-            Betal for det, <em className="text-blue-700">du faktisk bruger.</em>
+            Start gratis.
           </SectionHead>
           <PricingCards />
         </div>
@@ -123,8 +118,8 @@ export default function Home() {
       {/* FAQ — native <details>, no fake numbering. */}
       <section id="faq" className="border-t border-slate-200/80 px-4 py-16 sm:px-6 sm:py-28">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
-          <SectionHead eyebrow="Spørgsmål" lead="Det, folk oftest spørger om, inden de bruger NordInvest.">
-            Før din <em className="text-blue-700">første analyse.</em>
+          <SectionHead eyebrow="Spørgsmål">
+            Det bliver vi <span className="text-slate-400">tit spurgt om.</span>
           </SectionHead>
           <div className="divide-y divide-slate-200 border-y border-slate-200">
             {FAQS.map((f) => (
@@ -172,37 +167,27 @@ export default function Home() {
             backgroundSize: "24px 24px",
           }}
         />
-        <svg
+        {/* The blueprint from the opening scene, bleeding off the right edge. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/landing/villa-blueprint.webp"
+          alt=""
           aria-hidden
-          viewBox="0 0 640 300"
-          className="pointer-events-none absolute -right-24 bottom-0 hidden w-[46rem] opacity-60 md:block"
-          fill="none"
-          stroke="#8db8ff"
-          strokeWidth="1.2"
-        >
-          <path d="M132 112h376v140H132zM108 116h424l-62-118H170z" />
-          <path d="M282 30h76v62h-76zM272 36h96l-48-32z" strokeOpacity="0.7" />
-          {[156, 224, 360, 428].map((x) => (
-            <rect key={x} x={x} y="142" width="56" height="66" strokeOpacity="0.7" />
-          ))}
-          <path d="M302 162h36v90h-36z" strokeOpacity="0.7" />
-          <path d="M40 252h560" strokeWidth="1.6" />
-          <path d="M136 252h368v34H136z" strokeDasharray="5 4" strokeOpacity="0.6" />
-        </svg>
+          loading="lazy"
+          className="pointer-events-none absolute -right-16 bottom-0 hidden w-[52rem] max-w-none opacity-70 md:block"
+          style={{ maskImage: "linear-gradient(to right, transparent, black 35%)", WebkitMaskImage: "linear-gradient(to right, transparent, black 35%)" }}
+        />
         <div className="relative mx-auto max-w-6xl">
-          <h2 className="max-w-3xl font-thesis text-[2.3rem] font-normal leading-[1.04] tracking-[-0.02em] [text-wrap:balance] sm:text-6xl">
-            Næste gang du står foran en facade, <em className="text-blue-300">ved du, hvad der står bag.</em>
+          <h2 className="max-w-3xl font-thesis text-[2.6rem] font-normal leading-[1.02] tracking-[-0.01em] [text-wrap:balance] sm:text-[4rem]">
+            Har du en bolig <span className="text-blue-300">i tankerne?</span>
           </h2>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-blue-100/80 sm:text-lg">
-            Indsæt et link fra en dansk boligside, eller tast tallene selv. Du får hele
-            regnestykket på under et minut.
+            Sæt linket ind, så regner vi den igennem. Du kan også taste tallene selv.
           </p>
           <div className="mt-9 max-w-xl">
             <HeroInput />
           </div>
-          <p className="mt-4 font-drafting text-[11px] uppercase tracking-[0.14em] text-blue-200/70">
-            3 gratis analyser om måneden · intet kreditkort
-          </p>
+          <p className="mt-4 text-sm text-blue-200/80">3 gratis analyser om måneden. Intet kreditkort.</p>
         </div>
       </section>
 

@@ -40,9 +40,9 @@ const config: Config = {
         serif: ["var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
         mono: ["var(--font-inter)", "ui-monospace", "monospace"],
         display: ["var(--font-display)", "var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
-        // Landing page only: editorial serif + drafting mono (see components/home/fonts.ts).
+        // Landing page only (see components/home/fonts.ts).
         thesis: ["var(--font-serif-display)", "Georgia", "Times New Roman", "serif"],
-        drafting: ["var(--font-drafting)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        geist: ["var(--font-geist)", "-apple-system", "system-ui", "sans-serif"],
       },
       letterSpacing: {
         micro: "0.12em",

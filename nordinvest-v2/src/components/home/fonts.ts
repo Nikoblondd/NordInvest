@@ -1,22 +1,21 @@
-import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import localFont from "next/font/local";
+import { Instrument_Serif } from "next/font/google";
 
-// Landing-page voice: an editorial serif for the thesis lines and a drafting
-// mono for the drawing annotations. Scoped to the landing components so the
-// rest of the app keeps Inter/Outfit and doesn't pay for these files.
-export const serif = Newsreader({
+// Landing-page type: Instrument Serif for headlines (upright only) and Geist
+// for everything else, including the numbers. Both open-source (OFL). Geist
+// is self-hosted because this Next version's Google list predates it.
+export const serif = Instrument_Serif({
   subsets: ["latin"],
   variable: "--font-serif-display",
   display: "swap",
-  style: ["normal", "italic"],
-  weight: ["400", "500"],
+  weight: "400",
   fallback: ["Georgia", "Times New Roman", "serif"],
 });
 
-export const drafting = IBM_Plex_Mono({
-  subsets: ["latin"],
-  variable: "--font-drafting",
+export const geist = localFont({
+  src: "./font-files/Geist-latin.woff2",
+  variable: "--font-geist",
   display: "swap",
-  weight: ["400", "500", "600"],
-  preload: false,
-  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+  weight: "100 900",
+  fallback: ["-apple-system", "system-ui", "Segoe UI", "sans-serif"],
 });
