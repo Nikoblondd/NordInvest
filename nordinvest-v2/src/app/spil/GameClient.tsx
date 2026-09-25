@@ -61,6 +61,8 @@ import {
   useBoard,
   type FreeSettings,
 } from "./Home";
+import { mergeProfiles, pushGame, remoteGame, useGameAccount } from "./account";
+import { AccountStrip, SaveProgressCard } from "./AccountForms";
 
 /* ---------- types ---------- */
 
@@ -182,6 +184,47 @@ export default function GameClient() {
   );
 
   const scrollTop = () => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  /* ---------- profile ↔ account ---------- */
+
+  const account = useGameAccount();
+  const syncedFor = useRef<string | null>(null);
+
+  // On login (or when a logged-in player opens the game): pull the account's
+  // progress, merge it with this browser's, and play under the account id.
+  const userId = account.user?.id ?? null;
+  useEffect(() => {
+    const u = account.user;
+    if (!u || !profileRef.current || syncedFor.current === u.id) return;
+    syncedFor.current = u.id;
+    const merged = mergeProfiles(profileRef.current, remoteGame(u));
+    const next = { ...merged, clientId: u.id, name: account.username || merged.name };
+    profileRef.current = next;
+    saveProfile(next);
+    setProfile(next);
+    setSettings((s) => ({ ...s, players: [{ ...s.players[0], name: next.name || "Spiller 1" }, ...s.players.slice(1)] }));
+    setBoardKey((k) => k + 1);
+    void pushGame(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, account.username, profile]);
+
+  useEffect(() => {
+    if (!userId) syncedFor.current = null; // logged out: the next login merges again
+  }, [userId]);
+
+  // Keep the account up to date as the player earns XP and badges.
+  useEffect(() => {
+    if (!userId || !profile || syncedFor.current !== userId) return;
+    const t = window.setTimeout(() => void pushGame(profile), 1500);
+    return () => window.clearTimeout(t);
+  }, [profile, userId]);
+
+  const onAccountDone = (kind: "signup" | "login") =>
+    toast(
+      kind === "signup"
+        ? { title: "Profil oprettet", body: "Du er logget ind, og din fremgang bliver gemt.", tone: "info" }
+        : { title: "Velkommen tilbage", body: "Din fremgang er hentet ind.", tone: "info" },
+    );
 
   /* ---------- starting games ---------- */
 
@@ -512,8 +555,9 @@ export default function GameClient() {
               <p className="mt-2 max-w-xl text-blue-100">
                 Rigtige danske boliger til salg lige nu. Gæt prisen, saml point, og se hvor du ligger mod resten af Danmark.
               </p>
-              <div className="mt-6">
+              <div className="mt-6 space-y-2">
                 <ProfileStrip profile={profile} seen={seenCount} />
+                <AccountStrip account={account} defaultName={profile.name} onDone={onAccountDone} />
               </div>
             </div>
           </header>
@@ -523,6 +567,7 @@ export default function GameClient() {
                 profile={profile}
                 board={board}
                 available={dailyAvailable}
+                accountName={account.user ? account.username : null}
                 onPlay={startDaily}
                 onShare={() => {
                   const r = profile.daily[todayDK()];
@@ -696,6 +741,7 @@ export default function GameClient() {
               xp={gameXp}
               badges={gameBadges}
               onShare={() => share(dailyResult)}
+              save={<SaveProgressCard account={account} defaultName={profile.name} xp={gameXp} onDone={onAccountDone} />}
               onFree={() => {
                 setStage("home");
                 window.scrollTo({ top: 0, behavior: "smooth" });
@@ -709,6 +755,7 @@ export default function GameClient() {
               xp={gameXp}
               badges={gameBadges}
               onAgain={() => startFree()}
+              save={<SaveProgressCard account={account} defaultName={profile.name} xp={gameXp} onDone={onAccountDone} />}
               onHome={() => {
                 setStage("home");
                 window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1017,6 +1064,7 @@ function FreeFinal({
   badges,
   onAgain,
   onHome,
+  save,
 }: {
   players: Player[];
   rounds: Round[];
@@ -1025,6 +1073,7 @@ function FreeFinal({
   badges: BadgeId[];
   onAgain: () => void;
   onHome: () => void;
+  save: React.ReactNode;
 }) {
   const ranked = [...players].sort((a, b) => b.score - a.score);
   const top = ranked[0];
@@ -1071,6 +1120,7 @@ function FreeFinal({
       )}
 
       <XpCard profile={profile} xp={xp} badges={badges} />
+      {save}
 
       <div className="grid gap-2 sm:grid-cols-2">
         <button type="button" onClick={onAgain} className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-blue-600 text-base font-extrabold text-white shadow-btn hover:bg-blue-700 active:translate-y-px">
@@ -1092,6 +1142,7 @@ function DailyFinal({
   badges,
   onShare,
   onFree,
+  save,
 }: {
   result: DailyResult;
   profile: Profile;
@@ -1100,6 +1151,7 @@ function DailyFinal({
   badges: BadgeId[];
   onShare: () => void;
   onFree: () => void;
+  save: React.ReactNode;
 }) {
   useTicker(true, 1000);
   const ms = msToNextDaily();
@@ -1134,6 +1186,7 @@ function DailyFinal({
         </p>
       </div>
       <XpCard profile={profile} xp={xp} badges={badges} />
+      {save}
       <Leaderboard board={board} />
       <button type="button" onClick={onFree} className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 text-base font-extrabold text-white shadow-btn hover:bg-slate-800 active:translate-y-px">
         Spil fri leg imens <ArrowRight className="h-5 w-5" />

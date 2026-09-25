@@ -94,6 +94,7 @@ export function DailyCard({
   onShare,
   onName,
   available,
+  accountName,
 }: {
   profile: Profile;
   board: Board;
@@ -101,6 +102,7 @@ export function DailyCard({
   onShare: () => void;
   onName: (n: string) => void;
   available: boolean | null;
+  accountName: string | null;
 }) {
   const today = todayDK();
   const done = profile.daily[today];
@@ -155,16 +157,22 @@ export function DailyCard({
             <p className="mt-2 max-w-md text-sm text-blue-100">
               Én chance om dagen. Se hvor du lander på ranglisten, og hold din stime i live.
             </p>
-            <label className="mt-4 block max-w-xs">
-              <span className="text-xs text-blue-100">Dit navn på ranglisten</span>
-              <input
-                value={profile.name}
-                onChange={(e) => onName(e.target.value.slice(0, 18))}
-                placeholder="Skriv dit navn"
-                maxLength={18}
-                className="mt-1 h-11 w-full rounded-xl bg-white/15 px-3 text-sm font-semibold text-white outline-none ring-1 ring-inset ring-white/25 placeholder:text-blue-100/70 focus:bg-white/20 focus:ring-2 focus:ring-white"
-              />
-            </label>
+            {accountName ? (
+              <p className="mt-4 text-sm text-blue-100">
+                Du er på ranglisten som <strong className="text-white">{accountName}</strong>.
+              </p>
+            ) : (
+              <label className="mt-4 block max-w-xs">
+                <span className="text-xs text-blue-100">Dit navn på ranglisten</span>
+                <input
+                  value={profile.name}
+                  onChange={(e) => onName(e.target.value.slice(0, 18))}
+                  placeholder="Skriv dit navn"
+                  maxLength={18}
+                  className="mt-1 h-11 w-full rounded-xl bg-white/15 px-3 text-sm font-semibold text-white outline-none ring-1 ring-inset ring-white/25 placeholder:text-blue-100/70 focus:bg-white/20 focus:ring-2 focus:ring-white"
+                />
+              </label>
+            )}
             <button
               type="button"
               onClick={onPlay}
