@@ -442,12 +442,11 @@ function Sheet({ progress }: { progress: MotionValue<number> }) {
             src="/landing/villa-photo.webp"
             alt="Eksempel: hvidkalket dansk villa med sort tegltag"
             fill
-            priority
-            sizes="(min-width: 1024px) 680px, 100vw"
+            unoptimized
             className="object-cover"
           />
           <motion.div className="absolute inset-0" style={{ clipPath: clip }}>
-            <Image src="/landing/villa-blueprint.webp" alt="" fill sizes="(min-width: 1024px) 680px, 100vw" className="object-cover" />
+            <Image src="/landing/villa-blueprint.webp" alt="" fill unoptimized className="object-cover" />
             {/* dimension line across the house */}
             <motion.div style={{ opacity: dim }} className="absolute inset-x-[7.4%] top-[6.5%] h-3">
               <div className="absolute inset-x-0 top-1/2 h-px bg-blue-100/80" />

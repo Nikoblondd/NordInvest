@@ -202,7 +202,7 @@ export function QuestionsDemo() {
               </span>
               <p className="mt-3 text-sm leading-relaxed text-slate-600 lg:hidden">{q.body}</p>
               <div className="relative mt-5 aspect-[16/9] overflow-hidden rounded-xl bg-[#f4f6f9] ring-1 ring-inset ring-slate-200/70">
-                <Image src={q.image} alt={q.alt} fill sizes="(min-width: 1024px) 620px, 100vw" className="object-cover" />
+                <Image src={q.image} alt={q.alt} fill unoptimized className="object-cover" />
               </div>
               <p className="mt-3 text-xs text-slate-500">Kilde: {q.source}</p>
             </motion.div>
