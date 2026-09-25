@@ -12,7 +12,6 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { HeroInput } from "./HeroInput";
 
 /*
  * Opening scene of the landing page.
@@ -101,8 +100,6 @@ export function FacadeReveal() {
     (window as unknown as { __niScene?: MotionValue<number> }).__niScene = progress;
   }, [progress]);
 
-  // Phones stack photo over text, so the photo waits until the intro is gone.
-  const sheetFade = useTransform(progress, [T.heroOut[0], T.heroOut[1]], [0, 1]);
   const ready = wide !== null;
 
   return (
@@ -114,16 +111,13 @@ export function FacadeReveal() {
     >
       <div className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden">
         <div className="mx-auto grid h-full max-w-7xl grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-y-5 px-4 py-4 sm:px-6 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:grid-rows-1 lg:items-center lg:gap-x-14 lg:px-8 lg:pb-16 lg:pt-4">
-          <Phase progress={progress} ready={ready} range={[-1, -0.5, ...T.heroOut]} first className="row-start-1 row-end-3 self-center lg:row-end-2">
-            <HeroCopy progress={progress} />
+          <Phase progress={progress} ready={ready} range={[-1, -0.5, ...T.heroOut]} first className="row-start-2 self-start lg:row-start-1 lg:self-center">
+            <IntroCopy progress={progress} />
           </Phase>
 
-          <motion.div
-            style={ready ? { opacity: wide ? 1 : sheetFade } : undefined}
-            className="col-start-1 row-start-1 min-w-0 self-start max-lg:opacity-0 lg:col-start-2 lg:self-center"
-          >
+          <div className="col-start-1 row-start-1 min-w-0 self-start lg:col-start-2 lg:self-center">
             <Sheet progress={progress} />
-          </motion.div>
+          </div>
 
           <Phase progress={progress} ready={ready} range={[0.1, 0.14, 0.36, 0.385]} className="row-start-2 self-start lg:row-start-1 lg:self-center">
             <ScanCopy progress={progress} />
@@ -184,24 +178,21 @@ const H2 =
 
 // ── Intro ────────────────────────────────────────────────────────────────
 
-function HeroCopy({ progress }: { progress: MotionValue<number> }) {
+function IntroCopy({ progress }: { progress: MotionValue<number> }) {
   const hint = useTransform(progress, [0, 0.04], [1, 0]);
   return (
-    <div className="flex flex-col items-start">
-      <h1 className="font-thesis text-[2.9rem] font-normal leading-[0.98] tracking-[-0.015em] text-[#0b1b33] [text-wrap:balance] sm:text-[4rem] lg:text-[4.9rem]">
-        Se hvad huset tjener, <span className="text-slate-400">før du byder.</span>
-      </h1>
-      <p className="mt-6 max-w-[33rem] text-[17px] leading-relaxed text-slate-600 sm:text-lg">
-        Sæt et link ind fra en dansk boligside. På under et minut får du cashflow, afkast og et
-        klart bud på, om handlen hænger sammen.
+    <div>
+      <Label>Et eksempel</Label>
+      <h2 className={H2}>
+        Tag en almindelig villa <span className="text-slate-400">til 1.995.000 kr.</span>
+      </h2>
+      <p className="mt-4 max-w-[33rem] leading-relaxed text-slate-600 max-lg:text-[15px] lg:mt-5 lg:text-lg">
+        Scroll videre, så viser vi, hvordan NordInvest regner den igennem, fra facade til
+        resultat.
       </p>
-      <div className="mt-8 w-full max-w-xl">
-        <HeroInput />
-      </div>
-      <p className="mt-4 text-sm text-slate-500">3 gratis analyser om måneden. Intet kreditkort.</p>
-      <motion.div style={{ opacity: hint }} className="mt-10 flex items-center gap-3 text-sm text-slate-500">
+      <motion.div style={{ opacity: hint }} className="mt-8 flex items-center gap-3 text-sm text-slate-500">
         <span aria-hidden className="scroll-cue relative block h-7 w-px overflow-hidden bg-slate-300" />
-        Scroll ned og se, hvordan vi regner
+        Scroll ned
       </motion.div>
     </div>
   );

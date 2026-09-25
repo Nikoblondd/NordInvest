@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentType, type KeyboardEvent, type ReactNode } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 
 /*
@@ -20,7 +21,8 @@ type Question = {
   answer: string;
   body: string;
   source: string;
-  Visual: ComponentType;
+  image: string;
+  alt: string;
 };
 
 const QUESTIONS: Question[] = [
@@ -32,7 +34,8 @@ const QUESTIONS: Question[] = [
     answer: "Ja. Lejen kan falde 1.100 kr. om måneden, før du taber penge.",
     body: "Det kalder vi lejereserven. Jo større den er, jo bedre klarer du en lavere leje eller en måned uden lejer.",
     source: "Husleje minus lån og faste udgifter",
-    Visual: RentReserve,
+    image: "/landing/demo-rent-reserve.webp",
+    alt: "Lejereserve: lejen er 13.000 kr., break-even er 11.900 kr., så der er 1.100 kr. i luft.",
   },
   {
     id: "pris",
@@ -42,7 +45,8 @@ const QUESTIONS: Question[] = [
     answer: "Ja. Prisen pr. m² ligger 6 % under lignende boliger.",
     body: "Vi sammenligner med boliger til salg af samme type og størrelse i samme postnummer.",
     source: "Boliger til salg i samme postnummer",
-    Visual: Comparables,
+    image: "/landing/demo-price-per-m2.webp",
+    alt: "Pris pr. m²: denne bolig koster 15.114 kr. pr. m², medianen for lignende boliger er 16.050 kr.",
   },
   {
     id: "udgifter",
@@ -52,7 +56,8 @@ const QUESTIONS: Question[] = [
     answer: "Nok ikke. Salgsopstillingen ligger 600 kr. under det normale.",
     body: "Hvis mægleren har sat de faste udgifter lavt, regner vi med vores eget tal i stedet.",
     source: "Salgsopstillingen mod lignende boliger",
-    Visual: ExpenseCheck,
+    image: "/landing/demo-expenses.webp",
+    alt: "Faste udgifter pr. måned: salgsopstilling 2.450 kr., lignende boliger 3.050 kr., vi regner med 3.250 kr.",
   },
   {
     id: "rente",
@@ -62,7 +67,8 @@ const QUESTIONS: Question[] = [
     answer: "Handlen holder, indtil renten når cirka 5,2 %.",
     body: "Vi regner handlen igennem ved forskellige renter, så du kan se, hvor den begynder at give underskud.",
     source: "Annuitetslån, 30 år, inkl. bidrag",
-    Visual: RateStress,
+    image: "/landing/demo-rate-stress.webp",
+    alt: "Overskud ved renter fra 3 til 7 %. I dag 4 %, underskud fra cirka 5,2 %.",
   },
   {
     id: "jorden",
@@ -72,7 +78,8 @@ const QUESTIONS: Question[] = [
     answer: "Området skal separatkloakeres. Det kan koste dig penge.",
     body: "Vi tjekker lokalplaner og kommunens spildevandsplan. Den slags står sjældent i salgsopstillingen.",
     source: "Plandata.dk og kommunens spildevandsplan",
-    Visual: PlanData,
+    image: "/landing/demo-plan-data.webp",
+    alt: "Kortudsnit: grunden ligger i et kloakopland, hvor separering er planlagt, og inden for en lokalplan.",
   },
 ];
 
@@ -194,8 +201,8 @@ export function QuestionsDemo() {
                 {q.answer}
               </span>
               <p className="mt-3 text-sm leading-relaxed text-slate-600 lg:hidden">{q.body}</p>
-              <div className="mt-5 rounded-xl bg-[#f6f8fb] p-3 ring-1 ring-inset ring-slate-200/70 sm:p-5">
-                <q.Visual />
+              <div className="relative mt-5 aspect-[16/9] overflow-hidden rounded-xl bg-[#f4f6f9] ring-1 ring-inset ring-slate-200/70">
+                <Image src={q.image} alt={q.alt} fill sizes="(min-width: 1024px) 620px, 100vw" className="object-cover" />
               </div>
               <p className="mt-3 text-xs text-slate-500">Kilde: {q.source}</p>
             </motion.div>
@@ -204,159 +211,5 @@ export function QuestionsDemo() {
         <p className="mt-2.5 text-right text-xs text-slate-500">Samme eksempelbolig som ovenfor.</p>
       </div>
     </div>
-  );
-}
-
-// ── Visuals ──────────────────────────────────────────────────────────────
-// Each is a small, honest chart drawn for this page — the same shapes the
-// analyzer uses, not screenshots.
-
-const mono = { fontFamily: "var(--font-geist)" } as const;
-
-function Svg({ label, children, h = 190 }: { label: string; children: ReactNode; h?: number }) {
-  return (
-    <svg viewBox={`0 0 520 ${h}`} className="block h-auto w-full" role="img" aria-label={label}>
-      {children}
-    </svg>
-  );
-}
-
-function RentReserve() {
-  // Scale 10.000 → 14.000 kr over x 30 → 490.
-  const x = (v: number) => 30 + ((v - 10000) / 4000) * 460;
-  const be = 11900;
-  const rent = 13000;
-  return (
-    <Svg label="Lejereserve: nuværende leje 13.000 kr/md., break-even 11.900 kr/md., reserve 1.100 kr/md.">
-      <text x="30" y="30" fontSize="11" fill="#64748b" style={mono}>Månedlig leje</text>
-      <rect x="30" y="70" width="460" height="26" rx="6" fill="#e2e8f0" />
-      <rect x="30" y="70" width={x(be) - 30} height="26" rx="6" fill="#fecdd3" opacity="0.55" />
-      <rect x={x(be)} y="70" width={x(rent) - x(be)} height="26" fill="#10b981" />
-      <text x={(x(be) + x(rent)) / 2} y="87" textAnchor="middle" fontSize="11" fontWeight="600" fill="#ffffff" style={mono}>1.100</text>
-      <line x1={x(be)} x2={x(be)} y1="58" y2="108" stroke="#0b1b33" strokeDasharray="3 3" />
-      <line x1={x(rent)} x2={x(rent)} y1="58" y2="108" stroke="#2563eb" strokeWidth="2" />
-      <text x={x(be)} y="126" textAnchor="middle" fontSize="11" fill="#0b1b33" style={mono}>Break-even 11.900</text>
-      <text x={x(rent)} y="50" textAnchor="middle" fontSize="11" fontWeight="600" fill="#2563eb" style={mono}>Leje 13.000</text>
-      <text x="30" y="150" fontSize="10" fill="#94a3b8" style={mono}>10.000</text>
-      <text x="490" y="150" textAnchor="end" fontSize="10" fill="#94a3b8" style={mono}>14.000 kr/md.</text>
-      <text x="30" y="178" fontSize="12" fill="#047857" style={mono}>Lejereserve: 1.100 kr. (8,5 % af lejen)</text>
-    </Svg>
-  );
-}
-
-function Comparables() {
-  // kr/m² for 14 illustrative comparable listings.
-  const comps = [13200, 13900, 14300, 14800, 15500, 15800, 16000, 16100, 16600, 17200, 17600, 18300, 19100, 19800];
-  const x = (v: number) => 30 + ((v - 12500) / 8000) * 460;
-  const median = 16050;
-  const me = 15114;
-  const ys = [92, 76, 104, 84, 98, 72, 88, 106, 80, 94, 74, 100, 86, 96];
-  return (
-    <Svg label="Pris pr. m² for 14 sammenlignelige boliger. Denne bolig: 15.114 kr/m², medianen: 16.050 kr/m².">
-      <text x="30" y="30" fontSize="11" fill="#64748b" style={mono}>Kr. pr. m², 14 lignende boliger</text>
-      <line x1="30" x2="490" y1="130" y2="130" stroke="#cbd5e1" />
-      {comps.map((c, i) => (
-        <circle key={c} cx={x(c)} cy={ys[i]} r="6" fill="#94a3b8" fillOpacity="0.55" />
-      ))}
-      <line x1={x(median)} x2={x(median)} y1="54" y2="130" stroke="#0b1b33" strokeDasharray="3 3" />
-      <text x={x(median) + 6} y="62" fontSize="10.5" fill="#0b1b33" style={mono}>Median 16.050</text>
-      <circle cx={x(me)} cy="90" r="11" fill="#2563eb" fillOpacity="0.15" />
-      <circle cx={x(me)} cy="90" r="7" fill="#2563eb" stroke="#ffffff" strokeWidth="2" />
-      <text x={x(me)} y="150" textAnchor="middle" fontSize="11" fontWeight="600" fill="#2563eb" style={mono}>Denne bolig: 15.114</text>
-      <text x="30" y="178" fontSize="10" fill="#94a3b8" style={mono}>12.500</text>
-      <text x="490" y="178" textAnchor="end" fontSize="10" fill="#94a3b8" style={mono}>20.500 kr/m²</text>
-    </Svg>
-  );
-}
-
-function ExpenseCheck() {
-  const rows = [
-    { label: "Salgsopstilling", v: 2450, fill: "#f59e0b" },
-    { label: "Lignende boliger", v: 3050, fill: "#94a3b8" },
-    { label: "Vi regner med", v: 3250, fill: "#2563eb" },
-  ];
-  const w = (v: number) => (v / 3600) * 300;
-  return (
-    <Svg label="Faste udgifter pr. måned: salgsopstilling 2.450 kr, median for sammenlignelige 3.050 kr, NordInvest-estimat 3.250 kr.">
-      <text x="20" y="30" fontSize="11" fill="#64748b" style={mono}>Faste udgifter pr. måned</text>
-      {rows.map((r, i) => (
-        <g key={r.label} transform={`translate(0 ${56 + i * 42})`}>
-          <text x="20" y="15" fontSize="12" fill="#334155">{r.label}</text>
-          <rect x="190" y="2" width="300" height="18" rx="5" fill="#e2e8f0" />
-          <rect x="190" y="2" width={w(r.v)} height="18" rx="5" fill={r.fill} />
-          <text x={196 + w(r.v)} y="15.5" fontSize="11" fontWeight="600" fill="#0b1b33" style={mono}>
-            {r.v.toLocaleString("da-DK")}
-          </text>
-        </g>
-      ))}
-      <text x="20" y="182" fontSize="12" fill="#b45309" style={mono}>600 kr. under det normale niveau</text>
-    </Svg>
-  );
-}
-
-function RateStress() {
-  const pts: [number, number][] = [
-    [3, 2020],
-    [4, 1100],
-    [5, 180],
-    [6, -820],
-    [7, -1870],
-  ];
-  const x = (r: number) => 50 + ((r - 3) / 4) * 440;
-  const y = (v: number) => 95 - (v / 2200) * 70;
-  const d = pts.map(([r, v], i) => `${i ? "L" : "M"}${x(r)} ${y(v)}`).join("");
-  const zero = 5.18;
-  return (
-    <Svg label="Cash flow pr. måned ved renter fra 3 til 7 procent. Positiv op til cirka 5,2 procent.">
-      <text x="50" y="18" fontSize="11" fill="#64748b" style={mono}>Overskud pr. måned ved forskellige renter</text>
-      <rect x="50" y={y(0)} width="440" height={y(-2200) - y(0)} fill="#fff1f2" />
-      <line x1="50" x2="490" y1={y(0)} y2={y(0)} stroke="#94a3b8" />
-      {[3, 4, 5, 6, 7].map((r) => (
-        <text key={r} x={x(r)} y="182" textAnchor="middle" fontSize="10.5" fill="#94a3b8" style={mono}>
-          {r} %
-        </text>
-      ))}
-      <text x="44" y={y(2000) + 4} textAnchor="end" fontSize="10" fill="#94a3b8" style={mono}>+2k</text>
-      <text x="44" y={y(0) + 4} textAnchor="end" fontSize="10" fill="#94a3b8" style={mono}>0</text>
-      <text x="44" y={y(-1800) + 4} textAnchor="end" fontSize="10" fill="#94a3b8" style={mono}>−2k</text>
-      <path d={d} fill="none" stroke="#0b1b33" strokeWidth="2.2" strokeLinejoin="round" />
-      <circle cx={x(4)} cy={y(1100)} r="5" fill="#2563eb" stroke="#fff" strokeWidth="2" />
-      <text x={x(4) + 8} y={y(1100) - 8} fontSize="10.5" fontWeight="600" fill="#2563eb" style={mono}>I dag 4,0 %</text>
-      <line x1={x(zero)} x2={x(zero)} y1="28" y2="168" stroke="#e11d48" strokeDasharray="3 3" />
-      <text x={x(zero) + 6} y="40" fontSize="10.5" fontWeight="600" fill="#be123c" style={mono}>Underskud fra ca. 5,2 %</text>
-    </Svg>
-  );
-}
-
-function PlanData() {
-  return (
-    <Svg label="Kortudsnit: grunden ligger i et kloakopland med planlagt separatkloakering og inden for en gældende lokalplan." h={200}>
-      <defs>
-        <pattern id="q-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-          <path d="M0 0V8" stroke="#f59e0b" strokeOpacity="0.45" strokeWidth="2" />
-        </pattern>
-      </defs>
-      {/* roads */}
-      <rect x="0" y="150" width="520" height="22" fill="#e2e8f0" />
-      <rect x="360" y="0" width="22" height="200" fill="#e2e8f0" />
-      {/* neighbouring plots */}
-      {[20, 120, 220].map((px) => (
-        <rect key={px} x={px} y="30" width="90" height="110" fill="#ffffff" stroke="#cbd5e1" />
-      ))}
-      <rect x="400" y="30" width="100" height="110" fill="#ffffff" stroke="#cbd5e1" />
-      {/* sewer catchment */}
-      <path d="M10 20H350V145H10Z" fill="url(#q-hatch)" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="6 4" />
-      {/* the plot */}
-      <rect x="120" y="30" width="90" height="110" fill="#dbeafe" stroke="#2563eb" strokeWidth="2" />
-      <rect x="138" y="62" width="54" height="40" fill="#2563eb" />
-      <text x="165" y="124" textAnchor="middle" fontSize="10" fontWeight="600" fill="#1d4ed8" style={mono}>NR. 14</text>
-      {/* lokalplan boundary */}
-      <path d="M4 12H510V190H4Z" fill="none" stroke="#64748b" strokeDasharray="2 5" />
-      <rect x="392" y="150" width="120" height="40" rx="6" fill="#ffffff" stroke="#e2e8f0" />
-      <text x="402" y="166" fontSize="9" fill="#64748b" style={mono}>Lokalplan</text>
-      <text x="402" y="181" fontSize="10.5" fill="#0b1b33" style={mono}>Åben-lav bolig</text>
-      <rect x="18" y="160" width="220" height="30" rx="6" fill="#fffbeb" stroke="#fcd34d" />
-      <text x="28" y="179" fontSize="10.5" fill="#92400e" style={mono}>Kloakopland, separering planlagt</text>
-    </Svg>
   );
 }

@@ -71,7 +71,36 @@ export default function Home() {
     <div className={`${serif.variable} ${geist.variable} min-h-screen overflow-x-clip bg-[#f4f6f9] font-geist text-slate-900`}>
       <Nav />
 
-      {/* Opening scene: the facade is scanned into its economics. */}
+      {/* Hero: what NordInvest is, in plain words, before any effects. */}
+      <section className="drafting-paper px-4 pb-6 pt-14 sm:px-6 sm:pb-10 sm:pt-24">
+        <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+          <p className="mb-5 text-sm font-medium text-blue-700">Boliganalyse til investorer</p>
+          <h1 className="font-thesis text-[3rem] font-normal leading-[0.98] tracking-[-0.015em] text-[#0b1b33] [text-wrap:balance] sm:text-[4.4rem] lg:text-[5.2rem]">
+            Se hvad huset tjener, <span className="text-slate-400">før du byder.</span>
+          </h1>
+          <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-slate-600 sm:text-lg">
+            NordInvest regner danske boliger igennem for dig, der overvejer at købe til udlejning.
+            Sæt et link ind fra en boligside, og få cashflow, afkast og en klar vurdering på under
+            et minut.
+          </p>
+          <div className="mt-8 w-full max-w-xl text-left">
+            <HeroInput />
+          </div>
+          <p className="mt-4 text-sm text-slate-500">3 gratis analyser om måneden. Intet kreditkort.</p>
+          <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600">
+            {["Virker med danske boligsider", "Data fra BBR og Danmarks Statistik", "Boliger og erhverv"].map((f) => (
+              <li key={f} className="flex items-center gap-2">
+                <svg aria-hidden viewBox="0 0 12 12" className="h-3 w-3 text-blue-600">
+                  <path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {f}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Then the scanner: an example villa is scanned into its economics. */}
       <FacadeReveal />
 
       {/* Product demonstration — the analysis as the questions an investor asks. */}
