@@ -1148,7 +1148,7 @@ export function AnalyzerApp() {
           <Chapter id="fremtid" question={`Hvad bliver det til om ${r.holdYears} år?`} answer={futureAnswer} tint={tint()}>
             <Panel>
               <ProjectionStory
-                data={r.projection.map((y) => ({ year: y.year, equity: y.equity, cumulativeCashFlow: y.cumulativeCashFlow }))}
+                data={r.projection.map((y) => ({ year: y.year, paid: inputs.price - y.loanBalance, growth: y.propertyValue - inputs.price, cumulativeCashFlow: y.cumulativeCashFlow }))}
                 holdYears={r.holdYears}
                 totalProfit={r.totalProfit}
                 netSaleProceeds={r.netSaleProceeds}
