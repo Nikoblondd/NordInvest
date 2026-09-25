@@ -11,6 +11,8 @@ lang: da
 
 **Ejendomsinvestering** er den mest gennemprøvede vej til langsigtet formueopbygning i Danmark — og den, hvor forskellen mellem en god og en dårlig handel oftest afgøres af tallene, ikke af mavefornemmelsen. Denne guide gennemgår alt, du skal vide om ejendomsinvestering i 2026: hvad det er, hvad det koster at komme i gang, hvordan du beregner afkastet, hvilke strategier der virker, og hvordan du undgår de fejl, der koster førstegangsinvestorer dyrt. Undervejs kan du regne på enhver konkret bolig med vores gratis [ejendomsanalyser](/#analyze-section) på under 60 sekunder.
 
+Vil du regne en konkret bolig igennem, så læs vores guide til [analyse af ejendomsinvestering i Danmark](/analyse-af-ejendomsinvestering). Den viser nøgletallene, et regneeksempel og de danske regler, der betyder noget.
+
 ## Hvad er ejendomsinvestering?
 
 Ejendomsinvestering betyder at eje fast ejendom med det formål at skabe afkast — enten gennem løbende lejeindtægt, gennem værdistigning over tid, eller begge dele — frem for at bo i boligen selv. Som ejendomsinvestor tjener du typisk penge fra **fire kilder samtidig**:

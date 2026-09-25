@@ -14,6 +14,8 @@ translation: how-to-analyze-nordic-property-investment
 
 At købe en investeringsejendom i et nordisk marked er ikke det samme som at købe i Spanien eller Polen. Priserne er høje, afkastene ofte lave, og formuemotoren er som regel værdistigning — ikke månedlig indtægt.
 
+Vil du regne en konkret bolig igennem, så læs vores guide til [analyse af ejendomsinvestering i Danmark](/analyse-af-ejendomsinvestering). Den viser nøgletallene, et regneeksempel og de danske regler, der betyder noget.
+
 Denne guide gennemgår den præcise flerlags-ramme, du bør bruge, før du byder på noget.
 
 ## Trin 1: Beregn bruttolejeafkastet

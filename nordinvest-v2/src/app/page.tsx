@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
+import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { HeroInput } from "@/components/home/HeroInput";
@@ -7,6 +9,13 @@ import { QuestionsDemo } from "@/components/home/QuestionsDemo";
 import { FeaturedDeals } from "@/components/home/FeaturedDeals";
 import { PricingCards } from "@/components/PricingCards";
 import { geist, serif } from "@/components/home/fonts";
+
+export const metadata: Metadata = {
+  title: { absolute: "Analyse af ejendomsinvestering i Danmark · NordInvest" },
+  description:
+    "Analysér ejendomsinvesteringer i Danmark på under et minut: cashflow, afkast, rentestress og en klar vurdering af boligen. Indsæt et boliglink. Gratis at prøve.",
+  alternates: { canonical: "/" },
+};
 
 const FAQS: { q: string; a: string }[] = [
   {
@@ -74,7 +83,7 @@ export default function Home() {
       {/* Hero: what NordInvest is, in plain words, before any effects. */}
       <section className="drafting-paper px-4 pb-6 pt-14 sm:px-6 sm:pb-10 sm:pt-24">
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-          <p className="mb-5 text-sm font-medium text-blue-700">Boliganalyse til investorer</p>
+          <p className="mb-5 text-sm font-medium text-blue-700">Analyse af ejendomsinvestering i Danmark</p>
           <h1 className="font-thesis text-[3rem] font-normal leading-[0.98] tracking-[-0.015em] text-[#0b1b33] [text-wrap:balance] sm:text-[4.4rem] lg:text-[5.2rem]">
             Se hvad huset tjener, <span className="text-slate-400">før du byder.</span>
           </h1>
@@ -86,7 +95,12 @@ export default function Home() {
           <div className="mt-8 w-full max-w-xl text-left">
             <HeroInput />
           </div>
-          <p className="mt-4 text-sm text-slate-500">3 gratis analyser om måneden. Intet kreditkort.</p>
+          <p className="mt-4 text-sm text-slate-500">
+            3 gratis analyser om måneden. Intet kreditkort.{" "}
+            <Link href="/analyse-af-ejendomsinvestering" className="font-medium text-blue-700 underline-offset-2 hover:underline">
+              Sådan analyserer du en ejendomsinvestering
+            </Link>
+          </p>
           <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600">
             {["Virker med danske boligsider", "Data fra BBR og Danmarks Statistik", "Boliger og erhverv"].map((f) => (
               <li key={f} className="flex items-center gap-2">

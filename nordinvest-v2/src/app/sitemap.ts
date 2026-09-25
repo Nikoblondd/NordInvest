@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
     { path: "/", priority: 1.0, freq: "weekly" },
     { path: "/analyseren", priority: 0.9, freq: "weekly" },
+    { path: "/analyse-af-ejendomsinvestering", priority: 0.95, freq: "monthly" },
     { path: "/deals", priority: 0.9, freq: "daily" },
     { path: "/priser", priority: 0.8, freq: "monthly" },
     { path: "/methodology", priority: 0.7, freq: "monthly" },

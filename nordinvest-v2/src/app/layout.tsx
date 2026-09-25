@@ -43,6 +43,9 @@ export const metadata: Metadata = {
     locale: "da_DK",
     siteName: "NordInvest",
   },
+  // Every page is its own canonical unless it says otherwise ("./" resolves
+  // to the page's own path against metadataBase).
+  alternates: { canonical: "./" },
 };
 
 export default function RootLayout({

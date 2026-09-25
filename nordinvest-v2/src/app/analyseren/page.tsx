@@ -6,9 +6,10 @@ import { AnalyzerApp } from "@/components/analyzer/AnalyzerApp";
 import { HeroInput } from "@/components/home/HeroInput";
 
 export const metadata: Metadata = {
-  title: "Analysér enhver dansk ejendom",
+  title: "Analysér din ejendomsinvestering – enhver dansk bolig",
   description:
-    "Indsæt et boliglink fra Boligsiden, EDC, Ejendomstorvet eller enhver dansk side. Få bruttoafkast, cash flow, rentestress-test og 5-årig prisprognose på sekunder.",
+    "Gratis analyse af ejendomsinvestering i Danmark: indsæt et boliglink og få bruttoafkast, cash flow, rentestress-test og 5-årig prisprognose på sekunder.",
+  alternates: { canonical: "/analyseren" },
 };
 
 export default function AnalyserenPage({
