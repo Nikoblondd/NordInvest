@@ -63,6 +63,7 @@ import {
 } from "./Home";
 import { mergeProfiles, pushGame, remoteGame, useGameAccount } from "./account";
 import { AccountStrip, SaveProgressCard } from "./AccountForms";
+import { CityMap } from "./CityMap";
 
 /* ---------- types ---------- */
 
@@ -949,9 +950,10 @@ function RoundResult({
 
   return (
     <div className="mt-4 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-      <div className="min-w-0">
+      <div className="min-w-0 space-y-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={home.images[0]} alt="" className="aspect-[4/3] w-full rounded-3xl object-cover shadow-card" />
+        {home.zipCode && <CityMap zip={home.zipCode} city={home.city} height={200} />}
       </div>
       <div className="min-w-0 space-y-4">
         <div className="rounded-3xl bg-[#0b1b33] p-5 text-white shadow-card-lift sm:p-6">

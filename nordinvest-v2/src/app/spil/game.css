@@ -80,3 +80,31 @@
     animation: none !important;
   }
 }
+
+/* City map: keep Leaflet's high z-index panes under the sticky nav. */
+.city-map {
+  isolation: isolate;
+}
+.city-map .leaflet-container {
+  font-family: inherit;
+  background: #eef2f7;
+}
+.city-map .leaflet-tile-pane {
+  filter: saturate(0.55) contrast(0.95);
+}
+.city-map .city-map-label {
+  background: #0b1b33;
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px -6px rgba(11, 27, 51, 0.45);
+}
+.city-map .city-map-label::before {
+  display: none;
+}
+.map-in {
+  animation: row-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}

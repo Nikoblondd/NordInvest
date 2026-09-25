@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight, Eye, Lock, Pencil } from "lucide-react";
 import { HINT_COST, TURN_SECONDS, accuracy, timePenalty } from "./gameLogic";
+import { CityMap } from "./CityMap";
 
 /* ---------- shared types ---------- */
 
@@ -112,6 +113,11 @@ export function HintPanel({
           );
         })}
       </div>
+      {revealed.has("city") && home.zipCode && (
+        <div className="map-in mt-3">
+          <CityMap zip={home.zipCode} city={home.city} />
+        </div>
+      )}
     </div>
   );
 }
