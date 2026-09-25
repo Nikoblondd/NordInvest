@@ -44,7 +44,7 @@ export function CityMap({ zip, city, height = 220 }: { zip: string; city: string
         scrollWheelZoom: false, // don't hijack the page scroll
         dragging: !L.Browser.mobile, // one finger scrolls the page on phones; pinch still zooms
         minZoom: 5,
-        maxZoom: 14,
+        maxZoom: 16,
       });
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -56,7 +56,7 @@ export function CityMap({ zip, city, height = 220 }: { zip: string; city: string
       layer
         .bindTooltip(`${zip} ${area.name || city}`, { permanent: true, direction: "center", className: "city-map-label" })
         .openTooltip();
-      map.fitBounds(layer.getBounds(), { padding: [24, 24], maxZoom: 12 });
+      map.fitBounds(layer.getBounds(), { padding: [28, 28], maxZoom: 14 });
       setState("ready");
     })();
     return () => {
