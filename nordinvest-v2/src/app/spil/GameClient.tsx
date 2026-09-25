@@ -149,8 +149,8 @@ export default function GameClient() {
 
   const toast = useCallback((t: Omit<Toast, "id">) => {
     const id = Date.now() + Math.random();
-    setToasts((ts) => [...ts, { ...t, id }]);
-    window.setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== id)), 4200);
+    setToasts((ts) => [...ts.slice(-1), { ...t, id }]);
+    window.setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== id)), 3500);
   }, []);
 
   // The profile is read and written through a ref so several updates in one
@@ -528,7 +528,16 @@ export default function GameClient() {
                   const r = profile.daily[todayDK()];
                   if (r) void share(r);
                 }}
-                onName={(name) => updateProfile((p) => ({ profile: { ...p, name } }))}
+                onName={(name) => {
+                  const prev = profile.name || "Spiller 1";
+                  updateProfile((p) => ({ profile: { ...p, name } }));
+                  // Player 1 is you: follow the leaderboard name unless renamed by hand.
+                  setSettings((s) =>
+                    s.players[0] && (s.players[0].name === prev || s.players[0].name === "Spiller 1")
+                      ? { ...s, players: [{ ...s.players[0], name: name || "Spiller 1" }, ...s.players.slice(1)] }
+                      : s,
+                  );
+                }}
               />
               <FreePlayCard settings={settings} setSettings={setSettings} onStart={() => startFree()} />
             </div>
@@ -687,7 +696,10 @@ export default function GameClient() {
               xp={gameXp}
               badges={gameBadges}
               onShare={() => share(dailyResult)}
-              onFree={() => setStage("home")}
+              onFree={() => {
+                setStage("home");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
             />
           ) : (
             <FreeFinal
@@ -697,7 +709,10 @@ export default function GameClient() {
               xp={gameXp}
               badges={gameBadges}
               onAgain={() => startFree()}
-              onHome={() => setStage("home")}
+              onHome={() => {
+                setStage("home");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
             />
           )}
         </main>
