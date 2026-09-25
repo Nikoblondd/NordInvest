@@ -318,7 +318,7 @@ export async function getLaunchReadiness(): Promise<ReadinessReport> {
     check(
       "gtm.seo",
       "SEO: ranking for \"ejendomsinvestering analyse Danmark\"",
-      "GEO/AI-crawler foundation shipped. Google ranking kræver backlinks + tid.",
+      "Hovedside /analyse-af-ejendomsinvestering live (guide, regneeksempel, FAQ + schema), forside-title målrettet, canonical på alle sider, IndexNow indsendt. Placering kræver indeksering, backlinks og tid.",
       "amber",
       "Top 20",
     ),
@@ -331,7 +331,7 @@ export async function getLaunchReadiness(): Promise<ReadinessReport> {
     check(
       "gtm.gsc",
       "Google Search Console indeksering foldet ud",
-      "Manuel URL-indeksering igangværende. Se GSC-progress memory.",
+      "Sitet ligger på nordinvest.io (www omdirigerer), men GSC-ejendommen er www. Tilføj Domæne-ejendommen nordinvest.io (auto-verificeret via DNS), indsend sitemap, og anmod om indeksering af de vigtigste sider.",
       "amber",
     ),
     check(
