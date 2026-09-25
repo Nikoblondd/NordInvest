@@ -50,30 +50,31 @@ export function ProjectionStory({
 
   return (
     <div>
-      <div className="grid gap-3 sm:grid-cols-3">
-        {stats.map((s) => (
-          <div key={s.label} className="min-w-0 rounded-xl bg-slate-50 p-3.5 ring-1 ring-inset ring-slate-200 sm:p-4">
-            <div className="truncate text-xs font-medium text-slate-500">{s.label}</div>
-            <div className={clsx("mt-1 whitespace-nowrap font-display text-2xl font-bold tabular-nums tracking-[-0.02em] sm:text-3xl", s.tone)}>
-              {s.value} <span className="text-base font-semibold text-slate-400">{s.unit}</span>
-            </div>
+      <dl className="grid gap-y-5 sm:grid-cols-3">
+        {stats.map((s, i) => (
+          <div key={s.label} className={clsx("min-w-0", i > 0 && "sm:border-l sm:border-slate-200 sm:pl-6")}>
+            <dt className="truncate text-[15px] font-medium text-slate-500">{s.label}</dt>
+            <dd className={clsx("mt-1 whitespace-nowrap text-[32px] font-semibold leading-tight tabular-nums tracking-[-0.03em] sm:text-[38px]", s.tone)}>
+              {s.value}
+              <span className="ml-1 text-lg font-medium tracking-normal text-slate-400">{s.unit}</span>
+            </dd>
           </div>
         ))}
+      </dl>
+
+      <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-slate-200 pt-5 text-sm text-slate-500">
+        <span className="inline-flex items-center gap-2">
+          <span aria-hidden className="h-0.5 w-4 rounded-full bg-blue-600" /> Friværdi
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span aria-hidden className="h-0.5 w-4 rounded-full bg-emerald-500" /> Samlet cash flow
+        </span>
+        <span className="sm:ml-auto">
+          Antager {appreciationLabel} værdistigning og {rentGrowthLabel} lejevækst om året
+        </span>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-slate-500">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-blue-600" /> Friværdi
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-emerald-500" /> Samlet cash flow
-        </span>
-        <span className="ml-auto">
-          Værdistigning {appreciationLabel}/år · lejevækst {rentGrowthLabel}/år
-        </span>
-      </div>
-
-      <div className="mt-3 h-64 sm:h-72">
+      <div className="mt-4 h-64 sm:h-72" role="img" aria-label={`Friværdi og samlet cash flow over ${holdYears} år`}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
             <defs>
@@ -92,7 +93,7 @@ export function ProjectionStory({
             <Tooltip
               formatter={(v, name) => [`${dk(Number(v))} kr`, name === "equity" ? "Friværdi" : "Samlet cash flow"]}
               labelFormatter={(y) => `År ${y}`}
-              contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }}
+              contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 13, fontVariantNumeric: "tabular-nums" }}
             />
             <Area type="monotone" dataKey="equity" stroke="#2563eb" strokeWidth={2.25} fill="url(#gEq)" />
             <Area type="monotone" dataKey="cumulativeCashFlow" stroke="#10b981" strokeWidth={2.25} fill="url(#gCf)" />

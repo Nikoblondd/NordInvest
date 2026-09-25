@@ -84,7 +84,7 @@ export function FutureBurdens({ address }: { address: string | null }) {
 
   if (state.status === "loading") {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <Loader2 size={14} className="animate-spin" />
           Tjekker offentlige planer på adressen…
@@ -107,7 +107,7 @@ export function FutureBurdens({ address }: { address: string | null }) {
 
   if (sorted.length === 0) {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="flex items-center gap-2">
           <CheckCircle2 size={16} className="text-emerald-600" />
           <h3 className="text-sm font-semibold text-slate-900">Fremtidige byrder</h3>
@@ -131,7 +131,7 @@ export function FutureBurdens({ address }: { address: string | null }) {
       : "Kontekst fra Plandata";
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
       <div className="flex items-center gap-2">
         <Landmark size={16} className="text-slate-500" />
         <h3 className="text-sm font-semibold text-slate-900">Fremtidige byrder</h3>

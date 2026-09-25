@@ -30,7 +30,7 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
   const Icon = positive ? TrendingUp : negative ? TrendingDown : Minus;
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
       <div className="flex items-center gap-2">
         <Scale size={16} className="text-slate-500" />
         <h3 className="text-sm font-semibold text-slate-900">Lejereserve</h3>
@@ -54,21 +54,21 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
       {/* Nu / Marked / Realistisk — three-column at-a-glance */}
       <div className="mt-4 grid grid-cols-3 gap-3 rounded-xl bg-slate-50 p-3">
         <div className="min-w-0">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Nu</div>
+          <div className="text-[13px] font-medium text-slate-500">Nu</div>
           <div className="mt-1 truncate text-lg font-bold tnum text-slate-900">
             {dk(reserve.currentPerM2Month)}
             <span className="ml-0.5 text-xs font-semibold text-slate-400">kr/m²/md</span>
           </div>
         </div>
         <div className="min-w-0 border-x border-slate-200 px-3">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Marked</div>
+          <div className="text-[13px] font-medium text-slate-500">Marked</div>
           <div className="mt-1 truncate text-lg font-bold tnum text-slate-900">
             {dk(reserve.marketPerM2Month)}
             <span className="ml-0.5 text-xs font-semibold text-slate-400">kr/m²/md</span>
           </div>
         </div>
         <div className="min-w-0">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Realistisk</div>
+          <div className="text-[13px] font-medium text-slate-500">Realistisk</div>
           <div
             className={clsx(
               "mt-1 truncate text-lg font-bold tnum",
@@ -85,7 +85,7 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
       {positive && reserve.technicalValueUplift > 0 && (
         <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3">
           <div className="min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-emerald-700">
+            <div className="text-[13px] font-medium text-emerald-700">
               Teknisk værdi-uplift
             </div>
             <div className="mt-0.5 text-[11px] leading-snug text-emerald-800">
@@ -104,7 +104,7 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
       {/* Uplift path — how the 24 months look */}
       {positive && reserve.path.length > 0 && (
         <div className="mt-4">
-          <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+          <div className="mb-2 text-[13px] font-medium text-slate-500">
             Sådan realiseres reserven
           </div>
           <div className="space-y-2">

@@ -2,12 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, TrendingUp, Wallet, Percent, ShieldCheck, Scale, ShieldAlert, Sparkle, LineChart as LineChartIcon, Database, ArrowRight } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing } from "lucide-react";
 import { analyze, kr, krMd, pct, num, type Strategy } from "@/lib/analysis";
 import { runUncertainty } from "@/lib/uncertainty";
 import { assessInvestment } from "@/lib/deals";
 import { ConfidenceBands } from "@/components/analyzer/ConfidenceBands";
-import { Button } from "@/components/ui/Button";
 import { clsx } from "@/lib/clsx";
 import { createClient } from "@/lib/supabase/client";
 import { type ConfidenceTier } from "@/lib/calibration";
@@ -27,6 +26,7 @@ import { Comparables } from "@/components/analyzer/Comparables";
 import { ExpenseCheck } from "@/components/analyzer/ExpenseCheck";
 import { DealHero, type HeroMetric } from "@/components/analyzer/story/DealHero";
 import { Chapter, ChapterNav, Details, Panel, type ChapterAnswer, type NavItem } from "@/components/analyzer/story/Chapter";
+import { Sheet } from "@/components/analyzer/story/Sheet";
 import { CashflowWaterfall } from "@/components/analyzer/story/CashflowWaterfall";
 import { RateStress } from "@/components/analyzer/story/RateStress";
 import { ProjectionStory } from "@/components/analyzer/story/ProjectionStory";
@@ -100,30 +100,34 @@ const FIELD_LABELS: Record<string, string> = {
 
 type Extract = { status: "idle" | "loading" | "ok" | "fail"; stage?: string; msg?: string; found?: string[]; estimated?: string[] };
 
-// Section separator styled like a spreadsheet tab-header — small alt-caps
-// label with a right-side hint, plus a subtle hairline below. Groups the
-// results into named zones (Vurdering · Marked · Datagrundlag · Prognose ·
-// Værktøjer) so an investor can scan the analysis the way they scan the
-// tabs of an Excel model instead of a wall of cards.
-function Field({ label, value, onChange, suffix, step = 1 }: {
-  label: string; value: number; onChange: (n: number) => void; suffix: string; step?: number;
+function Field({ label, name, value, onChange, suffix, step = 1 }: {
+  label: string; name: string; value: number; onChange: (n: number) => void; suffix: string; step?: number;
 }) {
   return (
-    <label className="block">
-      <span className="text-sm text-slate-600">{label}</span>
-      <div className="mt-1 flex items-center rounded-xl border border-slate-200 bg-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-        <input type="number" value={value} step={step} onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full rounded-xl bg-transparent px-3 py-2.5 font-semibold text-slate-900 tnum outline-none" />
-        <span className="px-3 text-sm text-slate-400">{suffix}</span>
+    <label className="block min-w-0">
+      <span className="text-sm font-medium text-slate-600">{label}</span>
+      <div className="mt-1.5 flex items-center rounded-xl border border-slate-200 bg-white transition-colors focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-600/20 hover:border-slate-300">
+        <input
+          type="number"
+          name={name}
+          inputMode="decimal"
+          autoComplete="off"
+          value={value}
+          step={step}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="w-full min-w-0 rounded-xl bg-transparent px-3.5 py-3 text-[17px] font-medium tabular-nums text-slate-900 outline-none"
+        />
+        <span className="shrink-0 whitespace-nowrap pr-3.5 text-sm text-slate-400">{suffix}</span>
       </div>
     </label>
   );
 }
 
-// A single quiet metric: label, big number, optional inline explanation. No box,
-// no border — grouping comes from whitespace, keeping the results calm and scannable.
+// One figure in the "alle nøgletal" grid: label, number, one line of context.
+// No box and no icon badge; a hairline on top groups it. The "?" opens a plain
+// explanation of what the number means and how it is calculated.
 function KeyStat({
-  label, value, unit = "", tone = "text-slate-900", explain, how, Icon, sub,
+  label, value, unit = "", tone = "text-slate-900", explain, how, sub,
 }: {
   label: string;
   value: string;
@@ -131,56 +135,52 @@ function KeyStat({
   tone?: string;
   explain?: string;
   how?: string;
-  Icon?: typeof HelpCircle;
-  /** Optional one-liner under the number ("+1.240 kr vs. medianen") — keeps the tile scannable without a popup. */
+  /** Optional one-liner under the number ("+1.240 kr vs. medianen"). */
   sub?: string;
 }) {
   const [open, setOpen] = useState(false);
-  // Map text-color tone → subtle icon-badge tint so the tile carries meaning
-  // at a glance without the number itself changing size.
-  const badgeTint =
-    tone.includes("emerald") ? "bg-emerald-50 text-emerald-600 ring-emerald-100" :
-    tone.includes("rose") ? "bg-rose-50 text-rose-600 ring-rose-100" :
-    tone.includes("blue") ? "bg-blue-50 text-blue-600 ring-blue-100" :
-    "bg-slate-50 text-slate-500 ring-slate-100";
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDown); document.removeEventListener("keydown", onKey); };
+  }, [open]);
   return (
-    <div className="group relative min-w-0 rounded-xl bg-slate-50/60 p-3 ring-1 ring-slate-100 transition-colors hover:bg-slate-50 sm:p-4">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-1 text-xs font-medium text-slate-500">
-          <span className="truncate">{label}</span>
-          {explain && (
-            <button
-              onClick={() => setOpen((v) => !v)}
-              aria-label="Forklar"
-              className="shrink-0 text-slate-300 opacity-70 transition-colors hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-            >
-              <HelpCircle size={12} />
-            </button>
-          )}
-        </div>
-        {Icon && (
-          <span className={clsx("inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md ring-1", badgeTint)}>
-            <Icon size={13} />
-          </span>
+    <div ref={ref} className="relative min-w-0 border-t border-slate-200 pt-4">
+      <div className="flex min-w-0 items-start gap-1.5 text-sm font-medium leading-snug text-slate-500">
+        <span className="min-w-0">{label}</span>
+        {explain && (
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={`Hvad betyder ${label}?`}
+            aria-expanded={open}
+            className="-m-1 shrink-0 rounded-full p-1 text-slate-400 transition-colors hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          >
+            <HelpCircle aria-hidden size={14} strokeWidth={2} />
+          </button>
         )}
       </div>
-      <div className={clsx("mt-2 flex items-baseline gap-1 font-display font-bold leading-none tabular-nums tracking-[-0.02em]", tone)}>
-        <span className="whitespace-nowrap text-xl sm:text-2xl md:text-[26px]">{value}</span>
-        {unit && <span className="text-sm font-semibold text-slate-400">{unit}</span>}
+      <div className={clsx("mt-1.5 flex items-baseline gap-1 whitespace-nowrap", tone)}>
+        <span className="text-[26px] font-semibold leading-tight tabular-nums tracking-[-0.025em] sm:text-[30px]">{value}</span>
+        {unit && <span className="text-[15px] font-medium text-slate-400">{unit}</span>}
       </div>
-      {sub && (
-        <div className="mt-1.5 truncate text-[11px] font-medium text-slate-500">{sub}</div>
-      )}
+      {sub && <div className="mt-1 text-sm leading-snug text-slate-500">{sub}</div>}
 
       {open && explain && (
-        <div className="absolute left-0 top-full z-30 mt-2 w-64 max-w-[80vw] rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-xl shadow-slate-900/10">
-          <div className="flex items-center justify-between">
-            <div className="text-sm font-bold text-slate-900">{label}</div>
-            <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-700"><X size={15} /></button>
+        <div role="dialog" aria-label={label} className="absolute left-0 top-full z-30 mt-2 w-72 max-w-[85vw] rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-[0_18px_40px_-12px_rgba(15,23,42,0.25)]">
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-[15px] font-semibold text-slate-900">{label}</div>
+            <button type="button" onClick={() => setOpen(false)} aria-label="Luk forklaring" className="-m-1 rounded-full p-1 text-slate-400 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+              <X aria-hidden size={16} />
+            </button>
           </div>
-          <p className="mt-2 text-sm leading-relaxed text-slate-600">{explain}</p>
+          <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{explain}</p>
           {how && (
-            <p className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">
+            <p className="mt-3 border-t border-slate-100 pt-3 text-sm leading-relaxed text-slate-500">
               <span className="font-semibold text-slate-700">Sådan regnes det: </span>{how}
             </p>
           )}
@@ -216,6 +216,7 @@ export function AnalyzerApp() {
   const [address, setAddress] = useState<string | null>(null);
   const [ran, setRan] = useState(false);
   const [advanced, setAdvanced] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [save, setSave] = useState<{ status: "idle" | "saving" | "saved" | "limit" | "error"; msg?: string }>({ status: "idle" });
   const [watch, setWatch] = useState<{ status: "idle" | "saving" | "saved" | "error"; msg?: string }>({ status: "idle" });
@@ -416,12 +417,12 @@ export function AnalyzerApp() {
         const err = String(d.error ?? "");
         const msg =
           err === "boligsiden_not_active"
-            ? "Denne bolig er ikke længere aktiv på Boligsiden. Indtast tallene manuelt herunder — analysen er lige så præcis."
+            ? "Denne bolig er ikke længere aktiv på Boligsiden. Indtast tallene selv under “Justér tallene”. Analysen bliver lige så præcis."
             : err === "invalid_url"
             ? "Linket ser ikke rigtigt ud. Kopier hele URL'en fra boligsiden og prøv igen."
             : err.startsWith("fetch_")
-            ? "Siden blokerede vores hentning. Indtast tallene manuelt herunder — analysen er lige så præcis."
-            : "Kunne ikke hente data automatisk fra dette link. Indtast tallene manuelt herunder — analysen er lige så præcis.";
+            ? "Siden blokerede vores hentning. Indtast tallene selv under “Justér tallene”. Analysen bliver lige så præcis."
+            : "Kunne ikke hente data automatisk fra dette link. Indtast tallene selv under “Justér tallene”. Analysen bliver lige så præcis.";
         setEx({ status: "fail", msg });
       }
     };
@@ -578,8 +579,8 @@ export function AnalyzerApp() {
   const heroHeadline =
     displayScore >= 80 ? "Stærk handel." : displayScore >= 65 ? "God handel." : displayScore >= 45 ? "Tvivlsom handel." : "Svag handel.";
   const heroNotes = [
-    ...(inv?.note ? [inv.note] : []),
-    ...(!isInvestment && rentEstimated ? ["Bygger på en estimeret leje — bekræft den, før du handler."] : []),
+    ...(inv?.note ? [inv.note.replace(" — ", ". ")] : []),
+    ...(!isInvestment && rentEstimated ? ["Bygger på en estimeret leje. Bekræft den, før du handler."] : []),
   ];
   const heroMetrics: HeroMetric[] = [
     {
@@ -595,8 +596,8 @@ export function AnalyzerApp() {
 
   const cashAnswer: ChapterAnswer =
     r.cashFlow >= 0
-      ? { tone: r.cashFlow >= 500 ? "good" : "warn", text: `Ja — ${dk(r.cashFlow)} kr i overskud hver måned` }
-      : { tone: "bad", text: `Nej — du lægger ${dk(Math.abs(r.cashFlow))} kr til hver måned` };
+      ? { tone: r.cashFlow >= 500 ? "good" : "warn", text: `Ja, ${dk(r.cashFlow)} kr i overskud hver måned` }
+      : { tone: "bad", text: `Nej, du lægger ${dk(Math.abs(r.cashFlow))} kr til hver måned` };
 
   const priceDelta = priceBench && propertyPriceM2 ? ((propertyPriceM2 - priceBench.value) / priceBench.value) * 100 : null;
   const showPriceChapter = !isInvestment && (!!priceBench || !!rentBench || (!!zip && !!area && area > 10));
@@ -604,33 +605,33 @@ export function AnalyzerApp() {
     priceDelta == null
       ? { tone: "neutral", text: "Se hvad lignende boliger koster" }
       : priceDelta <= -3
-      ? { tone: "good", text: `Ja — ${Math.round(Math.abs(priceDelta))} % under markedet pr. m²` }
+      ? { tone: "good", text: `Ja, ${Math.round(Math.abs(priceDelta))} % under markedet pr. m²` }
       : priceDelta <= 3
-      ? { tone: "good", text: "Ja — på niveau med markedet pr. m²" }
+      ? { tone: "good", text: "Ja, på niveau med markedet pr. m²" }
       : priceDelta <= 15
-      ? { tone: "warn", text: `Lidt dyr — ${Math.round(priceDelta)} % over markedet pr. m²` }
-      : { tone: "bad", text: `Nej — ${Math.round(priceDelta)} % over markedet pr. m²` };
+      ? { tone: "warn", text: `Lidt dyr: ${Math.round(priceDelta)} % over markedet pr. m²` }
+      : { tone: "bad", text: `Nej, ${Math.round(priceDelta)} % over markedet pr. m²` };
 
   const headroom = Number.isFinite(r.breakEvenRate) ? r.breakEvenRate - inputs.interestRate : 0;
   const riskAnswer: ChapterAnswer =
     headroom >= 2
-      ? { tone: "good", text: `Robust — tåler ${p1(headroom)} %-point højere rente` }
+      ? { tone: "good", text: `Robust. Tåler ${p1(headroom)} %-point højere rente` }
       : headroom >= 0
-      ? { tone: "warn", text: `Sårbar — kun ${p1(headroom)} %-point rentebuffer` }
+      ? { tone: "warn", text: `Sårbar. Kun ${p1(headroom)} %-point rentebuffer` }
       : { tone: "bad", text: "Taber allerede penge ved din rente" };
 
   const potentialAnswer: ChapterAnswer =
     rentReserve?.verdict === "reserve"
-      ? { tone: "good", text: `Ja — +${dk(rentReserve.realisticMonthlyUplift)} kr/md i lejereserve` }
+      ? { tone: "good", text: `Ja, +${dk(rentReserve.realisticMonthlyUplift)} kr/md. i lejereserve` }
       : rentReserve?.verdict === "over-market"
-      ? { tone: "warn", text: "Lejen ligger over markedet — risiko ved genudlejning" }
+      ? { tone: "warn", text: "Lejen ligger over markedet. Risiko ved genudlejning" }
       : { tone: "neutral", text: "Regn på istandsættelse og værdiskabelse" };
 
   const futureAnswer: ChapterAnswer =
     r.totalProfit > 0
       ? {
           tone: Number.isFinite(r.irr) && r.irr >= 8 ? "good" : "warn",
-          text: `+${dk(r.totalProfit)} kr efter ${r.holdYears} år${Number.isFinite(r.irr) ? ` · ${num(r.irr)} % om året` : ""}`,
+          text: `+${dk(r.totalProfit)} kr efter ${r.holdYears} år${Number.isFinite(r.irr) ? `, ${num(r.irr)} % om året` : ""}`,
         }
       : { tone: "bad", text: `${dk(r.totalProfit)} kr efter ${r.holdYears} år` };
 
@@ -797,133 +798,195 @@ export function AnalyzerApp() {
     captureEvent("time_savings_reported", { manualMinutes, accuracy });
   };
 
-  return (
-    <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-8">
-      {/* INPUT PANEL */}
-      <div className={clsx(
-        // Sticky with its own scroll so the bottom ("Analysér nu") is never cut off on short screens.
-        "min-w-0 rounded-2xl border border-slate-200/80 bg-white p-4 card-highlight sm:p-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:self-start lg:overflow-y-auto lg:[scrollbar-width:thin]",
-        // On phones the verdict comes first; the form follows as "tweak the numbers".
-        ran && "order-2 lg:order-none",
-      )}>
-        <h2 className="font-display text-xl font-bold tracking-[-0.02em]">{ran ? "Justér tallene" : "Ejendommens tal"}</h2>
-        <p className="mt-1 text-sm text-slate-500">{ran ? "Ret et tal, og hele analysen regnes om med det samme." : "Indsæt et boliglink på forsiden, eller ret tallene her."}</p>
-
-        {ex.status !== "idle" && (
-          <div className={clsx("mt-4 flex items-start gap-2 rounded-xl border p-3 text-xs",
-            ex.status === "loading" && "border-blue-200 bg-blue-50 text-blue-800",
-            ex.status === "ok" && "border-emerald-200 bg-emerald-50 text-emerald-800",
-            ex.status === "fail" && "border-amber-200 bg-amber-50 text-amber-800")}>
-            {ex.status === "loading" ? <Loader2 size={15} className="mt-0.5 shrink-0 animate-spin" />
-              : ex.status === "ok" ? <CheckCircle2 size={15} className="mt-0.5 shrink-0" />
-              : <AlertCircle size={15} className="mt-0.5 shrink-0" />}
-            <span>
-              {ex.status === "loading" && ex.stage}
-              {ex.status === "ok" && (
-                <>Hentet fra annoncen: <b>{(ex.found ?? []).filter((k) => FIELD_LABELS[k]).map((k) => FIELD_LABELS[k]).join(", ") || "grunddata"}</b>
-                  {ex.estimated && ex.estimated.length > 0 && <> · estimeret: {ex.estimated.join(", ")}</>}. Ret gerne tallene.</>
-              )}
-              {ex.status === "fail" && ex.msg}
-            </span>
-          </div>
+  // The input form lives in two places: inline as the page's main tool before
+  // anything is analysed, and in the "Justér tallene" sheet once a verdict is
+  // on screen (so the results get the full width and the reader edits live).
+  const extractNote = ex.status !== "idle" && (
+    <div
+      role="status"
+      aria-live="polite"
+      className={clsx(
+        "flex items-start gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug",
+        ex.status === "loading" && "bg-blue-50 text-blue-900",
+        ex.status === "ok" && "bg-emerald-50 text-emerald-900",
+        ex.status === "fail" && "bg-amber-50 text-amber-900",
+      )}
+    >
+      {ex.status === "loading" ? <Loader2 aria-hidden size={16} className="mt-0.5 shrink-0 animate-spin" />
+        : ex.status === "ok" ? <CheckCircle2 aria-hidden size={16} className="mt-0.5 shrink-0" />
+        : <AlertCircle aria-hidden size={16} className="mt-0.5 shrink-0" />}
+      <span>
+        {ex.status === "loading" && ex.stage}
+        {ex.status === "ok" && (
+          <>Hentet fra annoncen: <b className="font-semibold">{(ex.found ?? []).filter((k) => FIELD_LABELS[k]).map((k) => FIELD_LABELS[k]).join(", ") || "grunddata"}</b>.
+            {ex.estimated && ex.estimated.length > 0 && <> Estimeret: {ex.estimated.join(", ")}.</>} Ret gerne tallene.</>
         )}
+        {ex.status === "fail" && ex.msg}
+      </span>
+    </div>
+  );
 
-        <div className="mt-6 space-y-5">
-          {/* Grouped like a spreadsheet: Ejendom → Finansiering → Drift.
-              Tiny headers give the panel a mental scan-order instead of a
-              flat list of a dozen fields. */}
-          <div>
-            <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Ejendom</div>
-            <div className="space-y-3">
-              <Field label="Købspris" value={inputs.price} onChange={(n) => set({ price: n })} suffix="kr" step={25000} />
-              <Field label={isInvestment ? "Driftsindtægt/md. (netto)" : "Månedlig leje"} value={inputs.monthlyRent} onChange={(n) => set({ monthlyRent: n })} suffix="kr/md." step={500} />
-            </div>
-          </div>
-          <div>
-            <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Finansiering</div>
-            <div className="space-y-3">
-              <Field label="Udbetaling" value={inputs.downPaymentPct} onChange={(n) => set({ downPaymentPct: n })} suffix="%" />
-              <Field label="Rente" value={inputs.interestRate} onChange={(n) => set({ interestRate: n })} suffix="% p.a." step={0.25} />
-            </div>
-          </div>
-          <div>
-            <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Drift</div>
-            <div className="space-y-3">
-              <Field label="Faste udgifter" value={inputs.monthlyOpex} onChange={(n) => set({ monthlyOpex: n })} suffix="kr/md." step={250} />
-            </div>
-          </div>
+  const form = (
+    <div className="space-y-7">
+      {extractNote}
+      <fieldset className="space-y-4">
+        <legend className="text-[15px] font-semibold text-slate-900">Ejendom</legend>
+        <Field label="Købspris" name="price" value={inputs.price} onChange={(n) => set({ price: n })} suffix="kr" step={25000} />
+        <Field label={isInvestment ? "Driftsindtægt pr. md. (netto)" : "Månedlig leje"} name="monthlyRent" value={inputs.monthlyRent} onChange={(n) => set({ monthlyRent: n })} suffix="kr/md." step={500} />
+      </fieldset>
+      <fieldset className="space-y-4">
+        <legend className="text-[15px] font-semibold text-slate-900">Finansiering</legend>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Udbetaling" name="downPaymentPct" value={inputs.downPaymentPct} onChange={(n) => set({ downPaymentPct: n })} suffix="%" />
+          <Field label="Rente" name="interestRate" value={inputs.interestRate} onChange={(n) => set({ interestRate: n })} suffix="%" step={0.25} />
         </div>
+      </fieldset>
+      <fieldset className="space-y-4">
+        <legend className="text-[15px] font-semibold text-slate-900">Drift</legend>
+        <Field label="Faste udgifter" name="monthlyOpex" value={inputs.monthlyOpex} onChange={(n) => set({ monthlyOpex: n })} suffix="kr/md." step={250} />
+      </fieldset>
 
-        <button onClick={() => setAdvanced((v) => !v)} className="mt-5 flex w-full items-center justify-between text-sm font-medium text-slate-600 hover:text-slate-900">
+      <fieldset>
+        <legend className="text-[15px] font-semibold text-slate-900">Strategi</legend>
+        <div role="radiogroup" aria-label="Strategi" className="grid grid-cols-3 gap-1 rounded-full bg-slate-100 p-1">
+          {strategies.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              role="radio"
+              aria-checked={inputs.strategy === s.id}
+              onClick={() => set({ strategy: s.id })}
+              className={clsx(
+                "rounded-full px-2 py-2 text-[13px] font-semibold transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
+                inputs.strategy === s.id ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.12)]" : "text-slate-500 hover:text-slate-900",
+              )}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
+      <div className="border-t border-slate-100 pt-5">
+        <button
+          type="button"
+          onClick={() => setAdvanced((v) => !v)}
+          aria-expanded={advanced}
+          aria-controls="advanced-fields"
+          className="flex w-full items-center justify-between rounded-lg text-[15px] font-semibold text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+        >
           Avancerede antagelser
-          <ChevronDown size={16} className={clsx("transition-transform", advanced && "rotate-180")} />
+          <ChevronDown aria-hidden size={18} className={clsx("text-slate-400 transition-transform", advanced && "rotate-180")} />
         </button>
         {advanced && (
-          <div className="mt-4 space-y-4 border-t border-slate-100 pt-4">
-            <Field label="Løbetid" value={inputs.termYears} onChange={(n) => set({ termYears: n })} suffix="år" />
-            <Field label="Tomgang" value={inputs.vacancyPct} onChange={(n) => set({ vacancyPct: n })} suffix="%" step={0.5} />
-            <Field label="Vedligehold (af leje)" value={inputs.maintenancePct} onChange={(n) => set({ maintenancePct: n })} suffix="%" step={0.5} />
-            <Field label="Købsomkostninger" value={inputs.acqCostPct} onChange={(n) => set({ acqCostPct: n })} suffix="%" step={0.5} />
-            <Field label="Værdistigning" value={inputs.appreciationPct} onChange={(n) => set({ appreciationPct: n })} suffix="%/år" step={0.5} />
-            <Field label="Lejevækst" value={inputs.rentGrowthPct} onChange={(n) => set({ rentGrowthPct: n })} suffix="%/år" step={0.5} />
-            <Field label="Ejerperiode" value={inputs.holdYears} onChange={(n) => set({ holdYears: n })} suffix="år" />
+          <div id="advanced-fields" className="mt-4 grid grid-cols-2 gap-3">
+            <Field label="Løbetid" name="termYears" value={inputs.termYears} onChange={(n) => set({ termYears: n })} suffix="år" />
+            <Field label="Ejerperiode" name="holdYears" value={inputs.holdYears} onChange={(n) => set({ holdYears: n })} suffix="år" />
+            <Field label="Tomgang" name="vacancyPct" value={inputs.vacancyPct} onChange={(n) => set({ vacancyPct: n })} suffix="%" step={0.5} />
+            <Field label="Vedligehold" name="maintenancePct" value={inputs.maintenancePct} onChange={(n) => set({ maintenancePct: n })} suffix="% af leje" step={0.5} />
+            <Field label="Købsomkostninger" name="acqCostPct" value={inputs.acqCostPct} onChange={(n) => set({ acqCostPct: n })} suffix="%" step={0.5} />
+            <Field label="Værdistigning" name="appreciationPct" value={inputs.appreciationPct} onChange={(n) => set({ appreciationPct: n })} suffix="%/år" step={0.5} />
+            <Field label="Lejevækst" name="rentGrowthPct" value={inputs.rentGrowthPct} onChange={(n) => set({ rentGrowthPct: n })} suffix="%/år" step={0.5} />
           </div>
         )}
+      </div>
+    </div>
+  );
 
-        <div className="mt-5">
-          <span className="text-sm text-slate-600">Strategi</span>
-          <div className="mt-2 grid grid-cols-3 gap-2">
-            {strategies.map((s) => (
-              <button key={s.id} onClick={() => set({ strategy: s.id })}
-                className={clsx("rounded-xl border px-2 py-2 text-xs font-medium transition-colors",
-                  inputs.strategy === s.id ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white hover:border-slate-300")}>
-                {s.label}
-              </button>
-            ))}
+  // Arriving with a link or a saved analysis: hold the verdict's place until the
+  // effects above have loaded it (never flash the empty form or example numbers).
+  if (!ran && (urlParam || priceParam || savedParam)) return <LoadingBand />;
+
+  // Before anything is analysed: the form is the page's tool, shown inline.
+  if (!ran) {
+    return (
+      <section aria-labelledby="own-numbers" className="px-4 pb-20 sm:px-6">
+        <div className="mx-auto grid max-w-[1080px] gap-10 rounded-[28px] bg-[#f4f6f9] p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] lg:gap-16 lg:p-14">
+          <div>
+            <h2 id="own-numbers" className="text-[32px] font-semibold leading-[1.08] tracking-[-0.03em] text-slate-900 [text-wrap:balance] sm:text-[40px]">
+              Intet link? Indtast tallene selv.
+            </h2>
+            <p className="mt-4 max-w-md text-[17px] leading-relaxed text-slate-600">
+              Pris, leje og faste udgifter er nok til en dom. Resten har fornuftige standardværdier, som du kan rette bagefter.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-7">
+            {form}
+            <button
+              type="button"
+              onClick={() => { setRan(true); window.scrollTo({ top: 0 }); }}
+              className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-blue-600 px-6 py-3.5 text-[17px] font-semibold text-white transition-[background-color,transform] hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-[0.98]"
+            >
+              Analysér ejendommen
+            </button>
           </div>
         </div>
+      </section>
+    );
+  }
 
-        <Button className="mt-6 w-full" onClick={() => setRan(true)}>Analysér nu</Button>
-      </div>
+  // Alternating band tint, in render order: the colour change is the divider.
+  let band = 0;
+  const tint = (): "white" | "tint" => (band++ % 2 === 0 ? "white" : "tint");
+  const navTitle = address ? address.split(",")[0] : "Din analyse";
 
-      {/* RESULTS */}
-      <div className={clsx("min-w-0 space-y-4 transition-opacity sm:space-y-6", ran ? "order-1 opacity-100 lg:order-none" : "opacity-70")}>
-        {gated ? (
-          <PaywallGate
+  return (
+    <div className="min-w-0">
+      {/* A link without deal data has no numbers until the listing is read. A
+          deal-seeded link already has them, so it renders at once. */}
+      {ex.status === "loading" && !priceParam ? (
+        <LoadingBand stage={ex.stage} />
+      ) : gated ? (
+        <div className="px-4 py-12 sm:px-6">
+          <div className="mx-auto max-w-[1080px]">
+            <PaywallGate
+              score={displayScore}
+              rating={displayRating}
+              verdict={displayVerdict}
+              max={freeMax}
+              scoreColor={scoreColor}
+            />
+          </div>
+        </div>
+      ) : (
+        <>
+          {ex.status === "fail" && (
+            <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 sm:px-6">
+              <div role="alert" className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-3 text-[15px] text-amber-900">
+                <span className="flex items-start gap-2">
+                  <AlertCircle aria-hidden size={18} className="mt-0.5 shrink-0" />
+                  {ex.msg}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSheetOpen(true)}
+                  className="rounded-full bg-amber-900 px-4 py-1.5 text-sm font-semibold text-white hover:bg-amber-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-900 focus-visible:ring-offset-2"
+                >
+                  Indtast tallene
+                </button>
+              </div>
+            </div>
+          )}
+
+          <DealHero
+            images={images}
+            address={address}
             score={displayScore}
             rating={displayRating}
+            headline={heroHeadline}
             verdict={displayVerdict}
-            max={freeMax}
-            scoreColor={scoreColor}
+            tone={heroTone}
+            notes={heroNotes}
+            metrics={heroMetrics}
+            probability={{ pct: Math.round(uncertainty.pCashFlowPositive * 100), runs: uncertainty.runs }}
+            listingUrl={listingUrl}
+            sourceLabel={sourceName(listingUrl)}
+            kindLabel={isInvestment ? `Investeringsejendom${subcatParam ? `, ${subcatParam}` : ""}` : `Strategi: ${strategies.find((s) => s.id === inputs.strategy)?.label ?? ""}`}
           />
-        ) : (
-        <>
-        {/* ================= THE STORY =================
-            Hero verdict → sticky chapter nav → one chapter per question an
-            investor asks. Every chapter answers in one coloured line first;
-            the cards underneath are the evidence. Nothing was removed — the
-            deep numbers moved behind "Se detaljer". */}
-        <DealHero
-          images={images}
-          address={address}
-          score={displayScore}
-          rating={displayRating}
-          headline={heroHeadline}
-          verdict={displayVerdict}
-          tone={heroTone}
-          notes={heroNotes}
-          metrics={heroMetrics}
-          probability={{ pct: Math.round(uncertainty.pCashFlowPositive * 100), runs: uncertainty.runs }}
-          listingUrl={listingUrl}
-          sourceLabel={sourceName(listingUrl)}
-          kindLabel={isInvestment ? `Investeringsejendom${subcatParam ? ` · ${subcatParam}` : ""}` : `Strategi: ${strategies.find((s) => s.id === inputs.strategy)?.label ?? ""}`}
-        />
 
-        <ChapterNav items={navItems} />
+          <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} />
 
-        <div className="space-y-12 pt-2 sm:space-y-16">
-          {/* 1 — Økonomi */}
-          <Chapter id="oekonomi" kicker="Økonomi" question="Tjener den penge?" answer={cashAnswer} Icon={Wallet}>
+          <Chapter id="oekonomi" question="Tjener den penge?" answer={cashAnswer} tint={tint()}>
             <Panel>
               <CashflowWaterfall
                 rent={r.annualRent / 12}
@@ -935,99 +998,99 @@ export function AnalyzerApp() {
               />
             </Panel>
             <Panel>
-              <div className="mb-4 text-sm font-semibold text-slate-900">Alle nøgletal <span className="font-normal text-slate-400">· tryk på ? for en forklaring</span></div>
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+              <h3 className="text-[21px] font-semibold tracking-[-0.02em] text-slate-900">Alle nøgletal</h3>
+              <p className="mt-1 text-[15px] text-slate-500">Tryk på spørgsmålstegnet for at se, hvad et tal betyder.</p>
+              <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-7 md:grid-cols-4">
                 <KeyStat
-                  label="Cash flow / md." value={dk(r.cashFlow)} unit="kr" tone={cfTone} Icon={Wallet}
-                  sub={r.cashFlow >= 0 ? `+${dk(r.annualCashFlow)} kr/år` : `−${dk(Math.abs(r.annualCashFlow))} kr/år`}
-                  explain="Det, der reelt lander på din konto hver måned, når lejen har betalt lånet og alle udgifter. Positivt = ejendommen betaler dig. Negativt = du lægger penge til hver måned."
+                  label="Cash flow pr. md." value={dk(r.cashFlow)} unit="kr" tone={cfTone}
+                  sub={r.cashFlow >= 0 ? `+${dk(r.annualCashFlow)} kr om året` : `−${dk(Math.abs(r.annualCashFlow))} kr om året`}
+                  explain="Det, der reelt lander på din konto hver måned, når lejen har betalt lånet og alle udgifter. Positivt betyder, at ejendommen betaler dig. Negativt betyder, at du lægger penge til hver måned."
                   how="Månedlig leje minus ydelsen på lånet minus alle driftsudgifter."
                 />
                 <KeyStat
-                  label="Nettoafkast" value={num(r.capRate)} unit="%" Icon={Percent}
-                  tone={r.capRate >= 5 ? "text-emerald-600" : r.capRate >= 3 ? "text-slate-900" : "text-rose-500"}
-                  sub="Før lån · pr. år"
-                  explain={`Hvor mange procent af prisen ejendommen tjener om året — efter driftsudgifter, men før lån. ${num(r.capRate)} % betyder, at ejendommen selv (uden lån) giver ${num(r.capRate)} % af sin pris tilbage hvert år. Højere = bedre.`}
+                  label="Nettoafkast" value={num(r.capRate)} unit="%"
+                  tone={r.capRate >= 5 ? "text-emerald-600" : r.capRate >= 3 ? "text-slate-900" : "text-rose-600"}
+                  sub="Før lån, om året"
+                  explain={`Hvor mange procent af prisen ejendommen tjener om året, efter driftsudgifter men før lån. ${num(r.capRate)} % betyder, at ejendommen selv giver ${num(r.capRate)} % af sin pris tilbage hvert år. Højere er bedre.`}
                   how="Driftsresultatet (leje minus tomgang, vedligehold og faste udgifter) delt med købsprisen."
                 />
                 <KeyStat
-                  label="Kontantafkast" value={num(r.cashOnCash)} unit="%" Icon={TrendingUp}
-                  tone={r.cashOnCash >= 8 ? "text-emerald-600" : r.cashOnCash >= 0 ? "text-slate-900" : "text-rose-500"}
+                  label="Kontantafkast" value={num(r.cashOnCash)} unit="%"
+                  tone={r.cashOnCash >= 8 ? "text-emerald-600" : r.cashOnCash >= 0 ? "text-slate-900" : "text-rose-600"}
                   sub={`På ${dk(r.cashInvested)} kr investeret`}
-                  explain={`Hvor meget dine EGNE penge tjener om året. Du lagde ${dk(r.cashInvested)} kr (udbetaling + købsomkostninger) og får ${dk(r.annualCashFlow)} kr tilbage i cash flow — det er ${num(r.cashOnCash)} %.`}
-                  how="Årligt cash flow delt med de penge, du selv lagde."
+                  explain={`Hvor meget dine egne penge tjener om året. Du lægger ${dk(r.cashInvested)} kr (udbetaling og købsomkostninger) og får ${dk(r.annualCashFlow)} kr tilbage i cash flow. Det er ${num(r.cashOnCash)} %.`}
+                  how="Årligt cash flow delt med de penge, du selv lægger."
                 />
                 <KeyStat
-                  label="Gældsdækning" value={num(r.dscr)} tone={dscrTone} Icon={ShieldCheck}
-                  sub={r.dscr >= 1.25 ? "Banken siger ja" : r.dscr >= 1 ? "På kanten" : "For lavt"}
+                  label="Gældsdækning" value={num(r.dscr)} tone={dscrTone}
+                  sub={r.dscr >= 1.25 ? "Banken siger typisk ja" : r.dscr >= 1 ? "På kanten" : "Under 1,0"}
                   explain={`Kan lejen betale lånet? 1,0 er lige akkurat. ${num(r.dscr)} betyder, at ejendommen tjener ${num(r.dscr)} gange så meget som ydelsen. Banker vil typisk gerne se mindst 1,25.`}
                   how="Driftsresultatet (NOI) delt med den årlige ydelse på lånet."
                 />
                 <KeyStat
                   label="Bruttoafkast" value={num(r.grossYield)} unit="%"
                   sub="Før udgifter"
-                  explain="Årlig leje i forhold til prisen — FØR udgifter. Et hurtigt førstetjek. Nettoafkastet er det mere ærlige tal, fordi det trækker udgifter fra."
+                  explain="Årlig leje i forhold til prisen, før udgifter. Et hurtigt førstetjek. Nettoafkastet er det mere ærlige tal, fordi det trækker udgifterne fra."
                   how="Årlig leje delt med købsprisen."
                 />
                 <KeyStat
-                  label={`IRR (${r.holdYears} år)`} value={num(r.irr)} unit="%"
+                  label={`IRR over ${r.holdYears} år`} value={num(r.irr)} unit="%"
                   tone={isFinite(r.irr) && r.irr >= 8 ? "text-emerald-600" : "text-slate-900"}
-                  sub="Cash flow + værdistigning"
-                  explain="Det samlede årlige afkast på dine penge over hele perioden — cash flow OG værdistigning lagt sammen til én procent. Over 8–10 % er stærkt."
+                  sub="Cash flow og værdistigning"
+                  explain="Det samlede årlige afkast på dine penge over hele perioden: cash flow og værdistigning lagt sammen til én procent. Over 8 til 10 % er stærkt."
                   how="Alle pengestrømme (udbetaling ud nu, cash flow ind hvert år, salg til sidst) regnet om til én årlig rente."
                 />
                 <KeyStat
                   label="Equity multiple" value={num(r.equityMultiple)} unit="x"
                   sub="Penge tilbage pr. krone"
-                  explain={`Hvor mange gange du får dine penge igen i alt. ${num(r.equityMultiple)}x betyder: for hver 1 krone du lagde, får du ${num(r.equityMultiple)} kr tilbage over perioden.`}
-                  how="Alt du får ud (samlet cash flow + nettoprovenu ved salg) delt med det, du selv lagde."
+                  explain={`Hvor mange gange du får dine penge igen i alt. ${num(r.equityMultiple)}x betyder, at du for hver krone, du lægger, får ${num(r.equityMultiple)} kr tilbage over perioden.`}
+                  how="Alt du får ud (samlet cash flow og nettoprovenu ved salg) delt med det, du selv lægger."
                 />
                 <KeyStat
                   label="Break-even belægning" value={num(r.breakEvenOccupancy, 0)} unit="%"
-                  sub="Lavere = mere buffer"
-                  explain={`Hvor tom ejendommen må stå, før du taber penge. ${num(r.breakEvenOccupancy, 0)} % betyder: selv hvis den kun er udlejet ${num(r.breakEvenOccupancy, 0)} % af tiden, går det lige op. Lavere = mere buffer.`}
+                  sub="Lavere giver mere buffer"
+                  explain={`Hvor tom ejendommen må stå, før du taber penge. ${num(r.breakEvenOccupancy, 0)} % betyder, at det går lige op, selv hvis den kun er udlejet ${num(r.breakEvenOccupancy, 0)} % af tiden. Over 100 % betyder, at lejen ikke dækker, heller ikke fuldt udlejet.`}
                   how="Hvor stor en del af lejen, der skal til for at dække lån og udgifter."
                 />
               </div>
             </Panel>
             <Details label="hele budgettet, finansieringen og usikkerheden">
-              <div className="grid gap-8 md:grid-cols-2">
+              <div className="grid gap-10 md:grid-cols-2">
                 <div>
-                  <div className="text-sm font-semibold text-slate-900">Driftsbudget (år 1)</div>
-                  <dl className="mt-3 space-y-2 text-sm">
+                  <h3 className="text-[17px] font-semibold text-slate-900">Driftsbudget, år 1</h3>
+                  <dl className="mt-4 space-y-2.5 text-[15px]">
                     <Row l="Lejeindtægt" v={kr(r.annualRent)} pos />
-                    <Row l="− Tomgang" v={"−" + kr(r.opex.vacancy)} />
-                    <Row l="− Vedligehold" v={"−" + kr(r.opex.maintenance)} />
-                    <Row l="− Faste udgifter" v={"−" + kr(r.opex.fixed)} />
-                    <div className="border-t border-slate-100 pt-2"><Row l="= NOI" v={kr(r.noi)} strong /></div>
-                    <Row l="− Ydelse" v={"−" + kr(r.monthlyMortgage * 12)} />
-                    <div className="border-t border-slate-100 pt-2"><Row l="= Cash flow (år)" v={kr(r.annualCashFlow)} strong pos={r.annualCashFlow >= 0} /></div>
+                    <Row l="Tomgang" v={"−" + kr(r.opex.vacancy)} />
+                    <Row l="Vedligehold" v={"−" + kr(r.opex.maintenance)} />
+                    <Row l="Faste udgifter" v={"−" + kr(r.opex.fixed)} />
+                    <div className="border-t border-slate-100 pt-2.5"><Row l="Driftsresultat (NOI)" v={kr(r.noi)} strong /></div>
+                    <Row l="Ydelse på lån" v={"−" + kr(r.monthlyMortgage * 12)} />
+                    <div className="border-t border-slate-100 pt-2.5"><Row l="Cash flow om året" v={kr(r.annualCashFlow)} strong pos={r.annualCashFlow >= 0} /></div>
                   </dl>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-slate-900">Finansiering</div>
-                  <dl className="mt-3 space-y-2 text-sm">
+                  <h3 className="text-[17px] font-semibold text-slate-900">Finansiering</h3>
+                  <dl className="mt-4 space-y-2.5 text-[15px]">
                     <Row l="Købspris" v={kr(inputs.price)} />
                     <Row l="Udbetaling" v={kr(r.downPayment)} />
-                    <Row l="Købsomk." v={kr(r.cashInvested - r.downPayment)} />
-                    <div className="border-t border-slate-100 pt-2"><Row l="Investeret" v={kr(r.cashInvested)} strong /></div>
+                    <Row l="Købsomkostninger" v={kr(r.cashInvested - r.downPayment)} />
+                    <div className="border-t border-slate-100 pt-2.5"><Row l="Du investerer" v={kr(r.cashInvested)} strong /></div>
                     <Row l="Lån" v={kr(r.loan)} />
                     <Row l="Belåningsgrad" v={pct(r.ltv, 0)} />
                     <Row l="Månedlig ydelse" v={krMd(r.monthlyMortgage)} />
                   </dl>
                 </div>
               </div>
-              <div className="mt-8 border-t border-slate-100 pt-7">
+              <div className="mt-10 border-t border-slate-100 pt-8">
                 <ConfidenceBands u={uncertainty} />
               </div>
             </Details>
           </Chapter>
 
-          {/* 2 — Pris */}
           {showPriceChapter && (
-            <Chapter id="pris" kicker="Pris & marked" question="Er prisen fair?" answer={priceAnswer} Icon={Scale}>
+            <Chapter id="pris" question="Er prisen fair?" answer={priceAnswer} tint={tint()}>
               {(priceBench || rentBench) && (
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-5 md:grid-cols-2">
                   {priceBench && propertyPriceM2 && (
                     <MarketBenchmark propertyPriceM2={propertyPriceM2} benchmark={priceBench} />
                   )}
@@ -1044,7 +1107,7 @@ export function AnalyzerApp() {
                 </div>
               )}
               {zip && area && area > 10 && inputs.price > 0 && (
-                <div>
+                <div className="space-y-5">
                   <Comparables zip={String(zip)} type={propType} areaM2={area} askingPrice={inputs.price} />
                   <ExpenseCheck zip={String(zip)} type={propType} areaM2={area} statedExpense={inputs.monthlyOpex} />
                 </div>
@@ -1052,8 +1115,7 @@ export function AnalyzerApp() {
             </Chapter>
           )}
 
-          {/* 3 — Risici */}
-          <Chapter id="risici" kicker="Risici" question="Hvad kan gå galt?" answer={riskAnswer} Icon={ShieldAlert}>
+          <Chapter id="risici" question="Hvad kan gå galt?" answer={riskAnswer} tint={tint()}>
             <Panel>
               <RateStress
                 rate={inputs.interestRate}
@@ -1065,8 +1127,7 @@ export function AnalyzerApp() {
             {address && <FutureBurdens address={address} />}
           </Chapter>
 
-          {/* 4 — Potentiale */}
-          <Chapter id="potentiale" kicker="Potentiale" question="Er der skjult potentiale?" answer={potentialAnswer} Icon={Sparkle}>
+          <Chapter id="potentiale" question="Er der skjult potentiale?" answer={potentialAnswer} tint={tint()}>
             {rentReserve && <RentReserve reserve={rentReserve} />}
             <RenovationModule
               price={inputs.price}
@@ -1084,8 +1145,7 @@ export function AnalyzerApp() {
             />
           </Chapter>
 
-          {/* 5 — Fremtid */}
-          <Chapter id="fremtid" kicker={`Prognose · ${r.holdYears} år`} question="Hvad bliver det til?" answer={futureAnswer} Icon={LineChartIcon}>
+          <Chapter id="fremtid" question={`Hvad bliver det til om ${r.holdYears} år?`} answer={futureAnswer} tint={tint()}>
             <Panel>
               <ProjectionStory
                 data={r.projection.map((y) => ({ year: y.year, equity: y.equity, cumulativeCashFlow: y.cumulativeCashFlow }))}
@@ -1099,8 +1159,7 @@ export function AnalyzerApp() {
             </Panel>
           </Chapter>
 
-          {/* 6 — Data */}
-          <Chapter id="data" kicker="Datagrundlag" question="Kan du stole på tallene?" answer={dataAnswer} Icon={Database}>
+          <Chapter id="data" question="Kan du stole på tallene?" answer={dataAnswer} tint={tint()}>
             <DataProvenance rows={provenanceRows} rentRule={rentRule} showRentCaveat={!isInvestment} />
             <BrainBadge
               regionName={regionLabel(cal.region)}
@@ -1113,111 +1172,102 @@ export function AnalyzerApp() {
             {bbr && <BbrPanel data={bbr} />}
           </Chapter>
 
-          {/* Next steps */}
-          <section id="naeste" className="scroll-mt-36">
-            <div className="mb-4 flex items-start gap-3 sm:mb-5">
-              <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-btn ring-1 ring-inset ring-white/10">
-                <ArrowRight size={18} strokeWidth={1.8} />
-              </span>
-              <div>
-                <div className="text-xs font-semibold text-slate-500">Næste skridt</div>
-                <h3 className="font-display text-2xl font-bold leading-tight tracking-[-0.02em] text-slate-900 sm:text-[30px]">
-                  Gem, del eller tag den med i banken
-                </h3>
-              </div>
-            </div>
-        {/* actions — one visual family: primary (dark) for "Gem", secondary (light)
-            for everything else. Prior version had four different palettes competing
-            for attention — this reads as one row of tools instead of a rainbow. */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            {/* Primary — the action most investors take */}
-            {save.status === "saved" ? (
-              <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 sm:px-5">
-                <Check size={16} /> Gemt — se portefølje
-              </a>
-            ) : (
-              <button onClick={saveToPortfolio} disabled={save.status === "saving"}
-                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 disabled:opacity-60 sm:px-5">
-                {save.status === "saving" ? <Loader2 size={16} className="animate-spin" /> : <Bookmark size={16} />}
-                Gem til portefølje
-              </button>
-            )}
-            {/* Secondary family — all the same slate outline */}
-            <button onClick={exportExcel} disabled={exporting}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60 sm:px-5">
-              {exporting ? <Loader2 size={16} className="animate-spin" /> : <FileSpreadsheet size={16} />}
-              Excel
-            </button>
-            <button onClick={openBankReport}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 sm:px-5">
-              <FileText size={16} />
-              Bankrapport
-            </button>
-            {listingUrl && (
-              watch.status === "saved" ? (
-                <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 sm:px-5">
-                  <BellRing size={16} /> Vagt aktiv
-                </a>
-              ) : (
-                <button onClick={startWatch} disabled={watch.status === "saving"}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60 sm:px-5">
-                  {watch.status === "saving" ? <Loader2 size={16} className="animate-spin" /> : <Bell size={16} />}
-                  Overvåg pris
+          {/* Next steps: one primary (blue), the rest as quiet outline pills. */}
+          <section id="naeste" aria-labelledby="naeste-h" className="scroll-mt-32 bg-[#0a0e16] px-4 py-16 text-white sm:px-6 sm:py-20">
+            <div className="mx-auto max-w-[1080px]">
+              <h2 id="naeste-h" className="max-w-2xl text-[32px] font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance] sm:text-[44px]">
+                Gem den, del den, eller tag den med i banken.
+              </h2>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                {save.status === "saved" ? (
+                  <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+                    <Check aria-hidden size={17} /> Gemt. Se porteføljen
+                  </a>
+                ) : (
+                  <button type="button" onClick={saveToPortfolio} disabled={save.status === "saving"}
+                    className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-[15px] font-semibold text-white transition-[background-color,transform] hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6aa8ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0e16] active:scale-[0.97] disabled:opacity-60">
+                    {save.status === "saving" ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <Bookmark aria-hidden size={17} />}
+                    {save.status === "saving" ? "Gemmer…" : "Gem til portefølje"}
+                  </button>
+                )}
+                <button type="button" onClick={openBankReport} className={darkPill}>
+                  <FileText aria-hidden size={17} /> Bankrapport
                 </button>
-              )
-            )}
-          </div>
-          {save.status === "limit" && (
-            <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-              Du har brugt dine analyser for denne måned.{" "}
-              <a href="/priser" className="font-semibold underline">Opgradér</a> for at gemme flere boliger.
-            </div>
-          )}
-          {save.status === "error" && (
-            <div className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-              Kunne ikke gemme: {save.msg}
-            </div>
-          )}
-          {watch.status === "error" && (
-            <div className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-              Kunne ikke starte vagt: {watch.msg}
-            </div>
-          )}
-          {listingUrl && watch.status === "idle" && (
-            <p className="mt-3 flex items-center gap-1.5 text-xs text-slate-400">
-              <Bell size={13} /> Vagt tjekker annoncen dagligt og giver besked, hvis prisen falder — så du aldrig misser en god handel.
-            </p>
-          )}
+                <button type="button" onClick={exportExcel} disabled={exporting} className={darkPill}>
+                  {exporting ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <FileSpreadsheet aria-hidden size={17} />}
+                  {exporting ? "Laver Excel…" : "Excel"}
+                </button>
+                {listingUrl && (
+                  watch.status === "saved" ? (
+                    <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+                      <BellRing aria-hidden size={17} /> Prisvagt aktiv
+                    </a>
+                  ) : (
+                    <button type="button" onClick={startWatch} disabled={watch.status === "saving"} className={darkPill}>
+                      {watch.status === "saving" ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <Bell aria-hidden size={17} />}
+                      Overvåg prisen
+                    </button>
+                  )
+                )}
+              </div>
+              <div aria-live="polite">
+                {save.status === "limit" && (
+                  <p className="mt-4 text-[15px] text-amber-200">
+                    Du har brugt dine analyser for denne måned. <a href="/priser" className="font-semibold underline">Opgradér</a> for at gemme flere boliger.
+                  </p>
+                )}
+                {save.status === "error" && <p className="mt-4 text-[15px] text-rose-300">Kunne ikke gemme: {save.msg}. Prøv igen om lidt.</p>}
+                {watch.status === "error" && <p className="mt-4 text-[15px] text-rose-300">Kunne ikke starte prisvagten: {watch.msg}. Prøv igen om lidt.</p>}
+              </div>
+              {listingUrl && watch.status === "idle" && (
+                <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/55">
+                  Prisvagten tjekker annoncen hver dag og giver dig besked, hvis prisen falder.
+                </p>
+              )}
 
-          {analysisLogged && !tsHidden && (
-            <div className="mt-5 border-t border-slate-100 pt-5">
-              <TimeSavingsCapture onSubmit={submitTimeSavings} onDismiss={() => setTsHidden(true)} />
+              <div className="mt-12 space-y-6 border-t border-white/10 pt-8 text-slate-900">
+                {analysisLogged && !tsHidden && (
+                  <div className="rounded-2xl bg-white p-5 sm:p-6">
+                    <TimeSavingsCapture onSubmit={submitTimeSavings} onDismiss={() => setTsHidden(true)} />
+                  </div>
+                )}
+                <div className="rounded-2xl bg-white p-5 sm:p-6">
+                  <PrecisionFeedback region={region} strategy={inputs.strategy} onSaved={() => { const q = region ? `?region=${encodeURIComponent(region)}` : ""; fetch(`/api/calibration${q}`).then((r) => r.json()).then(setCal).catch(() => {}); }} />
+                </div>
+                {savedParam && (
+                  <OutcomeForm
+                    analysisId={savedParam}
+                    region={region}
+                    predicted={{ price: inputs.price, monthlyRent: inputs.monthlyRent, appreciationPct: inputs.appreciationPct }}
+                  />
+                )}
+              </div>
+              <div id="analyse-end" aria-hidden className="h-px" />
             </div>
-          )}
-
-          <div className="mt-5 border-t border-slate-100 pt-5">
-            <PrecisionFeedback region={region} strategy={inputs.strategy} onSaved={() => { const q = region ? `?region=${encodeURIComponent(region)}` : ""; fetch(`/api/calibration${q}`).then((r) => r.json()).then(setCal).catch(() => {}); }} />
-          </div>
-        </div>
-
           </section>
-
-        {/* Real-outcome reporting — only when viewing a saved analysis */}
-        {savedParam && (
-          <OutcomeForm
-            analysisId={savedParam}
-            region={region}
-            predicted={{ price: inputs.price, monthlyRent: inputs.monthlyRent, appreciationPct: inputs.appreciationPct }}
-          />
-        )}
-        </div>
         </>
-        )}
-      </div>
+      )}
 
-      {/* Analytikeren — in-analysis expert chat (appears once an analysis exists) */}
-      {ran && !gated && (
+      <Sheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        title="Justér tallene"
+        description="Ret et tal, så regnes hele analysen om med det samme."
+        footer={
+          <button
+            type="button"
+            onClick={() => setSheetOpen(false)}
+            className="inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-[15px] font-semibold text-white transition-[background-color,transform] hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-[0.98]"
+          >
+            Se resultatet
+          </button>
+        }
+      >
+        {form}
+      </Sheet>
+
+      {/* Analytikeren: in-analysis expert chat (appears once an analysis exists) */}
+      {!gated && !(ex.status === "loading" && !priceParam) && (
         <AnalystChat
           context={{
             market: isInvestment ? "investering" : "bolig",
@@ -1276,10 +1326,37 @@ export function AnalyzerApp() {
   );
 }
 
+const darkPill =
+  "inline-flex items-center gap-2 rounded-full bg-white/[0.08] px-5 py-3 text-[15px] font-semibold text-white ring-1 ring-inset ring-white/15 transition-[background-color,transform] hover:bg-white/[0.14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6aa8ff] active:scale-[0.97] disabled:opacity-60";
+
+/** While the listing is being read: the verdict's place holds a calm skeleton, not example numbers. */
+function LoadingBand({ stage }: { stage?: string }) {
+  return (
+    <section aria-busy="true" aria-label="Analysen hentes" className="bg-[#0a0e16] px-4 pb-16 pt-12 text-white sm:px-6 sm:pt-14">
+      <div className="mx-auto max-w-[1080px]">
+        <p role="status" aria-live="polite" className="flex items-center gap-2 text-[15px] font-medium text-white/70">
+          <Loader2 aria-hidden size={16} className="animate-spin" />
+          {stage ?? "Henter annoncen…"}
+        </p>
+        <div className="mt-5 h-14 w-2/3 max-w-md animate-pulse rounded-xl bg-white/[0.07] motion-reduce:animate-none sm:h-16" />
+        <div className="mt-4 h-5 w-full max-w-lg animate-pulse rounded-lg bg-white/[0.05] motion-reduce:animate-none" />
+        <div className="mt-12 grid grid-cols-2 gap-6 border-t border-white/10 pt-6 md:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i}>
+              <div className="h-3.5 w-24 animate-pulse rounded bg-white/[0.06] motion-reduce:animate-none" />
+              <div className="mt-3 h-8 w-28 animate-pulse rounded-lg bg-white/[0.08] motion-reduce:animate-none" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Row({ l, v, pos, strong }: { l: string; v: string; pos?: boolean; strong?: boolean }) {
   return (
     <div className="flex items-baseline justify-between gap-3">
-      <dt className={clsx("min-w-0 text-slate-500", strong && "font-semibold text-slate-900")}>{l}</dt>
+      <dt className={clsx("min-w-0 text-slate-600", strong && "font-semibold text-slate-900")}>{l}</dt>
       <dd className={clsx("shrink-0 whitespace-nowrap tnum font-semibold tabular-nums", pos === true && "text-emerald-600", pos === false && "text-rose-500", pos === undefined && "text-slate-900")}>{v}</dd>
     </div>
   );

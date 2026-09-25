@@ -58,77 +58,83 @@ export function CashflowWaterfall({
 
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-between gap-2">
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div>
-          <div className="text-sm font-medium text-slate-500">Hver måned</div>
+          <div className="text-[15px] font-medium text-slate-500">Hver måned</div>
           <div
             className={clsx(
-              "font-display text-4xl font-bold tabular-nums tracking-[-0.03em] sm:text-5xl",
+              "mt-1 text-[44px] font-semibold leading-none tabular-nums tracking-[-0.035em] sm:text-[56px]",
               positive ? "text-emerald-600" : "text-rose-600",
             )}
           >
             {positive ? "+" : "−"}
-            {dk(Math.abs(cashFlow))} <span className="text-2xl font-semibold text-slate-400">kr</span>
+            {dk(Math.abs(cashFlow))}
+            <span className="ml-1.5 text-2xl font-medium tracking-normal text-slate-400">kr</span>
           </div>
         </div>
-        <p className="max-w-xs text-sm text-slate-500">
+        <p className="max-w-sm text-[15px] leading-relaxed text-slate-500">
           {positive
             ? "Det lander på din konto, når lejen har betalt lån og alle udgifter."
             : "Det skal du selv lægge til hver måned, fordi lejen ikke dækker lån og udgifter."}
         </p>
       </div>
 
-      <div className="mt-6 space-y-2.5">
+      <ul
+        role="img"
+        className="mt-8 space-y-3"
+        aria-label={`Fra leje til cash flow: ${steps.map((s) => `${s.label} ${s.kind === "out" ? "minus " : ""}${dk(Math.abs(s.amount))} kr`).join(", ")}`}
+      >
         {bars.map((b, i) => (
-          <div
+          <li
             key={b.label}
-            className="grid grid-cols-[6.75rem_minmax(0,1fr)_5.25rem] items-center gap-2 sm:grid-cols-[7.5rem_minmax(0,1fr)_6.5rem] sm:gap-3"
+            className={clsx(
+              "grid grid-cols-[6.5rem_minmax(0,1fr)_5.5rem] items-center gap-3 sm:grid-cols-[8.5rem_minmax(0,1fr)_7rem] sm:gap-4",
+              b.kind === "result" && "border-t border-slate-200 pt-3",
+            )}
           >
             <span
               className={clsx(
-                "truncate text-[13px] sm:text-sm",
+                "truncate text-sm sm:text-[15px]",
                 b.kind === "result" ? "font-semibold text-slate-900" : "text-slate-600",
               )}
             >
-              {b.kind === "out" ? "− " : b.kind === "result" ? "= " : ""}
               {b.label}
             </span>
-            <div className="relative h-7 rounded-lg bg-slate-100/80">
+            <div className="relative h-6">
               {lo < 0 && (
                 <div
-                  aria-hidden
-                  className="absolute -inset-y-1 z-10 border-l border-dashed border-slate-400"
+                  className="absolute -inset-y-1.5 z-10 border-l border-dashed border-slate-300"
                   style={{ left: `${zeroAt}%` }}
                 />
               )}
               <motion.div
                 className={clsx(
-                  "absolute inset-y-0 rounded-lg",
+                  "absolute inset-y-0 origin-left rounded-md",
                   b.kind === "in" && "bg-emerald-500",
-                  b.kind === "out" && "bg-rose-300",
-                  b.kind === "result" && (positive ? "bg-emerald-600" : "bg-rose-600"),
+                  b.kind === "out" && "bg-rose-200",
+                  b.kind === "result" && (positive ? "bg-emerald-600" : "bg-rose-500"),
                 )}
-                style={{ left: `${b.from}%` }}
-                initial={reduce ? false : { width: 0 }}
-                whileInView={{ width: `${Math.max(0.8, b.to - b.from)}%` }}
+                style={{ left: `${b.from}%`, width: `${Math.max(0.8, b.to - b.from)}%` }}
+                initial={reduce ? false : { scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: reduce ? 0 : i * 0.08, ease: [0.2, 0.7, 0.2, 1] }}
+                transition={{ duration: 0.6, delay: reduce ? 0 : i * 0.07, ease: [0.16, 1, 0.3, 1] }}
               />
             </div>
             <span
               className={clsx(
-                "whitespace-nowrap text-right font-display text-sm font-semibold tabular-nums sm:text-[15px]",
+                "whitespace-nowrap text-right text-sm font-semibold tabular-nums sm:text-[15px]",
                 b.kind === "in" && "text-emerald-700",
                 b.kind === "out" && "text-slate-700",
                 b.kind === "result" && (positive ? "text-emerald-700" : "text-rose-700"),
               )}
             >
-              {b.kind === "out" ? "−" : b.kind === "result" && !positive ? "−" : ""}
-              {dk(Math.abs(b.amount))} kr
+              {b.kind === "out" ? "−" : b.kind === "result" && !positive ? "−" : "+"}
+              {dk(Math.abs(b.amount))}&nbsp;kr
             </span>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

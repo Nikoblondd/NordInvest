@@ -31,62 +31,59 @@ export function RateStress({
 
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-between gap-2">
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div>
-          <div className="text-sm font-medium text-slate-500">Buffer før du taber penge</div>
+          <div className="text-[15px] font-medium text-slate-500">Buffer før du taber penge</div>
           <div
             className={clsx(
-              "font-display text-4xl font-bold tabular-nums tracking-[-0.03em]",
+              "mt-1 text-[44px] font-semibold leading-none tabular-nums tracking-[-0.035em] sm:text-[56px]",
               headroom >= 2 ? "text-emerald-600" : headroom >= 0 ? "text-amber-600" : "text-rose-600",
             )}
           >
             {headroom >= 0 ? "+" : "−"}
-            {p1(Math.abs(headroom))} <span className="text-2xl font-semibold text-slate-400">%-point</span>
+            {p1(Math.abs(headroom))}
+            <span className="ml-1.5 text-2xl font-medium tracking-normal text-slate-400">%-point</span>
           </div>
         </div>
-        <p className="max-w-xs text-sm text-slate-500">
+        <p className="max-w-sm text-[15px] leading-relaxed text-slate-500">
           {headroom >= 0
             ? `Renten kan stige fra ${p1(rate)} % til ${p1(be)} %, før cash flow bliver negativt.`
             : `Handlen taber allerede penge ved ${p1(rate)} %. Renten skal ned på ${p1(be)} %, før den går i nul.`}
         </p>
       </div>
 
-      {/* Gauge */}
-      <div className="relative mt-6 pb-7 pt-7">
-        <div className="relative h-3 overflow-hidden rounded-full bg-rose-200">
-          <div className="absolute inset-y-0 left-0 rounded-full bg-emerald-400" style={{ width: at(be) }} />
+      {/* Gauge: green up to break-even, red beyond. The gap between the two markers is the buffer. */}
+      <div
+        role="img"
+        aria-label={`Din rente ${p1(rate)} %, break-even ved ${p1(be)} %`}
+        className="relative mt-8 pb-8 pt-8"
+      >
+        <div className="relative h-2 overflow-hidden rounded-full bg-rose-200">
+          <div className="absolute inset-y-0 left-0 rounded-full bg-emerald-500" style={{ width: at(be) }} />
         </div>
         <Marker pct={pctOf(rate)} label={`Din rente ${p1(rate)} %`} top />
         <Marker pct={pctOf(be)} label={`Break-even ${p1(be)} %`} />
       </div>
 
-      <div className="grid grid-cols-3 gap-2 sm:gap-3">
-        {rows.map((r) => (
-          <div
-            key={r.rate}
-            className={clsx(
-              "rounded-xl p-3 ring-1 ring-inset",
-              r.now ? "bg-slate-900 text-white ring-slate-900" : "bg-slate-50 ring-slate-200",
-            )}
-          >
-            <div className={clsx("text-[11px] font-medium sm:text-xs", r.now ? "text-white/65" : "text-slate-500")}>
-              {r.now ? "Nu" : "Ved"} {p1(r.rate)} %
-            </div>
-            <div
+      <dl className="mt-2 grid grid-cols-3 border-t border-slate-200 pt-5">
+        {rows.map((r, i) => (
+          <div key={r.rate} className={clsx("min-w-0", i > 0 && "border-l border-slate-200 pl-4 sm:pl-6")}>
+            <dt className={clsx("text-[13px] sm:text-sm", r.now ? "font-semibold text-slate-900" : "font-medium text-slate-500")}>
+              {r.now ? "Nu" : "Ved"} {p1(r.rate)}&nbsp;%
+            </dt>
+            <dd
               className={clsx(
-                "mt-1 whitespace-nowrap font-display text-lg font-semibold tabular-nums sm:text-xl",
-                r.now
-                  ? r.cashFlow >= 0 ? "text-emerald-300" : "text-rose-300"
-                  : r.cashFlow >= 0 ? "text-emerald-600" : "text-rose-600",
+                "mt-1 whitespace-nowrap text-xl font-semibold tabular-nums tracking-[-0.02em] sm:text-2xl",
+                r.cashFlow >= 0 ? "text-emerald-600" : "text-rose-600",
               )}
             >
               {r.cashFlow >= 0 ? "+" : "−"}
               {dk(Math.abs(r.cashFlow))}
-              <span className={clsx("ml-1 text-xs font-medium", r.now ? "text-white/50" : "text-slate-400")}>kr/md</span>
-            </div>
+              <span className="ml-1 text-xs font-medium tracking-normal text-slate-400 sm:text-sm">kr/md.</span>
+            </dd>
           </div>
         ))}
-      </div>
+      </dl>
     </div>
   );
 }
@@ -96,10 +93,10 @@ function Marker({ pct, label, top }: { pct: number; label: string; top?: boolean
   const align = pct < 18 ? "translate-x-0" : pct > 82 ? "-translate-x-full" : "-translate-x-1/2";
   return (
     <div className="absolute inset-y-0" style={{ left: `${pct}%` }}>
-      <div className="absolute top-5 h-7 -translate-x-1/2 border-l-2 border-slate-900" />
+      <div className="absolute top-6 h-6 -translate-x-1/2 border-l-2 border-slate-900" />
       <div
         className={clsx(
-          "absolute whitespace-nowrap rounded-md bg-slate-900 px-1.5 py-0.5 text-[11px] font-semibold text-white",
+          "absolute whitespace-nowrap rounded-full bg-slate-900 px-2 py-0.5 text-xs font-semibold text-white",
           align,
           top ? "top-0" : "bottom-0",
         )}

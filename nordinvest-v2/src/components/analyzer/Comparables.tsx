@@ -95,7 +95,7 @@ export function Comparables({
 
   if (state.status === "loading") {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <Loader2 className="h-4 w-4 animate-spin" />
           Henter sammenlignelige boliger fra Boligsiden…
@@ -106,7 +106,7 @@ export function Comparables({
 
   if (state.status === "empty") {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
         <h3 className="text-sm font-semibold text-slate-900">Sammenlignelige boliger</h3>
         <p className="mt-2 text-sm text-slate-500">
           Ingen tilstrækkeligt sammenlignelige aktive udbud i {zip} lige nu. Prøv igen om nogle dage — Boligsiden opdaterer løbende.
@@ -124,7 +124,7 @@ export function Comparables({
   const arrow = d.priceDeltaPct >= 0 ? "+" : "";
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-sm font-semibold text-slate-900">
@@ -187,7 +187,7 @@ export function Comparables({
       {/* Closest 6 comparables — shown as a compact list, each linking to
           Boligsiden so the user can dig deeper. */}
       <div className="mt-5">
-        <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <div className="mb-2 text-[13px] font-semibold text-slate-500">
           Nærmeste sammenlignelige
         </div>
         <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200">
