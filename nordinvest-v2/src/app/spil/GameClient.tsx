@@ -1,1178 +1,1128 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ArrowRight, Crown, ExternalLink, Flame, RotateCcw, Share2, Timer } from "lucide-react";
 import "./game.css";
-import { calculateRoundScores } from "./gameLogic";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import {
+  HINT_COST,
+  STREAK_PCT,
+  accuracy,
+  calculateRoundScores,
+  levelFor,
+  streakBonus,
+  timePenalty,
+} from "./gameLogic";
+import {
+  addXp,
+  award,
+  bumpStreak,
+  liveStreak,
+  loadHistory,
+  loadProfile,
+  loadSeen,
+  markSeen,
+  msToNextDaily,
+  pushHistory,
+  resetHistory,
+  saveProfile,
+  todayDK,
+  BADGES,
+  type BadgeId,
+  type Profile,
+} from "./progress";
+import {
+  ACC_DOT,
+  AccuracyPill,
+  Confetti,
+  CountUp,
+  Gallery,
+  GuessRow,
+  HintPanel,
+  TimerBadge,
+  Toasts,
+  fmt,
+  kr,
+  playerColor,
+  useTicker,
+  type HintKey,
+  type PlayHome,
+  type PlayerGuess,
+  type Toast,
+} from "./ui";
+import {
+  BadgeShelf,
+  DailyCard,
+  FreePlayCard,
+  Leaderboard,
+  ProfileStrip,
+  REGIONS,
+  useBoard,
+  type FreeSettings,
+} from "./Home";
 
 /* ---------- types ---------- */
 
-type GameProperty = {
-  id: string;
-  price: number;
-  area: number;
-  rooms?: number;
-  yearBuilt?: number;
-  energyLabel?: string;
-  monthlyExpenses?: number;
-  propertyType?: string;
-  address: string;
-  city: string;
-  zipCode: string;
-  images: string[];
-  listingUrl?: string;
+type Stage = "home" | "loading" | "play" | "result" | "final" | "error";
+type Kind = "free" | "daily";
+type Player = { id: number; name: string; score: number; streak: number };
+type Row = {
+  pid: number;
+  guess: number;
+  pct: number;
+  base: number;
+  bonus: number;
+  streakBonus: number;
+  timePen: number;
+  points: number;
+  isWinner: boolean;
+  streak: number;
 };
+type Round = { price: number; rows: Row[]; hintCost: number };
+type Turn = { pos: number; stage: "inspect" | "handoff" | "running"; startedAt: number };
+type DailyResult = { score: number; squares: string; rank?: number; total?: number };
 
-type Player = { id: number; name: string; score: number };
+const freshGuesses = (players: { id: number }[]) =>
+  Object.fromEntries(players.map((p) => [p.id, { raw: "", value: null, locked: false } as PlayerGuess]));
 
-/* ---------- play history (per browser) ----------
-   Every home a player has been shown is remembered, and sent to the API as an
-   exclude list, so a new game never repeats a home. Stored in localStorage —
-   no login needed; survives reloads, per device. */
-
-const SEEN_KEY = "ni_spil_seen_v1";
-const HISTORY_KEY = "ni_spil_history_v1";
-const MAX_SEEN = 5000;
-
-type GameRecord = {
-  at: string;
-  region: string;
-  rounds: number;
-  players: { name: string; score: number }[];
-};
-
-function readJson<T>(key: string, fallback: T): T {
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-function writeJson(key: string, value: unknown) {
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    /* storage full or blocked — the game still works, it just can't remember */
-  }
-}
-function loadSeen(): string[] {
-  const v = readJson<unknown>(SEEN_KEY, []);
-  return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
-}
-function markSeen(id: string): number {
-  const seen = loadSeen();
-  if (!seen.includes(id)) {
-    seen.push(id);
-    writeJson(SEEN_KEY, seen.slice(-MAX_SEEN));
-  }
-  return Math.min(seen.length, MAX_SEEN);
-}
-function loadHistory(): GameRecord[] {
-  const v = readJson<unknown>(HISTORY_KEY, []);
-  return Array.isArray(v) ? (v as GameRecord[]) : [];
-}
-
-type PlayStats = { seen: number; games: number; lastPlayed: string | null };
-
-function readStats(): PlayStats {
-  const history = loadHistory();
-  return { seen: loadSeen().length, games: history.length, lastPlayed: history[history.length - 1]?.at ?? null };
-}
-
-type HintKey = "address" | "area" | "rooms" | "year" | "energy" | "expense";
-
-type Phase = "setup" | "loading" | "guessing" | "roundResult" | "final" | "error";
-
-type PlayerGuess = { raw: string; value: number | null; locked: boolean };
-
-/* ---------- constants ---------- */
-
-const HINTS: { key: HintKey; label: string; cost: number }[] = [
-  { key: "address", label: "Vis by / område", cost: 2 },
-  { key: "area", label: "Vis areal (m²)", cost: 2 },
-  { key: "rooms", label: "Vis værelser", cost: 2 },
-  { key: "year", label: "Vis byggeår", cost: 2 },
-  { key: "energy", label: "Vis energimærke", cost: 2 },
-  { key: "expense", label: "Vis ejerudgift", cost: 2 },
-];
-
-const REGIONS: { key: string; label: string; group: string }[] = [
-  { key: "hele-dk", label: "Hele Danmark", group: "Landsdele" },
-  { key: "sjaelland", label: "Sjælland", group: "Landsdele" },
-  { key: "fyn", label: "Fyn", group: "Landsdele" },
-  { key: "jylland", label: "Jylland", group: "Landsdele" },
-  { key: "kbh", label: "Storkøbenhavn", group: "Byer" },
-  { key: "aarhus", label: "Aarhus", group: "Byer" },
-  { key: "odense", label: "Odense", group: "Byer" },
-  { key: "aalborg", label: "Aalborg", group: "Byer" },
-  { key: "esbjerg", label: "Esbjerg", group: "Byer" },
-  { key: "vejle", label: "Vejle", group: "Byer" },
-  { key: "randers", label: "Randers", group: "Byer" },
-  { key: "kolding", label: "Kolding", group: "Byer" },
-  { key: "horsens", label: "Horsens", group: "Byer" },
-  { key: "roskilde", label: "Roskilde", group: "Byer" },
-  { key: "helsingoer", label: "Helsingør", group: "Byer" },
-  { key: "fredensborg", label: "Fredensborg", group: "Byer" },
-  { key: "hilleroed", label: "Hillerød", group: "Byer" },
-  { key: "koege", label: "Køge", group: "Byer" },
-  { key: "naestved", label: "Næstved", group: "Byer" },
-  { key: "slagelse", label: "Slagelse", group: "Byer" },
-  { key: "holbaek", label: "Holbæk", group: "Byer" },
-  { key: "frederikshavn", label: "Frederikshavn", group: "Byer" },
-  { key: "silkeborg", label: "Silkeborg", group: "Byer" },
-  { key: "viborg", label: "Viborg", group: "Byer" },
-  { key: "herning", label: "Herning", group: "Byer" },
-];
-
-const ROUND_OPTIONS = [3, 5, 10, 15, 20];
-
-/* ---------- helpers ---------- */
-
-const fmt = (n: number) =>
-  new Intl.NumberFormat("da-DK", { maximumFractionDigits: 0 }).format(n);
-
-const kr = (n: number) => `${fmt(n)} kr`;
-const krMd = (n: number) => `${fmt(n)} kr/md.`;
-
-/* ============================================================
-   Root component
-============================================================ */
+/* ============================================================ */
 
 export default function GameClient() {
-  const [phase, setPhase] = useState<Phase>("setup");
-  const [error, setError] = useState<string>("");
-
-  // setup
-  const [players, setPlayers] = useState<Player[]>([
-    { id: 1, name: "Spiller 1", score: 0 },
-    { id: 2, name: "Spiller 2", score: 0 },
-  ]);
-  const [region, setRegion] = useState<string>("hele-dk");
-  const [roundCount, setRoundCount] = useState<number>(10);
-
-  // game state
-  const [properties, setProperties] = useState<GameProperty[]>([]);
-  const [currentRound, setCurrentRound] = useState<number>(0); // 0-indexed
-  const [revealed, setRevealed] = useState<Set<HintKey>>(new Set());
-  const [guesses, setGuesses] = useState<Record<number, PlayerGuess>>({});
-  const [imageIdx, setImageIdx] = useState<number>(0);
-  const [roundHintCost, setRoundHintCost] = useState<number>(0);
-
-  // play history
-  const [stats, setStats] = useState<PlayStats>({ seen: 0, games: 0, lastPlayed: null });
-  const [exhausted, setExhausted] = useState(false); // this area has no unseen homes left
+  const [stage, setStage] = useState<Stage>("home");
+  const [kind, setKind] = useState<Kind>("free");
+  const [error, setError] = useState("");
+  const [exhausted, setExhausted] = useState(false);
   const [notice, setNotice] = useState("");
-  const recordedRef = useRef(false);
+
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [seenCount, setSeenCount] = useState(0);
+  const [gamesPlayed, setGamesPlayed] = useState(0);
+  const [boardKey, setBoardKey] = useState(0);
+  const board = useBoard(profile?.clientId ?? null, boardKey);
+  const [dailyAvailable, setDailyAvailable] = useState<boolean | null>(null);
+
+  const [settings, setSettings] = useState<FreeSettings>({
+    players: [{ id: 1, name: "Spiller 1" }],
+    region: "hele-dk",
+    rounds: 10,
+    timed: false,
+  });
+
+  // game
+  const [homes, setHomes] = useState<PlayHome[]>([]);
+  const [round, setRound] = useState(0);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [guesses, setGuesses] = useState<Record<number, PlayerGuess>>({});
+  const [revealed, setRevealed] = useState<Set<HintKey>>(new Set());
+  const [roundHintCost, setRoundHintCost] = useState(0);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [turn, setTurn] = useState<Turn | null>(null);
+  const [rounds, setRounds] = useState<Round[]>([]);
+  const [revealing, setRevealing] = useState(false);
+  const [dailyDate, setDailyDate] = useState("");
+  const [dailyResult, setDailyResult] = useState<DailyResult | null>(null);
+  const [gameXp, setGameXp] = useState(0);
+  const [gameBadges, setGameBadges] = useState<BadgeId[]>([]);
+
+  // feedback
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [confetti, setConfetti] = useState(0);
+  const hatTrick = useRef(0);
+  const topRef = useRef<HTMLDivElement>(null);
+
+  /* ---------- boot ---------- */
 
   useEffect(() => {
-    setStats(readStats());
+    const p = loadProfile();
+    profileRef.current = p;
+    setProfile(p);
+    setSeenCount(loadSeen().length);
+    setGamesPlayed(loadHistory().length);
+    setSettings((s) => ({ ...s, players: [{ id: 1, name: p.name || "Spiller 1" }] }));
+    // Warm the daily set so the button is instant.
+    fetch("/api/game/daily", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((j) => setDailyAvailable(!!j?.ok))
+      .catch(() => setDailyAvailable(false));
   }, []);
 
-  const regionLabel = REGIONS.find((r) => r.key === region)?.label ?? region;
+  const toast = useCallback((t: Omit<Toast, "id">) => {
+    const id = Date.now() + Math.random();
+    setToasts((ts) => [...ts, { ...t, id }]);
+    window.setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== id)), 4200);
+  }, []);
 
-  /* ---------- start game ---------- */
-  async function startGame() {
+  // The profile is read and written through a ref so several updates in one
+  // tick compose, and the side effects (save, toasts) run exactly once.
+  const profileRef = useRef<Profile | null>(null);
+  const updateProfile = useCallback(
+    (fn: (p: Profile) => { profile: Profile; fresh?: BadgeId[]; levelUp?: string | null }) => {
+      const cur = profileRef.current;
+      if (!cur) return;
+      const r = fn(cur);
+      profileRef.current = r.profile;
+      saveProfile(r.profile);
+      setProfile(r.profile);
+      if (r.fresh?.length) setGameBadges((g) => [...g, ...r.fresh!]);
+      for (const id of r.fresh ?? []) {
+        const b = BADGES.find((x) => x.id === id);
+        if (b) toast({ title: `Ny badge: ${b.title}`, body: b.how, tone: "badge" });
+      }
+      if (r.levelUp) toast({ title: `Nyt niveau: ${r.levelUp}`, body: "Du stiger i graderne.", tone: "level" });
+    },
+    [toast],
+  );
+
+  const grant = useCallback(
+    (ids: BadgeId[]) => {
+      if (ids.length) updateProfile((p) => award(p, ids));
+    },
+    [updateProfile],
+  );
+
+  const scrollTop = () => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  /* ---------- starting games ---------- */
+
+  function beginRound(ps: { id: number }[], timed: boolean) {
+    setGuesses(freshGuesses(ps));
+    setRevealed(new Set());
+    setRoundHintCost(0);
+    setTurn(timed ? { pos: 0, stage: "inspect", startedAt: 0 } : null);
+  }
+
+  async function startFree(s = settings) {
     setError("");
     setNotice("");
     setExhausted(false);
-    setPhase("loading");
+    setKind("free");
+    setStage("loading");
+    scrollTop();
     try {
       const res = await fetch("/api/game/properties", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         cache: "no-store",
-        body: JSON.stringify({ region, count: roundCount, exclude: loadSeen() }),
+        body: JSON.stringify({ region: s.region, count: s.rounds, exclude: loadSeen() }),
       });
       const j = await res.json();
       if (!j?.ok || !Array.isArray(j.properties) || j.properties.length < 3) {
+        const label = REGIONS.find((r) => r.key === s.region)?.label ?? s.region;
         if (j?.error === "exhausted") {
           setExhausted(true);
-          setError(`Du har allerede set alle de boliger, vi kan finde i ${regionLabel} lige nu. Vælg et andet område — eller nulstil din historik og start forfra.`);
+          setError(`Du har set alle de boliger, vi kan finde i ${label} lige nu. Vælg et andet område, eller nulstil din historik.`);
         } else {
-          setError("Kunne ikke hente nok boliger til dette område lige nu. Prøv igen eller vælg et andet område.");
+          setError("Vi kunne ikke hente nok boliger lige nu. Prøv igen, eller vælg et andet område.");
         }
-        setPhase("error");
+        setStage("error");
         return;
       }
-      if (j.exhausted) {
-        setNotice(`Der var kun ${j.properties.length} nye boliger tilbage i ${regionLabel}, så spillet har ${j.properties.length} runder.`);
-      }
-      recordedRef.current = false;
-      setProperties(j.properties as GameProperty[]);
-      setCurrentRound(0);
-      setRevealed(new Set());
-      setImageIdx(0);
-      setRoundHintCost(0);
-      setGuesses(
-        Object.fromEntries(players.map((p) => [p.id, { raw: "", value: null, locked: false }])),
-      );
-      setPlayers(players.map((p) => ({ ...p, score: 0 })));
-      setPhase("guessing");
+      if (j.exhausted) setNotice(`Der var kun ${j.properties.length} nye boliger tilbage i området, så spillet har ${j.properties.length} runder.`);
+      const ps = s.players.map((p) => ({ id: p.id, name: p.name.trim() || "Spiller", score: 0, streak: 0 }));
+      setHomes(j.properties as PlayHome[]);
+      setPlayers(ps);
+      setRound(0);
+      setRounds([]);
+      setHintsUsed(0);
+      setGameXp(0);
+      setGameBadges([]);
+      hatTrick.current = 0;
+      beginRound(ps, s.timed);
+      updateProfile((p) => ({ profile: { ...p, regions: Array.from(new Set([...p.regions, s.region])) } }));
+      setStage("play");
     } catch {
       setError("Netværksfejl. Prøv igen.");
-      setPhase("error");
+      setStage("error");
     }
   }
 
-  /* ---------- player list mgmt ---------- */
-  function addPlayer() {
-    if (players.length >= 8) return;
-    const nextId = Math.max(...players.map((p) => p.id)) + 1;
-    setPlayers([...players, { id: nextId, name: `Spiller ${nextId}`, score: 0 }]);
-  }
-  function removePlayer(id: number) {
-    if (players.length <= 2) return;
-    setPlayers(players.filter((p) => p.id !== id));
-  }
-  function renamePlayer(id: number, name: string) {
-    setPlayers(players.map((p) => (p.id === id ? { ...p, name } : p)));
+  async function startDaily() {
+    if (!profile) return;
+    if (profile.daily[todayDK()]) return;
+    setError("");
+    setNotice("");
+    setKind("daily");
+    setStage("loading");
+    scrollTop();
+    try {
+      const j = await fetch("/api/game/daily", { cache: "no-store" }).then((r) => r.json());
+      if (!j?.ok) throw new Error("no daily");
+      const ps = [{ id: 1, name: profile.name.trim() || "Dig", score: 0, streak: 0 }];
+      setDailyDate(j.date);
+      setHomes(j.properties as PlayHome[]);
+      setPlayers(ps);
+      setRound(0);
+      setRounds([]);
+      setHintsUsed(0);
+      setGameXp(0);
+      setGameBadges([]);
+      setDailyResult(null);
+      hatTrick.current = 0;
+      beginRound(ps, false);
+      setStage("play");
+    } catch {
+      setError("Dagens boliger kunne ikke hentes lige nu. Prøv igen om lidt.");
+      setStage("error");
+    }
   }
 
-  /* ---------- hints ---------- */
-  function revealHint(key: HintKey) {
-    if (revealed.has(key)) return;
-    const hint = HINTS.find((h) => h.key === key);
-    if (!hint) return;
-    const next = new Set(revealed);
-    next.add(key);
-    setRevealed(next);
-    // A hint is a real cost for every player, including when their score is 0.
-    // Negative totals are intentional: the scoreboard must reflect every cost.
-    setRoundHintCost((cost) => cost + hint.cost);
-    setPlayers((ps) => ps.map((p) => ({ ...p, score: p.score - hint.cost })));
+  /* ---------- during a round ---------- */
+
+  const home = homes[round];
+  const timed = kind === "free" && settings.timed;
+
+  useEffect(() => {
+    if (stage !== "play" || !home) return;
+    setSeenCount(markSeen(home.id));
+  }, [stage, home]);
+
+  function revealHint(k: HintKey) {
+    if (revealed.has(k)) return;
+    setRevealed((r) => new Set(r).add(k));
+    setRoundHintCost((c) => c + HINT_COST);
+    setHintsUsed((n) => n + 1);
+    setPlayers((ps) => ps.map((p) => ({ ...p, score: p.score - HINT_COST })));
   }
 
-  /* ---------- guessing ---------- */
-  /** Live-formats the field as the player types (4300000 → 4.300.000) and returns the formatted string. */
-  function setGuess(playerId: number, input: string): string {
-    const digits = input.replace(/\D/g, "").replace(/^0+/, "").slice(0, 10);
-    const n = digits ? Number(digits) : null;
+  function setGuess(pid: number, digits: string): string {
+    const d = digits.replace(/\D/g, "").replace(/^0+/, "").slice(0, 10);
+    const n = d ? Number(d) : null;
     const raw = n != null ? fmt(n) : "";
-    const value = n != null && n >= 1000 ? n : null;
-    setGuesses((g) => ({
-      ...g,
-      [playerId]: { ...(g[playerId] ?? { raw: "", value: null, locked: false }), raw, value },
-    }));
+    setGuesses((g) => ({ ...g, [pid]: { ...(g[pid] ?? { raw: "", value: null, locked: false }), raw, value: n != null && n >= 10_000 ? n : null } }));
     return raw;
   }
-  function lockGuess(playerId: number) {
-    setGuesses((g) => {
-      const cur = g[playerId];
-      if (!cur || cur.value == null) return g;
-      // Normalise the displayed string on lock so it shows Danish-formatted kr
-      return { ...g, [playerId]: { ...cur, raw: fmt(cur.value), locked: true } };
+
+  function lock(pid: number) {
+    const g = guesses[pid];
+    if (!g || g.value == null) return;
+    const seconds = turn?.stage === "running" ? (Date.now() - turn.startedAt) / 1000 : undefined;
+    setGuesses((all) => ({ ...all, [pid]: { ...g, raw: fmt(g.value!), locked: true, seconds } }));
+    if (seconds != null && seconds <= 10 && pid === players[0]?.id) grant(["speedy"]);
+    if (turn?.stage === "running") {
+      const nextPos = turn.pos + 1;
+      setTurn(nextPos < players.length ? { pos: nextPos, stage: "handoff", startedAt: 0 } : { ...turn, pos: nextPos });
+    }
+    // Daily: one player, so locking is the reveal.
+    if (kind === "daily") void revealDaily(g.value);
+  }
+
+  function unlock(pid: number) {
+    setGuesses((g) => ({ ...g, [pid]: { ...g[pid], locked: false } }));
+  }
+
+  const allLocked = useMemo(() => players.length > 0 && players.every((p) => guesses[p.id]?.locked && guesses[p.id]?.value != null), [players, guesses]);
+
+  function ownerBadges(price: number, pct: number) {
+    const ids: BadgeId[] = [];
+    if (pct <= 1) ids.push("spot_on");
+    if (price >= 5_000_000 && pct <= 5) ids.push("millionaire");
+    hatTrick.current = pct <= 5 ? hatTrick.current + 1 : 0;
+    if (hatTrick.current >= 3) ids.push("hat_trick");
+    grant(ids);
+  }
+
+  function revealFree() {
+    if (!home?.price || !allLocked) return;
+    const price = home.price;
+    const multi = players.length > 1;
+    const scored = calculateRoundScores(
+      players.map((p) => ({ id: p.id, score: p.score })),
+      Object.fromEntries(players.map((p) => [p.id, { value: guesses[p.id].value }])),
+      price,
+    );
+    const rows: Row[] = scored.map((s) => {
+      const p = players.find((x) => x.id === s.playerId)!;
+      const streak = s.pct <= STREAK_PCT ? p.streak + 1 : 0;
+      const sb = streakBonus(streak);
+      const tp = timed ? timePenalty(guesses[p.id].seconds ?? 0) : 0;
+      const bonus = multi ? s.winnerBonus : 0;
+      return {
+        pid: p.id,
+        guess: s.guess,
+        pct: s.pct,
+        base: s.basePoints,
+        bonus,
+        streakBonus: sb,
+        timePen: tp,
+        points: s.basePoints + bonus + sb - tp,
+        isWinner: multi && s.isWinner,
+        streak,
+      };
     });
-  }
-  function unlockGuess(playerId: number) {
-    setGuesses((g) => ({
-      ...g,
-      [playerId]: { ...(g[playerId] ?? { raw: "", value: null, locked: false }), locked: false },
-    }));
-  }
-
-  const allLocked = useMemo(
-    () => players.every((p) => guesses[p.id]?.locked && guesses[p.id]?.value != null),
-    [players, guesses],
-  );
-
-  /* ---------- reveal round result ---------- */
-  const currentProperty = properties[currentRound];
-
-  // A home counts as "seen" the moment it's on screen — so quitting a game
-  // half-way doesn't burn the homes that were never shown.
-  useEffect(() => {
-    if (phase !== "guessing" || !currentProperty) return;
-    const seen = markSeen(currentProperty.id);
-    setStats((s) => ({ ...s, seen }));
-  }, [phase, currentProperty]);
-
-  // Log each finished game once.
-  useEffect(() => {
-    if (phase !== "final" || recordedRef.current) return;
-    recordedRef.current = true;
-    const history = loadHistory();
-    history.push({
-      at: new Date().toISOString(),
-      region,
-      rounds: properties.length,
-      players: players.map((p) => ({ name: p.name, score: p.score })),
-    });
-    writeJson(HISTORY_KEY, history.slice(-50));
-    setStats(readStats());
-  }, [phase, region, properties.length, players]);
-
-  function resetHistory() {
-    writeJson(SEEN_KEY, []);
-    writeJson(HISTORY_KEY, []);
-    setStats({ seen: 0, games: 0, lastPlayed: null });
-  }
-
-  function revealPrice() {
-    if (!currentProperty || !allLocked) return;
-    const scored = calculateRoundScores(players, guesses, currentProperty.price);
     setPlayers((ps) =>
       ps.map((p) => {
-        const round = scored.find((row) => row.playerId === p.id);
-        return round ? { ...p, score: p.score + round.points } : p;
+        const r = rows.find((x) => x.pid === p.id)!;
+        return { ...p, score: p.score + r.points, streak: r.streak };
       }),
     );
-    setPhase("roundResult");
+    setRounds((rs) => [...rs, { price, rows, hintCost: roundHintCost }]);
+    if (rows.some((r) => r.pct <= 2)) setConfetti((c) => c + 1);
+    const own = rows.find((r) => r.pid === players[0].id);
+    if (own) ownerBadges(price, own.pct);
+    setStage("result");
+    scrollTop();
   }
 
-  function nextRound() {
-    const next = currentRound + 1;
-    if (next >= properties.length) {
-      setPhase("final");
+  async function revealDaily(guess: number) {
+    if (revealing) return;
+    setRevealing(true);
+    try {
+      const j = await fetch("/api/game/daily", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "reveal", date: dailyDate, index: round, guess }),
+      }).then((r) => r.json());
+      if (!j?.ok) throw new Error("reveal failed");
+      setHomes((hs) => hs.map((h, i) => (i === round ? { ...h, price: j.price, address: j.address, listingUrl: j.listingUrl } : h)));
+      const me = players[0];
+      const row: Row = {
+        pid: me.id,
+        guess,
+        pct: j.pct,
+        base: j.points,
+        bonus: 0,
+        streakBonus: 0,
+        timePen: 0,
+        points: j.points,
+        isWinner: false,
+        streak: 0,
+      };
+      setPlayers((ps) => ps.map((p) => ({ ...p, score: p.score + j.points })));
+      setRounds((rs) => [...rs, { price: j.price, rows: [row], hintCost: roundHintCost }]);
+      if (j.pct <= 2) setConfetti((c) => c + 1);
+      ownerBadges(j.price, j.pct);
+      setStage("result");
+      scrollTop();
+    } catch {
+      setNotice("Prisen kunne ikke hentes. Tjek din forbindelse, og lås dit gæt igen.");
+      setGuesses((g) => ({ ...g, [players[0].id]: { ...g[players[0].id], locked: false } }));
+    } finally {
+      setRevealing(false);
+    }
+  }
+
+  function next() {
+    if (round + 1 < homes.length) {
+      setRound(round + 1);
+      beginRound(players, timed);
+      setNotice("");
+      setStage("play");
+      scrollTop();
+    } else {
+      void finish();
+    }
+  }
+
+  /* ---------- end of game ---------- */
+
+  async function finish() {
+    const owner = players[0];
+    const seen = loadSeen().length;
+    if (kind === "free") {
+      pushHistory({ at: new Date().toISOString(), region: settings.region, rounds: homes.length, players: players.map((p) => ({ name: p.name, score: p.score })) });
+      setGamesPlayed(loadHistory().length);
+      const xp = Math.max(0, owner.score);
+      setGameXp(xp);
+      const ids: BadgeId[] = ["first_game"];
+      if (homes.length >= 5 && hintsUsed === 0) ids.push("no_hints");
+      if (seen >= 100) ids.push("seen100");
+      if ((profileRef.current?.regions.length ?? 0) >= 5) ids.push("explorer");
+      grant(ids);
+      updateProfile((p) => {
+        const r = addXp({ ...p, bestScore: Math.max(p.bestScore, owner.score) }, xp);
+        return r;
+      });
+      setStage("final");
+      scrollTop();
       return;
     }
-    setCurrentRound(next);
-    setRevealed(new Set());
-    setImageIdx(0);
-    setRoundHintCost(0);
-    setGuesses(
-      Object.fromEntries(players.map((p) => [p.id, { raw: "", value: null, locked: false }])),
-    );
-    setPhase("guessing");
+
+    // Daily: the server scores it again from the stored prices.
+    const guessesList = rounds.map((r) => r.rows[0].guess);
+    let result: DailyResult = {
+      score: Math.max(0, owner.score),
+      squares: rounds.map((r) => accuracy(r.rows[0].pct).square).join(""),
+    };
+    try {
+      const j = await fetch("/api/game/daily", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "submit", date: dailyDate, clientId: profileRef.current?.clientId, name: profileRef.current?.name || "Anonym", guesses: guessesList, hints: hintsUsed }),
+      }).then((r) => r.json());
+      if (j?.ok) result = { score: j.score, squares: j.squares, rank: j.rank, total: j.total };
+      else if (j?.error === "already_played" && j.score != null) result = { ...result, score: j.score, rank: j.rank, total: j.total };
+    } catch {
+      /* offline: keep the local result */
+    }
+    setDailyResult(result);
+    setGameXp(result.score);
+    const ids: BadgeId[] = ["daily_done", "first_game"];
+    if (result.rank && result.rank <= 10) ids.push("top10");
+    if (seen >= 100) ids.push("seen100");
+    updateProfile((p) => {
+      let np = bumpStreak({ ...p, daily: { ...p.daily, [dailyDate || todayDK()]: result } });
+      const streak = liveStreak(np);
+      const extra: BadgeId[] = [...ids];
+      if (streak >= 3) extra.push("streak3");
+      if (streak >= 7) extra.push("streak7");
+      const a = award(np, extra);
+      np = a.profile;
+      const x = addXp(np, result.score);
+      return { profile: x.profile, fresh: a.fresh, levelUp: x.levelUp };
+    });
+    setBoardKey((k) => k + 1);
+    setStage("final");
+    scrollTop();
   }
 
-  function playAgain() {
-    setPhase("setup");
-    setProperties([]);
-    setCurrentRound(0);
-    setRevealed(new Set());
-    setGuesses({});
-    setRoundHintCost(0);
-    setPlayers(players.map((p) => ({ ...p, score: 0 })));
+  async function share(r: DailyResult) {
+    const date = new Date().toLocaleDateString("da-DK", { day: "numeric", month: "long" });
+    const text = `NordInvest · Dagens 5 · ${date}\n${r.squares} ${r.score}/500${r.rank ? ` · nr. ${r.rank}` : ""}\nKan du slå mig? nordinvest.io/spil`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+        return;
+      }
+    } catch {
+      /* cancelled — fall through to copy */
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: "Kopieret", body: "Sæt det ind i jeres gruppechat.", tone: "info" });
+    } catch {
+      toast({ title: "Kunne ikke kopiere", tone: "info" });
+    }
   }
 
-  /* =========================================================
-     Render
-  ========================================================= */
+  /* ============================================================ */
+
   return (
-    <div className="game-page">
-      {/* Site-wide navigation — same Nav component used across all pages, so
-          the /spil tab uses the real NordInvest logo + navigation instead of
-          a bespoke ◆ mark. */}
+    <div className="min-h-screen bg-slate-100 text-slate-900">
       <Nav />
+      <Toasts toasts={toasts} />
+      <Confetti burst={confetti} />
+      <div ref={topRef} className="scroll-mt-16" />
 
-      <header className="game-subheader">
-        <div className="game-subheader-inner">
-          <h1 className="page-title">Boligpris Spil — Gæt Prisen på Boligen</h1>
-          <p className="page-subtitle">
-            Danmarks største bolig-quiz — gæt prisen på rigtige huse og lejligheder fra Boligsiden. 2-8 spillere, gratis, ingen login.
-          </p>
-        </div>
-      </header>
-
-      <div className="game-shell">
-        <main className="game-main">
-          {phase === "setup" && (
-            <SetupScreen
-              players={players}
-              onAdd={addPlayer}
-              onRemove={removePlayer}
-              onRename={renamePlayer}
-              region={region}
-              setRegion={setRegion}
-              roundCount={roundCount}
-              setRoundCount={setRoundCount}
-              onStart={startGame}
-              stats={stats}
-              onReset={resetHistory}
-            />
-          )}
-
-          {phase === "loading" && <LoadingScreen region={region} />}
-
-          {phase === "error" && (
-            <div className="panel error-panel">
-              <div className="panel-title">{exhausted ? "Du har set det hele her" : "Fejl"}</div>
-              <p style={{ margin: "12px 0" }}>{error}</p>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <button className="btn btn-primary" onClick={() => setPhase("setup")}>
-                  Vælg andet område
-                </button>
-                {exhausted && (
-                  <button
-                    className="btn btn-outline"
-                    onClick={() => {
-                      resetHistory();
-                      startGame();
-                    }}
-                  >
-                    Nulstil historik og spil
-                  </button>
-                )}
+      {stage === "home" && profile && (
+        <>
+          <header className="game-hero relative overflow-hidden bg-[#0b1b33] px-4 pb-24 pt-10 text-white sm:px-6 sm:pt-14">
+            <div className="relative mx-auto max-w-6xl">
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Gæt boligprisen</h1>
+              <p className="mt-2 max-w-xl text-blue-100">
+                Rigtige danske boliger til salg lige nu. Gæt prisen, saml point, og se hvor du ligger mod resten af Danmark.
+              </p>
+              <div className="mt-6">
+                <ProfileStrip profile={profile} seen={seenCount} />
               </div>
             </div>
-          )}
+          </header>
+          <main className="relative mx-auto -mt-16 grid max-w-6xl gap-5 px-4 pb-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="space-y-5">
+              <DailyCard
+                profile={profile}
+                board={board}
+                available={dailyAvailable}
+                onPlay={startDaily}
+                onShare={() => {
+                  const r = profile.daily[todayDK()];
+                  if (r) void share(r);
+                }}
+                onName={(name) => updateProfile((p) => ({ profile: { ...p, name } }))}
+              />
+              <FreePlayCard settings={settings} setSettings={setSettings} onStart={() => startFree()} />
+            </div>
+            <div className="space-y-5">
+              <Leaderboard board={board} />
+              <BadgeShelf profile={profile} />
+              <section className="rounded-3xl bg-white p-5 text-sm text-slate-600 shadow-card ring-1 ring-slate-200 sm:p-6">
+                <h2 className="text-lg font-extrabold text-slate-900">Dine tal</h2>
+                <dl className="mt-3 grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-2xl bg-slate-50 p-3">
+                    <dt className="text-xs">Spil</dt>
+                    <dd className="text-xl font-bold text-slate-900">{gamesPlayed}</dd>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-3">
+                    <dt className="text-xs">Boliger set</dt>
+                    <dd className="text-xl font-bold text-slate-900">{seenCount}</dd>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-3">
+                    <dt className="text-xs">Bedste spil</dt>
+                    <dd className="text-xl font-bold text-slate-900">{profile.bestScore}</dd>
+                  </div>
+                </dl>
+                <p className="mt-3">
+                  Du får aldrig den samme bolig to gange.{" "}
+                  {seenCount > 0 && (
+                    <button
+                      type="button"
+                      className="font-semibold text-blue-700 underline-offset-2 hover:underline"
+                      onClick={() => {
+                        if (window.confirm("Nulstil de boliger, du har set? Så kan de dukke op igen.")) {
+                          resetHistory();
+                          setSeenCount(0);
+                          setGamesPlayed(0);
+                        }
+                      }}
+                    >
+                      Nulstil
+                    </button>
+                  )}
+                </p>
+              </section>
+            </div>
+          </main>
+        </>
+      )}
 
-          {notice && (phase === "guessing" || phase === "roundResult") && (
-            <div className="game-notice" role="status">{notice}</div>
-          )}
+      {stage === "loading" && (
+        <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
+          <p className="mt-5 text-lg font-bold">Finder nye boliger …</p>
+          <p className="mt-1 text-sm text-slate-500">Vi henter boliger, du ikke har set før.</p>
+        </div>
+      )}
 
-          {phase === "guessing" && currentProperty && (
-            <GuessingScreen
-              property={currentProperty}
-              roundIdx={currentRound}
-              totalRounds={properties.length}
-              revealed={revealed}
-              onReveal={revealHint}
+      {stage === "error" && (
+        <div className="mx-auto max-w-lg px-4 py-20">
+          <div className="rounded-3xl bg-white p-6 shadow-card ring-1 ring-slate-200">
+            <h2 className="text-xl font-extrabold">{exhausted ? "Du har set det hele her" : "Noget gik galt"}</h2>
+            <p className="mt-2 text-slate-600">{error}</p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <button type="button" onClick={() => setStage("home")} className="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-bold text-white">
+                Tilbage
+              </button>
+              {exhausted && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetHistory();
+                    setSeenCount(0);
+                    void startFree();
+                  }}
+                  className="rounded-xl px-4 py-2.5 text-sm font-bold text-slate-900 ring-1 ring-inset ring-slate-300"
+                >
+                  Nulstil og spil
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {(stage === "play" || stage === "result") && home && (
+        <main className="mx-auto max-w-6xl px-4 pb-16 pt-4 sm:px-6 sm:pt-6">
+          <TopBar
+            kind={kind}
+            region={settings.region}
+            round={round}
+            total={homes.length}
+            players={players}
+            rounds={rounds}
+            onQuit={() => setStage("home")}
+          />
+          {notice && <div className="mt-3 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-amber-200">{notice}</div>}
+
+          {stage === "play" ? (
+            <div className="mt-4 grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+              <div className="min-w-0">
+                <Gallery home={home} nextHome={homes[round + 1]} />
+              </div>
+              <div className="min-w-0 space-y-4">
+                <div className="rounded-3xl bg-white p-4 shadow-card ring-1 ring-slate-200 sm:p-5">
+                  <HintPanel home={home} revealed={revealed} onReveal={revealHint} shared={players.length > 1} />
+                </div>
+                <div className="rounded-3xl bg-white p-4 shadow-card ring-1 ring-slate-200 sm:p-5">
+                  <GuessArea
+                    players={players}
+                    guesses={guesses}
+                    turn={turn}
+                    onStartTurn={() => turn && setTurn({ ...turn, stage: "running", startedAt: Date.now() })}
+                    setGuess={setGuess}
+                    lock={lock}
+                    unlock={unlock}
+                    daily={kind === "daily"}
+                    revealing={revealing}
+                  />
+                  {kind === "free" && (
+                    <button
+                      type="button"
+                      disabled={!allLocked}
+                      onClick={revealFree}
+                      className="mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 text-base font-extrabold text-white shadow-btn transition hover:bg-emerald-700 active:translate-y-px disabled:bg-slate-200 disabled:text-slate-500"
+                    >
+                      {allLocked ? (
+                        <>
+                          Afslør prisen <ArrowRight className="h-5 w-5" />
+                        </>
+                      ) : (
+                        "Lås alle gæt først"
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <RoundResult
+              home={home}
+              round={rounds[rounds.length - 1]}
               players={players}
-              guesses={guesses}
-              onGuess={setGuess}
-              onLock={lockGuess}
-              onUnlock={unlockGuess}
-              onRevealPrice={revealPrice}
-              allLocked={allLocked}
-              imageIdx={imageIdx}
-              setImageIdx={setImageIdx}
+              timed={timed}
+              isLast={round + 1 >= homes.length}
+              daily={kind === "daily"}
+              onNext={next}
             />
-          )}
-
-          {phase === "roundResult" && currentProperty && (
-            <RoundResultScreen
-              property={currentProperty}
-              roundIdx={currentRound}
-              totalRounds={properties.length}
-              players={players}
-              guesses={guesses}
-              hintCost={roundHintCost}
-              onNext={nextRound}
-              isFinal={currentRound === properties.length - 1}
-            />
-          )}
-
-          {phase === "final" && (
-            <FinalScreen players={players} onPlayAgain={playAgain} />
           )}
         </main>
-      </div>
+      )}
 
-      {/* SEO content strip — dense real prose so search engines pick up every
-          way a Dane might phrase this query: "boligpris spil", "bolig spil",
-          "gæt prisen på boligen", "gæt husets pris", "boligquiz", "prisspil",
-          "ejendomsspil", "boligmarked spil", etc. Every H2/H3 anchors a
-          distinct query variant. */}
-      <section className="game-seo-strip">
-        <div className="game-seo-inner">
-          <h2>Boligpris Spil — Danmarks største bolig-quiz</h2>
-          <p>
-            <strong>Gæt Boligprisen</strong> er et gratis <strong>boligpris spil</strong> hvor
-            2-8 spillere gætter kontantprisen på rigtige danske boliger fra Boligsiden.
-            Det er også kendt som <em>bolig spil</em>, <em>boligquiz</em>, <em>prisspil</em>{" "}
-            og <em>ejendomsspil</em> — samme koncept: se boligen, gæt prisen, vind runden.
-            Ingen login, ingen betaling, ingen download.
-          </p>
-
-          <h3>Gæt prisen på boligen — hus, lejlighed eller villa</h3>
-          <p>
-            Uanset om du vil <strong>gætte prisen på et hus</strong>, en{" "}
-            <strong>lejlighed</strong> eller en villa, dækker boligquizzen alle
-            boligtyper. Vi trækker aktive salgsopstillinger direkte fra Boligsiden —
-            parcelhuse, ejerlejligheder, rækkehuse, villaer, andelsboliger og
-            fritidshuse. Hver runde viser dig billeder af boligen, og du gætter{" "}
-            <strong>kontantprisen</strong>. Tættest på vinder.
-          </p>
-
-          <h3>Sådan spiller du bolig-quizzen</h3>
-          <ol>
-            <li>Vælg 2-8 spillere — spil med familien, kollegaerne eller vennerne</li>
-            <li>Vælg område: hele Danmark, en landsdel eller specifik by</li>
-            <li>Se billederne af boligen og gæt kontantprisen</li>
-            <li>Køb evt. hints om areal, byggeår, energimærke — koster 2 point</li>
-            <li>Tættest på vinder rundens bonus, alle får point for at være tæt på</li>
-          </ol>
-
-          <h3>Boligpris spil i din by</h3>
-          <p>
-            Spil <strong>Gæt Boligprisen i København</strong>, Aarhus, Odense, Aalborg,
-            Esbjerg, Vejle, Randers, Kolding, Horsens, Roskilde, Silkeborg, Herning,
-            Helsingør, Næstved eller Hillerød — eller test dig selv på hele
-            Danmark. Prisniveauerne er vidt forskellige, og det er en overraskende
-            god måde at træne sin intuition for det danske boligmarked.
-          </p>
-
-          <h3>Hvorfor spille Gæt Boligprisen?</h3>
-          <p>
-            Boligmarkedet er svært at aflæse. Prisspillet er den sjoveste måde at
-            teste hvor godt du kender det danske boligmarked. Kernebrugerne er
-            <strong> kommende boligkøbere, ejendomsinvestorer og mæglerbranchen</strong> —
-            men det fungerer også som selskabsspil, familieaften, eller onboarding
-            for nye kolleger i ejendomsbranchen. Alt data kommer fra{" "}
-            <a href="https://boligsiden.dk" target="_blank" rel="noopener">Boligsiden</a>{" "}
-            og opdateres løbende, så udbuddet altid afspejler det aktuelle
-            boligmarked.
-          </p>
-
-          <h3>Andre gratis værktøjer til boliginvestering</h3>
-          <p>
-            Vil du analysere en konkret bolig i stedet for at gætte prisen? Prøv{" "}
-            <a href="/analyseren">Analyseren</a> — indsæt et boliglink og få cashflow,
-            afkast og risiko-vurdering. Vil du se de bedste deals i hele Danmark
-            lige nu? Åbn <a href="/deals">Deal-motoren</a>. Vil du lære om
-            ejendomsinvestering? Læs vores <a href="/blog">blog</a>.
-          </p>
-
-          <p className="game-seo-links">
-            Se også: <a href="/analyseren">Boliganalyse</a> ·{" "}
-            <a href="/deals">Deal-motoren</a> ·{" "}
-            <a href="/blog">Blog om ejendomsinvestering</a> ·{" "}
-            <a href="/investering-i-ejendom-koebenhavn">Investering i København</a> ·{" "}
-            <a href="/investering-i-ejendom-aarhus">Investering i Aarhus</a>
-          </p>
-        </div>
-      </section>
+      {stage === "final" && profile && (
+        <main className="mx-auto max-w-3xl px-4 pb-16 pt-6 sm:px-6">
+          {kind === "daily" && dailyResult ? (
+            <DailyFinal
+              result={dailyResult}
+              profile={profile}
+              board={board}
+              xp={gameXp}
+              badges={gameBadges}
+              onShare={() => share(dailyResult)}
+              onFree={() => setStage("home")}
+            />
+          ) : (
+            <FreeFinal
+              players={players}
+              rounds={rounds}
+              profile={profile}
+              xp={gameXp}
+              badges={gameBadges}
+              onAgain={() => startFree()}
+              onHome={() => setStage("home")}
+            />
+          )}
+        </main>
+      )}
 
       <Footer />
     </div>
   );
 }
 
-/* ============================================================
-   Setup screen
-============================================================ */
+/* ============================================================ */
 
-function SetupScreen(props: {
-  players: Player[];
-  onAdd: () => void;
-  onRemove: (id: number) => void;
-  onRename: (id: number, name: string) => void;
+function TopBar({
+  kind,
+  region,
+  round,
+  total,
+  players,
+  rounds,
+  onQuit,
+}: {
+  kind: Kind;
   region: string;
-  setRegion: (r: string) => void;
-  roundCount: number;
-  setRoundCount: (n: number) => void;
-  onStart: () => void;
-  stats: PlayStats;
-  onReset: () => void;
+  round: number;
+  total: number;
+  players: Player[];
+  rounds: Round[];
+  onQuit: () => void;
 }) {
-  const groups = useMemo(() => {
-    const g: Record<string, typeof REGIONS> = {};
-    for (const r of REGIONS) (g[r.group] ||= []).push(r);
-    return g;
-  }, []);
-
+  const label = kind === "daily" ? "Dagens 5" : `Fri leg · ${REGIONS.find((r) => r.key === region)?.label ?? region}`;
+  const ranked = [...players].sort((a, b) => b.score - a.score);
   return (
-    <div className="setup-grid">
-      <section className="panel">
-        <div className="panel-title">1. Spillere <span className="panel-title-sub">(min. 2 · max. 8)</span></div>
-        <div className="player-list">
-          {props.players.map((p, i) => (
-            <div key={p.id} className="player-row">
-              <span className="player-badge" style={{ background: playerColor(i) }}>{i + 1}</span>
-              <input
-                type="text"
-                className="input player-name-input"
-                value={p.name}
-                onChange={(e) => props.onRename(p.id, e.target.value.slice(0, 20))}
-                maxLength={20}
-                placeholder={`Spiller ${i + 1}`}
-              />
-              {props.players.length > 2 && (
-                <button className="btn-icon" onClick={() => props.onRemove(p.id)} aria-label="Fjern spiller">
-                  ×
-                </button>
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-3xl bg-white px-4 py-3 shadow-card ring-1 ring-slate-200 sm:px-5">
+      <div className="min-w-0">
+        <div className="text-xs font-semibold text-blue-700">{label}</div>
+        <div className="text-lg font-extrabold">
+          Bolig {round + 1} <span className="font-medium text-slate-400">af {total}</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-1.5" aria-label="Dine runder">
+        {Array.from({ length: total }, (_, i) => {
+          const r = rounds[i];
+          const pct = r?.rows.find((x) => x.pid === players[0]?.id)?.pct;
+          return (
+            <span
+              key={i}
+              className={`h-2.5 rounded-full transition-all ${i === round ? "w-6 bg-blue-600" : "w-2.5"} ${
+                pct != null ? ACC_DOT[accuracy(pct).key] : i === round ? "" : "bg-slate-200"
+              }`}
+            />
+          );
+        })}
+      </div>
+      <div className="ml-auto flex flex-wrap items-center gap-2">
+        {ranked.map((p) => {
+          const idx = players.findIndex((x) => x.id === p.id);
+          return (
+            <span key={p.id} className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 py-1 pl-1 pr-3 text-sm ring-1 ring-inset ring-slate-200">
+              <span className="grid h-6 w-6 place-items-center rounded-full text-[11px] font-bold text-white" style={{ background: playerColor(idx) }}>
+                {idx + 1}
+              </span>
+              {players.length > 1 && <span className="max-w-[6rem] truncate font-medium">{p.name}</span>}
+              <span className={`font-bold tabular-nums ${p.score < 0 ? "text-rose-600" : ""}`}>{p.score}</span>
+              {p.streak >= 2 && (
+                <span className="inline-flex items-center text-amber-600" title={`${p.streak} i træk inden for 10 %`}>
+                  <Flame className="h-3.5 w-3.5" />
+                  <span className="text-xs font-bold">{p.streak}</span>
+                </span>
               )}
-            </div>
-          ))}
-          {props.players.length < 8 && (
-            <button className="btn btn-outline btn-add-player" onClick={props.onAdd}>
-              + Tilføj spiller
-            </button>
-          )}
-        </div>
-      </section>
-
-      <section className="panel">
-        <div className="panel-title">2. Område</div>
-        {Object.entries(groups).map(([group, list]) => (
-          <div key={group} className="region-group">
-            <div className="region-group-title">{group}</div>
-            <div className="region-chips">
-              {list.map((r) => (
-                <button
-                  key={r.key}
-                  className={`chip ${props.region === r.key ? "chip-active" : ""}`}
-                  onClick={() => props.setRegion(r.key)}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <section className="panel">
-        <div className="panel-title">3. Runder pr. spil</div>
-        <div className="round-chips">
-          {ROUND_OPTIONS.map((n) => (
-            <button
-              key={n}
-              className={`chip ${props.roundCount === n ? "chip-active" : ""}`}
-              onClick={() => props.setRoundCount(n)}
-            >
-              {n} boliger
-            </button>
-          ))}
-        </div>
-
-        <div className="rules-box">
-          <div className="rules-title">Sådan spiller I</div>
-          <ol>
-            <li>Se boligen. Gæt prisen. Lås.</li>
-            <li>Hints koster <strong>2 point</strong> — brug dem klogt.</li>
-            <li>Tættest på vinder <strong>op til 150 point</strong>.</li>
-          </ol>
-        </div>
-
-        <button className="btn btn-primary btn-start" onClick={props.onStart}>
-          START SPIL →
+            </span>
+          );
+        })}
+        <button type="button" onClick={onQuit} className="rounded-full px-3 py-1 text-xs font-semibold text-slate-500 ring-1 ring-inset ring-slate-200 hover:text-slate-900">
+          Afslut
         </button>
-
-        {props.stats.seen > 0 && (
-          <div className="history-box">
-            <div>
-              <strong>{props.stats.seen.toLocaleString("da-DK")}</strong> boliger set
-              {props.stats.games > 0 && (
-                <> · <strong>{props.stats.games}</strong> spil spillet</>
-              )}
-              {props.stats.lastPlayed && (
-                <> · sidst {new Date(props.stats.lastPlayed).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</>
-              )}
-            </div>
-            <div className="history-sub">
-              Du får aldrig den samme bolig to gange.{" "}
-              <button
-                type="button"
-                className="history-reset"
-                onClick={() => {
-                  if (window.confirm("Nulstil din historik? Boliger du har set kan så dukke op igen.")) props.onReset();
-                }}
-              >
-                Nulstil
-              </button>
-            </div>
-          </div>
-        )}
-      </section>
+      </div>
     </div>
   );
 }
 
-/* ============================================================
-   Loading
-============================================================ */
-
-function LoadingScreen({ region }: { region: string }) {
-  const label = REGIONS.find((r) => r.key === region)?.label ?? region;
-  return (
-    <div className="panel loading-panel">
-      <div className="spinner" />
-      <div className="loading-title">Henter boliger fra {label}...</div>
-      <div className="loading-sub">Vi trækker rigtige, aktive boliger fra Boligsiden</div>
-    </div>
-  );
-}
-
-/* ============================================================
-   Guessing screen
-============================================================ */
-
-function GuessingScreen(props: {
-  property: GameProperty;
-  roundIdx: number;
-  totalRounds: number;
-  revealed: Set<HintKey>;
-  onReveal: (k: HintKey) => void;
+function GuessArea({
+  players,
+  guesses,
+  turn,
+  onStartTurn,
+  setGuess,
+  lock,
+  unlock,
+  daily,
+  revealing,
+}: {
   players: Player[];
   guesses: Record<number, PlayerGuess>;
-  onGuess: (id: number, raw: string) => string;
-  onLock: (id: number) => void;
-  onUnlock: (id: number) => void;
-  onRevealPrice: () => void;
-  allLocked: boolean;
-  imageIdx: number;
-  setImageIdx: (n: number) => void;
+  turn: Turn | null;
+  onStartTurn: () => void;
+  setGuess: (pid: number, d: string) => string;
+  lock: (pid: number) => void;
+  unlock: (pid: number) => void;
+  daily: boolean;
+  revealing: boolean;
 }) {
-  const p = props.property;
+  const active = turn ? players[turn.pos] : null;
   return (
-    <>
-      <RoundHeader roundIdx={props.roundIdx} totalRounds={props.totalRounds} players={props.players} />
-
-      <div className="stage">
-        <div className="gallery-wrap">
-          <div className="gallery-main">
-            {p.images[props.imageIdx] ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                src={p.images[props.imageIdx]}
-                alt={`Bolig — billede ${props.imageIdx + 1} af ${p.images.length}`}
-                className="gallery-img"
-              />
-            ) : (
-              <div className="gallery-empty">Ingen billeder</div>
-            )}
-            {p.images.length > 1 && (
-              <>
-                <button
-                  className="gallery-nav gallery-prev"
-                  onClick={() => props.setImageIdx((props.imageIdx - 1 + p.images.length) % p.images.length)}
-                  aria-label="Forrige billede"
-                >‹</button>
-                <button
-                  className="gallery-nav gallery-next"
-                  onClick={() => props.setImageIdx((props.imageIdx + 1) % p.images.length)}
-                  aria-label="Næste billede"
-                >›</button>
-                <div className="gallery-count">
-                  {props.imageIdx + 1} / {p.images.length}
-                </div>
-              </>
-            )}
-          </div>
-          <div className="gallery-thumbs">
-            {p.images.slice(0, 12).map((src, i) => (
-              <button
-                key={src}
-                className={`thumb ${i === props.imageIdx ? "thumb-active" : ""}`}
-                onClick={() => props.setImageIdx(i)}
-                aria-label={`Vis billede ${i + 1}`}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={src} alt="" />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <aside className="side-panel">
-          <div className="panel-title panel-title-tight">Hints <span className="panel-title-sub">(−2 point pr. stk.)</span></div>
-          <div className="hint-list">
-            {HINTS.map((h) => {
-              const isRevealed = props.revealed.has(h.key);
-              const value = hintValue(h.key, p);
-              return (
-                <button
-                  key={h.key}
-                  className={`hint-btn ${isRevealed ? "hint-btn-revealed" : ""}`}
-                  disabled={isRevealed || value == null}
-                  onClick={() => props.onReveal(h.key)}
-                >
-                  {isRevealed ? (
-                    <>
-                      <span className="hint-key">{hintShortLabel(h.key)}</span>
-                      <span className="hint-value">{value ?? "—"}</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="hint-key">{h.label}</span>
-                      <span className="hint-cost">−{h.cost}</span>
-                    </>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="panel-title panel-title-tight" style={{ marginTop: 20 }}>
-            Jeres gæt
-          </div>
-          <div className="guess-list">
-            {props.players.map((pl, i) => (
-              <GuessRow
-                key={pl.id}
-                player={pl}
-                index={i}
-                guess={props.guesses[pl.id]}
-                onGuess={props.onGuess}
-                onLock={props.onLock}
-                onUnlock={props.onUnlock}
-              />
-            ))}
-          </div>
-
-          <button
-            className="btn btn-reveal"
-            disabled={!props.allLocked}
-            onClick={props.onRevealPrice}
-          >
-            {props.allLocked ? "AFSLØR PRIS →" : "Lås alle gæt for at afsløre"}
-          </button>
-        </aside>
+    <div>
+      <div className="mb-3 flex items-baseline justify-between">
+        <h3 className="text-sm font-semibold text-slate-900">{players.length > 1 ? "Jeres gæt" : "Dit gæt"}</h3>
+        {turn && (
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700">
+            <Timer className="h-3.5 w-3.5" /> Tidspres
+          </span>
+        )}
       </div>
-    </>
+
+      {turn && (turn.stage === "inspect" || turn.stage === "handoff") && active && (
+        <div className="mb-3 rounded-2xl bg-amber-50 p-4 ring-1 ring-inset ring-amber-200">
+          <p className="text-sm text-amber-950">
+            {turn.stage === "inspect" ? (
+              <>Kig boligen igennem i ro og mag. Tiden starter først, når I trykker. <strong>{active.name}</strong> starter.</>
+            ) : (
+              <>Giv enheden videre til <strong>{active.name}</strong>. Tiden starter, når du trykker.</>
+            )}
+          </p>
+          <button
+            type="button"
+            onClick={onStartTurn}
+            className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-amber-500 text-sm font-extrabold text-slate-900 shadow-btn transition hover:bg-amber-400 active:translate-y-px"
+          >
+            <Timer className="h-4 w-4" /> Start tiden for {active.name}
+          </button>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        {players.map((p, i) => {
+          const isActive = turn ? turn.stage === "running" && turn.pos === i : true;
+          return (
+            <GuessRow
+              key={p.id}
+              name={p.name}
+              index={i}
+              guess={guesses[p.id]}
+              disabled={!isActive || revealing}
+              canUnlock={!turn && !daily}
+              autoFocus={isActive && (turn ? true : i === 0)}
+              onGuess={(d) => setGuess(p.id, d)}
+              onLock={() => lock(p.id)}
+              onUnlock={() => unlock(p.id)}
+              timer={turn && turn.stage === "running" && turn.pos === i ? <TimerBadge startedAt={turn.startedAt} /> : undefined}
+            />
+          );
+        })}
+      </div>
+      {daily && <p className="mt-3 text-xs text-slate-500">Når du låser, afsløres prisen. Du kan ikke fortryde.</p>}
+      {revealing && <p className="mt-3 text-sm font-semibold text-blue-700">Afslører prisen …</p>}
+    </div>
   );
 }
 
-/**
- * One player's guess. Typing is live-formatted (4.300.000) with the caret
- * kept in place; Enter locks. Once locked the number is hidden behind dots so
- * the other players can't copy it — "Hold for at se" shows it only while held.
- */
-function GuessRow({
-  player,
-  index,
-  guess,
-  onGuess,
-  onLock,
-  onUnlock,
+function RoundResult({
+  home,
+  round,
+  players,
+  timed,
+  isLast,
+  daily,
+  onNext,
 }: {
-  player: Player;
-  index: number;
-  guess: PlayerGuess | undefined;
-  onGuess: (id: number, raw: string) => string;
-  onLock: (id: number) => void;
-  onUnlock: (id: number) => void;
+  home: PlayHome;
+  round: Round | undefined;
+  players: Player[];
+  timed: boolean;
+  isLast: boolean;
+  daily: boolean;
+  onNext: () => void;
 }) {
-  const [peek, setPeek] = useState(false);
-  const locked = !!guess?.locked;
-  const inputRef = useRef<HTMLInputElement>(null);
-  const caretRef = useRef<number | null>(null);
-
-  // Restore the caret synchronously after the formatted value renders, so
-  // editing in the middle of "4.350.000" never jumps to the end.
-  useLayoutEffect(() => {
-    const el = inputRef.current;
-    if (caretRef.current != null && el && document.activeElement === el) {
-      el.setSelectionRange(caretRef.current, caretRef.current);
-    }
-    caretRef.current = null;
-  });
-
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const el = e.target;
-    const prev = guess?.raw ?? "";
-    let digits = el.value.replace(/\D/g, "");
-    let digitsBefore = el.value.slice(0, el.selectionStart ?? el.value.length).replace(/\D/g, "").length;
-    // Backspace over a thousands dot removes only the dot, which formatting
-    // would put straight back — delete the digit in front of it instead.
-    if (digits === prev.replace(/\D/g, "") && el.value.length < prev.length && digitsBefore > 0) {
-      digits = digits.slice(0, digitsBefore - 1) + digits.slice(digitsBefore);
-      digitsBefore -= 1;
-    }
-    const formatted = onGuess(player.id, digits);
-    let pos = 0;
-    let seen = 0;
-    while (pos < formatted.length && seen < digitsBefore) {
-      if (/\d/.test(formatted[pos])) seen++;
-      pos++;
-    }
-    caretRef.current = pos;
-  }
+  const [shown, setShown] = useState(false);
+  useEffect(() => setShown(false), [home.id]);
+  if (!round) return null;
+  const facts = [
+    home.typeLabel,
+    home.area ? `${home.area} m²` : null,
+    home.rooms ? `${home.rooms} vær.` : null,
+    home.yearBuilt ? `opført ${home.yearBuilt}` : null,
+    home.energyLabel ? `energimærke ${home.energyLabel}` : null,
+  ].filter(Boolean);
+  const winner = round.rows.find((r) => r.isWinner);
 
   return (
-    <div className={`guess-row ${locked ? "guess-row-locked" : ""}`}>
-      <span className="mini-badge" style={{ background: playerColor(index) }}>{index + 1}</span>
-      <span className="guess-name">{player.name}</span>
-      <div className="guess-input-wrap">
-        {locked ? (
+    <div className="mt-4 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div className="min-w-0">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={home.images[0]} alt="" className="aspect-[4/3] w-full rounded-3xl object-cover shadow-card" />
+      </div>
+      <div className="min-w-0 space-y-4">
+        <div className="rounded-3xl bg-[#0b1b33] p-5 text-white shadow-card-lift sm:p-6">
+          <div className="text-sm text-blue-100">Den rigtige pris</div>
+          <div className="mt-1 text-4xl font-extrabold tabular-nums tracking-tight sm:text-5xl">
+            <CountUp to={round.price} onDone={() => setShown(true)} /> <span className="text-2xl font-bold text-blue-200">kr.</span>
+          </div>
+          {home.address && <div className="mt-2 text-sm font-medium text-white">{home.address}</div>}
+          <div className="mt-1 text-sm text-blue-100">{facts.join(" · ")}</div>
+          {home.listingUrl && (
+            <a href={home.listingUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-200 hover:text-white">
+              Se boligen hos mægleren <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
+
+        <div className={`space-y-2 transition-opacity duration-300 ${shown ? "opacity-100" : "opacity-0"}`}>
+          {winner && players.length > 1 && (
+            <div className="rounded-2xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-900 ring-1 ring-amber-200">
+              <Crown className="mr-1.5 inline h-4 w-4" />
+              {players.find((p) => p.id === winner.pid)?.name} var tættest på
+            </div>
+          )}
+          {round.rows.map((r, i) => {
+            const idx = players.findIndex((p) => p.id === r.pid);
+            const p = players[idx];
+            return (
+              <div key={r.pid} className="row-in rounded-2xl bg-white p-4 shadow-card ring-1 ring-slate-200" style={{ animationDelay: `${i * 90}ms` }}>
+                <div className="flex items-center gap-3">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold text-white" style={{ background: playerColor(idx) }}>
+                    {idx + 1}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-bold">{p?.name}</div>
+                    <div className="text-sm tabular-nums text-slate-600">
+                      {kr(r.guess)} · {r.guess > round.price ? "+" : "−"}
+                      {r.pct.toFixed(1).replace(".", ",")} %
+                    </div>
+                  </div>
+                  <AccuracyPill pct={r.pct} />
+                  <span className={`w-14 text-right text-xl font-extrabold tabular-nums ${r.points < 0 ? "text-rose-600" : "text-slate-900"}`}>
+                    {r.points >= 0 ? "+" : "−"}
+                    {Math.abs(r.points)}
+                  </span>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-1.5 pl-11 text-xs">
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-slate-700">+{r.base} for præcision</span>
+                  {r.bonus > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-900">+{r.bonus} tættest på</span>}
+                  {r.streakBonus > 0 && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 font-semibold text-orange-900">
+                      <Flame className="h-3 w-3" /> +{r.streakBonus} stime ({r.streak} i træk)
+                    </span>
+                  )}
+                  {timed && r.timePen > 0 && <span className="rounded-full bg-rose-100 px-2 py-0.5 font-semibold text-rose-800">−{r.timePen} over tid</span>}
+                  {round.hintCost > 0 && <span className="rounded-full bg-slate-100 px-2 py-0.5 text-slate-600">−{round.hintCost} hints (trukket)</span>}
+                </div>
+              </div>
+            );
+          })}
           <button
             type="button"
-            className="guess-hidden"
-            aria-label={`${player.name}s gæt er skjult. Hold for at se det.`}
-            onPointerDown={() => setPeek(true)}
-            onPointerUp={() => setPeek(false)}
-            onPointerLeave={() => setPeek(false)}
-            onPointerCancel={() => setPeek(false)}
-            onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") setPeek(true); }}
-            onKeyUp={() => setPeek(false)}
-            onContextMenu={(e) => e.preventDefault()}
+            onClick={onNext}
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 text-base font-extrabold text-white shadow-btn transition hover:bg-blue-700 active:translate-y-px"
           >
-            {peek ? (
-              <span className="guess-hidden-value">{guess?.raw} kr</span>
-            ) : (
-              <>
-                <span className="guess-hidden-dots" aria-hidden>••••••</span>
-                <span className="guess-hidden-hint">Hold for at se</span>
-              </>
-            )}
+            {isLast ? (daily ? "Se dit resultat" : "Se vinderen") : "Næste bolig"} <ArrowRight className="h-5 w-5" />
           </button>
-        ) : (
-          <>
-            <input
-              ref={inputRef}
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              className="input guess-input"
-              placeholder="fx 4.300.000"
-              value={guess?.raw ?? ""}
-              onChange={handleChange}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && guess?.value != null) onLock(player.id);
-              }}
-            />
-            <span className="guess-suffix">kr</span>
-          </>
-        )}
+        </div>
       </div>
-      {locked ? (
-        <button className="btn btn-ghost btn-sm" onClick={() => { setPeek(false); onUnlock(player.id); }}>
-          Ret
-        </button>
-      ) : (
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => onLock(player.id)}
-          disabled={!guess || guess.value == null}
-        >
-          LÅS
-        </button>
+    </div>
+  );
+}
+
+function XpCard({ profile, xp, badges }: { profile: Profile; xp: number; badges: BadgeId[] }) {
+  const lvl = levelFor(profile.xp);
+  return (
+    <div className="rounded-3xl bg-white p-5 shadow-card ring-1 ring-slate-200">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-semibold text-slate-600">
+          Niveau {lvl.level} · <span className="text-slate-900">{lvl.title}</span>
+        </span>
+        <span className="rounded-full bg-amber-100 px-2.5 py-1 text-sm font-extrabold text-amber-900">+{xp} XP</span>
+      </div>
+      <div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-100">
+        <div className="xp-fill h-full rounded-full bg-gradient-to-r from-amber-300 to-amber-500" style={{ width: `${lvl.progress * 100}%` }} />
+      </div>
+      <p className="mt-1.5 text-xs text-slate-500">
+        {lvl.next ? `${(lvl.next.xp - profile.xp).toLocaleString("da-DK")} XP til ${lvl.next.title}` : "Du er på højeste niveau."}
+      </p>
+      {badges.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {badges.map((id) => {
+            const b = BADGES.find((x) => x.id === id);
+            return (
+              <span key={id} className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-900 ring-1 ring-amber-200">
+                ★ {b?.title}
+              </span>
+            );
+          })}
+        </div>
       )}
     </div>
   );
 }
 
-function hintValue(key: HintKey, p: GameProperty): string | null {
-  switch (key) {
-    case "address":
-      return `${p.zipCode} ${p.city}`;
-    case "area":
-      return `${p.area} m²`;
-    case "rooms":
-      return p.rooms != null ? `${p.rooms} værelser` : null;
-    case "year":
-      return p.yearBuilt != null ? String(p.yearBuilt) : null;
-    case "energy":
-      return p.energyLabel ?? null;
-    case "expense":
-      return p.monthlyExpenses != null ? krMd(p.monthlyExpenses) : null;
-  }
-}
-
-function hintShortLabel(key: HintKey): string {
-  return {
-    address: "Område",
-    area: "Areal",
-    rooms: "Værelser",
-    year: "Byggeår",
-    energy: "Energi",
-    expense: "Ejerudgift",
-  }[key];
-}
-
-/* ============================================================
-   Round result
-============================================================ */
-
-function RoundResultScreen(props: {
-  property: GameProperty;
-  roundIdx: number;
-  totalRounds: number;
+function FreeFinal({
+  players,
+  rounds,
+  profile,
+  xp,
+  badges,
+  onAgain,
+  onHome,
+}: {
   players: Player[];
-  guesses: Record<number, PlayerGuess>;
-  hintCost: number;
-  onNext: () => void;
-  isFinal: boolean;
+  rounds: Round[];
+  profile: Profile;
+  xp: number;
+  badges: BadgeId[];
+  onAgain: () => void;
+  onHome: () => void;
 }) {
-  const p = props.property;
-  const scored = calculateRoundScores(props.players, props.guesses, p.price);
-  const winners = scored.filter((row) => row.isWinner);
-
+  const ranked = [...players].sort((a, b) => b.score - a.score);
+  const top = ranked[0];
+  const tie = ranked.filter((p) => p.score === top.score).length > 1;
+  const ownerId = players[0].id;
+  const ownPcts = rounds.map((r) => r.rows.find((x) => x.pid === ownerId)?.pct ?? 100);
+  const avg = ownPcts.length ? ownPcts.reduce((a, b) => a + b, 0) / ownPcts.length : 0;
+  const best = ownPcts.length ? Math.min(...ownPcts) : 0;
   return (
-    <>
-      <RoundHeader roundIdx={props.roundIdx} totalRounds={props.totalRounds} players={props.players} />
-
-      <div className="result-hero">
-        <div className="result-actual-label">Boligens rigtige pris</div>
-        <div className="result-actual-price">{kr(p.price)}</div>
-        <div className="result-address">{p.address}</div>
-        <div className="result-facts">
-          <span>{p.area} m²</span>
-          {p.rooms != null && <span>· {p.rooms} værelser</span>}
-          {p.yearBuilt != null && <span>· opført {p.yearBuilt}</span>}
-          {p.energyLabel && <span>· energi {p.energyLabel}</span>}
-          {p.propertyType && <span>· {p.propertyType}</span>}
+    <div className="space-y-5">
+      <div className="final-pop rounded-3xl bg-[#0b1b33] p-6 text-center text-white shadow-card-lift sm:p-8">
+        <Crown className="mx-auto h-10 w-10 text-amber-400" />
+        <div className="mt-2 text-sm font-semibold text-blue-100">{players.length > 1 ? (tie ? "Uafgjort" : "Vinderen er") : "Dit resultat"}</div>
+        <div className="mt-1 text-3xl font-extrabold sm:text-4xl">{players.length > 1 ? ranked.filter((p) => p.score === top.score).map((p) => p.name).join(" & ") : `${top.score} point`}</div>
+        {players.length > 1 && <div className="mt-1 text-lg text-blue-100">{top.score} point</div>}
+        <div className="mt-5 grid grid-cols-2 gap-2 text-left">
+          <div className="rounded-2xl bg-white/10 p-3">
+            <div className="text-xs text-blue-100">Gns. afvigelse{players.length > 1 ? ` · ${players[0].name}` : ""}</div>
+            <div className="text-xl font-bold tabular-nums">{avg.toFixed(1).replace(".", ",")} %</div>
+          </div>
+          <div className="rounded-2xl bg-white/10 p-3">
+            <div className="text-xs text-blue-100">Bedste gæt</div>
+            <div className="text-xl font-bold tabular-nums">{best.toFixed(1).replace(".", ",")} %</div>
+          </div>
         </div>
       </div>
 
-      <div className="round-score-summary" role="status">
-        <strong>{winners.length > 1 ? "Tæt på!" : "Rundens vinder"}</strong>
-        <span>
-          {winners.map((row) => props.players.find((pl) => pl.id === row.playerId)?.name).join(" & ")} +
-          {winners[0]?.points ?? 0} point
-        </span>
-        <span>{props.hintCost ? `Hints: −${props.hintCost} point pr. spiller` : "Ingen hints brugt"}</span>
-      </div>
+      {players.length > 1 && (
+        <ol className="space-y-2">
+          {ranked.map((p, i) => {
+            const idx = players.findIndex((x) => x.id === p.id);
+            return (
+              <li key={p.id} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-card ring-1 ring-slate-200">
+                <span className="w-5 text-center text-sm font-bold text-slate-400">{i + 1}</span>
+                <span className="grid h-7 w-7 place-items-center rounded-full text-xs font-bold text-white" style={{ background: playerColor(idx) }}>
+                  {idx + 1}
+                </span>
+                <span className="flex-1 font-semibold">{p.name}</span>
+                <span className={`text-lg font-extrabold tabular-nums ${p.score < 0 ? "text-rose-600" : ""}`}>{p.score}</span>
+              </li>
+            );
+          })}
+        </ol>
+      )}
 
-      <div className="result-table">
-        <div className="result-table-head">
-          <span>Spiller</span>
-          <span>Gæt</span>
-          <span>Difference</span>
-          <span>%</span>
-          <span>Point</span>
-        </div>
-        {scored.map((row) => {
-          const player = props.players.find((pl) => pl.id === row.playerId)!;
-          const net = row.points - props.hintCost;
-          return (
-            <div
-              key={player.id}
-              className={`result-table-row ${row.isWinner ? "result-table-row-winner" : ""}`}
-            >
-              <span>
-                <span className="mini-badge" style={{ background: playerColor(row.playerIndex) }}>{row.playerIndex + 1}</span>
-                {player.name}
-                {row.isWinner && <span className="badge-winner">Tættest på!</span>}
-              </span>
-              <span>{kr(row.guess)}</span>
-              <span className={row.diff === 0 ? "diff-perfect" : ""}>
-                {row.guess > p.price ? "+" : row.guess < p.price ? "−" : ""}
-                {kr(row.diff)}
-              </span>
-              <span>{row.pct.toFixed(1)} %</span>
-              <span className="pts-cell">
-                <strong className={net < 0 ? "score-negative" : ""}>
-                  {net >= 0 ? `+${net}` : `−${Math.abs(net)}`}
-                </strong>
-                <small>
-                  {row.basePoints}
-                  {row.winnerBonus > 0 ? ` + ${row.winnerBonus} bonus` : ""}
-                  {props.hintCost > 0 ? ` − ${props.hintCost} hints` : ""}
-                </small>
-              </span>
-            </div>
-          );
-        })}
-      </div>
+      <XpCard profile={profile} xp={xp} badges={badges} />
 
-      {/* Property listing link — once the price is revealed, players should be
-          able to jump to the actual Boligsiden listing to inspect the property
-          themselves. Slugifies the address into Boligsiden's URL format. */}
-      <div className="result-listing-link">
-        <a
-          href={p.listingUrl ?? boligsidenListingUrl(p)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-outline btn-sm"
-        >
-          Se det rigtige opslag ↗
-        </a>
-      </div>
-
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
-        <button className="btn btn-primary btn-big" onClick={props.onNext}>
-          {props.isFinal ? "SE VINDEREN →" : "NÆSTE RUNDE →"}
+      <div className="grid gap-2 sm:grid-cols-2">
+        <button type="button" onClick={onAgain} className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-blue-600 text-base font-extrabold text-white shadow-btn hover:bg-blue-700 active:translate-y-px">
+          <RotateCcw className="h-5 w-5" /> Spil igen med nye boliger
+        </button>
+        <button type="button" onClick={onHome} className="flex h-14 items-center justify-center rounded-2xl bg-white text-base font-bold text-slate-900 ring-1 ring-inset ring-slate-300 hover:bg-slate-50">
+          Til forsiden
         </button>
       </div>
-    </>
+    </div>
   );
 }
 
-/* ============================================================
-   Final screen
-============================================================ */
-
-function FinalScreen({ players, onPlayAgain }: { players: Player[]; onPlayAgain: () => void }) {
-  const sorted = [...players].sort((a, b) => b.score - a.score);
-  const winner = sorted[0];
-  const topScore = winner.score;
-  const winners = sorted.filter((p) => p.score === topScore);
-
+function DailyFinal({
+  result,
+  profile,
+  board,
+  xp,
+  badges,
+  onShare,
+  onFree,
+}: {
+  result: DailyResult;
+  profile: Profile;
+  board: ReturnType<typeof useBoard>;
+  xp: number;
+  badges: BadgeId[];
+  onShare: () => void;
+  onFree: () => void;
+}) {
+  useTicker(true, 1000);
+  const ms = msToNextDaily();
+  const time = [Math.floor(ms / 3_600_000), Math.floor((ms % 3_600_000) / 60_000), Math.floor((ms % 60_000) / 1000)]
+    .map((n) => String(n).padStart(2, "0"))
+    .join(":");
+  const rank = board?.me?.rank ?? result.rank;
+  const total = board?.total ?? result.total;
+  const streak = liveStreak(profile);
   return (
-    <div className="final-wrap">
-      <div className="final-crown">🏆</div>
-      <div className="final-title">
-        {winners.length > 1 ? "UAFGJORT!" : "VINDER!"}
+    <div className="space-y-5">
+      <div className="final-pop rounded-3xl bg-gradient-to-br from-blue-700 to-[#0b1b33] p-6 text-center text-white shadow-card-lift sm:p-8">
+        <div className="text-sm font-semibold text-blue-100">Dagens 5</div>
+        <div className="mt-2 text-6xl font-extrabold tabular-nums">{result.score}</div>
+        <div className="text-blue-100">af 500 point</div>
+        <div className="mt-3 text-3xl tracking-[0.2em]">{result.squares}</div>
+        {rank && total ? (
+          <p className="mt-3 text-lg">
+            Nr. <strong>{rank}</strong> af {total} i dag
+          </p>
+        ) : null}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+          <button type="button" onClick={onShare} className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-extrabold text-blue-700 shadow-btn hover:bg-blue-50 active:translate-y-px">
+            <Share2 className="h-4 w-4" /> Del og udfordr en ven
+          </button>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold text-amber-300">
+            <Flame className="h-4 w-4" /> {streak} {streak === 1 ? "dag" : "dage"} i træk
+          </span>
+        </div>
+        <p className="mt-4 text-sm text-blue-100">
+          Nye boliger om <span className="font-bold tabular-nums text-white">{time}</span>. Kom tilbage i morgen og hold stimen i live.
+        </p>
       </div>
-      <div className="final-name">
-        {winners.map((w) => w.name).join(" & ")}
-      </div>
-      <div className="final-score">
-        {winner.score} <span>point</span>
-      </div>
-
-      <Scoreboard players={players} />
-
-      <button className="btn btn-primary btn-big" onClick={onPlayAgain}>
-        SPIL IGEN →
+      <XpCard profile={profile} xp={xp} badges={badges} />
+      <Leaderboard board={board} />
+      <button type="button" onClick={onFree} className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 text-base font-extrabold text-white shadow-btn hover:bg-slate-800 active:translate-y-px">
+        Spil fri leg imens <ArrowRight className="h-5 w-5" />
       </button>
     </div>
   );
-}
-
-function RoundHeader({
-  roundIdx,
-  totalRounds,
-  players,
-}: {
-  roundIdx: number;
-  totalRounds: number;
-  players: Player[];
-}) {
-  return (
-    <div className="round-bar">
-      <div className="round-label">Runde <strong>{roundIdx + 1}</strong> af {totalRounds}</div>
-      <Scoreboard players={players} compact />
-    </div>
-  );
-}
-
-function Scoreboard({ players, compact = false }: { players: Player[]; compact?: boolean }) {
-  const ranked = [...players].sort((a, b) => b.score - a.score || a.id - b.id);
-
-  return (
-    <section className={`scoreboard ${compact ? "scoreboard-compact" : ""}`} aria-label="Scoreboard" aria-live="polite">
-      <div className="scoreboard-heading">
-        <span>Scoreboard</span>
-        <span>Samlet score</span>
-      </div>
-      <ol className="scoreboard-list">
-        {ranked.map((player, rank) => {
-          const playerIndex = players.findIndex((p) => p.id === player.id);
-          return (
-            <li key={player.id} className="scoreboard-row">
-              <span className="scoreboard-rank">{rank + 1}</span>
-              <span className="mini-badge" style={{ background: playerColor(playerIndex) }}>{playerIndex + 1}</span>
-              <span className="scoreboard-name">{player.name}</span>
-              <span className={`scoreboard-score ${player.score < 0 ? "score-negative" : ""}`}>{player.score} p</span>
-            </li>
-          );
-        })}
-      </ol>
-    </section>
-  );
-}
-
-/* ---------- shared ---------- */
-
-/**
- * Rebuild the property's Boligsiden URL from its address + zip. Boligsiden uses
- * dash-slug URLs at `/adresse/<street-number-zip-city>` with æ→ae, ø→oe, å→aa
- * (and København→koebenhavn). Good enough that at least the /adresse/ path
- * lands on the right adressekort, even when the exact match slug isn't known.
- */
-function boligsidenListingUrl(p: GameProperty): string {
-  const slugify = (s: string) =>
-    (s || "")
-      .toLowerCase()
-      .replace(/å/g, "aa")
-      .replace(/ø/g, "oe")
-      .replace(/æ/g, "ae")
-      .replace(/\./g, "")
-      .replace(/,/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
-  const street = slugify(p.address);
-  const city = slugify(p.city);
-  const slug = [street, p.zipCode, city].filter(Boolean).join("-");
-  return `https://www.boligsiden.dk/adresse/${slug}`;
-}
-
-function playerColor(idx: number): string {
-  const palette = [
-    "#e63946", // rød
-    "#1d7dd1", // blå
-    "#2a9d3f", // grøn
-    "#f4a520", // orange
-    "#8a3ffc", // lilla
-    "#0e9694", // teal
-    "#d43ea8", // pink
-    "#5c5c5c", // grå
-  ];
-  return palette[idx % palette.length];
 }

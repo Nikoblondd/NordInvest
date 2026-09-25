@@ -84,7 +84,7 @@ export default async function OGImage() {
               maxWidth: 1000,
             }}
           >
-            Gæt prisen på rigtige danske boliger — 2-8 spillere.
+            Gæt prisen på rigtige danske boliger. Tag Dagens 5.
           </div>
         </div>
 

@@ -8,7 +8,7 @@ import GameClient from "./GameClient";
 
 const TITLE = "Boligpris Spil — Gæt Prisen På Boligen | Danmarks #1 Bolig-Quiz | NordInvest";
 const DESCRIPTION =
-  "Boligpris spil på rigtige danske boliger fra Boligsiden. Gæt prisen på boligen — hus, lejlighed eller villa. Gratis multiplayer bolig-quiz (2-8 spillere), ingen login. Spil hele Danmark, København, Aarhus, Odense eller Aalborg.";
+  "Boligpris spil på rigtige danske boliger fra Boligsiden. Gæt prisen på boligen — hus, lejlighed eller villa. Spil alene eller med op til 8, tag Dagens 5 og kæmp om pladsen på ranglisten. Gratis, ingen login. Spil hele Danmark, København, Aarhus, Odense eller Aalborg.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -103,7 +103,7 @@ const jsonLd = {
         "Boligsiden Spil",
       ],
       description:
-        "Boligpris spil — gæt prisen på rigtige danske boliger (hus, lejlighed, villa) fra Boligsiden. Gratis multiplayer bolig-quiz for 2-8 spillere, ingen login.",
+        "Boligpris spil — gæt prisen på rigtige danske boliger (hus, lejlighed, villa) fra Boligsiden. Spil alene eller med op til 8, og tag Dagens 5 med rangliste. Gratis, ingen login.",
       inLanguage: "da-DK",
       applicationCategory: "GameApplication",
       operatingSystem: "Web",
@@ -131,7 +131,7 @@ const jsonLd = {
           name: "Hvad er et boligpris spil?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Et boligpris spil er en online quiz, hvor du gætter kontantprisen på rigtige boliger. NordInvest henter aktive salgsopstillinger fra Boligsiden — huse, lejligheder og villaer i hele Danmark — og lader 2-8 spillere gætte prisen. Tættest på vinder rundens bonus.",
+            text: "Et boligpris spil er en online quiz, hvor du gætter kontantprisen på rigtige boliger. NordInvest henter aktive salgsopstillinger fra Boligsiden — huse, lejligheder og villaer i hele Danmark — og lader 1-8 spillere gætte prisen. Tættest på vinder rundens bonus.",
           },
         },
         {
@@ -139,7 +139,7 @@ const jsonLd = {
           name: "Hvordan spiller man Gæt Boligprisen?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Vælg 2-8 spillere, vælg område (hele Danmark eller en specifik by), og gæt kontantprisen på de boliger vi trækker fra Boligsiden. Tættest på vinder rundens bonus. Alle spillere får point ud fra hvor tæt de er på — ikke kun vinderen. Du kan købe hints om areal, byggeår, energimærke eller ejerudgift mod point.",
+            text: "Vælg 1-8 spillere og et område, eller tag Dagens 5, hvor hele Danmark gætter de samme fem boliger. Alle får point efter, hvor tæt de rammer. Tættest på får en bonus, og flere gode gæt i træk giver stime-bonus. Hints om areal, byggeår, energimærke og ejerudgift koster point. Med tidspres har hver spiller 30 sekunder.",
           },
         },
         {
@@ -179,7 +179,7 @@ const jsonLd = {
           name: "Hvor mange kan spille sammen?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Boligpris spillet understøtter 2-8 spillere lokalt på samme skærm. Perfekt som selskabsspil til familieaftener, kollega-events eller mæglerbranchens onboarding.",
+            text: "Boligpris spillet kan spilles alene eller af op til 8 spillere på samme skærm. Perfekt som selskabsspil til familieaftener, kollega-events eller mæglerbranchens onboarding.",
           },
         },
         {
