@@ -953,7 +953,7 @@ function RoundResult({
       <div className="min-w-0 space-y-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={home.images[0]} alt="" className="aspect-[4/3] w-full rounded-3xl object-cover shadow-card" />
-        {home.zipCode && <CityMap zip={home.zipCode} city={home.city} height={200} />}
+        {home.zipCode && <CityMap zip={home.zipCode} city={home.city} />}
       </div>
       <div className="min-w-0 space-y-4">
         <div className="rounded-3xl bg-[#0b1b33] p-5 text-white shadow-card-lift sm:p-6">
