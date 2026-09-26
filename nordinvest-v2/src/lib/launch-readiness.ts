@@ -325,8 +325,16 @@ export async function getLaunchReadiness(): Promise<ReadinessReport> {
     check(
       "gtm.blog",
       "Blog cadence etableret",
-      "Flere Danish-first SEO-blogs live. Cluster + internal linking done.",
+      "28 danske guides live. Seneste: 3 feature-guides 26/9 (forældrekøb, Airbnb-regler, sommerhus som investering) med eget design, billeder fra billedmodel, FAQ-schema og skat.dk som kilde.",
       "green",
+    ),
+    check(
+      "gtm.bing",
+      "Bing & Copilot: indekseret og verificeret",
+      process.env.BING_SITE_VERIFICATION
+        ? "Bing Webmaster verificeret (msvalidate.01), IndexNow-nøgle live, sitemap + nye URL'er pushet via scripts/indexnow.mjs efter hvert deploy. Artikel-metadata (published/modified, og:image, twitter) på alle blogindlæg."
+        : "IndexNow-nøgle live og alle URL'er pushet (scripts/indexnow.mjs), artikel-metadata på alle blogindlæg. Mangler: opret Bing Webmaster Tools og importér sitet fra Google Search Console (eller sæt BING_SITE_VERIFICATION i Vercel), og indsend sitemap.",
+      process.env.BING_SITE_VERIFICATION ? "green" : "amber",
     ),
     check(
       "gtm.gsc",

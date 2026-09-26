@@ -7,6 +7,8 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/Button";
 import { getAllPosts, getPost, getRelatedPosts, formatDateDa } from "@/lib/blog";
 import { site } from "@/lib/site";
+import { enhanceFeatureHtml, getFeatureExtras } from "@/lib/blog-feature";
+import { FeatureArticle } from "@/components/blog/FeatureArticle";
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
@@ -19,15 +21,34 @@ export function generateMetadata({
 }): Metadata {
   const post = getPost(params.slug);
   if (!post) return { title: "Indlæg ikke fundet" };
+  const extras = getFeatureExtras(params.slug);
+  const modified = extras?.updated ?? post.meta.date;
+  // Full article metadata: Bing and Copilot lean on og:/article: tags and dates
+  // more than Google does, so every post states them explicitly.
   return {
     title: post.meta.title,
     description: post.meta.description,
+    keywords: post.meta.tags,
     alternates: { canonical: `/blog/${post.meta.slug}` },
     openGraph: {
       title: post.meta.title,
       description: post.meta.description,
-      images: post.meta.image ? [post.meta.image] : undefined,
+      url: `/blog/${post.meta.slug}`,
+      images: post.meta.image ? [{ url: post.meta.image, width: 1680, height: 944, alt: extras?.imageAlt ?? post.meta.title }] : undefined,
       type: "article",
+      locale: "da_DK",
+      siteName: "NordInvest",
+      publishedTime: post.meta.date,
+      modifiedTime: modified,
+      authors: ["NordInvest"],
+      section: extras?.category,
+      tags: post.meta.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.meta.title,
+      description: post.meta.description,
+      images: post.meta.image ? [post.meta.image] : undefined,
     },
   };
 }
@@ -37,6 +58,15 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
   if (!post || post.meta.lang === "en") notFound();
   const { meta, html } = post;
   const related = getRelatedPosts(meta.slug, 3);
+
+  const extras = getFeatureExtras(meta.slug);
+  if (extras) {
+    const enhanced = enhanceFeatureHtml(html);
+    // Feature guides point to each other first, then to the closest older posts.
+    const siblings = getAllPosts().filter((p) => p.slug !== meta.slug && getFeatureExtras(p.slug));
+    const featureRelated = [...siblings, ...getRelatedPosts(meta.slug, 6).filter((p) => !siblings.some((x) => x.slug === p.slug))].slice(0, 3);
+    return <FeatureArticle meta={meta} extras={extras} html={enhanced.html} toc={enhanced.toc} faq={enhanced.faq} related={featureRelated} />;
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",

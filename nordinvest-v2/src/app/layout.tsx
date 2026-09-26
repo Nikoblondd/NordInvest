@@ -46,6 +46,13 @@ export const metadata: Metadata = {
   // Every page is its own canonical unless it says otherwise ("./" resolves
   // to the page's own path against metadataBase).
   alternates: { canonical: "./" },
+  // Large image previews and full snippets in Google, Bing and Copilot answers.
+  robots: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  // Bing Webmaster Tools ownership (set BING_SITE_VERIFICATION in Vercel to the
+  // msvalidate.01 code, or import the site from Google Search Console instead).
+  ...(process.env.BING_SITE_VERIFICATION
+    ? { verification: { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } } }
+    : {}),
 };
 
 export default function RootLayout({
