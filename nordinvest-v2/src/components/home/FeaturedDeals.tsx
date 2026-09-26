@@ -33,41 +33,40 @@ function DealCard({ deal }: { deal: FeaturedDeal }) {
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           loading="lazy"
         />
-        <div className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-white/95 px-2 py-0.5 text-[11px] font-semibold text-slate-900 shadow-sm ring-1 ring-slate-200 sm:left-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-xs">
-          <span className="text-emerald-600">●</span>
+        <div className="absolute left-3 top-3 inline-flex items-center rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold tabular-nums text-slate-900 shadow-sm ring-1 ring-slate-200">
           Score {deal.score}
         </div>
-        <div className="absolute right-2 top-2 rounded-full bg-slate-900/85 px-2 py-0.5 text-[11px] font-semibold text-white sm:right-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-xs">
+        <div className="absolute right-3 top-3 rounded-full bg-slate-900/85 px-2.5 py-1 text-xs font-semibold tabular-nums text-white">
           {deal.yieldPct.toFixed(1)} %
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-4">
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-[11px]">
-            {deal.typeLabel} · {deal.zip} {deal.city}
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <div className="min-w-0">
+          <div className="truncate text-[13px] text-slate-500">
+            {deal.typeLabel}, {deal.zip} {deal.city}
           </div>
-          <h3 className="mt-0.5 truncate text-sm font-semibold text-slate-900 sm:mt-1 sm:text-base">
+          <h3 className="mt-0.5 truncate text-base font-semibold text-slate-900">
             {deal.address}
           </h3>
         </div>
 
-        <div className="grid grid-cols-3 gap-1.5 rounded-xl bg-slate-50 p-2 text-center ring-1 ring-slate-100 sm:gap-2 sm:p-3">
+        <div className="grid grid-cols-3 rounded-xl bg-slate-50 py-2.5 text-center ring-1 ring-slate-100 [&>div+div]:border-l [&>div+div]:border-slate-200/80">
           <div>
-            <div className="text-[9px] uppercase tracking-wide text-slate-500 sm:text-[10px]">Pris</div>
-            <div className="text-xs font-semibold text-slate-900 sm:text-sm">
+            <div className="text-xs text-slate-500">Pris</div>
+            <div className="mt-0.5 text-sm font-semibold tabular-nums text-slate-900">
               {krCompact(deal.price)}
             </div>
           </div>
           <div>
-            <div className="text-[9px] uppercase tracking-wide text-slate-500 sm:text-[10px]">Areal</div>
-            <div className="text-xs font-semibold text-slate-900 sm:text-sm">{deal.area} m²</div>
+            <div className="text-xs text-slate-500">Areal</div>
+            <div className="mt-0.5 text-sm font-semibold tabular-nums text-slate-900">{deal.area} m²</div>
           </div>
           <div>
-            <div className="text-[9px] uppercase tracking-wide text-slate-500 sm:text-[10px]">
-              {deal.cashFlowMonth != null ? "CF/md" : "Afkast"}
+            <div className="text-xs text-slate-500">
+              {deal.cashFlowMonth != null ? "Cash flow/md." : "Afkast"}
             </div>
-            <div className="text-xs font-semibold text-emerald-700 sm:text-sm">
+            <div className="mt-0.5 text-sm font-semibold tabular-nums text-emerald-700">
               {deal.cashFlowMonth != null
                 ? `+${krCompact(deal.cashFlowMonth)}`
                 : `${deal.yieldPct.toFixed(1)} %`}
@@ -101,7 +100,7 @@ function DealCard({ deal }: { deal: FeaturedDeal }) {
               e.stopPropagation();
               window.open(deal.sourceUrl, "_blank", "noopener,noreferrer");
             }}
-            className="relative z-10 cursor-pointer text-xs text-slate-400 hover:text-slate-600"
+            className="relative z-10 -my-2 cursor-pointer py-2 text-[13px] text-slate-500 hover:text-slate-700"
           >
             Se opslag ↗
           </span>
@@ -110,6 +109,12 @@ function DealCard({ deal }: { deal: FeaturedDeal }) {
     </Link>
   );
 }
+
+// Phones: one swipeable row per category (cards peek in from the right), so six
+// full-width photo cards don't turn into a wall. From `sm:` up it is a grid.
+const dealRow =
+  "-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3";
+const dealCell = "flex w-[84%] shrink-0 snap-start sm:w-auto [&>a]:w-full";
 
 /**
  * Landing-page "Deal-motoren" showcase. Sits right below the analyze-your-own
@@ -121,9 +126,9 @@ export function FeaturedDeals() {
   return (
     <section id="maanedens-deals" className="border-t border-slate-200/80 px-4 py-16 sm:px-6 sm:py-28">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8 flex flex-col items-center text-center sm:mb-10">
+        <div className="mb-8 flex flex-col items-start text-left sm:mb-10 sm:items-center sm:text-center">
           <p className="mb-4 text-sm font-medium text-blue-700">Deal-motoren, {FEATURED_MONTH_LABEL.toLowerCase()}</p>
-          <h2 className="max-w-3xl font-thesis text-[2.4rem] font-normal leading-[1.02] tracking-[-0.01em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.4rem]">
+          <h2 className="max-w-3xl font-thesis text-[2.5rem] font-normal leading-[1.06] tracking-[0.005em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.4rem] sm:leading-[1.02] sm:tracking-[-0.01em]">
             Månedens bedste handler
           </h2>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
@@ -148,9 +153,11 @@ export function FeaturedDeals() {
               Se alle boligdeals →
             </Link>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          <div className={dealRow}>
             {FEATURED_RESIDENTIAL.map((d) => (
-              <DealCard key={d.sourceUrl} deal={d} />
+              <div key={d.sourceUrl} className={dealCell}>
+                <DealCard deal={d} />
+              </div>
             ))}
           </div>
         </div>
@@ -171,9 +178,11 @@ export function FeaturedDeals() {
               Se alle erhvervsdeals →
             </Link>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          <div className={dealRow}>
             {FEATURED_COMMERCIAL.map((d) => (
-              <DealCard key={d.sourceUrl} deal={d} />
+              <div key={d.sourceUrl} className={dealCell}>
+                <DealCard deal={d} />
+              </div>
             ))}
           </div>
         </div>

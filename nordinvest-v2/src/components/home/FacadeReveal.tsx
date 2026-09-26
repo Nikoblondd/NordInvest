@@ -112,7 +112,7 @@ export function FacadeReveal() {
       <div className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden">
         <div className="mx-auto grid h-full max-w-7xl grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-y-5 px-4 py-4 sm:px-6 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:grid-rows-1 lg:items-center lg:gap-x-14 lg:px-8 lg:pb-16 lg:pt-4">
           <Phase progress={progress} ready={ready} range={[-1, -0.5, ...T.heroOut]} first className="row-start-2 self-start lg:row-start-1 lg:self-center">
-            <IntroCopy progress={progress} />
+            <IntroCopy />
           </Phase>
 
           <div className="col-start-1 row-start-1 min-w-0 self-start lg:col-start-2 lg:self-center">
@@ -173,27 +173,24 @@ function Label({ children }: { children: ReactNode }) {
   return <p className="mb-3 text-sm font-medium text-blue-700 lg:mb-4">{children}</p>;
 }
 
+// Instrument Serif is a condensed face: on phones it gets neutral tracking and a
+// little more leading so it reads as calm, not squeezed.
 const H2 =
-  "font-thesis text-[2.1rem] font-normal leading-[1.02] tracking-[-0.01em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.1rem]";
+  "font-thesis text-[2.2rem] font-normal leading-[1.08] tracking-[0.005em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.1rem] sm:leading-[1.02] sm:tracking-[-0.01em]";
 
 // ── Intro ────────────────────────────────────────────────────────────────
 
-function IntroCopy({ progress }: { progress: MotionValue<number> }) {
-  const hint = useTransform(progress, [0, 0.04], [1, 0]);
+function IntroCopy() {
   return (
     <div>
       <Label>Et eksempel</Label>
       <h2 className={H2}>
         Tag en almindelig villa <span className="text-slate-400">til 1.995.000 kr.</span>
       </h2>
-      <p className="mt-4 max-w-[33rem] leading-relaxed text-slate-600 max-lg:text-[15px] lg:mt-5 lg:text-lg">
+      <p className="mt-4 max-w-[33rem] text-[17px] leading-relaxed text-slate-600 lg:mt-5 lg:text-lg">
         Scroll videre, så viser vi, hvordan NordInvest regner den igennem, fra facade til
         resultat.
       </p>
-      <motion.div style={{ opacity: hint }} className="mt-8 flex items-center gap-3 text-sm text-slate-500">
-        <span aria-hidden className="scroll-cue relative block h-7 w-px overflow-hidden bg-slate-300" />
-        Scroll ned
-      </motion.div>
     </div>
   );
 }
@@ -452,7 +449,7 @@ function Sheet({ progress }: { progress: MotionValue<number> }) {
               <div className="absolute inset-x-0 top-1/2 h-px bg-blue-100/80" />
               <div className="absolute left-0 top-0 h-full w-px bg-blue-100/80" />
               <div className="absolute right-0 top-0 h-full w-px bg-blue-100/80" />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-[#0b2350] px-2 text-[10px] font-medium tabular-nums text-blue-50 sm:text-xs">
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded bg-[#0b2350] px-2 text-[11px] font-medium tabular-nums text-blue-50 sm:text-xs">
                 {EX.area} m² · {kr(PER_M2)} kr. pr. m²
               </span>
             </motion.div>
@@ -470,7 +467,7 @@ function Sheet({ progress }: { progress: MotionValue<number> }) {
           <Verdict progress={progress} />
         </div>
 
-        <div className="grid grid-cols-3 border-t border-slate-200 text-[11px] sm:text-xs [&>div]:min-w-0 [&>div]:truncate">
+        <div className="grid grid-cols-3 border-t border-slate-200 text-xs sm:text-[13px] [&>div]:min-w-0 [&>div]:truncate">
           <div className="border-r border-slate-200 px-3 py-2 sm:px-4 sm:py-2.5">
             <span className="block text-slate-400">Bolig</span>
             <span className="text-slate-800">Villa, {EX.area} m²</span>
@@ -513,15 +510,15 @@ function CalloutMark({ c, scan, progress }: { c: Callout; scan: MotionValue<numb
         </motion.span>
       </span>
       <span
-        className="absolute w-[27%] rounded-md bg-[#0b2350]/95 px-2 py-1 ring-1 ring-blue-200/40 sm:px-2.5 sm:py-1.5"
+        className="absolute w-[33%] rounded-lg bg-[#0b2350]/95 px-2 py-1 ring-1 ring-blue-200/40 sm:w-[27%] sm:px-2.5 sm:py-1.5"
         style={{
           left: c.box.left != null ? `${c.box.left}%` : undefined,
           right: c.box.right != null ? `${c.box.right}%` : undefined,
           top: `${c.box.top}%`,
         }}
       >
-        <span className="block text-[9px] leading-tight text-blue-200 sm:text-[11px]">{c.label}</span>
-        <span className={`block whitespace-nowrap text-[10.5px] font-semibold leading-tight tabular-nums sm:text-[13px] ${value > 0 ? "text-emerald-300" : "text-white"}`}>
+        <span className="block text-[11px] leading-tight text-blue-200">{c.label}</span>
+        <span className={`block whitespace-nowrap text-xs font-semibold leading-tight tabular-nums sm:text-[13px] ${value > 0 ? "text-emerald-300" : "text-white"}`}>
           {signed(value)} kr/md.
         </span>
       </span>
@@ -547,7 +544,7 @@ function Verdict({ progress }: { progress: MotionValue<number> }) {
       </span>
       <span>
         <span className="block text-sm font-semibold leading-tight text-slate-900 sm:text-[15px]">Solid handel</span>
-        <span className="block text-[11px] leading-tight text-slate-500 sm:text-xs">Score 68 af 100</span>
+        <span className="block text-xs leading-tight text-slate-500">Score 68 af 100</span>
       </span>
     </motion.div>
   );

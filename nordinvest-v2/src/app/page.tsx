@@ -65,9 +65,9 @@ function SectionHead({
 }) {
   const center = align === "center";
   return (
-    <div className={`mb-10 flex flex-col sm:mb-14 ${center ? "items-center text-center" : "items-start"}`}>
+    <div className={`mb-10 flex flex-col sm:mb-14 ${center ? "items-start text-left sm:items-center sm:text-center" : "items-start"}`}>
       <p className="mb-4 text-sm font-medium text-blue-700">{eyebrow}</p>
-      <h2 className="max-w-3xl font-thesis text-[2.4rem] font-normal leading-[1.02] tracking-[-0.01em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.4rem]">
+      <h2 className="max-w-3xl font-thesis text-[2.5rem] font-normal leading-[1.06] tracking-[0.005em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.4rem] sm:leading-[1.02] sm:tracking-[-0.01em]">
         {children}
       </h2>
       {lead && <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">{lead}</p>}
@@ -82,12 +82,12 @@ export default function Home() {
 
       {/* Hero: what NordInvest is, in plain words, before any effects. */}
       <section className="drafting-paper px-4 pb-6 pt-14 sm:px-6 sm:pb-10 sm:pt-24">
-        <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-          <p className="mb-5 text-sm font-medium text-blue-700">Analyse af ejendomsinvestering i Danmark</p>
-          <h1 className="font-thesis text-[3rem] font-normal leading-[0.98] tracking-[-0.015em] text-[#0b1b33] [text-wrap:balance] sm:text-[4.4rem] lg:text-[5.2rem]">
+        <div className="mx-auto flex max-w-3xl flex-col items-start text-left sm:items-center sm:text-center">
+          <p className="mb-4 text-sm font-medium text-blue-700 sm:mb-5">Analyse af ejendomsinvestering i Danmark</p>
+          <h1 className="font-thesis text-[3.1rem] font-normal leading-[1.02] tracking-[0.003em] text-[#0b1b33] [text-wrap:balance] sm:text-[4.4rem] sm:leading-[0.98] sm:tracking-[-0.015em] lg:text-[5.2rem]">
             Se hvad huset tjener, <span className="text-slate-400">før du byder.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-slate-600 sm:text-lg">
+          <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-slate-600 sm:mt-6 sm:text-lg">
             NordInvest regner danske boliger igennem for dig, der overvejer at købe til udlejning.
             Sæt et link ind fra en boligside, og få cashflow, afkast og en klar vurdering på under
             et minut.
@@ -101,7 +101,7 @@ export default function Home() {
               Sådan analyserer du en ejendomsinvestering
             </Link>
           </p>
-          <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-600">
+          <ul className="mt-7 flex flex-col gap-2 text-[15px] text-slate-600 sm:mt-8 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-6 sm:text-sm">
             {["Virker med danske boligsider", "Data fra BBR og Danmarks Statistik", "Boliger og erhverv"].map((f) => (
               <li key={f} className="flex items-center gap-2">
                 <svg aria-hidden viewBox="0 0 12 12" className="h-3 w-3 text-blue-600">
@@ -221,7 +221,7 @@ export default function Home() {
           style={{ maskImage: "linear-gradient(to right, transparent, black 35%)", WebkitMaskImage: "linear-gradient(to right, transparent, black 35%)" }}
         />
         <div className="relative mx-auto max-w-6xl">
-          <h2 className="max-w-3xl font-thesis text-[2.6rem] font-normal leading-[1.02] tracking-[-0.01em] [text-wrap:balance] sm:text-[4rem]">
+          <h2 className="max-w-3xl font-thesis text-[2.6rem] font-normal leading-[1.06] tracking-[0.005em] [text-wrap:balance] sm:text-[4rem] sm:leading-[1.02] sm:tracking-[-0.01em]">
             Har du en bolig <span className="text-blue-300">i tankerne?</span>
           </h2>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-blue-100/80 sm:text-lg">

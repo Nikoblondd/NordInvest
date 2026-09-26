@@ -62,7 +62,7 @@ export function ProfileStrip({ profile, seen }: { profile: Profile; seen: number
         <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/15">
           <div className="h-full rounded-full bg-gradient-to-r from-amber-300 to-amber-500 transition-all duration-700" style={{ width: `${lvl.progress * 100}%` }} />
         </div>
-        <div className="mt-1 text-[11px] text-blue-100/80">
+        <div className="mt-1 text-xs text-blue-100/80">
           {lvl.next ? `${(lvl.next.xp - profile.xp).toLocaleString("da-DK")} XP til ${lvl.next.title}` : "Højeste niveau"}
         </div>
       </div>
@@ -80,7 +80,7 @@ function Stat({ icon, label, value, sub, hot }: { icon: React.ReactNode; label: 
         {label}
       </div>
       <div className={`mt-1 text-2xl font-bold tabular-nums ${hot ? "text-amber-300" : "text-white"}`}>{value}</div>
-      {sub && <div className="text-[11px] text-blue-100/80">{sub}</div>}
+      {sub && <div className="text-xs text-blue-100/80">{sub}</div>}
     </div>
   );
 }
@@ -403,8 +403,8 @@ export function BadgeShelf({ profile }: { profile: Profile }) {
               <span className={`grid h-10 w-10 place-items-center rounded-full ${got ? "bg-gradient-to-br from-amber-300 to-amber-500 text-slate-900 shadow-sm" : "bg-slate-200 text-slate-400"}`}>
                 {got ? <Check className="h-5 w-5" strokeWidth={3} /> : <Lock className="h-4 w-4" />}
               </span>
-              <span className={`mt-1.5 text-[11px] font-bold leading-tight ${got ? "text-slate-900" : "text-slate-500"}`}>{b.title}</span>
-              <span className="mt-0.5 hidden text-[10px] leading-tight text-slate-500 sm:block">{b.how}</span>
+              <span className={`mt-1.5 text-xs font-bold leading-tight ${got ? "text-slate-900" : "text-slate-500"}`}>{b.title}</span>
+              <span className="mt-0.5 hidden text-xs leading-tight text-slate-500 sm:block">{b.how}</span>
             </div>
           );
         })}
@@ -422,7 +422,7 @@ export function LevelLadder({ xp }: { xp: number }) {
       {LEVELS.map((l, i) => (
         <span
           key={l.title}
-          className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${i + 1 < cur ? "bg-emerald-100 text-emerald-800" : i + 1 === cur ? "bg-amber-400 text-slate-900" : "bg-slate-100 text-slate-400"}`}
+          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${i + 1 < cur ? "bg-emerald-100 text-emerald-800" : i + 1 === cur ? "bg-amber-400 text-slate-900" : "bg-slate-100 text-slate-400"}`}
         >
           {l.title}
         </span>

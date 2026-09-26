@@ -111,7 +111,7 @@ export function FutureBurdens({ address }: { address: string | null }) {
         <div className="flex items-center gap-2">
           <CheckCircle2 size={16} className="text-emerald-600" />
           <h3 className="text-sm font-semibold text-slate-900">Fremtidige byrder</h3>
-          <span className="ml-auto inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">
+          <span className="ml-auto inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">
             Ingen fundet
           </span>
         </div>
@@ -137,7 +137,7 @@ export function FutureBurdens({ address }: { address: string | null }) {
         <h3 className="text-sm font-semibold text-slate-900">Fremtidige byrder</h3>
         <span
           className={clsx(
-            "ml-auto inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ring-inset",
+            "ml-auto inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ring-inset",
             burdenCount > 0
               ? "bg-amber-50 text-amber-700 ring-amber-200"
               : watchCount > 0
@@ -173,7 +173,7 @@ export function FutureBurdens({ address }: { address: string | null }) {
                   <span className="min-w-0 text-[13px] font-semibold text-slate-900">{b.title}</span>
                   <span
                     className={clsx(
-                      "shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em]",
+                      "shrink-0 rounded-full px-1.5 py-0.5 text-xs font-semibold",
                       tone.badge,
                       tone.text,
                     )}
@@ -183,7 +183,7 @@ export function FutureBurdens({ address }: { address: string | null }) {
                 </div>
                 <p className="mt-1 text-[13px] leading-snug text-slate-600">{b.detail}</p>
                 {(b.meta || b.planLink) && (
-                  <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
                     {b.meta && <span>{b.meta}</span>}
                     {b.planLink && (
                       <a
@@ -203,7 +203,7 @@ export function FutureBurdens({ address }: { address: string | null }) {
         })}
       </div>
 
-      <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
+      <p className="mt-3 text-xs leading-relaxed text-slate-500">
         Kilde: Plandata.dk (Erhvervsstyrelsen) + DAWA. Tjekket {new Date(checkedAt).toLocaleDateString("da-DK")}.
         Beslutningsstøtte — bekræft altid med kommunens spildevandsplan og gældende lokalplan hos kommunen.
       </p>

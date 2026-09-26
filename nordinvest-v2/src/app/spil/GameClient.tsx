@@ -186,6 +186,12 @@ export default function GameClient() {
 
   const scrollTop = () => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
+  // Each new home starts at the top (header and photos), once it has rendered.
+  // Scrolling while the loading screen is up left phones parked at the guess box.
+  useEffect(() => {
+    if (stage === "play") topRef.current?.scrollIntoView({ block: "start" });
+  }, [stage, round]);
+
   /* ---------- profile ↔ account ---------- */
 
   const account = useGameAccount();
@@ -793,36 +799,37 @@ function TopBar({
   const label = kind === "daily" ? "Dagens 5" : `Fri leg · ${REGIONS.find((r) => r.key === region)?.label ?? region}`;
   const ranked = [...players].sort((a, b) => b.score - a.score);
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-3xl bg-white px-4 py-3 shadow-card ring-1 ring-slate-200 sm:px-5">
+    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 rounded-3xl bg-white px-4 py-3.5 shadow-card ring-1 ring-slate-200 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-x-5 sm:px-5">
       <div className="min-w-0">
-        <div className="text-xs font-semibold text-blue-700">{label}</div>
-        <div className="text-lg font-extrabold">
+        <div className="truncate text-[13px] font-semibold text-blue-700">{label}</div>
+        <div className="text-lg font-extrabold leading-tight">
           Bolig {round + 1} <span className="font-medium text-slate-400">af {total}</span>
         </div>
       </div>
-      <div className="flex items-center gap-1.5" aria-label="Dine runder">
+      {/* Progress: one segment per round, coloured by how close your guess was. */}
+      <div className="col-span-2 row-start-2 flex items-center gap-1 sm:col-span-1 sm:row-start-1" aria-label={`Runde ${round + 1} af ${total}`}>
         {Array.from({ length: total }, (_, i) => {
           const r = rounds[i];
           const pct = r?.rows.find((x) => x.pid === players[0]?.id)?.pct;
           return (
             <span
               key={i}
-              className={`h-2.5 rounded-full transition-all ${i === round ? "w-6 bg-blue-600" : "w-2.5"} ${
-                pct != null ? ACC_DOT[accuracy(pct).key] : i === round ? "" : "bg-slate-200"
+              className={`h-1.5 flex-1 rounded-full transition-colors sm:max-w-[28px] ${
+                pct != null ? ACC_DOT[accuracy(pct).key] : i === round ? "bg-blue-600" : "bg-slate-200"
               }`}
             />
           );
         })}
       </div>
-      <div className="ml-auto flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-2">
         {ranked.map((p) => {
           const idx = players.findIndex((x) => x.id === p.id);
           return (
             <span key={p.id} className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 py-1 pl-1 pr-3 text-sm ring-1 ring-inset ring-slate-200">
-              <span className="grid h-6 w-6 place-items-center rounded-full text-[11px] font-bold text-white" style={{ background: playerColor(idx) }}>
+              <span className="grid h-6 w-6 place-items-center rounded-full text-xs font-bold text-white" style={{ background: playerColor(idx) }}>
                 {idx + 1}
               </span>
-              {players.length > 1 && <span className="max-w-[6rem] truncate font-medium">{p.name}</span>}
+              {players.length > 1 && <span className="max-w-[5rem] truncate font-medium sm:max-w-[6rem]">{p.name}</span>}
               <span className={`font-bold tabular-nums ${p.score < 0 ? "text-rose-600" : ""}`}>{p.score}</span>
               {p.streak >= 2 && (
                 <span className="inline-flex items-center text-amber-600" title={`${p.streak} i træk inden for 10 %`}>
@@ -833,7 +840,7 @@ function TopBar({
             </span>
           );
         })}
-        <button type="button" onClick={onQuit} className="rounded-full px-3 py-1 text-xs font-semibold text-slate-500 ring-1 ring-inset ring-slate-200 hover:text-slate-900">
+        <button type="button" onClick={onQuit} className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
           Afslut
         </button>
       </div>
@@ -862,6 +869,8 @@ function GuessArea({
   daily: boolean;
   revealing: boolean;
 }) {
+  const [finePointer, setFinePointer] = useState(false);
+  useEffect(() => setFinePointer(window.matchMedia("(pointer: fine)").matches), []);
   const active = turn ? players[turn.pos] : null;
   return (
     <div>
@@ -904,7 +913,9 @@ function GuessArea({
               guess={guesses[p.id]}
               disabled={!isActive || revealing}
               canUnlock={!turn && !daily}
-              autoFocus={isActive && (turn ? true : i === 0)}
+              // On touch screens only focus after the player's own tap ("Start tiden"),
+              // otherwise the keyboard opens and scrolls away from the photos.
+              autoFocus={isActive && (turn ? true : i === 0 && finePointer)}
               onGuess={(d) => setGuess(p.id, d)}
               onLock={() => lock(p.id)}
               onUnlock={() => unlock(p.id)}

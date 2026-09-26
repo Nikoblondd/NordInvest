@@ -148,7 +148,7 @@ export function DealHero({
             >
               <dt className="text-[13px] font-medium text-white/55">{m.label}</dt>
               <dd className="mt-1.5 flex items-baseline gap-1 whitespace-nowrap">
-                <span className={clsx("text-[28px] font-semibold tabular-nums tracking-[-0.025em] sm:text-[34px]", toneText[m.tone])}>
+                <span className={clsx("text-[26px] font-semibold tabular-nums tracking-[-0.025em] sm:text-[34px]", toneText[m.tone])}>
                   {m.value}
                 </span>
                 {m.unit && <span className="text-[15px] font-medium text-white/45">{m.unit}</span>}

@@ -101,7 +101,7 @@ export function HintPanel({
                   : "bg-white ring-slate-200 hover:-translate-y-px hover:ring-blue-300 active:translate-y-0"
               }`}
             >
-              <span className="text-[11px] font-medium text-slate-500">{h.label}</span>
+              <span className="text-xs font-medium text-slate-500">{h.label}</span>
               {open ? (
                 <span className="text-sm font-semibold text-slate-900">{h.v}</span>
               ) : (
@@ -287,7 +287,7 @@ export function GuessRow({
       }`}
     >
       <div className="mb-2 flex items-center gap-2">
-        <span className="grid h-6 w-6 place-items-center rounded-full text-[11px] font-bold text-white" style={{ background: playerColor(index) }}>
+        <span className="grid h-6 w-6 place-items-center rounded-full text-xs font-bold text-white" style={{ background: playerColor(index) }}>
           {index + 1}
         </span>
         <span className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-900">{name}</span>

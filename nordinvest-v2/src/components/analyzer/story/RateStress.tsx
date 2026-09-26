@@ -79,7 +79,7 @@ export function RateStress({
             >
               {r.cashFlow >= 0 ? "+" : "−"}
               {dk(Math.abs(r.cashFlow))}
-              <span className="ml-1 text-xs font-medium tracking-normal text-slate-400 sm:text-sm">kr/md.</span>
+              <span className="block text-xs font-medium tracking-normal text-slate-400 sm:ml-1 sm:inline sm:text-sm">kr/md.</span>
             </dd>
           </div>
         ))}

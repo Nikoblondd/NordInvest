@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 
@@ -161,7 +160,7 @@ export function QuestionsDemo() {
                   className={`h-2 w-2 shrink-0 rounded-full ${item.tone === "good" ? "bg-emerald-500" : "bg-amber-500"} ${on ? "" : "opacity-50"}`}
                 />
                 <span
-                  className={`whitespace-nowrap font-thesis text-lg leading-tight tracking-[-0.01em] transition-colors lg:whitespace-normal lg:text-[1.65rem] ${
+                  className={`whitespace-nowrap text-[15px] font-medium leading-tight transition-colors lg:whitespace-normal lg:font-thesis lg:text-[1.65rem] lg:font-normal lg:tracking-[-0.01em] ${
                     on ? "text-[#0b1b33]" : "text-slate-500 group-hover:text-slate-800"
                   }`}
                 >
@@ -191,7 +190,7 @@ export function QuestionsDemo() {
               transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
               className="p-4 sm:p-6"
             >
-              <p className="font-thesis text-2xl leading-tight tracking-[-0.01em] text-[#0b1b33] sm:text-[1.7rem]">{q.q}</p>
+              <p className="font-thesis text-[1.75rem] leading-[1.1] text-[#0b1b33] sm:text-[1.7rem] sm:tracking-[-0.01em]">{q.q}</p>
               <span
                 className={`mt-3 inline-flex items-start gap-2 rounded-lg px-2.5 py-1.5 text-sm font-medium ring-1 ring-inset ${
                   q.tone === "good" ? "bg-emerald-50 text-emerald-800 ring-emerald-200" : "bg-amber-50 text-amber-900 ring-amber-200"
@@ -200,11 +199,22 @@ export function QuestionsDemo() {
                 <span aria-hidden className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${q.tone === "good" ? "bg-emerald-500" : "bg-amber-500"}`} />
                 {q.answer}
               </span>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600 lg:hidden">{q.body}</p>
-              <div className="relative mt-5 aspect-[16/9] overflow-hidden rounded-xl bg-[#f4f6f9] ring-1 ring-inset ring-slate-200/70">
-                <Image src={q.image} alt={q.alt} fill unoptimized className="object-cover" />
-              </div>
-              <p className="mt-3 text-xs text-slate-500">Kilde: {q.source}</p>
+              <p className="mt-3 text-[15px] leading-relaxed text-slate-600 lg:hidden">{q.body}</p>
+              {/* Phones get a square version drawn for small screens (same image
+                  model, same content, bigger type); the 16:9 one is too small there. */}
+              <picture className="relative mt-5 block aspect-square overflow-hidden rounded-xl bg-[#f4f6f9] ring-1 ring-inset ring-slate-200/70 sm:aspect-[16/9]">
+                <source media="(min-width: 640px)" srcSet={q.image} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={q.image.replace(/\.webp$/, "-m.webp")}
+                  alt={q.alt}
+                  width={1080}
+                  height={1080}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </picture>
+              <p className="mt-3 text-[13px] text-slate-500">Kilde: {q.source}</p>
             </motion.div>
           </AnimatePresence>
         </div>

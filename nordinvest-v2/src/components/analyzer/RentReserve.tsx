@@ -30,13 +30,13 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
   const Icon = positive ? TrendingUp : negative ? TrendingDown : Minus;
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+    <section className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-8">
       <div className="flex items-center gap-2">
         <Scale size={16} className="text-slate-500" />
-        <h3 className="text-sm font-semibold text-slate-900">Lejereserve</h3>
+        <h3 className="text-[17px] font-semibold text-slate-900">Lejereserve</h3>
         <span
           className={clsx(
-            "ml-auto inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ring-inset",
+            "ml-auto inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset",
             badge.bg,
             badge.text,
             badge.ring,
@@ -52,31 +52,31 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
       </p>
 
       {/* Nu / Marked / Realistisk — three-column at-a-glance */}
-      <div className="mt-4 grid grid-cols-3 gap-3 rounded-xl bg-slate-50 p-3">
+      <div className="mt-5 grid grid-cols-3 border-t border-slate-200 pt-4">
         <div className="min-w-0">
           <div className="text-[13px] font-medium text-slate-500">Nu</div>
-          <div className="mt-1 truncate text-lg font-bold tnum text-slate-900">
+          <div className="mt-1 text-xl font-semibold tabular-nums tracking-[-0.02em] text-slate-900 sm:text-2xl">
             {dk(reserve.currentPerM2Month)}
-            <span className="ml-0.5 text-xs font-semibold text-slate-400">kr/m²/md</span>
+            <span className="block text-xs font-medium tracking-normal text-slate-400">kr/m² pr. md.</span>
           </div>
         </div>
-        <div className="min-w-0 border-x border-slate-200 px-3">
+        <div className="min-w-0 border-x border-slate-200 px-3 sm:px-5">
           <div className="text-[13px] font-medium text-slate-500">Marked</div>
-          <div className="mt-1 truncate text-lg font-bold tnum text-slate-900">
+          <div className="mt-1 text-xl font-semibold tabular-nums tracking-[-0.02em] text-slate-900 sm:text-2xl">
             {dk(reserve.marketPerM2Month)}
-            <span className="ml-0.5 text-xs font-semibold text-slate-400">kr/m²/md</span>
+            <span className="block text-xs font-medium tracking-normal text-slate-400">kr/m² pr. md.</span>
           </div>
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 pl-3 sm:pl-5">
           <div className="text-[13px] font-medium text-slate-500">Realistisk</div>
           <div
             className={clsx(
-              "mt-1 truncate text-lg font-bold tnum",
+              "mt-1 text-xl font-semibold tabular-nums tracking-[-0.02em] sm:text-2xl",
               positive ? "text-emerald-700" : negative ? "text-rose-700" : "text-slate-900",
             )}
           >
             {positive ? "+" : ""}{dk(reserve.realisticMonthlyUplift)}
-            <span className="ml-0.5 text-xs font-semibold text-slate-400">kr/md</span>
+            <span className="block text-xs font-medium tracking-normal text-slate-400">kr pr. md.</span>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
             <div className="text-[13px] font-medium text-emerald-700">
               Teknisk værdi-uplift
             </div>
-            <div className="mt-0.5 text-[11px] leading-snug text-emerald-800">
+            <div className="mt-0.5 text-xs leading-snug text-emerald-800">
               Ekstra årlig NOI kapitaliseret ved regionens cap rate.
             </div>
           </div>
@@ -113,11 +113,11 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
                 <ArrowRight size={14} className="mt-1 shrink-0 text-slate-400" />
                 <div className="min-w-0 flex-1">
                   <div className="text-[13px] font-semibold text-slate-900">{p.label}</div>
-                  <div className="text-[11px] text-slate-500">{p.when}</div>
+                  <div className="text-xs text-slate-500">{p.when}</div>
                 </div>
                 <div className="shrink-0 text-sm font-bold tnum text-emerald-700">
                   +{dk(p.amountMonthly)}
-                  <span className="ml-0.5 text-[11px] font-semibold text-emerald-500">kr/md</span>
+                  <span className="ml-0.5 text-xs font-semibold text-emerald-500">kr/md</span>
                 </div>
               </div>
             ))}
@@ -142,7 +142,7 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
       {open && (
         <div className="mt-2 rounded-lg border border-slate-100 bg-slate-50 p-3 text-[12px] leading-relaxed text-slate-600">
           {reserve.explain}{" "}
-          <span className="block pt-2 text-[11px] text-slate-500">
+          <span className="block pt-2 text-xs text-slate-500">
             Beslutningsstøtte, ikke juridisk rådgivning. Konkrete lejevarslinger
             skal altid udarbejdes med udlejer-advokat eller huslejenævn.
           </span>

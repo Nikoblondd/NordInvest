@@ -95,7 +95,7 @@ export function Comparables({
 
   if (state.status === "loading") {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+      <section className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-8">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <Loader2 className="h-4 w-4 animate-spin" />
           Henter sammenlignelige boliger fra Boligsiden…
@@ -106,7 +106,7 @@ export function Comparables({
 
   if (state.status === "empty") {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+      <section className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-8">
         <h3 className="text-sm font-semibold text-slate-900">Sammenlignelige boliger</h3>
         <p className="mt-2 text-sm text-slate-500">
           Ingen tilstrækkeligt sammenlignelige aktive udbud i {zip} lige nu. Prøv igen om nogle dage — Boligsiden opdaterer løbende.
@@ -124,10 +124,10 @@ export function Comparables({
   const arrow = d.priceDeltaPct >= 0 ? "+" : "";
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+    <section className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-8">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-slate-900">
+          <h3 className="text-[17px] font-semibold text-slate-900">
             Sammenlignelige boliger
           </h3>
           <p className="mt-1 text-xs text-slate-500">
@@ -136,7 +136,7 @@ export function Comparables({
         </div>
         <span
           className={clsx(
-            "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ring-1",
+            "inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ring-1",
             tone.bg,
             tone.text,
             tone.ring,
@@ -192,7 +192,7 @@ export function Comparables({
         </div>
         <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200">
           {d.comparables.map((c, i) => (
-            <li key={`${c.url}-${i}`} className="flex items-center justify-between gap-3 px-3 py-2">
+            <li key={`${c.url}-${i}`} className="flex items-start justify-between gap-3 px-3.5 py-3">
               <div className="min-w-0">
                 <a
                   href={c.url}
@@ -203,25 +203,23 @@ export function Comparables({
                   <span className="truncate">{c.address}</span>
                   <ArrowUpRight className="h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
                 </a>
-                <div className="text-xs text-slate-500">
-                  {c.zipCode} {c.city}
+                <div className="mt-0.5 text-xs leading-snug text-slate-500">
+                  {kr(c.price)} · {c.zipCode} {c.city}
                   {c.rooms ? ` · ${c.rooms} vær` : ""}
                   {c.yearBuilt ? ` · opført ${c.yearBuilt}` : ""}
                   {c.daysOnMarket != null ? ` · ${c.daysOnMarket} dage til salg` : ""}
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm font-semibold text-slate-900">{krM2(c.pricePerM2)}</div>
-                <div className="text-xs text-slate-500">
-                  {kr(c.price)} · {c.area} m²
-                </div>
+              <div className="shrink-0 text-right">
+                <div className="whitespace-nowrap text-sm font-semibold tabular-nums text-slate-900">{krM2(c.pricePerM2)}</div>
+                <div className="whitespace-nowrap text-xs tabular-nums text-slate-500">{c.area} m²</div>
               </div>
             </li>
           ))}
         </ul>
       </div>
 
-      <p className="mt-3 text-[11px] text-slate-400">
+      <p className="mt-3 text-xs text-slate-500">
         Kilde: Boligsiden aktive udbud. Median og IQR beregnes på hele stikprøven, ikke kun de viste 6.
       </p>
     </section>

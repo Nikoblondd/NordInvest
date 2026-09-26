@@ -150,12 +150,12 @@ export function AccountStrip({
   }
 
   return (
-    <div className="rounded-2xl bg-white/10 p-3 ring-1 ring-inset ring-white/15">
-      <div className="flex flex-wrap items-center gap-3">
+    <div className="rounded-2xl bg-white/10 p-4 ring-1 ring-inset ring-white/15">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 sm:flex sm:items-center">
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/15 text-white">
-          <UserRound className="h-5 w-5" />
+          <UserRound aria-hidden className="h-5 w-5" />
         </span>
-        <p className="min-w-0 flex-1 text-sm text-blue-50">
+        <p className="min-w-0 flex-1 text-[15px] leading-snug text-blue-50 sm:text-sm">
           <strong className="text-white">Gem din fremgang.</strong> Få dit eget navn på ranglisten, og behold XP, badges og
           stime på alle dine enheder.
         </p>
@@ -163,7 +163,7 @@ export function AccountStrip({
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="rounded-xl bg-white px-4 py-2 text-sm font-extrabold text-blue-700 shadow-btn transition hover:bg-blue-50 active:translate-y-px"
+            className="col-span-2 w-full rounded-xl bg-white px-4 py-2.5 text-sm font-extrabold text-blue-700 shadow-btn transition hover:bg-blue-50 active:translate-y-px sm:col-span-1 sm:w-auto sm:py-2"
           >
             Opret profil
           </button>
