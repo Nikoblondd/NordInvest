@@ -6,6 +6,8 @@ import { AuthCodeHandler } from "@/components/auth/AuthCodeHandler";
 import { Analytics } from "@vercel/analytics/react";
 import { ConsentAnalytics } from "@/components/analytics/ConsentAnalytics";
 import { site } from "@/lib/site";
+import { LangScript } from "@/components/i18n/LangScript";
+import { I18nRuntime } from "@/components/i18n/I18nRuntime";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -150,8 +152,12 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="da" className={`${inter.variable} ${outfit.variable}`}>
+    <html lang="da" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <head>
+        <LangScript />
+      </head>
       <body>
+        <I18nRuntime />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}

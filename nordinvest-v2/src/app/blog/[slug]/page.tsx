@@ -127,7 +127,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
         )}
 
         <div className="container-x max-w-3xl py-12">
-          <div className="article" dangerouslySetInnerHTML={{ __html: html }} />
+          <div className="article" data-i18n-html dangerouslySetInnerHTML={{ __html: html }} />
 
           <div className="mt-14 rounded-2xl border border-stone-200 bg-navy-900 p-8 text-cream-100">
             <h3 className="text-xl text-cream-100">Regn på din egen bolig</h3>

@@ -290,3 +290,8 @@
   .feature-prose h2 { font-size: 26px; margin-top: 2.75rem; }
   .feature-prose table { font-size: 15px; }
 }
+
+/* English mode: hide the page for the moment between paint and the first
+   translation pass, so English visitors never see a flash of Danish. */
+html.i18n-pending body { opacity: 0; }
+html[data-lang="en"] body { transition: opacity 120ms ease-out; }

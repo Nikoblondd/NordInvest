@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Menu, X, LayoutDashboard, ChevronDown, LogOut, User } from "lucide-react";
 import { Logo } from "./Logo";
 import { createClient } from "@/lib/supabase/client";
+import { LangToggle } from "./i18n/LangToggle";
 
 const links = [
   { href: "/analyseren", label: "Analyseren" },
@@ -56,8 +57,10 @@ export function Nav() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-slate-50/80 backdrop-blur-lg">
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Logo />
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+        <div translate="no" data-no-i18n className="min-w-0">
+          <Logo />
+        </div>
 
         <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
           {links.map((l) => (
@@ -67,7 +70,8 @@ export function Nav() {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <LangToggle />
           {authed ? (
             <div ref={menuRef} className="relative">
               <button
@@ -116,15 +120,15 @@ export function Nav() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-slate-800"
+                className="flex items-center gap-2 whitespace-nowrap rounded-full bg-slate-900 px-3.5 py-2 text-sm font-medium text-white transition-all hover:bg-slate-800 sm:px-4"
               >
-                Start gratis <ArrowRight size={16} />
+                Start gratis <ArrowRight size={16} className="hidden min-[400px]:block" />
               </Link>
             </>
           )}
           <button
             aria-label="Menu"
-            className="text-slate-700 md:hidden"
+            className="-mr-1 p-1 text-slate-700 md:hidden"
             onClick={() => setOpen((v) => !v)}
           >
             {open ? <X size={22} /> : <Menu size={22} />}
@@ -133,7 +137,7 @@ export function Nav() {
       </nav>
 
       {open && (
-        <div className="border-t border-slate-200 bg-slate-50 px-6 py-5 md:hidden">
+        <div className="border-t border-slate-200 bg-slate-50 px-4 py-5 sm:px-6 md:hidden">
           <div className="flex flex-col gap-4">
             {links.map((l) => (
               <Link key={l.href} href={l.href} className="text-base font-medium text-slate-700" onClick={() => setOpen(false)}>

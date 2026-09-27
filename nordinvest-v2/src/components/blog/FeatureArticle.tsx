@@ -179,7 +179,7 @@ export function FeatureArticle({
                     ))}
                   </ol>
                 </details>
-                <div itemProp="articleBody" className="feature-prose" dangerouslySetInnerHTML={{ __html: html }} />
+                <div itemProp="articleBody" className="feature-prose" data-i18n-html dangerouslySetInnerHTML={{ __html: html }} />
               </div>
             </div>
           </div>
