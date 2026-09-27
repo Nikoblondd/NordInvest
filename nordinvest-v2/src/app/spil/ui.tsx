@@ -103,7 +103,7 @@ export function HintPanel({
             >
               <span className="text-xs font-medium text-slate-500">{h.label}</span>
               {open ? (
-                <span className="text-sm font-semibold text-slate-900">{h.v}</span>
+                <span className="text-sm font-semibold text-slate-900" {...(h.key === "city" ? { translate: "no" as const, "data-no-i18n": "" } : {})}>{h.v}</span>
               ) : (
                 <span className="flex items-center gap-1 text-sm font-medium text-blue-700">
                   <Eye className="h-3.5 w-3.5" strokeWidth={2} /> Vis

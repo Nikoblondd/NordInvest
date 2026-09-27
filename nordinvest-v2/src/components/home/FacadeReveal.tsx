@@ -70,9 +70,9 @@ type Callout = {
   label: string;
 };
 const CALLOUTS: Callout[] = [
-  { n: "3", row: 3, at: [37, 32], box: { left: 2, top: 15 }, tip: [29.5, 20], label: "Vedligehold" },
+  { n: "3", row: 3, at: [40, 37], box: { left: 2, top: 14 }, tip: [29.5, 22], label: "Vedligehold" },
   { n: "1", row: 0, at: [50, 58], box: { right: 2, top: 22 }, tip: [70.5, 27], label: "Husleje" },
-  { n: "2", row: 2, at: [20, 89], box: { left: 25, top: 84 }, tip: [25, 89], label: "Grundskyld" },
+  { n: "2", row: 2, at: [20, 89], box: { left: 25, top: 77 }, tip: [25, 82], label: "Grundskyld" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -510,14 +510,14 @@ function CalloutMark({ c, scan, progress }: { c: Callout; scan: MotionValue<numb
         </motion.span>
       </span>
       <span
-        className="absolute w-[33%] rounded-lg bg-[#0b2350]/95 px-2 py-1 ring-1 ring-blue-200/40 sm:w-[27%] sm:px-2.5 sm:py-1.5"
+        className="absolute w-max min-w-[33%] max-w-[62%] rounded-lg bg-[#0b2350]/95 px-2 py-1 ring-1 ring-blue-200/40 sm:min-w-[27%] sm:px-2.5 sm:py-1.5"
         style={{
           left: c.box.left != null ? `${c.box.left}%` : undefined,
           right: c.box.right != null ? `${c.box.right}%` : undefined,
           top: `${c.box.top}%`,
         }}
       >
-        <span className="block text-[11px] leading-tight text-blue-200">{c.label}</span>
+        <span className="block whitespace-nowrap text-[11px] leading-tight text-blue-200">{c.label}</span>
         <span className={`block whitespace-nowrap text-xs font-semibold leading-tight tabular-nums sm:text-[13px] ${value > 0 ? "text-emerald-300" : "text-white"}`}>
           {signed(value)} kr/md.
         </span>

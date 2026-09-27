@@ -857,7 +857,7 @@ export function AnalyzerApp() {
               aria-checked={inputs.strategy === s.id}
               onClick={() => set({ strategy: s.id })}
               className={clsx(
-                "rounded-full px-2 py-2 text-[13px] font-semibold transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
+                "whitespace-nowrap rounded-full px-2 py-2 text-[13px] font-semibold transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
                 inputs.strategy === s.id ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.12)]" : "text-slate-500 hover:text-slate-900",
               )}
             >

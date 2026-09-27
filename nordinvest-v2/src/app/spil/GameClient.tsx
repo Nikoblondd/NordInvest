@@ -972,7 +972,7 @@ function RoundResult({
           <div className="mt-1 text-4xl font-extrabold tabular-nums tracking-tight sm:text-5xl">
             <CountUp to={round.price} onDone={() => setShown(true)} /> <span className="text-2xl font-bold text-blue-200">kr.</span>
           </div>
-          {home.address && <div className="mt-2 text-sm font-medium text-white">{home.address}</div>}
+          {home.address && <div className="mt-2 text-sm font-medium text-white" translate="no" data-no-i18n>{home.address}</div>}
           <div className="mt-1 text-sm text-blue-100">{facts.join(" · ")}</div>
           {home.listingUrl && (
             <a href={home.listingUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-200 hover:text-white">

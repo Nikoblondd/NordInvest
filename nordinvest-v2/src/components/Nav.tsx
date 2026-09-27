@@ -151,6 +151,9 @@ export function Nav() {
             >
               {authed ? "Dashboard" : "Log ind"}
             </Link>
+            <div className="border-t border-slate-200 pt-4">
+              <LangToggle variant="menu" />
+            </div>
           </div>
         </div>
       )}

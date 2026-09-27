@@ -174,7 +174,10 @@ export function CityMap({ zip, city }: { zip: string; city: string }) {
             preserveAspectRatio="xMidYMid meet"
             className="absolute inset-0 h-full w-full cursor-pointer"
             role="img"
-            aria-label={`Danmarkskort. ${label} er markeret.`}
+            aria-label={
+              document.documentElement.dataset.lang === "en" ? `Map of Denmark. ${label} is marked.` : `Danmarkskort. ${label} er markeret.`
+            }
+            data-no-i18n
             onClick={toggle}
           >
             <defs>
@@ -228,6 +231,8 @@ export function CityMap({ zip, city }: { zip: string; city: string }) {
                   left: `${Math.min(80, Math.max(20, pin.x))}%`,
                   top: pin.below > 80 ? `calc(${pin.above}% - 10px)` : `calc(${pin.below}% + 10px)`,
                 }}
+                translate="no"
+                data-no-i18n
               >
                 {label}
               </span>

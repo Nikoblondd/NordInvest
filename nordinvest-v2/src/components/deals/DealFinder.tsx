@@ -610,13 +610,13 @@ export function DealFinder() {
               ? "Erhvervsejendomme fra Ejendomstorvet — cash flow og afkast beregnet ud fra det udbudte afkast og prisen."
               : "Leje og cash flow er estimater — klik “Fuld analyse” for den præcise vurdering med BBR-data og fotos."}
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button onClick={openNationwideMap}
-              className="flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50">
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50">
               <MapIcon size={13} /> Se hele markedet på kort
             </button>
             <button onClick={() => setAdvOpen((v) => !v)}
-              className="flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50">
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50">
               <SlidersHorizontal size={13} /> Avancerede filtre
               {advCount > 0 && <span className="rounded-full bg-blue-100 px-1.5 text-[10px] font-bold text-blue-700">{advCount}</span>}
               <ChevronDown size={13} className={clsx("transition-transform", advOpen && "rotate-180")} />

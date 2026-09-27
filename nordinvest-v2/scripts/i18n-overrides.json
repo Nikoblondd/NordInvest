@@ -1,10 +1,22 @@
 {
   "Analyseren": "Analyser",
   "Analyseren →": "Analyser →",
-  "billeder": "photos",
+  "Avancerede filtre": "More filters",
   "Danmark": "Denmark",
   "Ejerudgift fra annoncen": "Owner costs from the listing",
+  "Erhvervsejendomme": "Commercial",
+  "Estimat — endnu ingen lokale handler": "Early estimate",
+  "Kalibreret estimat": "Calibrated",
+  "Kontakt os om en aftale": "Contact sales",
   "Niveau": "Level",
   "Norge": "Norway",
-  "Sverige": "Sweden"
+  "Se hele markedet på kort": "Market map",
+  "Sverige": "Sweden",
+  "Tæt på": "Close",
+  "Villa": "House",
+  "Villa,": "House,",
+  "Villa, ⟦0⟧ m², ⟦1⟧ kr.": "House, ⟦0⟧ m², DKK ⟦1⟧",
+  "Værdistigning": "Appreciation",
+  "Ydelse på lån": "Loan payment",
+  "billeder": "photos"
 }
