@@ -25,7 +25,8 @@ import { RentReserve } from "@/components/analyzer/RentReserve";
 import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import { Comparables } from "@/components/analyzer/Comparables";
 import { ExpenseCheck } from "@/components/analyzer/ExpenseCheck";
-import type { HeroMetric } from "@/components/analyzer/story/DealHero";
+import { DealHero, type HeroMetric } from "@/components/analyzer/story/DealHero";
+import { CashflowWaterfall } from "@/components/analyzer/story/CashflowWaterfall";
 import { Chapter, ChapterNav, Details, Panel, type ChapterAnswer, type NavItem } from "@/components/analyzer/story/Chapter";
 import { RateStress } from "@/components/analyzer/story/RateStress";
 import type { Tone } from "@/components/analyzer/story/tone";
@@ -37,19 +38,16 @@ import { captureEvent } from "@/lib/analytics-events";
 import { buildProvenance, rentRegulationRule } from "@/lib/provenance";
 import type { PriceBenchmark } from "@/lib/reference";
 
-// The result view's animated pieces (framer-motion) load in their own chunks, so
-// the empty analyser, and its first paint, doesn't carry them. They're warmed
-// on idle below, so a result never waits for them.
-const loadHero = () => import("@/components/analyzer/story/DealHero");
+// The hero and the cash-flow waterfall open the result, so they're part of the
+// bundle: loading them late pushed the whole result down as they arrived (CLS).
+// The adjust sheet (closed until asked for) and the 10-year projection (far
+// down the page) load in their own chunks, warmed on idle.
 const loadSheet = () => import("@/components/analyzer/story/Sheet");
-const loadWaterfall = () => import("@/components/analyzer/story/CashflowWaterfall");
 const loadProjection = () => import("@/components/analyzer/story/ProjectionStory");
-const DealHero = dynamic(() => loadHero().then((m) => m.DealHero));
 const Sheet = dynamic(() => loadSheet().then((m) => m.Sheet), { ssr: false });
-const CashflowWaterfall = dynamic(() => loadWaterfall().then((m) => m.CashflowWaterfall));
 const ProjectionStory = dynamic(() => loadProjection().then((m) => m.ProjectionStory));
 function warmResultView() {
-  const run = () => void Promise.all([loadHero(), loadSheet(), loadWaterfall(), loadProjection()]).catch(() => {});
+  const run = () => void Promise.all([loadSheet(), loadProjection()]).catch(() => {});
   const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
   if (w.requestIdleCallback) w.requestIdleCallback(run, { timeout: 3000 });
   else window.setTimeout(run, 1500);
@@ -1349,7 +1347,7 @@ const darkPill =
 /** While the listing is being read: the verdict's place holds a calm skeleton, not example numbers. */
 function LoadingBand({ stage }: { stage?: string }) {
   return (
-    <section aria-busy="true" aria-label="Analysen hentes" className="bg-[#0a0e16] px-4 pb-16 pt-12 text-white sm:px-6 sm:pt-14">
+    <section aria-busy="true" aria-label="Analysen hentes" className="min-h-[calc(100svh-4rem)] bg-[#0a0e16] px-4 pb-16 pt-12 text-white sm:px-6 sm:pt-14">
       <div className="mx-auto max-w-[1080px]">
         <p role="status" aria-live="polite" className="flex items-center gap-2 text-[15px] font-medium text-white/70">
           <Loader2 aria-hidden size={16} className="animate-spin" />

@@ -79,7 +79,7 @@ export function ExpenseCheck({
 
   if (state.status === "loading") {
     return (
-      <div className="mt-3 flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-500 ring-1 ring-slate-100">
+      <div aria-busy="true" className="mt-3 flex min-h-[64px] items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-500 ring-1 ring-slate-100">
         <Loader2 className="h-3.5 w-3.5 animate-spin" />
         Tjekker om udgifterne matcher sammenlignelige boliger…
       </div>

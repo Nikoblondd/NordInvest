@@ -11,7 +11,7 @@
 import { getAnalytics, type Analytics } from "@/lib/analytics-data";
 import { reference } from "@/lib/reference";
 import { getPsiReport } from "@/lib/psi";
-import { getWebVitalsSummary, MIN_SAMPLES } from "@/lib/web-vitals";
+import { getWebVitalsSummary, MIN_SAMPLES, RUM_SINCE } from "@/lib/web-vitals";
 
 export type CheckStatus = "green" | "amber" | "red" | "waiting";
 
@@ -249,7 +249,7 @@ export async function getLaunchReadiness(): Promise<ReadinessReport> {
       const pages = ["/", "/analyseren", "/deals"].map((path) => {
         const r = rum.perPath.find((p) => p.path === path);
         if (r && r.samples >= MIN_SAMPLES && r.lcpP75 != null) {
-          return { path, source: `RUM, ${r.samples} målinger`, lcp: r.lcpP75, inp: r.inpP75, cls: r.clsP75 };
+          return { path, source: `RUM, ${r.samples} målinger siden ${RUM_SINCE.slice(8, 10)}/${RUM_SINCE.slice(5, 7)}`, lcp: r.lcpP75, inp: r.inpP75, cls: r.clsP75 };
         }
         const p = psi.results.find((x) => x.ok && new URL(x.url).pathname === path);
         if (p && p.vitals.lcpMs != null) {

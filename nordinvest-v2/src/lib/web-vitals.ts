@@ -15,6 +15,12 @@ export const CLS_GOOD = 0.1;
 // Below this many samples per path we don't trust our own p75 and fall back
 // to PSI. Real-user metrics need a real sample size.
 export const MIN_SAMPLES = 20;
+// Only count visits since the last performance release. Visits before it measure
+// a page that no longer exists (e.g. layout shifts on /analyseren fixed
+// 2026-09-29), and a 28-day window would keep them in the verdict for weeks.
+// Bump this after a release that changes loading or layout. Until a page has
+// MIN_SAMPLES new visits, the launch check falls back to PageSpeed Insights.
+export const RUM_SINCE = "2026-09-29 11:30:00"; // UTC
 
 export type Vitals = {
   path: string;
@@ -115,6 +121,7 @@ export async function getWebVitalsSummary(windowDays = 28): Promise<VitalsSummar
     FROM events
     WHERE event = '$web_vitals'
       AND timestamp >= now() - INTERVAL ${windowDays} DAY
+      AND timestamp >= toDateTime('${RUM_SINCE}')
       AND properties.$pathname IN (${WATCH_PATHS.map((p) => `'${p}'`).join(", ")})
     GROUP BY path
   `;

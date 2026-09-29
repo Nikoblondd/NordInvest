@@ -94,11 +94,18 @@ export function Comparables({
   if (state.status === "idle") return null;
 
   if (state.status === "loading") {
+    // Same height as the loaded card (measured: ~1,015 px on phones, ~675 px
+    // wider), so nothing below it jumps when the comparables arrive (CLS).
     return (
-      <section className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-8">
+      <section aria-busy="true" className="min-h-[1010px] rounded-2xl border border-slate-200/80 bg-white p-5 sm:min-h-[670px] sm:p-8">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <Loader2 className="h-4 w-4 animate-spin" />
           Henter sammenlignelige boliger fra Boligsiden…
+        </div>
+        <div aria-hidden className="mt-6 space-y-3">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100 motion-reduce:animate-none" />
+          ))}
         </div>
       </section>
     );

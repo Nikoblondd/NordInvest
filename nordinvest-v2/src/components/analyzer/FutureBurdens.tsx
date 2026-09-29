@@ -84,10 +84,17 @@ export function FutureBurdens({ address }: { address: string | null }) {
 
   if (state.status === "loading") {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+      // Reserves the loaded card's height (~400 px on phones, ~240 px wider) so
+      // the chapter doesn't jump when the plans arrive (CLS).
+      <section aria-busy="true" className="min-h-[400px] rounded-2xl border border-slate-200 bg-white p-4 sm:min-h-[240px] sm:p-5">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <Loader2 size={14} className="animate-spin" />
           Tjekker offentlige planer på adressen…
+        </div>
+        <div aria-hidden className="mt-6 space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-100 motion-reduce:animate-none" />
+          ))}
         </div>
       </section>
     );

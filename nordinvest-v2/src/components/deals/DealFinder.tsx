@@ -630,7 +630,10 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
       {/* results */}
       <div className="mt-6">
         {loading && (
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-white py-20 text-center">
+          // A screen tall: the content below moves away on the click itself (a
+          // shift right after input doesn't count as CLS), and the results that
+          // replace it are taller still, so nothing visible jumps when they land.
+          <div aria-busy="true" className="flex min-h-[calc(100svh-4rem)] flex-col items-center justify-start rounded-3xl border border-dashed border-slate-200 bg-white pt-20 text-center">
             <Loader2 size={26} className="animate-spin text-blue-600" />
             <p className="mt-3 text-sm text-slate-500">Scanner markedet på tværs af mæglere og analyserer hver bolig…</p>
           </div>
