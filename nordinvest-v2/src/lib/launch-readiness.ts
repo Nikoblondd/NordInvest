@@ -349,16 +349,14 @@ export async function getLaunchReadiness(): Promise<ReadinessReport> {
     check(
       "gtm.bing",
       "Bing & Copilot: indekseret og verificeret",
-      process.env.BING_SITE_VERIFICATION
-        ? "Bing Webmaster verificeret (msvalidate.01), IndexNow-nøgle live, sitemap + nye URL'er pushet via scripts/indexnow.mjs efter hvert deploy. Artikel-metadata (published/modified, og:image, twitter) på alle blogindlæg."
-        : "IndexNow-nøgle live og alle URL'er pushet (scripts/indexnow.mjs), artikel-metadata på alle blogindlæg. Mangler: opret Bing Webmaster Tools og importér sitet fra Google Search Console (eller sæt BING_SITE_VERIFICATION i Vercel), og indsend sitemap.",
-      process.env.BING_SITE_VERIFICATION ? "green" : "amber",
+      "Bing Webmaster Tools verificeret via import fra Google Search Console (29/9-2026), sitemap hentet og 61 nøglesider indsendt manuelt. IndexNow-nøgle live; scripts/indexnow.mjs pusher nye URL'er efter hvert deploy. Artikel-metadata (published/modified, og:image, twitter) på alle blogindlæg.",
+      "green",
     ),
     check(
       "gtm.gsc",
       "Google Search Console indeksering foldet ud",
-      "Sitet ligger på nordinvest.io (www omdirigerer), men GSC-ejendommen er www. Tilføj Domæne-ejendommen nordinvest.io (auto-verificeret via DNS), indsend sitemap, og anmod om indeksering af de vigtigste sider.",
-      "amber",
+      "Domæne-ejendommen nordinvest.io verificeret via DNS (29/9-2026), sitemap.xml indsendt (66 URL'er), indeksering anmodet for forsiden, /deals, /analyseren, guiden og de største Deal-bysider. www og http omdirigerer (308) til https://nordinvest.io.",
+      "green",
     ),
     check(
       "gtm.launch-channel",
