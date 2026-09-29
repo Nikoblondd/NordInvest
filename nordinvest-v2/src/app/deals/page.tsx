@@ -140,7 +140,12 @@ export default async function DealsPage() {
             </h2>
             <p className="mt-3 max-w-3xl leading-relaxed text-slate-600">
               En boligannonce fortæller, hvad boligen koster. Deal-motoren regner ud, hvad den kan tjene. Hver bolig går
-              gennem de samme fire trin, så handler i Esbjerg og på Østerbro kan sammenlignes på lige vilkår.
+              gennem de samme fire trin, så handler i Esbjerg og på Østerbro kan sammenlignes på lige vilkår. Vil du forstå
+              tallene bag, gennemgår vores guide til{" "}
+              <Link href="/analyse-af-ejendomsinvestering" className="font-medium text-blue-700 underline-offset-2 hover:underline">
+                analyse af ejendomsinvestering i Danmark
+              </Link>{" "}
+              hvert nøgletal med et regneeksempel.
             </p>
             <div className="mt-6">
               <HowItWorks />

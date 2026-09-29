@@ -14,7 +14,7 @@ export const INP_GOOD = 200;
 export const CLS_GOOD = 0.1;
 // Below this many samples per path we don't trust our own p75 and fall back
 // to PSI. Real-user metrics need a real sample size.
-const MIN_SAMPLES = 20;
+export const MIN_SAMPLES = 20;
 
 export type Vitals = {
   path: string;

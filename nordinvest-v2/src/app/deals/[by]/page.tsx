@@ -145,6 +145,13 @@ export default async function CityDealsPage({ params }: { params: { by: string }
                   .
                 </p>
               )}
+              <p className="mt-3 text-slate-600">
+                Sådan regner du selv en bolig igennem:{" "}
+                <Link href="/analyse-af-ejendomsinvestering" className="font-medium text-blue-700 underline-offset-2 hover:underline">
+                  analyse af ejendomsinvestering
+                </Link>
+                .
+              </p>
             </div>
             <Faq items={faq} />
           </div>

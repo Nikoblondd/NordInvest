@@ -67,7 +67,7 @@ export function ConsentAnalytics() {
       <div className="mx-auto flex max-w-3xl flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:flex-row sm:items-center sm:gap-4">
         <p className="flex-1 text-sm leading-relaxed text-slate-600">
           Vi bruger cookies til at forstå, hvordan siden bruges, så vi kan gøre den bedre. Du bestemmer selv.{" "}
-          <Link href="/juridisk/cookies" className="font-semibold text-slate-900 underline">Læs mere</Link>.
+          <Link href="/juridisk/cookies" prefetch={false} className="font-semibold text-slate-900 underline">Læs mere</Link>.
         </p>
         <div className="flex shrink-0 gap-2">
           <button

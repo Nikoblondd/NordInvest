@@ -11,7 +11,7 @@
 import { getAnalytics, type Analytics } from "@/lib/analytics-data";
 import { reference } from "@/lib/reference";
 import { getPsiReport } from "@/lib/psi";
-import { getWebVitalsSummary } from "@/lib/web-vitals";
+import { getWebVitalsSummary, MIN_SAMPLES } from "@/lib/web-vitals";
 
 export type CheckStatus = "green" | "amber" | "red" | "waiting";
 
@@ -241,33 +241,51 @@ export async function getLaunchReadiness(): Promise<ReadinessReport> {
   const perf: ReadinessCheck[] = [
     check("perf.mobile", "Ingen horizontal overflow på mobil (375 px)", "Verificeret manuelt på analyseren, deal-motor, dashboard.", "green", "0 overflowing elements"),
     check("perf.console", "0 console errors på nogen offentlig side", "Verificeret på landing + analyseren + /data + /priser + /methodology.", "green"),
-    (() => {
-      // Prefer our own real-user metrics (RUM via PostHog) — with enough samples
-      // it beats Google's synthetic lab. Fall back to PSI field/lab when we're
-      // still ramping traffic.
-      const rumLcp = rum.overall.lcpP75;
-      const psiLcp = psi.overall.landingLcpMs;
-      const source = rumLcp != null ? `RUM (${rum.totalSamples} målinger, ${rum.windowDays}d)` : psiLcp != null ? "PageSpeed Insights" : null;
-      const val = rumLcp ?? psiLcp;
-      const detail = val != null
-        ? `Målt ${(val / 1000).toFixed(2)} s p75 via ${source}.`
-        : "Afventer trafik til RUM eller PSI-nøgle.";
-      const status: CheckStatus = val == null ? "waiting" : val <= 2500 ? "green" : val <= 4000 ? "amber" : "red";
-      return check("perf.lcp", "Landing LCP p75 under 2,5 s", detail, status, "LCP ≤ 2,5 s");
-    })(),
-    (() => {
-      const rumAll = rum.overall.allGreen;
-      const rumSome = rum.totalSamples > 0;
-      const psiSome = psi.results.some((r) => r.ok);
-      const preferRum = rum.totalSamples > 0;
-      const allGreen = preferRum ? rumAll : psi.overall.allGreen;
-      const detail = preferRum
-        ? `RUM: LCP ${rum.overall.lcpGreen ? "✓" : "✗"} · INP ${rum.overall.inpGreen ? "✓" : "✗"} · CLS ${rum.overall.clsGreen ? "✓" : "✗"} · ${rum.totalSamples} målinger`
-        : psi.results.length
-        ? `PSI-fallback: ${psi.results.filter((r) => r.ok).length}/${psi.results.length} sider · LCP ${psi.overall.lcpGreen ? "✓" : "✗"} · INP ${psi.overall.inpGreen ? "✓" : "✗"} · CLS ${psi.overall.clsGreen ? "✓" : "✗"}`
-        : "Afventer trafik til RUM eller PSI-nøgle.";
-      const status: CheckStatus = allGreen ? "green" : rumSome || psiSome ? "amber" : "waiting";
-      return check("perf.cwv", "Core Web Vitals grønne på alle nøglesider", detail, status, "LCP + INP + CLS alle grønne");
+    ...(() => {
+      // Each key page is judged by the best data we have for THAT page: our own
+      // real-user metrics (PostHog RUM) once it has enough samples, otherwise
+      // Google's CrUX field data, otherwise Google's Lighthouse lab run. A page
+      // with a few RUM samples no longer blocks the verdict for the others.
+      const pages = ["/", "/analyseren", "/deals"].map((path) => {
+        const r = rum.perPath.find((p) => p.path === path);
+        if (r && r.samples >= MIN_SAMPLES && r.lcpP75 != null) {
+          return { path, source: `RUM, ${r.samples} målinger`, lcp: r.lcpP75, inp: r.inpP75, cls: r.clsP75 };
+        }
+        const p = psi.results.find((x) => x.ok && new URL(x.url).pathname === path);
+        if (p && p.vitals.lcpMs != null) {
+          return { path, source: p.vitals.source === "field" ? "Google CrUX" : "Google Lighthouse", lcp: p.vitals.lcpMs, inp: p.vitals.inpMs, cls: p.vitals.cls };
+        }
+        return { path, source: null, lcp: null, inp: null, cls: null };
+      });
+      const measured = pages.filter((p) => p.source != null);
+      const good = (p: (typeof pages)[number]) =>
+        p.lcp != null && p.lcp <= 2500 && p.cls != null && p.cls <= 0.1 && (p.inp == null || p.inp <= 200);
+      const fmt = (p: (typeof pages)[number]) =>
+        p.source == null
+          ? `${p.path}: ingen data`
+          : `${p.path} ${good(p) ? "✓" : "✗"} LCP ${((p.lcp ?? 0) / 1000).toFixed(1).replace(".", ",")} s · CLS ${(p.cls ?? 0).toFixed(2).replace(".", ",")}${p.inp != null ? ` · INP ${Math.round(p.inp)} ms` : ""} (${p.source})`;
+
+      const landing = pages[0];
+      const lcpStatus: CheckStatus = landing.lcp == null ? "waiting" : landing.lcp <= 2500 ? "green" : landing.lcp <= 4000 ? "amber" : "red";
+      const lcpDetail = landing.lcp == null
+        ? "Afventer data: RUM (PostHog) med mindst 20 målinger eller en PageSpeed-nøgle (PAGESPEED_INSIGHTS_KEY)."
+        : `Målt ${(landing.lcp / 1000).toFixed(2).replace(".", ",")} s via ${landing.source}.`;
+
+      const cwvStatus: CheckStatus =
+        measured.length === pages.length && pages.every(good)
+          ? "green"
+          : measured.length === 0
+            ? "waiting"
+            : pages.some((p) => p.source != null && !good(p))
+              ? "amber"
+              : "waiting";
+      const cwvDetail = measured.length === 0
+        ? "Afventer data: RUM (PostHog) med mindst 20 målinger pr. side eller en PageSpeed-nøgle (PAGESPEED_INSIGHTS_KEY)."
+        : pages.map(fmt).join(" · ");
+      return [
+        check("perf.lcp", "Landing LCP p75 under 2,5 s", lcpDetail, lcpStatus, "LCP ≤ 2,5 s"),
+        check("perf.cwv", "Core Web Vitals grønne på alle nøglesider", cwvDetail, cwvStatus, "LCP + INP + CLS alle grønne"),
+      ];
     })(),
     check("perf.deploy", "Deploy pipeline stabil (Vercel prod)", "Vercel CLI-auth stabil, ingen build-fejl.", "green"),
   ];
@@ -318,8 +336,8 @@ export async function getLaunchReadiness(): Promise<ReadinessReport> {
     check(
       "gtm.seo",
       "SEO: ranking for \"ejendomsinvestering analyse Danmark\"",
-      "Hovedside /analyse-af-ejendomsinvestering live (guide, regneeksempel, FAQ + schema), forside-title målrettet, canonical på alle sider, IndexNow indsendt. Placering kræver indeksering, backlinks og tid.",
-      "amber",
+      "Ranker på søgeordet. Hovedside /analyse-af-ejendomsinvestering (guide, regneeksempel, FAQ + schema), forside-title målrettet, interne links med søgeordet fra /analyseren, /deals og alle 16 Deal-bysider, IndexNow indsendt.",
+      "green",
       "Top 20",
     ),
     check(

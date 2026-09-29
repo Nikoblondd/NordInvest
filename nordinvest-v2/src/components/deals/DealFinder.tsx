@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Loader2, Search, TrendingUp, MapPin, Sparkles, ArrowUpRight, Info, Home, Building2, Bell, Check, SlidersHorizontal, ChevronDown, X, Map as MapIcon, LayoutGrid } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { num, kr } from "@/lib/analysis";
-import { createClient } from "@/lib/supabase/client";
 import type { AnalyzedDeal, InvestmentDeal } from "@/lib/deals";
 import { dealHref, investHref } from "@/lib/deal-links";
 import { MUNICIPALITIES } from "@/lib/kommuner";
@@ -354,7 +353,8 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   // Save the current criteria as a standing search — the "Vagt på søgning" cron
   // then emails the user when a NEW listing matches.
   const saveSearch = async () => {
-    const supabase = createClient();
+    const { loadSupabase } = await import("@/lib/supabase/lazy");
+    const supabase = await loadSupabase();
     if (!supabase) { window.location.href = "/auth/signup?next=/deals"; return; }
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { window.location.href = "/auth/signup?next=/deals"; return; }

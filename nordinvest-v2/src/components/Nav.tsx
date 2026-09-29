@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Menu, X, LayoutDashboard, ChevronDown, LogOut, User } from "lucide-react";
 import { Logo } from "./Logo";
-import { createClient } from "@/lib/supabase/client";
+import { hasAuthCookie, loadSupabase } from "@/lib/supabase/lazy";
 import { LangToggle } from "./i18n/LangToggle";
 
 const links = [
@@ -23,26 +23,32 @@ export function Nav() {
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const supabase = createClient();
-    if (!supabase) return;
-    const loadName = async (userId: string) => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("full_name")
-        .eq("id", userId)
-        .single();
-      setName((data?.full_name as string) ?? null);
+    // No session cookie means not logged in: skip loading Supabase entirely.
+    if (!hasAuthCookie()) return;
+    let alive = true;
+    let unsub: (() => void) | undefined;
+    (async () => {
+      const supabase = await loadSupabase();
+      if (!supabase || !alive) return;
+      const loadName = async (userId: string) => {
+        const { data } = await supabase.from("profiles").select("full_name").eq("id", userId).single();
+        setName((data?.full_name as string) ?? null);
+      };
+      supabase.auth.getUser().then(({ data }) => {
+        setAuthed(!!data.user);
+        if (data.user) loadName(data.user.id);
+      });
+      const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+        setAuthed(!!session);
+        if (session?.user) loadName(session.user.id);
+        else setName(null);
+      });
+      unsub = () => sub.subscription.unsubscribe();
+    })();
+    return () => {
+      alive = false;
+      unsub?.();
     };
-    supabase.auth.getUser().then(({ data }) => {
-      setAuthed(!!data.user);
-      if (data.user) loadName(data.user.id);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setAuthed(!!session);
-      if (session?.user) loadName(session.user.id);
-      else setName(null);
-    });
-    return () => sub.subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -114,12 +120,14 @@ export function Nav() {
             <>
               <Link
                 href="/auth/login"
+                prefetch={false}
                 className="hidden text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 md:block"
               >
                 Log ind
               </Link>
               <Link
                 href="/auth/signup"
+                prefetch={false}
                 className="flex items-center gap-2 whitespace-nowrap rounded-full bg-slate-900 px-3.5 py-2 text-sm font-medium text-white transition-all hover:bg-slate-800 max-[379px]:px-3 max-[379px]:text-[13px] sm:px-4"
               >
                 Start gratis <ArrowRight size={16} className="hidden min-[400px]:block" />

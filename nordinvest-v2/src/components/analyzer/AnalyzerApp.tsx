@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing } from "lucide-react";
 import { analyze, kr, krMd, pct, num, type Strategy } from "@/lib/analysis";
 import { runUncertainty } from "@/lib/uncertainty";
 import { assessInvestment } from "@/lib/deals";
 import { ConfidenceBands } from "@/components/analyzer/ConfidenceBands";
 import { clsx } from "@/lib/clsx";
-import { createClient } from "@/lib/supabase/client";
+import { loadSupabase } from "@/lib/supabase/lazy";
 import { type ConfidenceTier } from "@/lib/calibration";
 import { regionFromAddress, regionLabel } from "@/lib/region";
 import { PrecisionFeedback } from "@/components/analyzer/PrecisionFeedback";
@@ -24,12 +25,9 @@ import { RentReserve } from "@/components/analyzer/RentReserve";
 import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import { Comparables } from "@/components/analyzer/Comparables";
 import { ExpenseCheck } from "@/components/analyzer/ExpenseCheck";
-import { DealHero, type HeroMetric } from "@/components/analyzer/story/DealHero";
+import type { HeroMetric } from "@/components/analyzer/story/DealHero";
 import { Chapter, ChapterNav, Details, Panel, type ChapterAnswer, type NavItem } from "@/components/analyzer/story/Chapter";
-import { Sheet } from "@/components/analyzer/story/Sheet";
-import { CashflowWaterfall } from "@/components/analyzer/story/CashflowWaterfall";
 import { RateStress } from "@/components/analyzer/story/RateStress";
-import { ProjectionStory } from "@/components/analyzer/story/ProjectionStory";
 import type { Tone } from "@/components/analyzer/story/tone";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
@@ -38,6 +36,24 @@ import { TimeSavingsCapture } from "@/components/analyzer/TimeSavingsCapture";
 import { captureEvent } from "@/lib/analytics-events";
 import { buildProvenance, rentRegulationRule } from "@/lib/provenance";
 import type { PriceBenchmark } from "@/lib/reference";
+
+// The result view's animated pieces (framer-motion) load in their own chunks, so
+// the empty analyser, and its first paint, doesn't carry them. They're warmed
+// on idle below, so a result never waits for them.
+const loadHero = () => import("@/components/analyzer/story/DealHero");
+const loadSheet = () => import("@/components/analyzer/story/Sheet");
+const loadWaterfall = () => import("@/components/analyzer/story/CashflowWaterfall");
+const loadProjection = () => import("@/components/analyzer/story/ProjectionStory");
+const DealHero = dynamic(() => loadHero().then((m) => m.DealHero));
+const Sheet = dynamic(() => loadSheet().then((m) => m.Sheet), { ssr: false });
+const CashflowWaterfall = dynamic(() => loadWaterfall().then((m) => m.CashflowWaterfall));
+const ProjectionStory = dynamic(() => loadProjection().then((m) => m.ProjectionStory));
+function warmResultView() {
+  const run = () => void Promise.all([loadHero(), loadSheet(), loadWaterfall(), loadProjection()]).catch(() => {});
+  const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+  if (w.requestIdleCallback) w.requestIdleCallback(run, { timeout: 3000 });
+  else window.setTimeout(run, 1500);
+}
 
 type CalState = {
   count: number;
@@ -212,6 +228,7 @@ function sourceName(url: string | null): string {
 }
 
 export function AnalyzerApp() {
+  useEffect(() => warmResultView(), []);
   const [inputs, setInputs] = useState<Inputs>(DEFAULTS);
   const [address, setAddress] = useState<string | null>(null);
   const [ran, setRan] = useState(false);
@@ -328,7 +345,7 @@ export function AnalyzerApp() {
     if (!savedParam) return;
     let cancelled = false;
     (async () => {
-      const supabase = createClient();
+      const supabase = await loadSupabase();
       if (!supabase) return;
       const { data } = await supabase
         .from("analyses")
@@ -705,7 +722,7 @@ export function AnalyzerApp() {
 
   const startWatch = async () => {
     if (!listingUrl) return;
-    const supabase = createClient();
+    const supabase = await loadSupabase();
     if (!supabase) { window.location.href = "/auth/signup"; return; }
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { window.location.href = "/auth/signup?next=/analyseren"; return; }
@@ -729,7 +746,7 @@ export function AnalyzerApp() {
   };
 
   const saveToPortfolio = async () => {
-    const supabase = createClient();
+    const supabase = await loadSupabase();
     if (!supabase) {
       window.location.href = "/auth/signup";
       return;
@@ -784,7 +801,7 @@ export function AnalyzerApp() {
   const submitTimeSavings = async (manualMinutes: number, accuracy: string) => {
     const id = usageRowIdRef.current;
     if (!id) return;
-    const supabase = createClient();
+    const supabase = await loadSupabase();
     if (!supabase) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
