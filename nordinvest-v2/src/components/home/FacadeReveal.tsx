@@ -94,6 +94,15 @@ export function FacadeReveal() {
 
   useMotionValueEvent(scrollYProgress, "change", (v) => progress.set(v));
 
+  // Phones: once the ledger starts, the house steps back to a thumbnail so the
+  // numbers below it fit the screen (on short phones the last rows and the
+  // result were cut off). The numbered markers stay, so the link holds.
+  const [compact, setCompact] = useState(false);
+  useMotionValueEvent(progress, "change", (v) => {
+    const next = wide === false && v >= 0.385;
+    setCompact((c) => (c === next ? c : next));
+  });
+
   // Dev-only handle for inspecting any frame without scrolling.
   useEffect(() => {
     if (process.env.NODE_ENV === "production") return;
@@ -115,8 +124,12 @@ export function FacadeReveal() {
             <IntroCopy />
           </Phase>
 
-          <div className="col-start-1 row-start-1 min-w-0 self-start lg:col-start-2 lg:self-center">
-            <Sheet progress={progress} />
+          <div
+            className={`col-start-1 row-start-1 min-w-0 self-start justify-self-center transition-[width] duration-500 ease-out lg:col-start-2 lg:w-full lg:self-center ${
+              compact ? "w-[46%]" : "w-full"
+            }`}
+          >
+            <Sheet progress={progress} compact={compact} />
           </div>
 
           <Phase progress={progress} ready={ready} range={[0.1, 0.14, 0.36, 0.385]} className="row-start-2 self-start lg:row-start-1 lg:self-center">
@@ -259,7 +272,7 @@ function LedgerCopy({ progress }: { progress: MotionValue<number> }) {
   return (
     <div>
       <Label>Regnestykket</Label>
-      <h2 className={H2}>Så regner vi den igennem.</h2>
+      <h2 className={H2}>Sådan regner vi den igennem.</h2>
       <p className="mt-3 max-w-[33rem] leading-relaxed text-slate-600 max-lg:hidden lg:mt-4">
         Leje ind, lån og udgifter ud. Posterne med et nummer kan du finde på billedet.
       </p>
@@ -343,9 +356,9 @@ function LedgerRow({
 function VerdictCopy() {
   const stats = [
     { label: "Overskud pr. måned", value: `+${kr(CASH_FLOW)} kr.`, good: true },
-    { label: "Bruttoafkast", value: "7,8 %" },
-    { label: "Kontantafkast", value: "3,3 %" },
-    { label: "Break-even-rente", value: "ca. 5,2 %" },
+    { label: "Bruttoafkast", value: "7,8\u00a0%" },
+    { label: "Kontantafkast", value: "3,3\u00a0%" },
+    { label: "Break-even-rente", value: "ca. 5,2\u00a0%" },
   ];
   return (
     <div>
@@ -353,11 +366,11 @@ function VerdictCopy() {
       <h2 className={H2}>En solid handel.</h2>
       <p className="mt-3 max-w-[33rem] leading-relaxed text-slate-600 max-lg:text-[15px] lg:mt-4 lg:text-lg">
         Huset betaler sig selv med {kr(CASH_FLOW)} kr. i overskud om måneden og kan tåle, at renten
-        stiger til omkring 5,2 %.
+        stiger til omkring 5,2&nbsp;%.
       </p>
-      <dl className="mt-5 grid max-w-[33rem] grid-cols-2 gap-px overflow-hidden rounded-2xl bg-slate-200/70 ring-1 ring-slate-200 lg:mt-6">
+      <dl className="mt-5 grid max-w-[33rem] grid-cols-2 gap-px overflow-hidden rounded-2xl bg-slate-200/70 ring-1 ring-slate-200 lg:mt-6 [@media(max-height:700px)]:mt-3">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white px-4 py-3">
+          <div key={s.label} className="bg-white px-4 py-3 [@media(max-height:700px)]:py-2">
             <dt className="text-xs text-slate-500">{s.label}</dt>
             <dd className={`mt-0.5 text-lg font-semibold tabular-nums tracking-tight lg:text-xl ${s.good ? "text-emerald-700" : "text-slate-900"}`}>
               {s.value}
@@ -365,7 +378,7 @@ function VerdictCopy() {
           </div>
         ))}
       </dl>
-      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 lg:mt-7">
+      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 lg:mt-7 [@media(max-height:700px)]:mt-3 [@media(max-height:700px)]:gap-y-2">
         <Link
           href="/analyseren"
           className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition hover:bg-blue-700 active:translate-y-px"
@@ -376,7 +389,7 @@ function VerdictCopy() {
           Se månedens bedste handler
         </Link>
       </div>
-      <p className="mt-4 max-w-[33rem] text-xs leading-relaxed text-slate-500">
+      <p className="mt-4 max-w-[33rem] text-xs leading-relaxed text-slate-500 [@media(max-height:700px)]:mt-2">
         Eksemplet er opdigtet, og tallene er afrundede. Det er ikke finansiel rådgivning.
       </p>
     </div>
@@ -421,7 +434,7 @@ function RailStep({ progress, label, from, to }: { progress: MotionValue<number>
 
 // ── The photo / blueprint sheet ──────────────────────────────────────────
 
-function Sheet({ progress }: { progress: MotionValue<number> }) {
+function Sheet({ progress, compact = false }: { progress: MotionValue<number>; compact?: boolean }) {
   const scan = useTransform(progress, [...T.scan], [0, 100], { clamp: true });
   const clip = useTransform(scan, (v) => `inset(0 0 ${100 - v}% 0)`);
   const lineTop = useTransform(scan, (v) => `${v}%`);
@@ -446,7 +459,7 @@ function Sheet({ progress }: { progress: MotionValue<number> }) {
           <motion.div className="absolute inset-0" style={{ clipPath: clip }}>
             <Image src="/landing/villa-blueprint.webp" alt="" fill sizes="(min-width: 1024px) 640px, 100vw" quality={80} className="object-cover" />
             {/* dimension line across the house */}
-            <motion.div style={{ opacity: dim }} className="absolute inset-x-[7.4%] top-[6.5%] h-3">
+            <motion.div style={{ opacity: dim }} className={`absolute inset-x-[7.4%] top-[6.5%] h-3 ${compact ? "hidden" : ""}`}>
               <div className="absolute inset-x-0 top-1/2 h-px bg-blue-100/80" />
               <div className="absolute left-0 top-0 h-full w-px bg-blue-100/80" />
               <div className="absolute right-0 top-0 h-full w-px bg-blue-100/80" />
@@ -457,7 +470,7 @@ function Sheet({ progress }: { progress: MotionValue<number> }) {
           </motion.div>
 
           {CALLOUTS.map((c) => (
-            <CalloutMark key={c.n} c={c} scan={scan} progress={progress} />
+            <CalloutMark key={c.n} c={c} scan={scan} progress={progress} compact={compact} />
           ))}
 
           <motion.div style={{ top: lineTop, opacity: lineOpacity }} className="pointer-events-none absolute inset-x-0 h-0">
@@ -465,10 +478,10 @@ function Sheet({ progress }: { progress: MotionValue<number> }) {
             <div className="absolute inset-x-0 top-0 h-[1.5px] bg-blue-300" />
           </motion.div>
 
-          <Verdict progress={progress} />
+          {!compact && <Verdict progress={progress} />}
         </div>
 
-        <div className="grid grid-cols-3 border-t border-slate-200 text-xs sm:text-[13px] [&>div]:min-w-0 [&>div]:truncate">
+        <div className={`grid grid-cols-3 border-t border-slate-200 text-xs sm:text-[13px] [&>div]:min-w-0 [&>div]:truncate ${compact ? "hidden" : ""}`}>
           <div className="border-r border-slate-200 px-3 py-2 sm:px-4 sm:py-2.5">
             <span className="block text-slate-400">Bolig</span>
             <span className="text-slate-800">Villa, {EX.area} m²</span>
@@ -490,7 +503,7 @@ function Sheet({ progress }: { progress: MotionValue<number> }) {
   );
 }
 
-function CalloutMark({ c, scan, progress }: { c: Callout; scan: MotionValue<number>; progress: MotionValue<number> }) {
+function CalloutMark({ c, scan, progress, compact = false }: { c: Callout; scan: MotionValue<number>; progress: MotionValue<number>; compact?: boolean }) {
   const opacity = useTransform(scan, [c.at[1] - 4, c.at[1] + 6], [0, 1]);
   const at = T.rows[c.row];
   const scale = useTransform(progress, [at - 0.03, at, at + 0.04], [1, 1.4, 1]);
@@ -498,7 +511,7 @@ function CalloutMark({ c, scan, progress }: { c: Callout; scan: MotionValue<numb
   const value = ROWS[c.row].value;
   return (
     <motion.div style={{ opacity }} className="pointer-events-none absolute inset-0">
-      <svg aria-hidden className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <svg aria-hidden className={`absolute inset-0 h-full w-full ${compact ? "hidden" : ""}`} viewBox="0 0 100 100" preserveAspectRatio="none">
         <line x1={c.at[0]} y1={c.at[1]} x2={c.tip[0]} y2={c.tip[1]} stroke="#dbeafe" strokeWidth="1" vectorEffect="non-scaling-stroke" />
       </svg>
       <span className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${c.at[0]}%`, top: `${c.at[1]}%` }}>
@@ -511,7 +524,7 @@ function CalloutMark({ c, scan, progress }: { c: Callout; scan: MotionValue<numb
         </motion.span>
       </span>
       <span
-        className="absolute w-max min-w-[33%] max-w-[62%] rounded-lg bg-[#0b2350]/95 px-2 py-1 ring-1 ring-blue-200/40 sm:min-w-[27%] sm:px-2.5 sm:py-1.5"
+        className={`absolute w-max min-w-[33%] max-w-[62%] rounded-lg bg-[#0b2350]/95 px-2 py-1 ring-1 ring-blue-200/40 sm:min-w-[27%] sm:px-2.5 sm:py-1.5 ${compact ? "hidden" : ""}`}
         style={{
           left: c.box.left != null ? `${c.box.left}%` : undefined,
           right: c.box.right != null ? `${c.box.right}%` : undefined,

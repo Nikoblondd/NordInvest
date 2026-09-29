@@ -55,7 +55,7 @@ function CityPicker({ values, onChange }: { values: string[]; onChange: (slugs: 
             <button
               type="button"
               onMouseDown={(e) => { e.preventDefault(); toggle(slug); }}
-              className="flex h-4 w-4 items-center justify-center rounded text-blue-400 hover:bg-blue-100 hover:text-blue-700"
+              className="relative flex h-4 w-4 items-center justify-center rounded text-blue-400 after:absolute after:-inset-3 after:content-[''] hover:bg-blue-100 hover:text-blue-700"
               aria-label={`Fjern ${nameOf(slug)}`}
             >
               <X size={12} />

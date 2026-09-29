@@ -9,10 +9,14 @@ import {
   type FeaturedDeal,
 } from "@/lib/featured-deals";
 
+// Danish number format throughout: "2,60 mio.", "7,3 %", "+9.000 kr." (the
+// earlier toFixed() gave English decimals and a "9k" shorthand).
 const krCompact = (n: number) => {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(n >= 10_000_000 ? 1 : 2)} mio`;
-  return `${Math.round(n / 1000)}k`;
+  if (n >= 1_000_000)
+    return `${(n / 1_000_000).toLocaleString("da-DK", { minimumFractionDigits: n >= 10_000_000 ? 1 : 2, maximumFractionDigits: n >= 10_000_000 ? 1 : 2 })}\u00a0mio.`;
+  return `${Math.round(n).toLocaleString("da-DK")}\u00a0kr.`;
 };
+const pct1 = (n: number) => `${n.toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}\u00a0%`;
 
 function DealCard({ deal }: { deal: FeaturedDeal }) {
   // Whole card is a tap-target that opens the analyzer with the deal pre-filled.
@@ -37,7 +41,7 @@ function DealCard({ deal }: { deal: FeaturedDeal }) {
           Score {deal.score}
         </div>
         <div className="absolute right-3 top-3 rounded-full bg-slate-900/85 px-2.5 py-1 text-xs font-semibold tabular-nums text-white">
-          {deal.yieldPct.toFixed(1)} %
+          {pct1(deal.yieldPct)}
         </div>
       </div>
 
@@ -69,7 +73,7 @@ function DealCard({ deal }: { deal: FeaturedDeal }) {
             <div className="mt-0.5 text-sm font-semibold tabular-nums text-emerald-700">
               {deal.cashFlowMonth != null
                 ? `+${krCompact(deal.cashFlowMonth)}`
-                : `${deal.yieldPct.toFixed(1)} %`}
+                : `${pct1(deal.yieldPct)}`}
             </div>
           </div>
         </div>

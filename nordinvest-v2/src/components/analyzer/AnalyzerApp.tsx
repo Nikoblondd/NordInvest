@@ -172,7 +172,7 @@ function KeyStat({
             onClick={() => setOpen((v) => !v)}
             aria-label={`Hvad betyder ${label}?`}
             aria-expanded={open}
-            className="-m-1 shrink-0 rounded-full p-1 text-slate-400 transition-colors hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            className="relative -m-1 shrink-0 rounded-full p-1 text-slate-400 transition-colors after:absolute after:-inset-[11px] after:content-[''] hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
           >
             <HelpCircle aria-hidden size={14} strokeWidth={2} />
           </button>
@@ -863,7 +863,7 @@ export function AnalyzerApp() {
 
       <fieldset>
         <legend className="text-[15px] font-semibold text-slate-900">Strategi</legend>
-        <div role="radiogroup" aria-label="Strategi" className="grid grid-cols-3 gap-1 rounded-full bg-slate-100 p-1">
+        <div role="radiogroup" aria-label="Strategi" className="flex gap-0.5 rounded-full bg-slate-100 p-1">
           {strategies.map((s) => (
             <button
               key={s.id}
@@ -872,7 +872,7 @@ export function AnalyzerApp() {
               aria-checked={inputs.strategy === s.id}
               onClick={() => set({ strategy: s.id })}
               className={clsx(
-                "whitespace-nowrap rounded-full px-2 py-2 text-[13px] font-semibold transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
+                "flex-auto whitespace-nowrap rounded-full px-2 py-2 text-[13px] font-semibold transition-[background-color,color,box-shadow] max-[380px]:px-1.5 max-[380px]:text-[12.5px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
                 inputs.strategy === s.id ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.12)]" : "text-slate-500 hover:text-slate-900",
               )}
             >
@@ -888,7 +888,7 @@ export function AnalyzerApp() {
           onClick={() => setAdvanced((v) => !v)}
           aria-expanded={advanced}
           aria-controls="advanced-fields"
-          className="flex w-full items-center justify-between rounded-lg text-[15px] font-semibold text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+          className="-my-2.5 flex min-h-11 w-full items-center justify-between rounded-lg py-2.5 text-[15px] font-semibold text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
         >
           Avancerede antagelser
           <ChevronDown aria-hidden size={18} className={clsx("text-slate-400 transition-transform", advanced && "rotate-180")} />

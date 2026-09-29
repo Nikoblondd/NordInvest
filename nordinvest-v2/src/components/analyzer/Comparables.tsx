@@ -128,7 +128,7 @@ export function Comparables({
 
   const d = state.data;
   const tone = VERDICT[d.verdict];
-  const arrow = d.priceDeltaPct >= 0 ? "+" : "";
+  const arrow = d.priceDeltaPct >= 0 ? "+" : "−"; // a real minus; the numbers below are shown unsigned
 
   return (
     <section className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-8">
@@ -182,11 +182,11 @@ export function Comparables({
           <div className={clsx("text-xs", tone.text)}>Forskel til median</div>
           <div className={clsx("mt-1 text-lg font-semibold", tone.text)}>
             {arrow}
-            {d.priceDeltaPct.toFixed(1)} %
+            {Math.abs(d.priceDeltaPct).toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}&nbsp;%
           </div>
           <div className={clsx("text-xs", tone.text)}>
             {arrow}
-            {kr((d.askingPricePerM2 - d.medianPricePerM2) * d.input.area)} total
+            {kr(Math.abs((d.askingPricePerM2 - d.medianPricePerM2) * d.input.area))} total
           </div>
         </div>
       </div>

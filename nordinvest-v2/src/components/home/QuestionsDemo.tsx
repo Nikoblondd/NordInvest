@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
+import { ExpensesVisual, PlanDataVisual, PricePerM2Visual, RateStressVisual, RentReserveVisual } from "./DemoVisuals";
 
 /*
  * "Fem spørgsmål" — the product demonstration. The analyzer is organised as
@@ -20,7 +21,7 @@ type Question = {
   answer: string;
   body: string;
   source: string;
-  image: string;
+  visual: () => JSX.Element;
   alt: string;
 };
 
@@ -33,7 +34,7 @@ const QUESTIONS: Question[] = [
     answer: "Ja. Lejen kan falde 1.100 kr. om måneden, før du taber penge.",
     body: "Det kalder vi lejereserven. Jo større den er, jo bedre klarer du en lavere leje eller en måned uden lejer.",
     source: "Husleje minus lån og faste udgifter",
-    image: "/landing/demo-rent-reserve.webp",
+    visual: () => <RentReserveVisual />,
     alt: "Lejereserve: lejen er 13.000 kr., break-even er 11.900 kr., så der er 1.100 kr. i luft.",
   },
   {
@@ -44,7 +45,7 @@ const QUESTIONS: Question[] = [
     answer: "Ja. Prisen pr. m² ligger 6 % under lignende boliger.",
     body: "Vi sammenligner med boliger til salg af samme type og størrelse i samme postnummer.",
     source: "Boliger til salg i samme postnummer",
-    image: "/landing/demo-price-per-m2.webp",
+    visual: () => <PricePerM2Visual />,
     alt: "Pris pr. m²: denne bolig koster 15.114 kr. pr. m², medianen for lignende boliger er 16.050 kr.",
   },
   {
@@ -55,7 +56,7 @@ const QUESTIONS: Question[] = [
     answer: "Nok ikke. Salgsopstillingen ligger 600 kr. under det normale.",
     body: "Hvis mægleren har sat de faste udgifter lavt, regner vi med vores eget tal i stedet.",
     source: "Salgsopstillingen mod lignende boliger",
-    image: "/landing/demo-expenses.webp",
+    visual: () => <ExpensesVisual />,
     alt: "Faste udgifter pr. måned: salgsopstilling 2.450 kr., lignende boliger 3.050 kr., vi regner med 3.250 kr.",
   },
   {
@@ -63,11 +64,11 @@ const QUESTIONS: Question[] = [
     q: "Hvad hvis renten stiger?",
     chapter: "Rente",
     tone: "good",
-    answer: "Handlen holder, indtil renten når cirka 5,2 %.",
+    answer: "Handlen holder, indtil renten når cirka 5,2\u00a0%.",
     body: "Vi regner handlen igennem ved forskellige renter, så du kan se, hvor den begynder at give underskud.",
     source: "Annuitetslån, 30 år, inkl. bidrag",
-    image: "/landing/demo-rate-stress.webp",
-    alt: "Overskud ved renter fra 3 til 7 %. I dag 4 %, underskud fra cirka 5,2 %.",
+    visual: () => <RateStressVisual />,
+    alt: "Overskud ved renter fra 3 til 7 %. I dag 4 %, underskud fra cirka 5,2\u00a0%.",
   },
   {
     id: "jorden",
@@ -77,7 +78,7 @@ const QUESTIONS: Question[] = [
     answer: "Området skal separatkloakeres. Det kan koste dig penge.",
     body: "Vi tjekker lokalplaner og kommunens spildevandsplan. Den slags står sjældent i salgsopstillingen.",
     source: "Plandata.dk og kommunens spildevandsplan",
-    image: "/landing/demo-plan-data.webp",
+    visual: () => <PlanDataVisual />,
     alt: "Kortudsnit: grunden ligger i et kloakopland, hvor separering er planlagt, og inden for en lokalplan.",
   },
 ];
@@ -200,20 +201,16 @@ export function QuestionsDemo() {
                 {q.answer}
               </span>
               <p className="mt-3 text-[15px] leading-relaxed text-slate-600 lg:hidden">{q.body}</p>
-              {/* Phones get a square version drawn for small screens (same image
-                  model, same content, bigger type); the 16:9 one is too small there. */}
-              <picture className="relative mt-5 block aspect-square overflow-hidden rounded-xl bg-[#f4f6f9] ring-1 ring-inset ring-slate-200/70 sm:aspect-[16/9]">
-                <source media="(min-width: 640px)" srcSet={q.image} />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={q.image.replace(/\.webp$/, "-m.webp")}
-                  alt={q.alt}
-                  width={1080}
-                  height={1080}
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              </picture>
+              {/* Drawn in code (DemoVisuals): sharp at any density and
+                  translated with the page. A fixed frame (square on phones,
+                  16:9 wider) keeps the auto-rotating tabs from moving the page. */}
+              <div
+                role="img"
+                aria-label={q.alt}
+                className="relative mt-5 aspect-square overflow-hidden rounded-xl bg-[#f4f6f9] p-3 ring-1 ring-inset ring-slate-200/70 sm:aspect-[16/9] sm:p-4"
+              >
+                <q.visual />
+              </div>
               <p className="mt-3 text-[13px] text-slate-500">Kilde: {q.source}</p>
             </motion.div>
           </AnimatePresence>
