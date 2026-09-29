@@ -296,11 +296,3 @@
 html.i18n-pending body { opacity: 0; }
 html[data-lang="en"] body { transition: opacity 120ms ease-out; }
 
-/* Split-flap language board (SplitFlapLang): a tile folding over its hinge. */
-@keyframes flap {
-  0% { transform: perspective(120px) rotateX(0deg); filter: brightness(1); }
-  50% { transform: perspective(120px) rotateX(-70deg); filter: brightness(0.7); }
-  100% { transform: perspective(120px) rotateX(0deg); filter: brightness(1); }
-}
-.flap { animation: flap 110ms ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .flap { animation: none; } }

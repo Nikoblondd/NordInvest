@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { DK, GB } from "country-flag-icons/react/3x2";
 import { currentLang, setLang, type Lang } from "@/lib/i18n/engine";
+import { clsx } from "@/lib/clsx";
 
-export function chooseLang(next: Lang) {
+function chooseLang(next: Lang) {
   if (next === currentLang()) return;
   setLang(next);
   if (next === "en") {
@@ -19,66 +20,60 @@ export function chooseLang(next: Lang) {
   }
 }
 
-/** The active language, read after mount (the server always renders Danish). */
-export function useLang(): [Lang, (l: Lang) => void] {
-  const [lang, setLangState] = useState<Lang>("da");
-  useEffect(() => {
-    setLangState(currentLang());
-    const on = () => setLangState(currentLang());
-    window.addEventListener("nordinvest-lang", on);
-    return () => window.removeEventListener("nordinvest-lang", on);
-  }, []);
-  return [
-    lang,
-    (l: Lang) => {
-      setLangState(l);
-      chooseLang(l);
-    },
-  ];
-}
-
-export const Flag = ({ lang, className = "h-3.5 w-[21px]" }: { lang: Lang; className?: string }) =>
+const Flag = ({ lang, className = "h-3.5 w-[21px]" }: { lang: Lang; className?: string }) =>
   lang === "da" ? (
-    <DK aria-hidden className={`${className} shrink-0 rounded-[2px] shadow-[0_0_0_1px_rgba(15,23,42,0.12)]`} />
+    <DK aria-hidden className={`${className} shrink-0 rounded-[2px] shadow-[0_0_0_1px_rgba(15,23,42,0.15)]`} />
   ) : (
-    <GB aria-hidden className={`${className} shrink-0 rounded-[2px] shadow-[0_0_0_1px_rgba(15,23,42,0.12)]`} />
+    <GB aria-hidden className={`${className} shrink-0 rounded-[2px] shadow-[0_0_0_1px_rgba(15,23,42,0.15)]`} />
   );
 
 /**
- * Quiet language links. The top bar holds no flags (it has to fit a phone);
- * desktop gets a small text link, the phone menu a full row. The landing page
- * has its own, louder switch (SplitFlapLang). Labels are never translated.
+ * Language switch in the top bar. Phones: just the flag of the language you
+ * switch to, small enough that the logo always keeps its room. Desktop: both
+ * flags side by side. Its own labels are never run through the translator.
  */
-export function LangToggle({ variant = "bar" }: { variant?: "bar" | "menu" }) {
-  const [lang, pick] = useLang();
-  const other: Lang = lang === "da" ? "en" : "da";
-  const label = other === "en" ? "English" : "Dansk";
+export function LangToggle() {
+  const [lang, setLangState] = useState<Lang>("da");
+  useEffect(() => setLangState(currentLang()), []);
 
-  if (variant === "menu") {
-    return (
-      <button
-        type="button"
-        data-no-i18n
-        translate="no"
-        onClick={() => pick(other)}
-        className="flex items-center gap-2.5 text-left text-base font-medium text-slate-700"
-      >
-        <Flag lang={other} />
-        {other === "en" ? "Read in English" : "Læs på dansk"}
-      </button>
-    );
-  }
+  const pick = (l: Lang) => {
+    setLangState(l);
+    chooseLang(l);
+  };
+  const other: Lang = lang === "da" ? "en" : "da";
 
   return (
-    <button
-      type="button"
-      data-no-i18n
-      translate="no"
-      onClick={() => pick(other)}
-      aria-label={other === "en" ? "Switch to English" : "Skift til dansk"}
-      className="hidden rounded-md px-1.5 py-1 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 md:inline-flex"
-    >
-      {label}
-    </button>
+    <div data-no-i18n translate="no" className="shrink-0">
+      {/* Phones and tablets */}
+      <button
+        type="button"
+        onClick={() => pick(other)}
+        aria-label={other === "en" ? "Switch to English" : "Skift til dansk"}
+        title={other === "en" ? "English" : "Dansk"}
+        className="grid h-9 w-9 place-items-center rounded-full max-[379px]:w-8 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 active:bg-slate-200 md:hidden"
+      >
+        <Flag lang={other} className="h-[15px] w-[22px]" />
+      </button>
+
+      {/* Desktop */}
+      <div role="group" aria-label="Sprog / Language" className="hidden items-center rounded-full border border-slate-200 bg-white p-0.5 md:inline-flex">
+        {(["da", "en"] as Lang[]).map((l) => (
+          <button
+            key={l}
+            type="button"
+            onClick={() => pick(l)}
+            aria-pressed={lang === l}
+            aria-label={l === "da" ? "Dansk" : "English"}
+            className={clsx(
+              "inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-[12px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
+              lang === l ? "bg-slate-900 text-white" : "text-slate-500 hover:text-slate-900",
+            )}
+          >
+            <Flag lang={l} />
+            {l.toUpperCase()}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

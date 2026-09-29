@@ -58,7 +58,7 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-slate-50/80 backdrop-blur-lg">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-        <div translate="no" data-no-i18n className="min-w-0">
+        <div translate="no" data-no-i18n className="shrink-0 max-[379px]:[&_.text-xl]:text-[18px]">
           <Logo />
         </div>
 
@@ -70,7 +70,7 @@ export function Nav() {
           ))}
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
           <LangToggle />
           {authed ? (
             <div ref={menuRef} className="relative">
@@ -120,7 +120,7 @@ export function Nav() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="flex items-center gap-2 whitespace-nowrap rounded-full bg-slate-900 px-3.5 py-2 text-sm font-medium text-white transition-all hover:bg-slate-800 sm:px-4"
+                className="flex items-center gap-2 whitespace-nowrap rounded-full bg-slate-900 px-3.5 py-2 text-sm font-medium text-white transition-all hover:bg-slate-800 max-[379px]:px-3 max-[379px]:text-[13px] sm:px-4"
               >
                 Start gratis <ArrowRight size={16} className="hidden min-[400px]:block" />
               </Link>
@@ -151,9 +151,6 @@ export function Nav() {
             >
               {authed ? "Dashboard" : "Log ind"}
             </Link>
-            <div className="border-t border-slate-200 pt-4">
-              <LangToggle variant="menu" />
-            </div>
           </div>
         </div>
       )}

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { HeroInput } from "@/components/home/HeroInput";
-import { SplitFlapLang } from "@/components/i18n/SplitFlapLang";
 import { FacadeReveal } from "@/components/home/FacadeReveal";
 import { QuestionsDemo } from "@/components/home/QuestionsDemo";
 import { FeaturedDeals } from "@/components/home/FeaturedDeals";
@@ -84,7 +83,6 @@ export default function Home() {
       {/* Hero: what NordInvest is, in plain words, before any effects. */}
       <section className="drafting-paper px-4 pb-6 pt-14 sm:px-6 sm:pb-10 sm:pt-24">
         <div className="mx-auto flex max-w-3xl flex-col items-start text-left sm:items-center sm:text-center">
-          <SplitFlapLang />
           <p className="mb-4 text-sm font-medium text-blue-700 sm:mb-5">Analyse af ejendomsinvestering i Danmark</p>
           <h1 className="font-thesis text-[3.1rem] font-normal leading-[1.02] tracking-[0.003em] text-[#0b1b33] [text-wrap:balance] sm:text-[4.4rem] sm:leading-[0.98] sm:tracking-[-0.015em] lg:text-[5.2rem]">
             Se hvad huset tjener, <span className="text-slate-400">før du byder.</span>
