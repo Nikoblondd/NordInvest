@@ -195,9 +195,17 @@ function ScoreRing({ score, rating, tone, large }: { score: number; rating: stri
       </svg>
       <div aria-hidden className="absolute inset-0 flex flex-col items-center justify-center">
         <span className={clsx("font-semibold leading-none tabular-nums tracking-[-0.04em]", large ? "text-[72px] lg:text-[84px]" : "text-[30px] sm:text-[38px]")}>{score}</span>
-        <span className={clsx("mt-1 font-semibold", large ? "text-[15px]" : "text-[11px] sm:text-xs", toneText[tone])}>
-          {large ? `${rating} · ud af 100` : rating}
-        </span>
+        {/* Short lines only: text sits below the centre, where the circle is
+            narrower, so a long label ("Fremragende · ud af 100") ran past the
+            ring. The small ring leaves the rating to the headline beside it. */}
+        {large ? (
+          <>
+            <span className={clsx("mt-2 whitespace-nowrap text-[15px] font-semibold leading-tight", toneText[tone])}>{rating}</span>
+            <span className="whitespace-nowrap text-[13px] font-medium leading-tight text-white/50">ud af 100</span>
+          </>
+        ) : (
+          <span className="mt-1 whitespace-nowrap text-[11px] font-medium leading-none text-white/55 sm:text-xs">af 100</span>
+        )}
       </div>
     </div>
   );
