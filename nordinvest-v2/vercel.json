@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/vagt/check",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/deals/watch",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/lifecycle/run",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}
