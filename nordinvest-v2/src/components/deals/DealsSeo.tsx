@@ -150,7 +150,8 @@ export function MarketFigures({ snap, where }: { snap: DealSnapshot; where: stri
   const share = snap.scanned ? Math.round((snap.positive / snap.scanned) * 100) : 0;
   const items = [
     { label: `Helårsboliger til salg ${where}`, value: snap.scanned.toLocaleString("da-DK") },
-    { label: "Med positivt cashflow", value: `${snap.positive.toLocaleString("da-DK")} (${share} %)` },
+    // 3 of 1.173 rounds to "0 %", which reads as none; say "under 1 %" instead.
+    { label: "Med positivt cashflow", value: `${snap.positive.toLocaleString("da-DK")} (${snap.positive > 0 && share < 1 ? "under 1" : share}\u00a0%)` },
     { label: "Median kvadratmeterpris", value: snap.medianPricePerM2 ? `${Math.round(snap.medianPricePerM2).toLocaleString("da-DK")} kr./m²` : "–" },
     { label: "Median bruttoafkast", value: snap.medianGrossYield != null ? pct(snap.medianGrossYield) : "–" },
   ];

@@ -41,7 +41,9 @@ export default async function CityDealsPage({ params }: { params: { by: string }
   const c = dealCity(params.by);
   if (!c) notFound();
   const snap = await getDealSnapshot(c.slug, 8);
-  const share = snap && snap.scanned ? Math.round((snap.positive / snap.scanned) * 100) : null;
+  const pctRaw = snap && snap.scanned ? Math.round((snap.positive / snap.scanned) * 100) : null;
+  // 3 of 1.173 rounds to 0; "under 1" says what it is.
+  const share = snap && pctRaw === 0 && snap.positive > 0 ? "under 1" : pctRaw;
 
   const faq = [
     {
