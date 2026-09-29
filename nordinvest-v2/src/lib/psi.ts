@@ -122,11 +122,16 @@ export async function getPsiReport(): Promise<PsiReport> {
   // (PAGESPEED_INSIGHTS_KEY in Vercel env — free at
   // https://developers.google.com/speed/docs/insights/v5/get-started) we get
   // 25k requests/day.
-  const results: PsiResult[] = [];
-  for (const url of TARGETS) {
-    // Small pace so we stay under the per-second cap even without a key.
-    if (results.length > 0) await new Promise((r) => setTimeout(r, 400));
-    results.push(await fetchOne(url));
+  // With a key the quota is 25k/day, so run the pages in parallel (each PSI run
+  // takes 15-30 s). Without one, stay sequential and paced.
+  let results: PsiResult[] = [];
+  if (process.env.PAGESPEED_INSIGHTS_KEY) {
+    results = await Promise.all(TARGETS.map((url) => fetchOne(url)));
+  } else {
+    for (const url of TARGETS) {
+      if (results.length > 0) await new Promise((r) => setTimeout(r, 400));
+      results.push(await fetchOne(url));
+    }
   }
 
   const measured = results.filter((r) => r.ok && r.vitals.source !== "unavailable");

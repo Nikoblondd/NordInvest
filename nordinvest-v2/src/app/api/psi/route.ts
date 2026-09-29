@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { getPsiReport } from "@/lib/psi";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function GET() {
   const report = await getPsiReport();

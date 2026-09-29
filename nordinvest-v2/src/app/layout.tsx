@@ -13,9 +13,10 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-  // Preloading the font on the critical path removes the FOIT/FOUT flash on
-  // the LCP element. adjustFontFallback prevents CLS during the swap.
-  preload: true,
+  // Not preloaded: the landing and the analyser set their text in Geist, and a
+  // preloaded Inter (48 KB) competed with their LCP fonts. Pages in Inter paint
+  // straight away in the size-matched fallback (adjustFontFallback) and swap.
+  preload: false,
   adjustFontFallback: true,
   fallback: ["-apple-system", "system-ui", "sans-serif"],
 });
