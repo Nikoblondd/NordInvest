@@ -9,6 +9,7 @@ import { getAllPosts, getPost, getRelatedPosts, formatDateDa } from "@/lib/blog"
 import { site } from "@/lib/site";
 import { enhanceFeatureHtml, getFeatureExtras } from "@/lib/blog-feature";
 import { FeatureArticle } from "@/components/blog/FeatureArticle";
+import { BLOG_SEO } from "@/lib/blog-seo";
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
@@ -25,14 +26,18 @@ export function generateMetadata({
   const modified = extras?.updated ?? post.meta.date;
   // Full article metadata: Bing and Copilot lean on og:/article: tags and dates
   // more than Google does, so every post states them explicitly.
+  // Shorter search title/description where the headline is too long for a result.
+  const seo = BLOG_SEO[post.meta.slug] ?? {};
+  const seoTitle = seo.title ?? post.meta.title;
+  const seoDescription = seo.description ?? post.meta.description;
   return {
-    title: post.meta.title,
-    description: post.meta.description,
+    title: seo.title ? { absolute: seo.title } : post.meta.title,
+    description: seoDescription,
     keywords: post.meta.tags,
     alternates: { canonical: `/blog/${post.meta.slug}` },
     openGraph: {
-      title: post.meta.title,
-      description: post.meta.description,
+      title: seoTitle,
+      description: seoDescription,
       url: `/blog/${post.meta.slug}`,
       images: post.meta.image ? [{ url: post.meta.image, width: 1680, height: 944, alt: extras?.imageAlt ?? post.meta.title }] : undefined,
       type: "article",
@@ -46,8 +51,8 @@ export function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: post.meta.title,
-      description: post.meta.description,
+      title: seoTitle,
+      description: seoDescription,
       images: post.meta.image ? [post.meta.image] : undefined,
     },
   };

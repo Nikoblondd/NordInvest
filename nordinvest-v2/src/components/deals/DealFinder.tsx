@@ -8,6 +8,7 @@ import { clsx } from "@/lib/clsx";
 import { num, kr } from "@/lib/analysis";
 import { createClient } from "@/lib/supabase/client";
 import type { AnalyzedDeal, InvestmentDeal } from "@/lib/deals";
+import { dealHref, investHref } from "@/lib/deal-links";
 import { MUNICIPALITIES } from "@/lib/kommuner";
 import type { MapPoint } from "./DealMap";
 
@@ -172,30 +173,6 @@ const advInput = "w-full rounded-xl border border-slate-200 bg-white px-3 py-2 t
 
 const dk = (n: number) => (Number.isFinite(n) ? Math.round(n).toLocaleString("da-DK") : "–");
 
-// Carry the reliable Boligsiden numbers straight into the analyzer, and pass the
-// agent URL so it can still fetch photos for the AI condition analysis. This
-// avoids depending on each agent's page structure for the core figures.
-function dealHref(d: AnalyzedDeal, dp: string, ir: string): string {
-  const q = new URLSearchParams();
-  q.set("url", d.url);
-  q.set("price", String(d.price));
-  if (d.area) q.set("area", String(d.area));
-  if (d.rooms) q.set("rooms", String(d.rooms));
-  // Pass the EXACT operating cost the card was scored with — when the listing
-  // has no ejerudgift, analyzeDeal estimates it from the area. Omitting it made
-  // the analyzer fall back to its generic default, so cash flow and score
-  // dropped on click-through. Must mirror analyzeDeal()'s formula exactly.
-  const opex = d.monthlyExpense ?? (d.area ? Math.round((d.area * 35) / 50) * 50 : 0);
-  q.set("opex", String(opex));
-  q.set("rent", String(d.estRent));
-  // Carry the SAME financing assumptions the card was scored with, so the full
-  // analysis reproduces the exact cash flow / score — no jump on click-through.
-  q.set("downPaymentPct", dp);
-  q.set("interestRate", ir);
-  if (d.address) q.set("addr", d.address);
-  if (d.yearBuilt) q.set("year", String(d.yearBuilt));
-  return `/analyseren?${q.toString()}`;
-}
 
 function ScorePill({ score }: { score: number }) {
   const tone = score >= 65 ? "text-emerald-600" : score >= 45 ? "text-blue-600" : "text-slate-400";
@@ -279,22 +256,6 @@ function DealCard({ d, dp, ir }: { d: AnalyzedDeal; dp: string; ir: string }) {
   );
 }
 
-function investHref(d: InvestmentDeal, dp: string, ir: string): string {
-  const q = new URLSearchParams();
-  q.set("url", d.url);
-  q.set("price", String(d.price));
-  if (d.area) q.set("area", String(d.area));
-  q.set("rent", String(Math.round(d.noi / 12))); // NOI/md as the (net) rent baseline
-  q.set("opex", "0"); // NOI is already net — don't double-count operating costs
-  // Same financing assumptions the card was scored with (investment defaults to
-  // 30 % down) so the full analysis matches the card exactly.
-  q.set("downPaymentPct", dp);
-  q.set("interestRate", ir);
-  q.set("market", "investering");
-  if (d.subcategory) q.set("subcat", d.subcategory);
-  if (d.address) q.set("addr", d.address);
-  return `/analyseren?${q.toString()}`;
-}
 
 function InvestmentCard({ d, dp, ir }: { d: InvestmentDeal; dp: string; ir: string }) {
   const cfTone = d.cashFlow >= 0 ? "text-emerald-600" : "text-rose-500";
@@ -366,9 +327,9 @@ function InvestmentCard({ d, dp, ir }: { d: InvestmentDeal; dp: string; ir: stri
   );
 }
 
-export function DealFinder() {
+export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   const [market, setMarket] = useState<"bolig" | "investering">("bolig");
-  const [cities, setCities] = useState<string[]>([]); // empty = hele Danmark
+  const [cities, setCities] = useState<string[]>(initialCity ? [initialCity] : []); // empty = hele Danmark
   const [type, setType] = useState("condo");
   const [sort, setSort] = useState("score");
   const [priceMax, setPriceMax] = useState<number | "">(4000000);

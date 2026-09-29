@@ -19,10 +19,10 @@ const DESCRIPTION =
   "Guide til analyse af ejendomsinvestering i Danmark: cashflow, afkast, lån, drift, rentestress og lokalplaner. Med regneeksempel og gratis analyseværktøj.";
 
 export const metadata: Metadata = {
-  title: { absolute: `${TITLE} · NordInvest` },
+  title: { absolute: "Analyse af ejendomsinvestering: sådan regner du · NordInvest" },
   description: DESCRIPTION,
   alternates: { canonical: PATH },
-  openGraph: { title: TITLE, description: DESCRIPTION, type: "article", url: PATH },
+  openGraph: { title: TITLE, description: DESCRIPTION, type: "article", url: PATH, images: [{ url: "/opengraph-image.jpg", width: 1200, height: 630, alt: "NordInvest: se hvad huset tjener, før du byder" }] },
 };
 
 const QUESTIONS: { q: string; body: string; metric: string }[] = [

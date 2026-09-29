@@ -91,7 +91,7 @@ const freshGuesses = (players: { id: number }[]) =>
 
 /* ============================================================ */
 
-export default function GameClient() {
+export default function GameClient({ children }: { children?: React.ReactNode }) {
   const [stage, setStage] = useState<Stage>("home");
   const [kind, setKind] = useState<Kind>("free");
   const [error, setError] = useState("");
@@ -558,7 +558,7 @@ export default function GameClient() {
         <>
           <header className="game-hero relative overflow-hidden bg-[#0b1b33] px-4 pb-24 pt-10 text-white sm:px-6 sm:pt-14">
             <div className="relative mx-auto max-w-6xl">
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Gæt boligprisen</h1>
+              <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Gæt boligprisen</h2>
               <p className="mt-2 max-w-xl text-blue-100">
                 Rigtige danske boliger til salg lige nu. Gæt prisen, saml point, og se hvor du ligger mod resten af Danmark.
               </p>
@@ -772,6 +772,7 @@ export default function GameClient() {
         </main>
       )}
 
+      {children}
       <Footer />
     </div>
   );

@@ -1,8 +1,13 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/blog";
 import { CITIES } from "@/lib/cities";
+import { DEAL_CITIES } from "@/lib/deal-cities";
+import { getFeatureExtras } from "@/lib/blog-feature";
 
 const BASE = "https://nordinvest.io";
+// When the static pages last changed. Bump it when their content changes; a
+// lastmod that is always "now" teaches search engines to ignore it.
+const STATIC_UPDATED = new Date("2026-09-29");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -16,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/methodology", priority: 0.7, freq: "monthly" },
     { path: "/investment-models", priority: 0.7, freq: "monthly" },
     { path: "/glossary", priority: 0.7, freq: "monthly" },
+    { path: "/data", priority: 0.6, freq: "monthly" },
     { path: "/om", priority: 0.5, freq: "monthly" },
     { path: "/kontakt", priority: 0.5, freq: "monthly" },
     { path: "/blog", priority: 0.8, freq: "weekly" },
@@ -29,24 +35,32 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
     url: `${BASE}${p.path}`,
-    lastModified: now,
+    // The Deal-motor rankings are rebuilt every 6 hours; everything else is static.
+    lastModified: p.path === "/deals" ? now : STATIC_UPDATED,
     changeFrequency: p.freq,
     priority: p.priority,
   }));
 
   const cityEntries: MetadataRoute.Sitemap = CITIES.map((c) => ({
     url: `${BASE}/investering-i-ejendom-${c.slug}`,
-    lastModified: now,
+    lastModified: STATIC_UPDATED,
     changeFrequency: "monthly",
     priority: 0.8,
   }));
 
   const postEntries: MetadataRoute.Sitemap = getAllPosts().map((p) => ({
     url: `${BASE}/blog/${p.slug}`,
-    lastModified: p.date ? new Date(p.date) : now,
+    lastModified: new Date(getFeatureExtras(p.slug)?.updated ?? p.date ?? STATIC_UPDATED),
     changeFrequency: "monthly",
     priority: 0.6,
   }));
 
-  return [...staticEntries, ...cityEntries, ...postEntries];
+  const dealCityEntries: MetadataRoute.Sitemap = DEAL_CITIES.map((c) => ({
+    url: `${BASE}/deals/${c.slug}`,
+    lastModified: now,
+    changeFrequency: "daily",
+    priority: 0.8,
+  }));
+
+  return [...staticEntries, ...dealCityEntries, ...cityEntries, ...postEntries];
 }

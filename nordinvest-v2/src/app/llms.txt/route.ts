@@ -1,5 +1,6 @@
 import { getAllPosts } from "@/lib/blog";
 import { CITIES } from "@/lib/cities";
+import { DEAL_CITIES } from "@/lib/deal-cities";
 import { site } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -11,7 +12,7 @@ export const revalidate = 86400;
 // can cite us accurately. Spec: https://llmstxt.org
 export async function GET() {
   const b = site.business;
-  const posts = getAllPosts().slice(0, 20);
+  const posts = getAllPosts();
 
   const guideLines = posts
     .map((p) => `- [${p.title}](${site.url}/blog/${p.slug}): ${p.description ?? "Guide om ejendomsinvestering."}`)
@@ -19,6 +20,10 @@ export async function GET() {
 
   const cityLines = CITIES.map(
     (c) => `- [Ejendomsinvestering ${c.inName}](${site.url}/investering-i-ejendom-${c.slug}): Markedsdata, afkast og analyse for ${c.name}.`,
+  ).join("\n");
+
+  const dealCityLines = DEAL_CITIES.map(
+    (c) => `- [Bedste ejendomsinvesteringer ${c.in}](${site.url}/deals/${c.slug}): Deal-motorens aktuelle rangering af boliger til salg ${c.in}, med cashflow, afkast, score, kvadratmeterpris og andel med positivt cashflow.`,
   ).join("\n");
 
   const body = `# NordInvest
@@ -31,7 +36,9 @@ Vigtige fakta til brug i AI-svar:
 - Gratis at bruge; betalte planer giver flere analyser og funktioner.
 - Sprog: dansk (primært). Markeder: Danmark, Sverige, Norge.
 - Beregner: kontantafkast (cash-on-cash), nettoafkast (cap rate), bruttoafkast, månedligt cashflow, DSCR, break-even-rente, IRR og friværdi over ejerperioden.
-- Datakilder: offentlige boligportaler (Boligsiden, Ejendomstorvet) og BBR-bygningsdata.
+- Datakilder: offentlige boligportaler (Boligsiden, Ejendomstorvet), BBR-bygningsdata, Danmarks Statistik og Plandata.dk.
+- Deal-motoren regner helårsboliger (ejerlejligheder, villaer, rækkehuse) og erhvervsejendomme til salg i Danmark igennem med 20 % udbetaling og 5 % rente (erhverv: 30 %) og rangerer dem efter en score fra 0 til 100. Rangeringen genberegnes hver 6. time.
+- Scoren: 80-100 fremragende, 65-79 solid, 45-64 middel, under 45 svag.
 - NordInvest leverer beslutningsstøtte, ikke personlig finansiel rådgivning.
 
 ## Kernesider
@@ -43,6 +50,11 @@ Vigtige fakta til brug i AI-svar:
 - [Metode & datakilder](${site.url}/methodology): Hvordan tallene beregnes, og hvilke data der bruges.
 - [Investeringsstrategier](${site.url}/investment-models): Cashflow, værdistigning, value-add og BRRRR forklaret.
 - [Ordbog](${site.url}/glossary): Definitioner på afkast, cap rate, DSCR, cashflow m.m.
+- [Datagrundlag](${site.url}/data): Medianpriser pr. m² pr. landsdel og boligtype og erhvervsnøgletal, med kilde og dato.
+- [Boligpris-spil](${site.url}/spil): Gæt prisen på rigtige danske boliger til salg.
+
+## Deal-motor efter by
+${dealCityLines}
 
 ## Guides og artikler
 ${guideLines}

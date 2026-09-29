@@ -6,9 +6,9 @@ import GameClient from "./GameClient";
 // "gæt prisen på boligen", "gæt husets pris", "boligquiz", "prisspil",
 // "hvor meget koster boligen spil", + all major city modifiers.
 
-const TITLE = "Boligpris Spil — Gæt Prisen På Boligen | Danmarks #1 Bolig-Quiz | NordInvest";
+const TITLE = "Boligpris-spil: gæt prisen på boligen";
 const DESCRIPTION =
-  "Boligpris spil på rigtige danske boliger fra Boligsiden. Gæt prisen på boligen — hus, lejlighed eller villa. Spil alene eller med op til 8, tag Dagens 5 og kæmp om pladsen på ranglisten. Gratis, ingen login. Spil hele Danmark, København, Aarhus, Odense eller Aalborg.";
+  "Gæt prisen på rigtige danske boliger til salg. Spil alene eller med op til 8, tag Dagens 5 og kæmp om pladsen på ranglisten. Gratis og uden login.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -111,7 +111,7 @@ const jsonLd = {
       genre: ["Trivia", "Property", "Real Estate", "Guessing Game", "Quiz"],
       keywords:
         "boligpris spil, bolig spil, boligspil, gæt boligprisen, gæt prisen på boligen, gæt ejendomsprisen, boligquiz, prisspil, ejendomsspil, gæt husets pris, gæt lejlighedens pris, boligsiden spil",
-      numberOfPlayers: { "@type": "QuantitativeValue", minValue: 2, maxValue: 8 },
+      numberOfPlayers: { "@type": "QuantitativeValue", minValue: 1, maxValue: 8 },
       audience: { "@type": "Audience", audienceType: "Danish property enthusiasts, home buyers, investors, families" },
       publisher: { "@type": "Organization", name: "NordInvest", url: "https://nordinvest.io" },
       offers: { "@type": "Offer", price: "0", priceCurrency: "DKK" },
@@ -227,7 +227,48 @@ export default function SpilPage() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <GameClient />
+      <GameClient>
+        <SpilAbout />
+      </GameClient>
     </>
+  );
+}
+
+// The FAQ in the structured data above, shown on the page as well (search
+// engines only honour FAQ markup that matches visible content). Server-rendered,
+// so crawlers see it without running the game.
+const FAQ = (jsonLd["@graph"][2] as { mainEntity: { name: string; acceptedAnswer: { text: string } }[] }).mainEntity;
+
+function SpilAbout() {
+  return (
+    <section aria-labelledby="spil-om" className="border-t border-slate-200 bg-white px-4 py-12 sm:px-6 sm:py-16">
+      <h1 className="sr-only">Boligpris-spil: gæt prisen på rigtige danske boliger</h1>
+      <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+        <div>
+          <h2 id="spil-om" className="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
+            Om boligpris-spillet
+          </h2>
+          <p className="mt-3 leading-relaxed text-slate-600">
+            Spillet bruger rigtige boliger, der er til salg i Danmark lige nu. Du ser billeder og fakta om boligen og gætter
+            kontantprisen. Jo tættere du rammer, jo flere point.
+          </p>
+        </div>
+        <div className="divide-y divide-slate-200 border-y border-slate-200">
+          {FAQ.map((f) => (
+            <details key={f.name} className="group">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 py-4 text-base font-semibold text-slate-900 [&::-webkit-details-marker]:hidden">
+                {f.name}
+                <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white text-slate-500 ring-1 ring-slate-200 transition-transform duration-300 group-open:rotate-45 group-open:text-blue-600">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M6 1 v10 M1 6 h10" />
+                  </svg>
+                </span>
+              </summary>
+              <p className="pb-5 pr-10 leading-relaxed text-slate-600">{f.acceptedAnswer.text}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

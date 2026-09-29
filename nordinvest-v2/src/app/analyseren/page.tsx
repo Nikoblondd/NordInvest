@@ -5,10 +5,11 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { AnalyzerApp } from "@/components/analyzer/AnalyzerApp";
 import { HeroInput } from "@/components/home/HeroInput";
+import Link from "next/link";
 import { geist } from "@/components/home/fonts";
 
 export const metadata: Metadata = {
-  title: "Analysér din ejendomsinvestering – enhver dansk bolig",
+  title: "Analysér en ejendomsinvestering gratis",
   description:
     "Gratis analyse af ejendomsinvestering i Danmark: indsæt et boliglink og få bruttoafkast, cash flow, rentestress-test og 5-årig prisprognose på sekunder.",
   alternates: { canonical: "/analyseren" },
@@ -62,6 +63,8 @@ export default function AnalyserenPage({
           <AnalyzerApp />
         </Suspense>
 
+        {!analyzing && <WhatYouGet />}
+
         {analyzing && (
           <section aria-labelledby="next-property" className="bg-[#f4f6f9] px-4 py-16 sm:px-6 sm:py-20">
             <div className="mx-auto max-w-[1080px]">
@@ -79,5 +82,70 @@ export default function AnalyserenPage({
 
       <Footer />
     </div>
+  );
+}
+
+// What an analysis contains, in the HTML itself: the empty analyser is only a
+// form, so this is what search engines and AI assistants read about it.
+const FIGURES = [
+  { t: "Cashflow pr. måned", d: "Leje minus ydelse, fællesudgifter, vedligehold og tomgang. Det, der er tilbage til dig hver måned." },
+  { t: "Nettoafkast og bruttoafkast", d: "Årlig leje i forhold til prisen, før og efter driftsudgifter." },
+  { t: "Kontantafkast", d: "Hvad din egen udbetaling forrenter sig med, efter at ydelsen på lånet er betalt." },
+  { t: "Gældsdækning (DSCR)", d: "Hvor mange gange lejen dækker ydelsen på lånet. Under 1 betyder, at du selv må lægge til." },
+  { t: "Rentestress og break-even-rente", d: "Hvad der sker med cashflowet, hvis renten stiger, og ved hvilken rente handlen går i nul." },
+  { t: "Lejereserve", d: "Hvor meget lejen kan falde, før boligen ikke længere betaler sig selv." },
+  { t: "Friværdi over 10 år", d: "Hvordan afdrag og værdistigning bygger formue op år for år." },
+  { t: "Pris mod området", d: "Kvadratmeterprisen sammenlignet med lignende boliger til salg i samme postnummer." },
+  { t: "Lokalplaner og kloakprojekter", d: "Kommende byrder fra Plandata, der kan koste dig penge efter købet." },
+];
+
+function WhatYouGet() {
+  return (
+    <section aria-labelledby="what-h" className="bg-[#f4f6f9] px-4 py-16 sm:px-6 sm:py-20">
+      <div className="mx-auto max-w-[1080px]">
+        <h2 id="what-h" className="max-w-2xl text-[28px] font-semibold leading-[1.1] tracking-[-0.03em] [text-wrap:balance] sm:text-[40px]">
+          Det får du i analysen.
+        </h2>
+        <p className="mt-3 max-w-2xl text-[17px] leading-relaxed text-slate-600">
+          NordInvest regner boligen igennem, som en erfaren investor ville gøre det, og giver en samlet score fra 0 til 100.
+          Du kan rette alle tal bagefter og se resultatet ændre sig med det samme.
+        </p>
+        <dl className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-3">
+          {FIGURES.map((f) => (
+            <div key={f.t} className="bg-white p-5 sm:p-6">
+              <dt className="text-[17px] font-semibold tracking-[-0.01em] text-slate-900">{f.t}</dt>
+              <dd className="mt-1.5 text-[15px] leading-relaxed text-slate-600">{f.d}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="mt-12 grid gap-8 border-t border-slate-200 pt-10 sm:grid-cols-2">
+          <div>
+            <h3 className="text-lg font-semibold tracking-[-0.01em]">Hvor tallene kommer fra</h3>
+            <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
+              Pris, areal og ejerudgift fra boligannoncen. Bygningsdata fra BBR. Lejeniveau og prisudvikling fra Danmarks
+              Statistik og vores egen markedsindsamling. Lokalplaner fra Plandata.dk.{" "}
+              <Link href="/methodology" className="font-medium text-blue-700 underline-offset-2 hover:underline">
+                Læs om metoden
+              </Link>
+              .
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold tracking-[-0.01em]">Ny i ejendomsinvestering?</h3>
+            <p className="mt-2 text-[15px] leading-relaxed text-slate-600">
+              Guiden{" "}
+              <Link href="/analyse-af-ejendomsinvestering" className="font-medium text-blue-700 underline-offset-2 hover:underline">
+                analyse af ejendomsinvestering
+              </Link>{" "}
+              gennemgår hvert nøgletal med et regneeksempel. Leder du efter en bolig at regne på, så prøv{" "}
+              <Link href="/deals" className="font-medium text-blue-700 underline-offset-2 hover:underline">
+                Deal-motoren
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

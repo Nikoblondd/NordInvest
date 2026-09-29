@@ -45,6 +45,7 @@ export const metadata: Metadata = {
     locale: "da_DK",
     siteName: "NordInvest",
   },
+  twitter: { card: "summary_large_image" },
   // Every page is its own canonical unless it says otherwise ("./" resolves
   // to the page's own path against metadataBase).
   alternates: { canonical: "./" },

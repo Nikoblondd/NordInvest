@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
 import { FounderPhoto } from "@/components/FounderPhoto";
 
 export const metadata: Metadata = {
-  title: "Kontakt",
+  title: { absolute: "Kontakt NordInvest" },
   description:
     "Kom i kontakt med NordInvest — spørgsmål om produktet, salg, presse eller investering. Skriv til contact@nordinvest.io.",
 };
