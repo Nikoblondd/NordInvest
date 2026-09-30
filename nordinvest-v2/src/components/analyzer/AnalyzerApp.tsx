@@ -33,6 +33,10 @@ import type { Tone } from "@/components/analyzer/story/tone";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
+import { SignupGate } from "@/components/analyzer/SignupGate";
+import { UpgradeDialog, type UpgradeReason } from "@/components/upgrade/UpgradeDialog";
+import { UsageNudge } from "@/components/upgrade/UsageNudge";
+import { ANON_FREE, countAnonAnalysis, fetchPlan, usePlan } from "@/lib/plan";
 import { TimeSavingsCapture } from "@/components/analyzer/TimeSavingsCapture";
 import { captureEvent } from "@/lib/analytics-events";
 import { buildProvenance, rentRegulationRule } from "@/lib/provenance";
@@ -251,6 +255,15 @@ export function AnalyzerApp() {
   // Time-savings micro-survey visibility (once per analysis, dismissible).
   const [tsHidden, setTsHidden] = useState(false);
   const [analysisLogged, setAnalysisLogged] = useState(false);
+  // Upgrade path: the signup gate (3rd analysis without an account), this
+  // month's usage for the nudge, and the dialog for paid-only actions.
+  const plan = usePlan();
+  const [signupGated, setSignupGated] = useState(false);
+  const [usage, setUsage] = useState<{ authenticated: boolean; used: number; max: number; unlimited: boolean } | null>(null);
+  const [upgrade, setUpgrade] = useState<UpgradeReason | null>(null);
+  const requirePaid = (reason: UpgradeReason, action: () => void) => {
+    fetchPlan().then((p) => (p.paid ? action() : setUpgrade(reason)));
+  };
 
   const [bbr, setBbr] = useState<BbrEnrich | null>(null);
   const [images, setImages] = useState<string[]>([]);
@@ -494,6 +507,15 @@ export function AnalyzerApp() {
         });
         const d = await res.json();
         if (d?.ok && d.id) { usageRowIdRef.current = d.id as string; setAnalysisLogged(true); }
+        if (d?.authenticated === false) {
+          // No account: two analyses free, the third asks for a free account.
+          const n = countAnonAnalysis(sig);
+          setUsage({ authenticated: false, used: n, max: ANON_FREE, unlimited: false });
+          if (n > ANON_FREE) setSignupGated(true);
+          else captureEvent("analysis_completed", { market: isInvestment ? "investering" : "bolig", anon: true });
+          return;
+        }
+        if (d?.ok) setUsage({ authenticated: true, used: Number(d.used) || 0, max: Number(d.max) || 0, unlimited: !!d.unlimited });
         // Gate the results when a signed-in free user is past their monthly
         // quota — the willingness-to-pay moment. Anonymous users (authenticated
         // false) and admins/paid within limit are never gated.
@@ -679,6 +701,7 @@ export function AnalyzerApp() {
           ...inputs,
         }),
       });
+      if (res.status === 402) { setUpgrade("excel"); return; }
       const blob = await res.blob();
       const u = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -951,6 +974,12 @@ export function AnalyzerApp() {
           deal-seeded link already has them, so it renders at once. */}
       {ex.status === "loading" && !priceParam ? (
         <LoadingBand stage={ex.stage} />
+      ) : signupGated ? (
+        <div className="px-4 py-12 sm:px-6">
+          <div className="mx-auto max-w-[1080px]">
+            <SignupGate score={displayScore} rating={displayRating} verdict={displayVerdict} scoreColor={scoreColor} />
+          </div>
+        </div>
       ) : gated ? (
         <div className="px-4 py-12 sm:px-6">
           <div className="mx-auto max-w-[1080px]">
@@ -1193,6 +1222,7 @@ export function AnalyzerApp() {
               <h2 id="naeste-h" className="max-w-2xl text-[32px] font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance] sm:text-[44px]">
                 Gem den, del den, eller tag den med i banken.
               </h2>
+              {usage && <UsageNudge {...usage} />}
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 {save.status === "saved" ? (
                   <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
@@ -1205,12 +1235,14 @@ export function AnalyzerApp() {
                     {save.status === "saving" ? "Gemmer…" : "Gem til portefølje"}
                   </button>
                 )}
-                <button type="button" onClick={openBankReport} className={darkPill}>
+                <button type="button" onClick={() => requirePaid("report", openBankReport)} className={darkPill}>
                   <FileText aria-hidden size={17} /> Bankrapport
+                  {plan.loaded && !plan.paid && <PaidTag />}
                 </button>
-                <button type="button" onClick={exportExcel} disabled={exporting} className={darkPill}>
+                <button type="button" onClick={() => requirePaid("excel", exportExcel)} disabled={exporting} className={darkPill}>
                   {exporting ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <FileSpreadsheet aria-hidden size={17} />}
                   {exporting ? "Laver Excel…" : "Excel"}
+                  {plan.loaded && !plan.paid && <PaidTag />}
                 </button>
                 {listingUrl && (
                   watch.status === "saved" ? (
@@ -1258,6 +1290,7 @@ export function AnalyzerApp() {
                 )}
               </div>
               <div id="analyse-end" aria-hidden className="h-px" />
+              <UpgradeDialog reason={upgrade} onClose={() => setUpgrade(null)} />
             </div>
           </section>
         </>
@@ -1374,5 +1407,13 @@ function Row({ l, v, pos, strong }: { l: string; v: string; pos?: boolean; stron
       <dt className={clsx("min-w-0 text-slate-600", strong && "font-semibold text-slate-900")}>{l}</dt>
       <dd className={clsx("shrink-0 whitespace-nowrap tnum font-semibold tabular-nums", pos === true && "text-emerald-600", pos === false && "text-rose-500", pos === undefined && "text-slate-900")}>{v}</dd>
     </div>
+  );
+}
+
+function PaidTag() {
+  return (
+    <span className="ml-0.5 rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-white/70 ring-1 ring-inset ring-white/15">
+      Starter
+    </span>
   );
 }

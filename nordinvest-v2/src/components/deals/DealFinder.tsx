@@ -9,6 +9,7 @@ import { num, kr } from "@/lib/analysis";
 import type { AnalyzedDeal, InvestmentDeal } from "@/lib/deals";
 import { dealHref, investHref } from "@/lib/deal-links";
 import { MUNICIPALITIES } from "@/lib/kommuner";
+import { captureEvent } from "@/lib/analytics-events";
 import type { MapPoint } from "./DealMap";
 
 // Leaflet touches `window`, so the map is client-only (no SSR).
@@ -355,9 +356,16 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   const saveSearch = async () => {
     const { loadSupabase } = await import("@/lib/supabase/lazy");
     const supabase = await loadSupabase();
-    if (!supabase) { window.location.href = "/auth/signup?next=/deals"; return; }
+    const toSignup = async () => {
+      // Back to this page after signup (a city page keeps its kommune in the URL).
+      const { setReturnPath } = await import("@/lib/checkout-intent");
+      setReturnPath(window.location.pathname + window.location.search);
+      captureEvent("alert_signup_prompt", { from: "dealfinder" });
+      window.location.href = "/auth/signup";
+    };
+    if (!supabase) return toSignup();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { window.location.href = "/auth/signup?next=/deals"; return; }
+    if (!user) return toSignup();
     setSaved("saving");
     const names = cities.map((s) => MUNICIPALITIES.find((c) => c.slug === s)?.name ?? s);
     const cityLabel = names.length === 0 ? "Hele Danmark" : names.length <= 2 ? names.join(" + ") : `${names[0]} +${names.length - 1}`;
@@ -692,13 +700,13 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
                 )}
                 {saved === "done" ? (
                   <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                    <Check size={14} /> Søgning gemt
+                    <Check size={14} /> Du får en mail om nye boliger
                   </span>
                 ) : (
                   <button onClick={saveSearch} disabled={saved === "saving"}
                     className="flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60">
                     {saved === "saving" ? <Loader2 size={13} className="animate-spin" /> : <Bell size={13} />}
-                    Gem søgning
+                    Få mail om nye boliger
                   </button>
                 )}
               </div>

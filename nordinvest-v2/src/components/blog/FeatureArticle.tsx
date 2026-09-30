@@ -1,4 +1,9 @@
 import Link from "next/link";
+import { splitBeforeH2 } from "@/lib/blog-cta";
+import type { DealCity } from "@/lib/deal-cities";
+import { AnalyzeInline } from "@/components/blog/AnalyzeInline";
+import { ArticleEndCta } from "@/components/blog/ArticleEndCta";
+import { StickyAnalyzeBar } from "@/components/blog/StickyAnalyzeBar";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { geist } from "@/components/home/fonts";
@@ -19,6 +24,7 @@ export function FeatureArticle({
   toc,
   faq,
   related,
+  city,
 }: {
   meta: PostMeta;
   extras: FeatureExtras;
@@ -26,7 +32,9 @@ export function FeatureArticle({
   toc: TocItem[];
   faq: FaqItem[];
   related: PostMeta[];
+  city: DealCity | null;
 }) {
+  const parts = splitBeforeH2(html, 3);
   const url = `${site.url}/blog/${meta.slug}`;
   const image = meta.image?.startsWith("/") ? `${site.url}${meta.image}` : meta.image;
   const updated = extras.updated ?? meta.date;
@@ -179,28 +187,33 @@ export function FeatureArticle({
                     ))}
                   </ol>
                 </details>
-                <div itemProp="articleBody" className="feature-prose" data-i18n-html dangerouslySetInnerHTML={{ __html: html }} />
+                <div itemProp="articleBody">
+                  {parts ? (
+                    <>
+                      <div className="feature-prose" data-i18n-html dangerouslySetInnerHTML={{ __html: parts[0] }} />
+                      <div className="my-10">
+                        <AnalyzeInline
+                          from={`blog_inline:${meta.slug}`}
+                          title="Regn på en bolig, mens du læser"
+                          sub="Sæt et link ind fra en boligside, så regner NordInvest cashflow, afkast og risici igennem for dig."
+                        />
+                      </div>
+                      <div className="feature-prose" data-i18n-html dangerouslySetInnerHTML={{ __html: parts[1] }} />
+                    </>
+                  ) : (
+                    <div className="feature-prose" data-i18n-html dangerouslySetInnerHTML={{ __html: html }} />
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* One next step */}
-          <section aria-labelledby="cta-h" className="bg-[#0a0e16] px-4 py-14 text-white sm:px-6 sm:py-20">
-            <div className="mx-auto grid max-w-[1104px] items-end gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
-              <div>
-                <h2 id="cta-h" className="max-w-2xl text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] [text-wrap:balance] sm:text-[40px]">
-                  Regn din egen bolig igennem.
-                </h2>
-                {extras.cta && <p className="mt-4 max-w-xl text-[17px] leading-relaxed text-white/70">{extras.cta}</p>}
-              </div>
-              <Link
-                href="/analyseren"
-                className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3.5 text-[16px] font-semibold text-white transition-[background-color,transform] hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6aa8ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0e16] active:scale-[0.98]"
-              >
-                Åbn Analyseren
-              </Link>
+          {/* Next step: their own property, or the listings that already give plus. */}
+          <div className="px-4 py-14 sm:px-6 sm:py-20">
+            <div className="mx-auto max-w-[1104px]">
+              <ArticleEndCta id="blog-end-cta" slug={meta.slug} city={city} />
             </div>
-          </section>
+          </div>
 
           {related.length > 0 && (
             <section aria-labelledby="related-h" className="px-4 py-14 sm:px-6 sm:py-16">
@@ -226,6 +239,7 @@ export function FeatureArticle({
         </article>
       </main>
       <Footer />
+      <StickyAnalyzeBar slug={meta.slug} endId="blog-end-cta" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </div>
   );

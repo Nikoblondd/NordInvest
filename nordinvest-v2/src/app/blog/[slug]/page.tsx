@@ -4,12 +4,15 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/Button";
 import { getAllPosts, getPost, getRelatedPosts, formatDateDa } from "@/lib/blog";
 import { site } from "@/lib/site";
 import { enhanceFeatureHtml, getFeatureExtras } from "@/lib/blog-feature";
 import { FeatureArticle } from "@/components/blog/FeatureArticle";
 import { BLOG_SEO } from "@/lib/blog-seo";
+import { articleCity, splitBeforeH2 } from "@/lib/blog-cta";
+import { AnalyzeInline } from "@/components/blog/AnalyzeInline";
+import { ArticleEndCta } from "@/components/blog/ArticleEndCta";
+import { StickyAnalyzeBar } from "@/components/blog/StickyAnalyzeBar";
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
@@ -63,6 +66,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
   if (!post || post.meta.lang === "en") notFound();
   const { meta, html } = post;
   const related = getRelatedPosts(meta.slug, 3);
+  const city = articleCity(meta.title, meta.slug, meta.tags);
 
   const extras = getFeatureExtras(meta.slug);
   if (extras) {
@@ -70,8 +74,10 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
     // Feature guides point to each other first, then to the closest older posts.
     const siblings = getAllPosts().filter((p) => p.slug !== meta.slug && getFeatureExtras(p.slug));
     const featureRelated = [...siblings, ...getRelatedPosts(meta.slug, 6).filter((p) => !siblings.some((x) => x.slug === p.slug))].slice(0, 3);
-    return <FeatureArticle meta={meta} extras={extras} html={enhanced.html} toc={enhanced.toc} faq={enhanced.faq} related={featureRelated} />;
+    return <FeatureArticle meta={meta} extras={extras} html={enhanced.html} toc={enhanced.toc} faq={enhanced.faq} related={featureRelated} city={city} />;
   }
+
+  const parts = splitBeforeH2(html, 3);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -132,16 +138,24 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
         )}
 
         <div className="container-x max-w-3xl py-12">
-          <div className="article" data-i18n-html dangerouslySetInnerHTML={{ __html: html }} />
+          {parts ? (
+            <>
+              <div className="article" data-i18n-html dangerouslySetInnerHTML={{ __html: parts[0] }} />
+              <div className="my-10">
+                <AnalyzeInline
+                  from={`blog_inline:${meta.slug}`}
+                  title="Regn på en bolig, mens du læser"
+                  sub="Sæt et link ind fra en boligside, så regner NordInvest cashflow, afkast og risici igennem for dig."
+                />
+              </div>
+              <div className="article" data-i18n-html dangerouslySetInnerHTML={{ __html: parts[1] }} />
+            </>
+          ) : (
+            <div className="article" data-i18n-html dangerouslySetInnerHTML={{ __html: html }} />
+          )}
 
-          <div className="mt-14 rounded-2xl border border-stone-200 bg-navy-900 p-8 text-cream-100">
-            <h3 className="text-xl text-cream-100">Regn på din egen bolig</h3>
-            <p className="mt-2 text-cream-100/70">
-              Indsæt tallene og få en klar dom på under 60 sekunder.
-            </p>
-            <Button href="/analyseren" className="mt-5">
-              Åbn Analyseren →
-            </Button>
+          <div className="mt-14">
+            <ArticleEndCta id="blog-end-cta" slug={meta.slug} city={city} />
           </div>
 
           {related.length > 0 && (
@@ -178,6 +192,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
         </div>
       </article>
       <Footer />
+      <StickyAnalyzeBar slug={meta.slug} endId="blog-end-cta" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
