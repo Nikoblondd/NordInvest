@@ -80,7 +80,7 @@ export default function RootLayout({
         email: site.email,
         telephone: site.phone,
         description:
-          "NordInvest er et dansk, gratis analyseværktøj til ejendomsinvestering i Norden — cashflow, afkast, ROI, DSCR og rentestress-test på under 60 sekunder.",
+          "NordInvest er et dansk analyseværktøj til ejendomsinvestering, gratis at komme i gang med — cashflow, afkast, DSCR og rentestress-test på under 60 sekunder.",
         slogan: "Analyser ejendomsinvesteringer på under 60 sekunder.",
         foundingDate: "2026",
         founders: [{ "@type": "Person", name: site.founder.name }],
@@ -90,7 +90,7 @@ export default function RootLayout({
           ...(b.address ? { streetAddress: b.address } : {}),
           addressCountry: "DK",
         },
-        areaServed: ["DK", "SE", "NO"],
+        areaServed: "DK",
         knowsAbout: [
           "Ejendomsinvestering",
           "Udlejningsejendomme",
@@ -107,7 +107,7 @@ export default function RootLayout({
           email: site.email,
           telephone: site.phone,
           contactType: "customer support",
-          areaServed: ["DK", "SE", "NO"],
+          areaServed: "DK",
           availableLanguage: ["Danish", "English"],
         },
       },

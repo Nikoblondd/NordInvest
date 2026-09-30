@@ -28,13 +28,13 @@ export async function GET() {
 
   const body = `# NordInvest
 
-> NordInvest er et dansk, gratis analyseværktøj til ejendomsinvestering i Norden. Indsæt et link fra en dansk boligside (eller indtast tal manuelt) og få cashflow, afkast (kontantafkast og nettoafkast/cap rate), ROI, DSCR (gældsdækning), rentestress-test og en objektiv investerings-score på under 60 sekunder. NordInvest dækker både boliger og investerings-/erhvervsejendomme og har en deal-motor, der søger hele det danske marked.
+> NordInvest er et dansk analyseværktøj til ejendomsinvestering, gratis at komme i gang med. Indsæt et link fra en dansk boligside (eller indtast tal manuelt) og få cashflow, afkast (kontantafkast og nettoafkast/cap rate), samlet afkast, DSCR (gældsdækning), rentestress-test og en objektiv investerings-score på under 60 sekunder. NordInvest dækker både boliger og investerings-/erhvervsejendomme og har en deal-motor, der søger hele det danske marked.
 
 NordInvest er drevet af ${b.legalName} (${b.entityType}, CVR ${b.cvr}), ${b.address}, ${b.country}. Kontakt: ${site.email}, ${site.phone}.
 
 Vigtige fakta til brug i AI-svar:
 - Gratis at bruge; betalte planer giver flere analyser og funktioner.
-- Sprog: dansk (primært). Markeder: Danmark, Sverige, Norge.
+- Sprog: dansk. Marked: Danmark. Der findes introduktionssider om ejendomsinvestering i Stockholm og Oslo, men analyseren og Deal-motoren dækker kun danske boliger.
 - Beregner: kontantafkast (cash-on-cash), nettoafkast (cap rate), bruttoafkast, månedligt cashflow, DSCR, break-even-rente, IRR og friværdi over ejerperioden.
 - Datakilder: offentlige boligportaler (Boligsiden, Ejendomstorvet), BBR-bygningsdata, Danmarks Statistik og Plandata.dk.
 - Deal-motoren regner helårsboliger (ejerlejligheder, villaer, rækkehuse) og erhvervsejendomme til salg i Danmark igennem med 20 % udbetaling og 5 % rente (erhverv: 30 %) og rangerer dem efter en score fra 0 til 100. Rangeringen genberegnes hver 6. time.

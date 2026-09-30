@@ -63,7 +63,7 @@ Ud over udbetalingen skal du regne med:
 | Byggeteknisk gennemgang | 5.000–10.000 kr. |
 | Likviditetsbuffer (tomgang + reparationer) | 3–6 måneders ydelse |
 
-Vil du vide, hvad du realistisk kan låne, før du går på jagt? Brug vores gratis [boligkøbs-låneberegner](/vaerktoejer/boligkoeb-laaneberegner). Og læs vores dybdegående guide til [udbetaling på en investeringsejendom](/blog/udbetaling-investeringsejendom), som gennemgår kravene i detaljer.
+Vil du vide, hvad du realistisk kan låne, før du går på jagt? Brug vores gratis [boligkøbs-låneberegner](/analyseren). Og læs vores dybdegående guide til [udbetaling på en investeringsejendom](/blog/udbetaling-investeringsejendom), som gennemgår kravene i detaljer.
 
 ## Sådan beregner du afkastet på en ejendomsinvestering
 
@@ -78,7 +78,7 @@ Det simpleste tal: din årlige leje delt med boligens pris.
 Eksempel: en bolig til 2.000.000 kr., der lejes ud for 10.000 kr./md.
 10.000 kr. × 12 = 120.000 kr. om året. 120.000 ÷ 2.000.000 = **6 % bruttoafkast**.
 
-Screen enhver annonce på sekunder med vores [bruttoafkast-beregner](/vaerktoejer/bruttoafkast-beregner).
+Screen enhver annonce på sekunder med vores [bruttoafkast-beregner](/analyseren).
 
 ### Nettoafkast
 
@@ -116,7 +116,7 @@ Der findes ikke én rigtig måde at investere i ejendom på. Den bedste strategi
 
 - **Buy-and-hold cashflow** — køb, lej ud, behold. Den enkleste og mest robuste strategi for en ny ejendomsinvestor.
 - **Værdistigning** — accepter tynd cash flow nu til gengæld for langsigtet prisvækst i en storby.
-- **BRRRR** — køb nedslidt, renovér, lej ud, refinansiér, og gentag. Genbruger din kapital til næste handel. Se vores dybdegående [BRRRR-guide for Danmark](/blog/brrrr-strategy-denmark-2026).
+- **BRRRR** — køb nedslidt, renovér, lej ud, refinansiér, og gentag. Genbruger din kapital til næste handel. Se vores dybdegående [BRRRR-guide for Danmark](/investment-models).
 - **Value-add** — skab selv værdien gennem renovering eller ombygning.
 
 Mange sigter efter **passiv indkomst** gennem ejendomsinvestering — det er realistisk, men kræver, at cash flow-tallene går op fra starten. Læs, hvordan du bygger [passiv indkomst med ejendomsinvestering](/blog/passiv-indkomst-ejendomsinvestering).
@@ -137,7 +137,7 @@ Alle fem fejl har det til fælles, at de opstår, når man springer analysen ove
 
 ## Sådan kommer du i gang med ejendomsinvestering — trin for trin
 
-1. **Læg budgettet.** Find ud af, hvad du kan låne, med [låneberegneren](/vaerktoejer/boligkoeb-laaneberegner).
+1. **Læg budgettet.** Find ud af, hvad du kan låne, med [låneberegneren](/analyseren).
 2. **Vælg strategi og område.** Cashflow i en sekundær by, eller værdistigning i en storby?
 3. **Find boliger** på investerings- og erhvervsportaler som Ejendomstorvet og Sixten Partners samt de almindelige boligsider.
 4. **Analysér hver bolig** i [NordInvests analyser](/#analyze-section) — afkast, cash flow, ROI, rentestresstest og en klar vurdering.

@@ -11,6 +11,7 @@ import { Assumptions, CityLinks, DealRanking, Faq, InvestmentRanking, MarketFigu
 // Rendered per request; getDealSnapshot caches each kommune's market data for
 // 6 hours. Unknown kommuner are a 404 (see dealCity below).
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const title = (name: string) => `Bedste ejendomsinvesteringer i ${name}`;
 const description = (c: { name: string; in: string }) =>

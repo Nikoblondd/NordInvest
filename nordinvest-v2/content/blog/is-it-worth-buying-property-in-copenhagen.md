@@ -62,4 +62,4 @@ Don't guess. Paste a Copenhagen listing into the [NordInvest analyzer](/) and ge
 
 To understand the full framework behind the verdict, see [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment) and [how to calculate rental yield](/blog/how-to-calculate-rental-yield).
 
-If you would live there yourself, weigh it up with our free [buy or rent calculator](/vaerktoejer/koebe-eller-leje-bolig). If you would rent it out, check the return with the [gross yield calculator](/vaerktoejer/bruttoafkast-beregner).
+If you would live there yourself, weigh it up with our free [buy or rent calculator](/analyseren). If you would rent it out, check the return with the [gross yield calculator](/analyseren).

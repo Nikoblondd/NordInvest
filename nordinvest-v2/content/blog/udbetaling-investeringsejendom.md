@@ -111,4 +111,4 @@ Regn med **28-33 % af købsprisen i alt** som det realistiske kontantbehov. Har 
 
 For den fulde begynderguide til ejendomsinvestering, se [ejendomsinvestering for begyndere 2026](/blog/ejendomsinvestering-for-begyndere-2026). For skattesiden af regnestykket, læs [ejendomsskat på investeringsejendom](/blog/ejendomsskat-investeringsejendom-2026).
 
-Vil du se, hvor stor en bolig din økonomi kan bære, så prøv vores gratis [boligkøber låneberegner](/vaerktoejer/boligkoeb-laaneberegner) — den viser din realistiske køberamme set fra bankens side.
+Vil du se, hvor stor en bolig din økonomi kan bære, så prøv vores gratis [boligkøber låneberegner](/analyseren) — den viser din realistiske køberamme set fra bankens side.

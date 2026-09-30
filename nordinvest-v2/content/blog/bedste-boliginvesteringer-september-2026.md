@@ -24,7 +24,7 @@ Alle tre er villaer i mindre danske byer. Det er ikke tilfældigt. I 2026 er cas
 
 Toppen af listen. En stor patriciervilla på over 400 m² til under 3 mio. kr. Den store bygningsmasse er nøglen: **10 værelser** giver plads til værelsesudlejning, som i Vestsjælland typisk kan udlejes til 3.500-4.500 kr pr. værelse. Selv med konservativ udlejning på 6-7 værelser rammer man 9.400 kr i månedligt positivt cashflow.
 
-**Risici:** ejendom fra 1917 med energimærke E betyder du skal budgettere isolering og vinduer inden for 5-10 år. Vi anbefaler [analysen med rentestress](/vaerktoejer/rentestress-boliginvestering) inden budgettet fastlægges.
+**Risici:** ejendom fra 1917 med energimærke E betyder du skal budgettere isolering og vinduer inden for 5-10 år. Vi anbefaler [analysen med rentestress](/analyseren) inden budgettet fastlægges.
 
 ## 2. Ribe Landevej 373, 7100 Vejle — score 94
 

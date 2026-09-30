@@ -23,7 +23,7 @@ const toneWord: Record<Tone, string> = { good: "godt", warn: "middel", bad: "sva
  * numbers everything else leads to, divided by hairlines instead of boxes.
  */
 export function DealHero({
-  images,
+  images: allImages,
   address,
   score,
   rating,
@@ -52,6 +52,10 @@ export function DealHero({
   kindLabel: string | null;
 }) {
   const [lightboxAt, setLightboxAt] = useState<number | null>(null);
+  // Listing photos are hotlinked; a broker can block or move one. Drop the ones
+  // that fail so the cover falls back to the next photo, or to the big score ring.
+  const [failed, setFailed] = useState<string[]>([]);
+  const images = allImages.filter((src) => !failed.includes(src));
   const reduce = useReducedMotion();
   const photo = images[0];
 
@@ -130,6 +134,7 @@ export function DealHero({
                 width={880}
                 height={660}
                 fetchPriority="high"
+                onError={() => setFailed((f) => [...f, photo])}
                 className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
               />
               <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5 text-[13px] font-medium text-white backdrop-blur-md">

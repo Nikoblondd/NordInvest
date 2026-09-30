@@ -80,4 +80,4 @@ Nordisk ejendomsinvestering belønner tålmodighed og kapitalstyrke. Hvis du har
 
 Brug [NordInvest-analyzeren](/) til at køre disse beregninger på under 60 sekunder for enhver ejendom, du overvejer.
 
-Kom hurtigt i gang med vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner), og test robustheden med [tomgangsrisiko beregneren](/vaerktoejer/tomgangsrisiko-beregner).
+Kom hurtigt i gang med vores gratis [bruttoafkast beregner](/analyseren), og test robustheden med [tomgangsrisiko beregneren](/analyseren).

@@ -116,4 +116,4 @@ Det gode ved modellen er at den skalerer. Aktier på 500.000 kr. giver ikke mere
 
 For den bredere strategi bag hvordan man analyserer om en handel er en cashflow-handel eller en værdistigningshandel, læs [sådan analyserer du en nordisk ejendomsinvestering](/blog/sadan-analyserer-du-en-nordisk-ejendomsinvestering) og [er det stadig værd at købe ejendom i København](/blog/er-det-vaerd-at-koebe-ejendom-i-koebenhavn).
 
-Passiv indkomst står og falder med afkastet og tomgangen. Regn på begge dele med vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner) og [tomgangsrisiko beregner](/vaerktoejer/tomgangsrisiko-beregner).
+Passiv indkomst står og falder med afkastet og tomgangen. Regn på begge dele med vores gratis [bruttoafkast beregner](/analyseren) og [tomgangsrisiko beregner](/analyseren).

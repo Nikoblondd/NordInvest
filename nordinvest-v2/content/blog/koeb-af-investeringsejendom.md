@@ -76,7 +76,7 @@ Bruttoafkastet varierer voldsomt mellem landsdele. Tallene her er intervaller ba
 
 Læg mærke til mønstret: jo højere afkast, jo mindre by — og jo færre købere den dag, du skal sælge. Et bruttoafkast på 8 % i en mindre fynsk by er kun bedre end 4 % i København, hvis du faktisk kan finde lejere løbende og komme ud af investeringen igen. Likviditet er den skjulte pris for højt afkast.
 
-For førstegangskøbere er den pragmatiske zone typisk **5-7 % brutto i en by med universitet eller sygehus** — Odense, Aalborg og Aarhus-forstæderne rammer den balance. Stor nok lejeefterspørgsel til at tomgang er kort, højt nok afkast til at regnestykket kan hænge sammen. Er du nysgerrig på landets stærkeste cash flow-marked, har vi gennemgået [boligmarkedet på Fyn postnummer for postnummer](/investering-i-ejendom-fyn) — og for det store billede af, om timingen overhovedet er rigtig, læs vores analyse af [om det stadig er værd at investere i Danmark i 2026](/investere-i-ejendom-danmark-2026).
+For førstegangskøbere er den pragmatiske zone typisk **5-7 % brutto i en by med universitet eller sygehus** — Odense, Aalborg og Aarhus-forstæderne rammer den balance. Stor nok lejeefterspørgsel til at tomgang er kort, højt nok afkast til at regnestykket kan hænge sammen. Er du nysgerrig på landets stærkeste cash flow-marked, har vi gennemgået [boligmarkedet på Fyn postnummer for postnummer](/investering-i-ejendom-fyn) — og for det store billede af, om timingen overhovedet er rigtig, læs vores analyse af [om det stadig er værd at investere i Danmark i 2026](/blog/ejendomsinvestering).
 
 ## Finansieringen: her vindes og tabes handlen
 
@@ -108,7 +108,7 @@ Tommelfingerreglen: én ejendom med beskedent overskud → personligt regi eller
 
 ## Fem fejl der koster førstegangsinvestorer dyrt
 
-**1. At regne med annoncens tal.** Mæglerens "forventet leje" er et salgsargument, ikke en garanti. Tjek selv de faktiske lejeniveauer for tilsvarende boliger i samme postnummer, og træk 5-10 % fra som forsigtighed. Vi har lavet en [trin-for-trin guide til at analysere en bolig direkte fra Boligsiden](/boligsiden-investering-guide), så du kan efterprøve annoncens tal på minutter.
+**1. At regne med annoncens tal.** Mæglerens "forventet leje" er et salgsargument, ikke en garanti. Tjek selv de faktiske lejeniveauer for tilsvarende boliger i samme postnummer, og træk 5-10 % fra som forsigtighed. Vi har lavet en [trin-for-trin guide til at analysere en bolig direkte fra Boligsiden](/analyseren), så du kan efterprøve annoncens tal på minutter.
 
 **2. At glemme tomgang og vedligehold.** En lejer flytter i gennemsnit efter 2-4 år, og hvert skift koster typisk en måneds tomgang plus istandsættelse. Budgettér 1 % af ejendomsværdien årligt til vedligehold og en måneds leje til tomgang — hvert år, ikke kun de år hvor det sker.
 
@@ -142,7 +142,7 @@ Det afhænger af markedet. I København er 3,5-4,5 % brutto normalt og acceptabe
 
 ### Kan ejendomsinvestering betale sig i 2026?
 
-Ja, men marginerne er smallere end for fem år siden, og strategivalget betyder mere. Cash flow-handler findes stadig uden for de store byer, og værdistigningshandler i København kræver længere horisont end tidligere. Den fulde gennemgang står i vores analyse af [det danske boligmarked i 2026](/investere-i-ejendom-danmark-2026).
+Ja, men marginerne er smallere end for fem år siden, og strategivalget betyder mere. Cash flow-handler findes stadig uden for de store byer, og værdistigningshandler i København kræver længere horisont end tidligere. Den fulde gennemgang står i vores analyse af [det danske boligmarked i 2026](/blog/ejendomsinvestering).
 
 ## Kør tallene, før du forelsker dig
 
@@ -150,4 +150,4 @@ Ejendomsinvestering belønner de kølige og straffer de forelskede. Forskellen p
 
 Det regnestykke tager 60 sekunder med [NordInvests gratis analyzer](/). Indsæt et link fra Boligsiden eller indtast pris, leje og udgifter selv — og få bruttoafkast, cash flow, ROI, stresstest og en samlet investeringsscore, før du overhovedet ringer til mægleren. Første skridt i enhver ejendomsinvestering er ikke en fremvisning. Det er et tal.
 
-Inden du kigger på annoncer, så find din realistiske ramme med vores gratis [boligkøber låneberegner](/vaerktoejer/boligkoeb-laaneberegner) — og hvis boligen er til dig selv, så afklar det grundlæggende spørgsmål med [købe eller leje bolig](/vaerktoejer/koebe-eller-leje-bolig) beregneren.
+Inden du kigger på annoncer, så find din realistiske ramme med vores gratis [boligkøber låneberegner](/analyseren) — og hvis boligen er til dig selv, så afklar det grundlæggende spørgsmål med [købe eller leje bolig](/analyseren) beregneren.

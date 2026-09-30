@@ -478,7 +478,7 @@ function collectImages(html: string, pageUrl: string): string[] {
   let m: RegExpExecArray | null;
   while ((m = re.exec(html))) add(m[0].replace(/\\\//g, "/"));
 
-  const bad = /(logo|icon|sprite|favicon|avatar|placeholder|badge|pixel|1x1|blank|flag|thumb_small|watermark|banner_ad)/i;
+  const bad = /(logo|icon|sprite|favicon|avatar|placeholder|badge|pixel|1x1|blank|flag|thumb_small|watermark|banner_ad|danbolig20\d\d)/i;
   const base = (() => { try { return new URL(pageUrl).origin; } catch { return ""; } })();
 
   // Deduplicate by the "underlying" image — many portals emit 6-10 size variants
@@ -487,7 +487,10 @@ function collectImages(html: string, pageUrl: string): string[] {
   const stemOrder: string[] = [];
   for (const raw of raws) {
     const u = decode(raw).trim();
-    const absolute = u.startsWith("//") ? "https:" + u : u.startsWith("/") ? base + u : u;
+    const absolute = (u.startsWith("//") ? "https:" + u : u.startsWith("/") ? base + u : u)
+      // www.danbolig.dk 301s media to the bare host, and browsers block the
+      // cross-origin redirect for <img> (ORB), so point straight at it.
+      .replace(/^https?:\/\/www\.danbolig\.dk\//i, "https://danbolig.dk/");
     if (!/^https?:\/\//.test(absolute) || bad.test(absolute)) continue;
     const dims =
       absolute.match(/Size(\d+)x(\d+)/i) ||

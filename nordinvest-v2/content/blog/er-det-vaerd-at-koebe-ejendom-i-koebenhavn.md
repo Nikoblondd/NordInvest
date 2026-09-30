@@ -62,4 +62,4 @@ Gæt ikke. Indsæt en københavner-annonce i [NordInvest-analyzeren](/) og få n
 
 For at forstå den fulde ramme bag dommen, læs [hvordan du analyserer en nordisk ejendomsinvestering](/blog/sadan-analyserer-du-en-nordisk-ejendomsinvestering) og [sådan beregner du lejeafkast](/blog/sadan-beregner-du-lejeafkast).
 
-Skal du selv bo der, så afklar først [købe eller leje bolig](/vaerktoejer/koebe-eller-leje-bolig). Skal den lejes ud, så tjek afkastet med vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner).
+Skal du selv bo der, så afklar først [købe eller leje bolig](/analyseren). Skal den lejes ud, så tjek afkastet med vores gratis [bruttoafkast beregner](/analyseren).

@@ -108,7 +108,7 @@ const HOME_TYPES = ["condo", "villa", "terraced house"];
 
 async function readHomes(municipality: string | null) {
   const munis = municipality ? [municipality] : [];
-  const batches = await Promise.all(HOME_TYPES.map((type) => readBoligDeals({ municipalities: munis, type, limit: 1500 })));
+  const batches = await Promise.all(HOME_TYPES.map((type) => readBoligDeals({ municipalities: munis, type, limit: 15000 })));
   const rows = batches.flatMap((b) => b ?? []);
   if (rows.length) return rows;
   // Local development without the market table: one live page set of condos.
@@ -118,7 +118,7 @@ async function readHomes(municipality: string | null) {
 async function build(municipality: string | null, topN: number): Promise<DealSnapshot | null> {
   try {
     const homes = await readHomes(municipality);
-    let invest = await readInvestmentDeals({ municipalities: municipality ? [municipality] : [], limit: 1500 });
+    let invest = await readInvestmentDeals({ municipalities: municipality ? [municipality] : [], limit: 5000 });
     if (!invest || invest.length === 0) {
       const live = await searchEjendomstorvet({}).catch(() => []);
       invest = municipality ? live.filter((l) => zipToMunicipality(l.zip) === municipality) : live;
@@ -152,4 +152,4 @@ async function build(municipality: string | null, topN: number): Promise<DealSna
   }
 }
 
-export const getDealSnapshot = unstable_cache(build, ["deal-snapshot-v2"], { revalidate: 21600 });
+export const getDealSnapshot = unstable_cache(build, ["deal-snapshot-v3"], { revalidate: 21600 });

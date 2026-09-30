@@ -129,4 +129,4 @@ Skattestrukturen på en dansk udlejningsejendom flytter 15.000-30.000 kr. om år
 
 Før du byder på næste ejendom, kør handlen gennem [NordInvest-analyzeren](/) — indsæt annoncen, vælg strategien, og få bruttoafkast, cash flow efter skat og en klar vurdering på under 60 sekunder. Gratis, uden login.
 
-Når skatten er med i regnestykket, afgør afkastet resten. Screen en handel med vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner), og stresstest den med [tomgangsrisiko beregneren](/vaerktoejer/tomgangsrisiko-beregner).
+Når skatten er med i regnestykket, afgør afkastet resten. Screen en handel med vores gratis [bruttoafkast beregner](/analyseren), og stresstest den med [tomgangsrisiko beregneren](/analyseren).

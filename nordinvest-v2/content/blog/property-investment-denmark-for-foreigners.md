@@ -63,6 +63,6 @@ Before you make an offer, run the property through the [NordInvest analyzer](/).
 
 For the underlying method, read [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment) and our guide to [whether buying in Copenhagen is worth it](/blog/is-it-worth-buying-property-in-copenhagen).
 
-Find your realistic borrowing budget with our free [home buyer loan calculator](/vaerktoejer/boligkoeb-laaneberegner), and screen a rental's return with the [gross yield calculator](/vaerktoejer/bruttoafkast-beregner).
+Find your realistic borrowing budget with our free [home buyer loan calculator](/analyseren), and screen a rental's return with the [gross yield calculator](/analyseren).
 
 Weighing up the wider region? Denmark's neighbour is worth a look too — read our [property investment in Norway guide for foreign buyers](/blog/property-investment-norway-guide-2026), covering eligibility, financing, tax and yields by city.

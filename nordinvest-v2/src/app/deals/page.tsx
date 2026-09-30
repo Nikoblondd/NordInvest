@@ -20,6 +20,7 @@ import {
 // caches the market data for 6 hours. (A static build can't read the market
 // table: its fetches are uncached by design.)
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const TITLE = "Deal-motor: find de bedste investeringsboliger";
 const DESCRIPTION =

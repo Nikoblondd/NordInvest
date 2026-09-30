@@ -88,4 +88,4 @@ Du kan lave hele regnestykket i hånden, men [NordInvest-analyzeren](/) gør det
 
 For hele beslutningsrammen, læs vores guide om [hvordan du analyserer en nordisk ejendomsinvestering](/blog/sadan-analyserer-du-en-nordisk-ejendomsinvestering).
 
-Vil du regne afkastet uden regneark, så brug vores gratis [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner), og stresstest resultatet med [tomgangsrisiko beregneren](/vaerktoejer/tomgangsrisiko-beregner).
+Vil du regne afkastet uden regneark, så brug vores gratis [bruttoafkast beregner](/analyseren), og stresstest resultatet med [tomgangsrisiko beregneren](/analyseren).

@@ -126,4 +126,4 @@ Before you bid, run the property through the [NordInvest analyzer](/) — paste 
 
 For a closer look at the capital specifically, see our [Oslo property investment guide](/property-investment-oslo). For the general framework behind how to analyze any Nordic deal, see our guide on [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment). For the Danish equivalent of this guide (which most foreign investors also consider), read [property investment in Denmark for foreigners](/blog/property-investment-denmark-for-foreigners).
 
-Whichever Nordic market you target, screen a deal's return fast with our free [gross yield calculator](/vaerktoejer/bruttoafkast-beregner).
+Whichever Nordic market you target, screen a deal's return fast with our free [gross yield calculator](/analyseren).

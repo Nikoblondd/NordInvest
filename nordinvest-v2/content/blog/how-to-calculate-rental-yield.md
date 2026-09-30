@@ -86,4 +86,4 @@ You can run all of this by hand, but the [NordInvest analyzer](/) does it in und
 
 For the full decision framework, read our guide on [how to analyze a Nordic property investment](/blog/how-to-analyze-nordic-property-investment).
 
-Skip the spreadsheet — our free [gross yield calculator](/vaerktoejer/bruttoafkast-beregner) does it in 30 seconds, and the [vacancy risk calculator](/vaerktoejer/tomgangsrisiko-beregner) shows how much vacancy the yield can absorb.
+Skip the spreadsheet — our free [gross yield calculator](/analyseren) does it in 30 seconds, and the [vacancy risk calculator](/analyseren) shows how much vacancy the yield can absorb.

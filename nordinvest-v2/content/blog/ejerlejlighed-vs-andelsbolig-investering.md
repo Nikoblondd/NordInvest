@@ -93,4 +93,4 @@ Uanset om du kigger på ejerlejlighed eller andel, indsæt tallene i [NordInvest
 
 For den fulde ramme, læs [købsguiden til investeringsejendomme](/blog/koeb-af-investeringsejendom) og [sådan finder du cash flow-ejendomme i Danmark 2026](/blog/cash-flow-ejendom-danmark-2026).
 
-Overvejer du at bo i boligen selv, så afvej [købe eller leje bolig](/vaerktoejer/koebe-eller-leje-bolig). Og få et hurtigt estimat af, hvad boligen er værd, med vores gratis [boligvurdering online](/vaerktoejer/boligvurdering-beregner).
+Overvejer du at bo i boligen selv, så afvej [købe eller leje bolig](/analyseren). Og få et hurtigt estimat af, hvad boligen er værd, med vores gratis [boligvurdering online](/analyseren).

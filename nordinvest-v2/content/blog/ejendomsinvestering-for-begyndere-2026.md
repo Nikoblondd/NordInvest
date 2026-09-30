@@ -134,4 +134,4 @@ Har du tre ja'er, så begynd at screene handler. Har du to eller færre, så byg
 
 Læs også vores [danske boligprisprognose for 2026](/blog/danske-boligpriser-2026-investering) og [er det stadig værd at købe i København?](/blog/er-det-vaerd-at-koebe-ejendom-i-koebenhavn) inden dit første bud.
 
-To gratis værktøjer gør de første skridt konkrete: [boligkøber låneberegner](/vaerktoejer/boligkoeb-laaneberegner) viser, hvor meget du kan låne, og [bruttoafkast beregner](/vaerktoejer/bruttoafkast-beregner) screener en annonce på 30 sekunder.
+To gratis værktøjer gør de første skridt konkrete: [boligkøber låneberegner](/analyseren) viser, hvor meget du kan låne, og [bruttoafkast beregner](/analyseren) screener en annonce på 30 sekunder.
