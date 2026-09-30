@@ -24,9 +24,9 @@ const n = (x: number) => Math.round(x).toLocaleString("da-DK");
 const share = (s: DealSnapshot) => {
   if (!s.scanned) return "–";
   const p = Math.round((s.positive / s.scanned) * 100);
-  return p === 0 && s.positive > 0 ? "under 1 %" : `${p} %`;
+  return p === 0 && s.positive > 0 ? "under 1\u00a0%" : `${p}\u00a0%`;
 };
-const yieldPct = (y: number | null) => (y == null ? "–" : `${y.toFixed(1).replace(".", ",")} %`);
+const yieldPct = (y: number | null) => (y == null ? "–" : `${y.toFixed(1).replace(".", ",")}\u00a0%`);
 const dateDa = (iso: string) =>
   new Intl.DateTimeFormat("da-DK", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Copenhagen" }).format(new Date(iso));
 
