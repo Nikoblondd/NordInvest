@@ -120,7 +120,7 @@ Skip mavefornemmelsen. Enhver ejendom du overvejer skal igennem samme systematis
 4. Sammenligning på tværs af de tre strategier (Cashflow / Appreciation / Value-Add)
 5. 5-årig værdistigningsprognose baseret på områdets historiske vækst
 
-[NordInvest-analyzeren](/) kører hele checklisten på under 60 sekunder. Indsæt en boligannonce fra Boliga, Boligsiden eller en mægler-side, vælg din strategi, og få hele rapporten inklusive skatteovervejelser og finansieringsbreakdown — gratis, uden login.
+[NordInvest-analyzeren](/) kører hele checklisten på under 60 sekunder. Indsæt en boligannonce fra Boliga, Boligsiden eller en mægler-side, vælg din strategi, og få hele rapporten inklusive skatteovervejelser og finansieringsbreakdown. Gratis at prøve.
 
 ## Konklusion — dine næste 3 skridt
 

@@ -34,3 +34,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.env*
+
+# NordInvest agent local state
+agent/data/
+agent/.env
+
+# Master key registry — never commit
+SECRETS.local.md

@@ -61,7 +61,7 @@ Når du kigger på en annonce, kør dette check før du overhovedet klikker "kon
 4. **Tomgangsrisiko**: Er området i vækst eller fald? Studieby? Industri? En stabil lejerpool er halvdelen af cash flow-succes.
 5. **Renoveringsbehov**: Læs annoncen for røde flag (vinduer, tag, elinstallation, kloak). En "billig" ejendom med 300.000 kr. gemte istandsættelsesudgifter er ikke billig.
 
-[NordInvest-analyzeren](/) kører alle fem trin automatisk. Indsæt annoncen, vælg strategien "Cashflow", og få det brutto- og nettoafkast, cash flow, ROI, og rentestresstest på under 60 sekunder — gratis, uden login.
+[NordInvest-analyzeren](/) kører alle fem trin automatisk. Indsæt annoncen, vælg strategien "Cashflow", og få det brutto- og nettoafkast, cash flow, ROI, og rentestresstest på under 60 sekunder. Gratis at prøve.
 
 ## Realistisk eksempel: Aalborg SØ 2-værelses
 

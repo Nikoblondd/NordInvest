@@ -96,7 +96,7 @@ Har du 350.000 kr., ikke 550.000 kr.? Fire justeringer:
 
 Før du starter research på handler, kør din indkomst og gæld gennem en rådighedsberegning hos dit realkreditinstitut. Så ved du præcis, hvad du kan bære — og du undgår at forelske dig i en handel du ikke kan finansiere.
 
-Når du har fundet en handel, kør annoncen gennem [NordInvest-analyzeren](/) og se hele finansieringsbreakdown'et — realkreditydelse, LTV, cash flow ved din faktiske udbetaling, plus stresstest ved højere rente. Gratis, uden login.
+Når du har fundet en handel, kør annoncen gennem [NordInvest-analyzeren](/) og se hele finansieringsbreakdown'et — realkreditydelse, LTV, cash flow ved din faktiske udbetaling, plus stresstest ved højere rente. Gratis at prøve.
 
 ## Konklusion
 

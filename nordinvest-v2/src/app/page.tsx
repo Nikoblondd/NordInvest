@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Testimonials } from "@/components/Testimonials";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
@@ -145,6 +146,8 @@ export default function Home() {
       <FeaturedDeals />
 
       {/* Pricing */}
+      <Testimonials className="border-t border-slate-200/80 bg-slate-50 py-16 sm:py-24" />
+
       <section id="priser" className="border-t border-slate-200/80 bg-white px-4 py-16 sm:px-6 sm:py-28">
         <div className="mx-auto flex max-w-7xl flex-col items-center">
           <SectionHead

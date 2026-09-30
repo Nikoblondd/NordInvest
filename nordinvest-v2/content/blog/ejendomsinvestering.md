@@ -169,4 +169,4 @@ Til ejendomsinvestering er ejerlejlighed næsten altid det rigtige valg — den 
 
 ## Kom godt i gang
 
-Ejendomsinvestering belønner tålmodighed og grundig analyse. Du behøver ikke gætte: indsæt en hvilken som helst boligannonce i **[NordInvests gratis ejendomsanalyser](/#analyze-section)**, og få afkast, cash flow, ROI, en 5-årig prisstigningsprognose og en klar dansk vurdering på under 60 sekunder — helt uden login.
+Ejendomsinvestering belønner tålmodighed og grundig analyse. Du behøver ikke gætte: indsæt en hvilken som helst boligannonce i **[NordInvests gratis ejendomsanalyser](/#analyze-section)**, og få afkast, cash flow, ROI, en 5-årig prisstigningsprognose og en klar dansk vurdering på under 60 sekunder. Gratis at prøve.

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 
 export default function VelkommenPage() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function VelkommenPage() {
       setError(error.message);
       setSaving(false);
     } else {
-      router.push("/dashboard");
+      router.push("/dashboard?welcome=1");
     }
   };
 
@@ -87,14 +88,9 @@ export default function VelkommenPage() {
               </label>
               <label className="block">
                 <span className="text-sm font-medium text-slate-600">Telefonnummer</span>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                  placeholder="+45 12 34 56 78"
-                  className="mt-1 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                />
+                <div className="mt-1">
+                  <PhoneInput value={phone} onChange={setPhone} required />
+                </div>
               </label>
               <label className="block">
                 <span className="text-sm font-medium text-slate-600">Email</span>
@@ -107,11 +103,18 @@ export default function VelkommenPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 hover:bg-blue-700 disabled:opacity-60"
               >
                 {saving && <Loader2 size={18} className="animate-spin" />}
                 Gå til dashboard
               </button>
+              <p className="text-center text-xs text-slate-500">
+                Vi bruger dine oplysninger til at oprette og drive din konto. Læs mere i vores{" "}
+                <a href="/juridisk/privatlivspolitik" className="underline hover:text-slate-700">
+                  privatlivspolitik
+                </a>
+                .
+              </p>
             </>
           )}
         </form>

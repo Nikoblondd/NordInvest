@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { pendingDest } from "@/lib/checkout-intent";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 
 function LinkedInIcon() {
   return (
@@ -46,6 +48,7 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
   const [loading, setLoading] = useState<null | "linkedin" | "google" | "email">(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [hint, setHint] = useState<null | "login" | "signup">(null);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -71,19 +74,37 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
     if (!supabase) return setError("Login er ikke aktiveret endnu.");
     setError(null);
     setNotice(null);
+    setHint(null);
     setLoading("email");
     if (isSignup) {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { full_name: name, phone }, emailRedirectTo: redirectTo },
       });
-      if (error) setError(error.message);
-      else setNotice("Tjek din mail for at bekræfte din konto, så er du klar.");
+      const alreadyExists =
+        /already|registered|exists/i.test(error?.message ?? "") ||
+        // Supabase returns a user with no identities when the email is taken.
+        (!error && data.user && (data.user.identities?.length ?? 0) === 0);
+      if (alreadyExists) {
+        setError("Der findes allerede en konto med denne email.");
+        setHint("login");
+      } else if (error) {
+        setError(error.message);
+      } else if (data.session) {
+        // Autoconfirm is on → the user is signed in immediately.
+        router.push(pendingDest() ?? "/velkommen");
+      } else {
+        setNotice("Tjek din mail for at bekræfte din konto, så er du klar.");
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
-      else router.push("/dashboard");
+      if (error) {
+        setError("Forkert email eller adgangskode.");
+        setHint("signup");
+      } else {
+        router.push(pendingDest() ?? "/dashboard?welcome=1");
+      }
     }
     setLoading(null);
   };
@@ -108,6 +129,22 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
           {error && (
             <div className="mt-5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-center text-sm text-rose-700">
               {error}
+              {hint === "signup" && (
+                <>
+                  {" "}Ingen konto?{" "}
+                  <Link href="/auth/signup" className="font-semibold underline hover:text-rose-900">
+                    Opret dig gratis
+                  </Link>.
+                </>
+              )}
+              {hint === "login" && (
+                <>
+                  {" "}
+                  <Link href="/auth/login" className="font-semibold underline hover:text-rose-900">
+                    Log ind i stedet
+                  </Link>.
+                </>
+              )}
             </div>
           )}
           {notice && (
@@ -153,7 +190,12 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
               {isSignup && (
                 <>
                   <Input label="Fulde navn" value={name} onChange={(e) => setName(e.target.value)} required autoComplete="name" placeholder="Fornavn Efternavn" />
-                  <Input label="Telefonnummer" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required autoComplete="tel" placeholder="+45 12 34 56 78" />
+                  <label className="block text-left">
+                    <span className="text-sm font-medium text-slate-600">Telefonnummer</span>
+                    <div className="mt-1">
+                      <PhoneInput value={phone} onChange={setPhone} required />
+                    </div>
+                  </label>
                 </>
               )}
               <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" placeholder="dig@email.dk" />
@@ -161,7 +203,7 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
               <button
                 type="submit"
                 disabled={!!loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition-colors hover:bg-blue-700 disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-colors hover:bg-blue-700 disabled:opacity-60"
               >
                 {loading === "email" && <Loader2 size={18} className="animate-spin" />}
                 {isSignup ? "Opret konto" : "Log ind"}

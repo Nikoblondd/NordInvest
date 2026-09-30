@@ -89,7 +89,7 @@ Til alt andet: køb ejerlejlighed.
 
 ## Screen enhver dansk handel gennem analyzeren
 
-Uanset om du kigger på ejerlejlighed eller andel, indsæt tallene i [NordInvest-analyzeren](/). Vælg strategien "Cashflow" eller "Appreciation", og få bruttoafkast, cash flow, ROI, rentestresstest og en investeringsklassificering på under 60 sekunder — gratis, ingen login.
+Uanset om du kigger på ejerlejlighed eller andel, indsæt tallene i [NordInvest-analyzeren](/). Vælg strategien "Cashflow" eller "Værdistigning", og få bruttoafkast, cash flow, ROI, rentestresstest og en investeringsklassificering på under 60 sekunder. Gratis at prøve.
 
 For den fulde ramme, læs [købsguiden til investeringsejendomme](/blog/koeb-af-investeringsejendom) og [sådan finder du cash flow-ejendomme i Danmark 2026](/blog/cash-flow-ejendom-danmark-2026).
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { loadSupabase } from "@/lib/supabase/lazy";
+import { pendingDest } from "@/lib/checkout-intent";
 
 // Some OAuth returns land the ?code= on the site root instead of /auth/callback.
 // This catches the code on ANY page, exchanges it for a session, then routes on.
@@ -17,10 +18,10 @@ export function AuthCodeHandler() {
     }
     if (!code) return;
 
-    const supabase = createClient();
-    if (!supabase) return;
-
     (async () => {
+      // Only pages that actually carry an auth code load Supabase.
+      const supabase = await loadSupabase();
+      if (!supabase) return;
       const { error } = await supabase.auth.exchangeCodeForSession(code);
       if (error) {
         window.location.replace("/auth/login?error=auth");
@@ -36,9 +37,9 @@ export function AuthCodeHandler() {
           .select("phone")
           .eq("id", user.id)
           .single();
-        if (profile?.phone) dest = "/dashboard";
+        if (profile?.phone) dest = "/dashboard?welcome=1";
       }
-      window.location.replace(dest);
+      window.location.replace(pendingDest() ?? dest);
     })();
   }, []);
 

@@ -127,6 +127,6 @@ Skattestrukturen på en dansk udlejningsejendom flytter 15.000-30.000 kr. om år
 4. Gem *alle* kvitteringer på forbedringer i mindst 10 år, digitalt.
 5. Modellér skatten i dit budget før du byder — ikke i regnskabsprogrammet efter overtagelse.
 
-Før du byder på næste ejendom, kør handlen gennem [NordInvest-analyzeren](/) — indsæt annoncen, vælg strategien, og få bruttoafkast, cash flow efter skat og en klar vurdering på under 60 sekunder. Gratis, uden login.
+Før du byder på næste ejendom, kør handlen gennem [NordInvest-analyzeren](/) — indsæt annoncen, vælg strategien, og få bruttoafkast, cash flow efter skat og en klar vurdering på under 60 sekunder. Gratis at prøve.
 
 Når skatten er med i regnestykket, afgør afkastet resten. Screen en handel med vores gratis [bruttoafkast beregner](/analyseren), og stresstest den med [tomgangsrisiko beregneren](/analyseren).

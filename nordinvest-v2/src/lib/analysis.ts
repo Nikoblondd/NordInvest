@@ -277,23 +277,38 @@ function scoreAndVerdict(a: {
   irr: number;
   strategy: Strategy;
 }): { score: number; rating: string; verdict: string } {
+  // Realistic, conservative scoring. The tiers are calibrated so a genuine 100
+  // is effectively unreachable (the additive ceiling is ~94) — a top score has
+  // to earn every dimension at once, and "good but not perfect" lands in the
+  // 70s–80s, which is how real deals look.
   let score = 50;
 
-  if (a.capRate > 6) score += 15;
-  else if (a.capRate > 4.5) score += 8;
-  else if (a.capRate < 3.5) score -= 10;
+  // Net yield (cap rate) — Danish residential prime sits ~3–5 %, so a high yield
+  // is strong but not a licence to run away with the score.
+  if (a.capRate > 7) score += 12;
+  else if (a.capRate > 5.5) score += 8;
+  else if (a.capRate > 4) score += 4;
+  else if (a.capRate < 3) score -= 10;
 
-  if (a.cashFlow > 2000) score += 15;
-  else if (a.cashFlow > 0) score += 8;
+  // Monthly cash flow.
+  if (a.cashFlow > 3000) score += 12;
+  else if (a.cashFlow > 1000) score += 8;
+  else if (a.cashFlow > 0) score += 4;
   else if (a.cashFlow < -1500) score -= 15;
+  else score -= 4;
 
-  if (a.dscr >= 1.25) score += 10;
-  else if (a.dscr >= 1.0) score += 4;
-  else score -= 12;
+  // Debt cover (DSCR) — the real make-or-break.
+  if (a.dscr >= 1.4) score += 12;
+  else if (a.dscr >= 1.25) score += 8;
+  else if (a.dscr >= 1.1) score += 4;
+  else if (a.dscr >= 1.0) score += 0;
+  else score -= 14;
 
+  // Total return over the hold (IRR).
   if (isFinite(a.irr)) {
-    if (a.irr > 12) score += 10;
-    else if (a.irr > 8) score += 5;
+    if (a.irr > 14) score += 8;
+    else if (a.irr > 10) score += 5;
+    else if (a.irr > 6) score += 2;
     else if (a.irr < 3) score -= 8;
   }
 
@@ -309,7 +324,7 @@ function scoreAndVerdict(a: {
   if (score >= 65) {
     verdict =
       a.dscr >= 1.2
-        ? "Solid handel. Positivt cash flow og komfortabel gældsdækning (DSCR " + a.dscr.toFixed(2) + ")."
+        ? "Solid handel. Positivt cash flow og komfortabel gældsdækning (DSCR " + a.dscr.toFixed(2).replace(".", ",") + ")."
         : "God på afkast, men gældsdækningen er stram — forhandl pris eller udbetaling.";
   } else if (score >= 45) {
     verdict = "Grænsehandel. Tallene hænger, men marginen er tynd — kør følsomhedsscenarierne.";
@@ -321,9 +336,11 @@ function scoreAndVerdict(a: {
 
 // ---- Danish formatting ----
 export function kr(n: number): string {
+  if (!isFinite(n)) return "–";
   return `${Math.round(n).toLocaleString("da-DK")} kr`;
 }
 export function krMd(n: number): string {
+  if (!isFinite(n)) return "–";
   return `${Math.round(n).toLocaleString("da-DK")} kr/md.`;
 }
 export function pct(n: number, decimals = 2): string {

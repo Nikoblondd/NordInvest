@@ -1,0 +1,26 @@
+# NordInvest — share copy
+
+## Primary (X / LinkedIn)
+Danske ejendomsinvestorer — stop med at bruge to timer på ét regneark.
+Indsæt boliglinket. NordInvest svarer på 60 sekunder.
+
+→ nordinvest.io
+
+## LinkedIn (longer)
+Vi har bygget NordInvest for danske ejendomsinvestorer, der er trætte af at bruge en aften
+i Excel på hver eneste bolig, de overvejer.
+
+Indsæt et link fra Boligsiden, EDC eller Home. Vi henter BBR, læser annoncens tal, og
+regner cashflow, DSCR, rentestress og en 10-årig prognose ud — på under 60 sekunder.
+
+Ét score. Fire tal. Én dom. Så kan I lægge Excelen væk.
+
+→ nordinvest.io
+
+## X (short)
+Fra link til dom. Under 60 sekunder.
+nordinvest.io
+
+## Discord / internal
+Ny brag-video for @nordinvest.io — viser paste-til-dom-flowet direkte.
+20 sekunder. Ingen Excel harmed.
