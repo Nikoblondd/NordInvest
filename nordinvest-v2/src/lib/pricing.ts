@@ -7,6 +7,19 @@ export type Tier = {
   cta: { label: string; href: string };
   features: string[];
   stripePriceEnv?: string;
+  stripeLink?: string; // Stripe Payment Link (paid tiers only)
+  priceId?: string; // Stripe recurring Price id (price_…) — enables in-app plan upgrades
+};
+
+// Fill these with the Stripe Product ids (Products → the product → "prod_…").
+// The change-plan API resolves each product's active recurring price at runtime.
+// Once set, upgrading an existing subscriber happens in-app via the API (no new
+// checkout); until then the upgrade button falls back to the Stripe portal.
+export const PRODUCT_IDS: Record<string, string> = {
+  starter: "prod_V8i0VpKnYkKbo0",
+  plus: "prod_V9JVeqvDAj98po",
+  pro: "prod_V9JWFAcqAgc6FG",
+  unlimited: "prod_V9JXqQa0DjadCn",
 };
 
 // Prices per Nikolaj's written brief (129 / 200 / 350 / 500), analyses 3/10/15/25/∞.
@@ -28,6 +41,7 @@ export const tiers: Tier[] = [
     featured: true,
     cta: { label: "Køb Starter", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_STARTER",
+    stripeLink: "https://buy.stripe.com/6oU7sN8Rigm47Dkdxmbwk00",
     features: ["10 ejendomsanalyser", "Avanceret rentestress-test", "Gemte cases"],
   },
   {
@@ -37,6 +51,7 @@ export const tiers: Tier[] = [
     blurb: "Til den aktive investor.",
     cta: { label: "Køb Plus", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_PLUS",
+    stripeLink: "https://buy.stripe.com/eVq9AV7Ne2ve2j0bpebwk02",
     features: ["15 ejendomsanalyser", "Fuld adgang til alle features"],
   },
   {
@@ -46,6 +61,7 @@ export const tiers: Tier[] = [
     blurb: "For dig der screener markedet dagligt.",
     cta: { label: "Køb Pro", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_PRO",
+    stripeLink: "https://buy.stripe.com/cNieVf5F6edW8Ho3WMbwk03",
     features: ["25 ejendomsanalyser", "Prioriteret support"],
   },
   {
@@ -55,6 +71,7 @@ export const tiers: Tier[] = [
     blurb: "Den ultimative løsning til professionelle.",
     cta: { label: "Køb Ubegrænset", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_UNLIMITED",
+    stripeLink: "https://buy.stripe.com/6oU14p1oQ8TC8Ho8d2bwk01",
     features: ["Ubegrænset analyser", "Ingen begrænsninger"],
   },
 ];

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { captureEvent } from "@/lib/analytics-events";
 import { Link as LinkIcon, ArrowUpRight } from "lucide-react";
 
 export function HeroInput() {
@@ -9,6 +10,7 @@ export function HeroInput() {
   const router = useRouter();
 
   const go = () => {
+    captureEvent("analyze_started", { fromLink: url.trim().length > 0 });
     const q = url.trim() ? `?url=${encodeURIComponent(url.trim())}` : "";
     router.push(`/analyseren${q}`);
   };
@@ -28,7 +30,7 @@ export function HeroInput() {
       </div>
       <button
         onClick={go}
-        className="flex h-12 items-center justify-center gap-2 rounded-xl bg-blue-600 px-8 font-semibold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-700 md:h-14"
+        className="flex h-12 items-center justify-center gap-2 rounded-xl bg-blue-600 px-8 font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-all hover:bg-blue-700 md:h-14"
       >
         Få analysen <ArrowUpRight size={18} />
       </button>

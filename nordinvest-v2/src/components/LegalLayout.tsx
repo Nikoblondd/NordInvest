@@ -16,7 +16,7 @@ export function LegalLayout({
       <article className="bg-cream-50 pt-32">
         <div className="container-x max-w-3xl pb-24">
           <h1 className="text-4xl md:text-5xl">{title}</h1>
-          <p className="mt-3 text-sm text-stone-400">Senest opdateret: {updated}</p>
+          <p className="mt-3 text-sm text-stone-500">Senest opdateret: {updated}</p>
           <div className="mt-10 space-y-10">
             {sections.map((s) => (
               <section key={s.h}>

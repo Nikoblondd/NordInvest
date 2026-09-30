@@ -5,7 +5,7 @@ date: 2026-07-31
 description: Danske Bank, Nordea og Nykredit forudser 5 til 6,5 procent stigning i danske boligpriser 2026. Hvor kommer stigningen fra, hvad betyder det for investorer, og hvor skal du købe nu.
 tags: [danmark, analyse]
 author: NordInvest
-image: https://www.nordinvest.io/brand/nordinvest-logo-light-banner.png
+image: https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&auto=format&fit=crop&q=80
 lang: da
 ---
 
@@ -93,4 +93,4 @@ For den fulde ramme bag hvordan man vurderer en dansk investeringsejendom, læs 
 
 Prognoserne er offentliggjort. Nu er det din tur.
 
-Vil du vide, hvad din egen bolig er værd i det marked, så prøv vores gratis [boligvurdering online](/vaerktoejer/boligvurdering-beregner). Og skal du screene en udlejningsbolig, giver [bruttoafkast beregneren](/vaerktoejer/bruttoafkast-beregner) svaret på 30 sekunder.
+Vil du vide, hvad din egen bolig er værd i det marked, så prøv vores gratis [boligvurdering online](/analyseren). Og skal du screene en udlejningsbolig, giver [bruttoafkast beregneren](/analyseren) svaret på 30 sekunder.

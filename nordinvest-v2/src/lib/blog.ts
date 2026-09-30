@@ -96,12 +96,65 @@ export function getAllPosts(): PostMeta[] {
   });
 }
 
+export type SearchablePost = PostMeta & { text: string };
+
+// Full-text search index for the blog page: every post's meta PLUS a lowercased
+// plaintext blob of title + description + tags + body, so the client search box
+// can match ANY word — including ones that only appear inside the article.
+export function getSearchablePosts(): SearchablePost[] {
+  const files = fs.readdirSync(BLOG_DIR).filter((f) => f.endsWith(".md"));
+  const parsed = files
+    .map(parseFile)
+    .filter((p): p is { meta: PostMeta; body: string } => !!p)
+    .filter((p) => p.meta.lang !== "en");
+
+  const order = readManifestOrder();
+  return parsed
+    .map(({ meta, body }) => {
+      const plain = body
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // markdown links → their text
+        .replace(/[#*_>`|]/g, " ") // strip markdown tokens
+        .replace(/\s+/g, " ");
+      const text = `${meta.title} ${meta.description} ${meta.tags.join(" ")} ${plain}`.toLowerCase();
+      return { ...meta, text };
+    })
+    .sort((a, b) => {
+      const ia = order.indexOf(a.slug);
+      const ib = order.indexOf(b.slug);
+      if (ia !== -1 && ib !== -1) return ia - ib;
+      if (ia !== -1) return -1;
+      if (ib !== -1) return 1;
+      return b.date.localeCompare(a.date);
+    });
+}
+
+// Related posts for internal linking — ranked by shared tags, then recency.
+// Strong, evidence-backed on-page SEO: spreads link equity, deepens crawl, and
+// keeps readers on-site.
+export function getRelatedPosts(slug: string, limit = 3): PostMeta[] {
+  const all = getAllPosts();
+  const self = all.find((p) => p.slug === slug);
+  if (!self) return all.filter((p) => p.slug !== slug).slice(0, limit);
+  const selfTags = new Set(self.tags);
+  return all
+    .filter((p) => p.slug !== slug)
+    .map((p) => ({ p, shared: p.tags.filter((t) => selfTags.has(t)).length }))
+    .sort((a, b) => b.shared - a.shared || b.p.date.localeCompare(a.p.date))
+    .slice(0, limit)
+    .map((x) => x.p);
+}
+
 export function getPost(slug: string): { meta: PostMeta; html: string } | null {
   const files = fs.readdirSync(BLOG_DIR).filter((f) => f.endsWith(".md"));
   for (const f of files) {
     const p = parseFile(f);
     if (p && p.meta.slug === slug) {
-      return { meta: p.meta, html: marked.parse(p.body) as string };
+      // Wrap tables so wide ones scroll inside their own box on mobile
+      // instead of forcing the whole page to scroll horizontally.
+      const html = (marked.parse(p.body) as string)
+        .replace(/<table>/g, '<div class="table-scroll"><table>')
+        .replace(/<\/table>/g, "</table></div>");
+      return { meta: p.meta, html };
     }
   }
   return null;
