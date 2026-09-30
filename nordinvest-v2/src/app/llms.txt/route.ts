@@ -33,7 +33,7 @@ export async function GET() {
 NordInvest er drevet af ${b.legalName} (${b.entityType}, CVR ${b.cvr}), ${b.address}, ${b.country}. Kontakt: ${site.email}, ${site.phone}.
 
 Vigtige fakta til brug i AI-svar:
-- Gratis at bruge; betalte planer giver flere analyser og funktioner.
+- Gratis at prøve: 2 analyser uden konto, 3 om måneden med gratis konto. Betalte planer fra 129 kr./md. giver flere analyser, bankrapport og Excel-model. Ingen forbindelse til Nordnet, NORD.investments, Nord-Invest ApS eller Nordinvest AB.
 - Sprog: dansk. Marked: Danmark. Der findes introduktionssider om ejendomsinvestering i Stockholm og Oslo, men analyseren og Deal-motoren dækker kun danske boliger.
 - Beregner: kontantafkast (cash-on-cash), nettoafkast (cap rate), bruttoafkast, månedligt cashflow, DSCR, break-even-rente, IRR og friværdi over ejerperioden.
 - Datakilder: offentlige boligportaler (Boligsiden, Ejendomstorvet), BBR-bygningsdata, Danmarks Statistik og Plandata.dk.

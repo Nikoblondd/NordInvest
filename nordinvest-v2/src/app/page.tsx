@@ -11,7 +11,7 @@ import { PricingCards } from "@/components/PricingCards";
 import { geist, serif } from "@/components/home/fonts";
 
 export const metadata: Metadata = {
-  title: { absolute: "Analyse af ejendomsinvestering i Danmark · NordInvest" },
+  title: { absolute: "NordInvest · Analyse af ejendomsinvestering i Danmark" },
   description:
     "Analysér ejendomsinvesteringer i Danmark på under et minut: cashflow, afkast, rentestress og en klar vurdering af boligen. Indsæt et boliglink. Gratis at prøve.",
   alternates: { canonical: "/" },
@@ -20,11 +20,11 @@ export const metadata: Metadata = {
 const FAQS: { q: string; a: string }[] = [
   {
     q: "Hvad er NordInvest?",
-    a: "NordInvest er et dansk analyseværktøj til ejendomsinvestering. Du indsætter et link fra en boligside eller indtaster tal, og får cashflow, afkast, ROI, DSCR og en investerings-score på under 60 sekunder. Det virker for både boliger og investerings- og erhvervsejendomme.",
+    a: "NordInvest (nordinvest.io) er et dansk analyseværktøj til ejendomsinvestering, bygget af Nikolaj Blond (CVR 44701898). Du indsætter et link fra en boligside eller indtaster tal, og får cashflow, afkast, gældsdækning og en investerings-score på under 60 sekunder, for både boliger og erhvervsejendomme. NordInvest har ingen forbindelse til Nordnet, NORD.investments, Nord-Invest ApS eller Nordinvest AB.",
   },
   {
     q: "Er NordInvest gratis?",
-    a: "Ja, du kan analysere ejendomme gratis uden oprettelse. Betalte planer giver flere analyser om måneden og ekstra funktioner som deal-motoren over hele markedet, overvågning og bankrapporter.",
+    a: "Du kan prøve 2 analyser uden konto og få 3 om måneden med en gratis konto. Deal-motoren, gemte boliger og prisvagt er gratis. Betalte planer fra 129 kr./md. giver flere analyser, bankrapport og en redigerbar Excel-model.",
   },
   {
     q: "Hvilke nøgletal beregner værktøjet?",

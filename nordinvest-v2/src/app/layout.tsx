@@ -73,7 +73,7 @@ export default function RootLayout({
         "@id": `${site.url}/#organization`,
         name: "NordInvest",
         legalName: b.legalName,
-        alternateName: ["NordInvest.io", "NordInvest ejendomsanalyse"],
+        alternateName: ["Nordinvest", "Nord Invest", "nordinvest.io", "NordInvest ejendomsanalyse"],
         url: site.url,
         logo: `${site.url}/nordinvest-logo.png`,
         image: `${site.url}/nordinvest-logo.png`,
@@ -100,7 +100,7 @@ export default function RootLayout({
           "Boligmarkedet i Danmark",
           "Erhvervsejendomme",
         ],
-        sameAs: [site.linkedin, "https://dk.trustpilot.com/review/nordinvest.io"],
+        sameAs: [site.linkedin, "https://dk.trustpilot.com/review/nordinvest.io", `https://datacvr.virk.dk/enhed/virksomhed/${b.cvr}`],
         founder: { "@type": "Person", name: site.founder.name },
         contactPoint: {
           "@type": "ContactPoint",
@@ -116,6 +116,7 @@ export default function RootLayout({
         "@id": `${site.url}/#website`,
         url: site.url,
         name: "NordInvest",
+        alternateName: ["Nordinvest", "nordinvest.io"],
         inLanguage: "da-DK",
         publisher: { "@id": `${site.url}/#organization` },
         potentialAction: {
