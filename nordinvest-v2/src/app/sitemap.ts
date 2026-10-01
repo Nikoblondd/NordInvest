@@ -26,6 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/beregn-husleje", priority: 0.8, freq: "monthly" },
     { path: "/beregn-afkast", priority: 0.8, freq: "monthly" },
     { path: "/ordbog", priority: 0.6, freq: "monthly" },
+    { path: "/udlejning-af-lejlighed", priority: 0.8, freq: "monthly" },
     ...TERMS.map((t) => ({ path: `/ordbog/${t.slug}`, priority: 0.6, freq: "monthly" as const })),
     { path: "/om", priority: 0.5, freq: "monthly" },
     { path: "/presse", priority: 0.6, freq: "daily" },

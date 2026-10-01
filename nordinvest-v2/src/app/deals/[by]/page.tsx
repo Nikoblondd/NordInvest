@@ -16,7 +16,7 @@ export const maxDuration = 60;
 // Worded the way people search: "investeringsejendomme <by>", "udlejningsejendom <by>".
 const title = (c: { in: string }) => `Investeringsejendomme ${c.in}: de bedste til udlejning`;
 const description = (c: { name: string; in: string }) =>
-  `Investeringsejendomme og udlejningsboliger til salg ${c.in}, rangeret efter cashflow og afkast. Se hvilke der giver plus som udlejning, kvadratmeterpris og afkast. Opdateres hver 6. time.`;
+  `Investeringsejendomme, udlejningsboliger og erhvervsejendomme til salg ${c.in}, rangeret efter cashflow og afkast. Se hvilke der giver plus som udlejning. Opdateres hver 6. time.`;
 
 export function generateMetadata({ params }: { params: { by: string } }): Metadata {
   const c = dealCity(params.by);
@@ -116,7 +116,7 @@ export default async function CityDealsPage({ params }: { params: { by: string }
               {snap.investments.length > 0 && (
                 <>
                   <h2 className="mt-10 text-xl font-semibold tracking-[-0.02em] sm:text-2xl">
-                    Erhvervs- og investeringsejendomme {c.in}
+                    Erhvervsejendomme til salg {c.in}
                   </h2>
                   <div className="mt-4">
                     <InvestmentRanking deals={snap.investments} />

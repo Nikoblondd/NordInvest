@@ -11,6 +11,7 @@ const columns = [
       { href: "/deals", label: "Deal-motor" },
       { href: "/beregn-husleje", label: "Beregn husleje" },
       { href: "/beregn-afkast", label: "Beregn afkast" },
+      { href: "/udlejning-af-lejlighed", label: "Regler og skat ved udlejning" },
       { href: "/priser", label: "Priser" },
       { href: "/#hvordan", label: "Sådan virker det" },
       { href: "/dashboard", label: "Dashboard" },

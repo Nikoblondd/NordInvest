@@ -119,7 +119,7 @@ export default async function DealsPage() {
               {snap.investments.length > 0 && (
                 <>
                   <h2 className="mt-14 text-2xl font-semibold tracking-[-0.02em] [text-wrap:balance] sm:text-3xl">
-                    De bedste erhvervsinvesteringer lige nu
+                    Erhvervsejendomme til salg: de bedste lige nu
                   </h2>
                   <p className="mt-3 max-w-3xl leading-relaxed text-slate-600">
                     Ud af {snap.investmentsScanned.toLocaleString("da-DK")} investerings- og erhvervsejendomme på
