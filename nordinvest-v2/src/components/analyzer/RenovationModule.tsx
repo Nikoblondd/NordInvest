@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { NumberInput } from "@/components/ui/NumberInput";
 import { Hammer, Plus, Trash2, ChevronDown, Sparkles, Wand2, Loader2, BadgeCheck } from "lucide-react";
 import { monthlyPayment, kr, krMd, num } from "@/lib/analysis";
 import { clsx } from "@/lib/clsx";
@@ -251,10 +252,9 @@ export function RenovationModule({
                       className="w-full min-w-0 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none focus:border-blue-500"
                     />
                     <div className="flex items-center rounded-lg border border-slate-200 bg-white focus-within:border-blue-500">
-                      <input
-                        type="number"
+                      <NumberInput
                         value={it.cost || ""}
-                        onChange={(e) => set(it.id, { cost: Number(e.target.value) })}
+                        onValueChange={(n) => set(it.id, { cost: n ?? 0 })}
                         placeholder="0"
                         className="w-24 rounded-lg bg-transparent px-2 py-1.5 text-right text-sm font-semibold text-slate-900 tnum outline-none"
                       />
@@ -338,7 +338,7 @@ function Field({ label, suffix, value, onChange, step = 1 }: {
     <label className="block">
       <span className="text-sm text-slate-600">{label}</span>
       <div className="mt-1 flex items-center rounded-xl border border-slate-200 bg-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-        <input type="number" value={value} step={step} onChange={(e) => onChange(Number(e.target.value))}
+        <NumberInput value={value} decimals={suffix.includes("%") || step < 1 ? 2 : 0} onValueChange={(n) => onChange(n ?? 0)}
           className="w-full rounded-xl bg-transparent px-3 py-2.5 font-semibold text-slate-900 tnum outline-none" />
         <span className="px-3 text-sm text-slate-400">{suffix}</span>
       </div>

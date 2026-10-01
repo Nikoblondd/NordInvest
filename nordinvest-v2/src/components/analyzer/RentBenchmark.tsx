@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { NumberInput } from "@/components/ui/NumberInput";
 import { BadgeCheck, TrendingUp, TrendingDown, Minus, Users, Check, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { loadSupabase } from "@/lib/supabase/lazy";
@@ -220,11 +221,9 @@ function ContributionForm({
           </div>
           <div className="mt-2 flex items-center gap-2">
             <div className="flex flex-1 items-center rounded-lg border border-slate-200 bg-white focus-within:border-blue-500">
-              <input
-                type="text"
-                inputMode="numeric"
+              <NumberInput
                 value={val}
-                onChange={(e) => setVal(e.target.value)}
+                onValueChange={(n) => setVal(n == null ? "" : String(n))}
                 placeholder={suggestedMonthly ? `${suggestedMonthly.toLocaleString("da-DK")}` : "fx 12.000"}
                 className="w-full rounded-lg bg-transparent px-2.5 py-1.5 text-sm text-slate-900 tabular-nums outline-none"
                 autoFocus

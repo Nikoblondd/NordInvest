@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { NumberInput } from "@/components/ui/NumberInput";
 import { Loader2, Check, Target } from "lucide-react";
 import { loadSupabase } from "@/lib/supabase/lazy";
 
@@ -74,9 +75,9 @@ export function OutcomeForm({
         <form onSubmit={submit} className="space-y-4">
           <div className="text-sm font-semibold text-slate-900">Hvad skete der i virkeligheden?</div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Field label="Faktisk månedlig leje" suffix="kr/md." value={rent} onChange={setRent} placeholder={predicted.monthlyRent ? String(predicted.monthlyRent) : ""} />
+            <Field label="Faktisk månedlig leje" suffix="kr/md." value={rent} onChange={setRent} placeholder={predicted.monthlyRent ? Math.round(predicted.monthlyRent).toLocaleString("da-DK") : ""} />
             <Field label="Faktisk cash flow" suffix="kr/md." value={cashflow} onChange={setCashflow} />
-            <Field label="Faktisk salgspris" suffix="kr" value={sale} onChange={setSale} placeholder={predicted.price ? String(predicted.price) : ""} />
+            <Field label="Faktisk salgspris" suffix="kr" value={sale} onChange={setSale} placeholder={predicted.price ? Math.round(predicted.price).toLocaleString("da-DK") : ""} />
             <Field label="Ejerperiode" suffix="mdr." value={months} onChange={setMonths} />
           </div>
           <label className="block">
@@ -106,7 +107,7 @@ function Field({ label, suffix, value, onChange, placeholder }: {
     <label className="block">
       <span className="text-sm text-slate-600">{label}</span>
       <div className="mt-1 flex items-center rounded-xl border border-slate-200 bg-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-        <input inputMode="numeric" value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)}
+        <NumberInput value={value} placeholder={placeholder} onValueChange={(n) => onChange(n == null ? "" : String(n))}
           className="w-full rounded-xl bg-transparent px-3 py-2 text-sm font-semibold text-slate-900 tnum outline-none" />
         <span className="px-3 text-xs text-slate-400">{suffix}</span>
       </div>

@@ -7,6 +7,7 @@ import { rentPerM2 } from "@/lib/rent-estimate";
 import { rentRegulationRule } from "@/lib/provenance";
 import { captureEvent } from "@/lib/analytics-events";
 import { clsx } from "@/lib/clsx";
+import { NumberInput } from "@/components/ui/NumberInput";
 
 const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
 const r100 = (n: number) => Math.round(n / 100) * 100;
@@ -14,10 +15,10 @@ const r100 = (n: number) => Math.round(n / 100) * 100;
 /** Market-rent estimate for a postnummer and an area, plus the rent rule that likely applies. */
 export function RentCalculator() {
   const [zip, setZip] = useState("");
-  const [area, setArea] = useState("");
+  const [area, setArea] = useState<number | null>(null);
   const [year, setYear] = useState("");
   const z = Number(zip);
-  const a = Number(area.replace(",", "."));
+  const a = area ?? 0;
   const y = Number(year);
   const valid = zip.length === 4 && z >= 1000 && z <= 9990 && a >= 10 && a <= 1000;
 
@@ -39,7 +40,7 @@ export function RentCalculator() {
         </label>
         <label className="block text-sm font-medium text-slate-700">
           Boligareal (m²)
-          <input inputMode="decimal" value={area} onChange={(e) => setArea(e.target.value.replace(/[^\d,.]/g, ""))} placeholder="fx 75…" className={field} />
+          <NumberInput value={area} onValueChange={setArea} decimals={1} placeholder="fx 75…" className={field} />
         </label>
         <label className="block text-sm font-medium text-slate-700">
           Byggeår <span className="font-normal text-slate-400">(valgfrit)</span>

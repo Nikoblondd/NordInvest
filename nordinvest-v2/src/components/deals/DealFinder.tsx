@@ -10,6 +10,7 @@ import type { AnalyzedDeal, InvestmentDeal } from "@/lib/deals";
 import { dealHref, investHref } from "@/lib/deal-links";
 import { MUNICIPALITIES } from "@/lib/kommuner";
 import { captureEvent } from "@/lib/analytics-events";
+import { NumberInput } from "@/components/ui/NumberInput";
 import type { MapPoint } from "./DealMap";
 
 // Leaflet touches `window`, so the map is client-only (no SSR).
@@ -550,7 +551,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
           )}
           <label className="block">
             <span className="text-xs font-medium text-slate-500">Maks. pris</span>
-            <input type="number" value={priceMax} step={250000} onChange={(e) => setPriceMax(e.target.value ? Number(e.target.value) : "")}
+            <NumberInput value={priceMax} onValueChange={(n) => setPriceMax(n == null ? "" : n)}
               className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-900 outline-none focus:border-blue-500 tnum" />
           </label>
           <label className="block">
@@ -596,18 +597,18 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
         {advOpen && (
           <div className="mt-4 border-t border-slate-100 pt-4">
             <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              <Adv label="Min. pris (kr)"><input type="number" step={100000} value={adv.priceMin} onChange={(e) => setA("priceMin", e.target.value)} placeholder="0" className={advInput} /></Adv>
-              <Adv label="Min. areal (m²)"><input type="number" step={5} value={adv.areaMin} onChange={(e) => setA("areaMin", e.target.value)} placeholder="—" className={advInput} /></Adv>
-              <Adv label="Min. afkast (%)"><input type="number" step={0.5} value={adv.minYield} onChange={(e) => setA("minYield", e.target.value)} placeholder="—" className={advInput} /></Adv>
-              <Adv label="Min. cashflow (kr/md.)"><input type="number" step={500} value={adv.minCashflow} onChange={(e) => setA("minCashflow", e.target.value)} placeholder="—" className={advInput} /></Adv>
-              <Adv label="Min. score"><input type="number" step={5} min={0} max={100} value={adv.minScore} onChange={(e) => setA("minScore", e.target.value)} placeholder="—" className={advInput} /></Adv>
-              <Adv label="Udbetaling (%)"><input type="number" step={5} value={adv.downPayment} onChange={(e) => setA("downPayment", e.target.value)} placeholder={market === "investering" ? "30" : "20"} className={advInput} /></Adv>
-              <Adv label="Rente (%)"><input type="number" step={0.25} value={adv.interest} onChange={(e) => setA("interest", e.target.value)} placeholder="5" className={advInput} /></Adv>
+              <Adv label="Min. pris (kr)"><NumberInput value={adv.priceMin} decimals={0} onValueChange={(n) => setA("priceMin", n == null ? "" : String(n))} placeholder="0" className={advInput} /></Adv>
+              <Adv label="Min. areal (m²)"><NumberInput value={adv.areaMin} decimals={0} onValueChange={(n) => setA("areaMin", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+              <Adv label="Min. afkast (%)"><NumberInput value={adv.minYield} decimals={1} onValueChange={(n) => setA("minYield", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+              <Adv label="Min. cashflow (kr/md.)"><NumberInput value={adv.minCashflow} decimals={0} onValueChange={(n) => setA("minCashflow", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+              <Adv label="Min. score"><NumberInput value={adv.minScore} decimals={0} group={false} onValueChange={(n) => setA("minScore", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+              <Adv label="Udbetaling (%)"><NumberInput value={adv.downPayment} decimals={1} onValueChange={(n) => setA("downPayment", n == null ? "" : String(n))} placeholder={market === "investering" ? "30" : "20"} className={advInput} /></Adv>
+              <Adv label="Rente (%)"><NumberInput value={adv.interest} decimals={2} onValueChange={(n) => setA("interest", n == null ? "" : String(n))} placeholder="5" className={advInput} /></Adv>
 
               {market === "bolig" ? (
                 <>
-                  <Adv label="Min. værelser"><input type="number" step={1} value={adv.roomsMin} onChange={(e) => setA("roomsMin", e.target.value)} placeholder="—" className={advInput} /></Adv>
-                  <Adv label="Byggeår fra"><input type="number" step={1} value={adv.yearFrom} onChange={(e) => setA("yearFrom", e.target.value)} placeholder="—" className={advInput} /></Adv>
+                  <Adv label="Min. værelser"><NumberInput value={adv.roomsMin} decimals={0} group={false} onValueChange={(n) => setA("roomsMin", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+                  <Adv label="Byggeår fra"><NumberInput value={adv.yearFrom} decimals={0} group={false} onValueChange={(n) => setA("yearFrom", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
                   <Adv label="Energimærke mindst">
                     <select value={adv.energy.split(",").pop() || ""} onChange={(e) => setA("energy", e.target.value ? ENERGY_LEVELS.slice(0, ENERGY_LEVELS.indexOf(e.target.value) + 1).join(",") : "")} className={advInput}>
                       <option value="">Alle</option>
@@ -617,7 +618,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
                 </>
               ) : (
                 <>
-                  <Adv label="Min. gældsdækning (DSCR)"><input type="number" step={0.05} value={adv.minDscr} onChange={(e) => setA("minDscr", e.target.value)} placeholder="—" className={advInput} /></Adv>
+                  <Adv label="Min. gældsdækning (DSCR)"><NumberInput value={adv.minDscr} decimals={2} onValueChange={(n) => setA("minDscr", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
                   <Adv label="Ejendomstype">
                     <select value={adv.subcat} onChange={(e) => setA("subcat", e.target.value)} className={advInput}>
                       <option value="">Alle typer</option>

@@ -33,6 +33,7 @@ import type { Tone } from "@/components/analyzer/story/tone";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
+import { NumberInput } from "@/components/ui/NumberInput";
 import { SignupGate } from "@/components/analyzer/SignupGate";
 import { UpgradeDialog, type UpgradeReason } from "@/components/upgrade/UpgradeDialog";
 import { UsageNudge } from "@/components/upgrade/UsageNudge";
@@ -125,14 +126,11 @@ function Field({ label, name, value, onChange, suffix, step = 1 }: {
     <label className="block min-w-0">
       <span className="text-sm font-medium text-slate-600">{label}</span>
       <div className="mt-1.5 flex items-center rounded-xl border border-slate-200 bg-white transition-colors focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-600/20 hover:border-slate-300">
-        <input
-          type="number"
+        <NumberInput
           name={name}
-          inputMode="decimal"
-          autoComplete="off"
           value={value}
-          step={step}
-          onChange={(e) => onChange(Number(e.target.value))}
+          decimals={suffix.includes("%") || step < 1 ? 2 : 0}
+          onValueChange={(n) => onChange(n ?? 0)}
           className="w-full min-w-0 rounded-xl bg-transparent px-3.5 py-3 text-[17px] font-medium tabular-nums text-slate-900 outline-none"
         />
         <span className="shrink-0 whitespace-nowrap pr-3.5 text-sm text-slate-400">{suffix}</span>
