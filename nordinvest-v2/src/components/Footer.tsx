@@ -8,6 +8,8 @@ const columns = [
     title: "Produkt",
     links: [
       { href: "/analyseren", label: "Analyseren" },
+      { href: "/deals", label: "Deal-motor" },
+      { href: "/beregn-husleje", label: "Beregn husleje" },
       { href: "/priser", label: "Priser" },
       { href: "/#hvordan", label: "Sådan virker det" },
       { href: "/dashboard", label: "Dashboard" },

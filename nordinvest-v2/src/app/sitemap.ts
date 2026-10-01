@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/investment-models", priority: 0.7, freq: "monthly" },
     { path: "/glossary", priority: 0.7, freq: "monthly" },
     { path: "/data", priority: 0.6, freq: "monthly" },
+    { path: "/beregn-husleje", priority: 0.8, freq: "monthly" },
     { path: "/om", priority: 0.5, freq: "monthly" },
     { path: "/presse", priority: 0.6, freq: "daily" },
     { path: "/kontakt", priority: 0.5, freq: "monthly" },

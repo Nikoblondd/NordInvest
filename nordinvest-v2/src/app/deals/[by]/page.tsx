@@ -13,14 +13,15 @@ import { Assumptions, CityLinks, DealRanking, Faq, InvestmentRanking, MarketFigu
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const title = (name: string) => `Bedste ejendomsinvesteringer i ${name}`;
+// Worded the way people search: "investeringsejendomme <by>", "udlejningsejendom <by>".
+const title = (c: { in: string }) => `Investeringsejendomme ${c.in}: de bedste til udlejning`;
 const description = (c: { name: string; in: string }) =>
-  `Deal-motorens aktuelle rangering af boliger til salg ${c.in}: cashflow, afkast og score for hver bolig, plus kvadratmeterpris og afkast.`;
+  `Investeringsejendomme og udlejningsboliger til salg ${c.in}, rangeret efter cashflow og afkast. Se hvilke der giver plus som udlejning, kvadratmeterpris og afkast. Opdateres hver 6. time.`;
 
 export function generateMetadata({ params }: { params: { by: string } }): Metadata {
   const c = dealCity(params.by);
   if (!c) return {};
-  const t = title(c.name);
+  const t = title(c);
   return {
     title: t,
     description: description(c),
@@ -66,7 +67,7 @@ export default async function CityDealsPage({ params }: { params: { by: string }
   ];
   const jsonLd = dealsJsonLd({
     path: `/deals/${c.slug}`,
-    name: title(c.name),
+    name: title(c),
     description: description(c),
     snap,
     faq,
@@ -90,8 +91,9 @@ export default async function CityDealsPage({ params }: { params: { by: string }
             <span className="font-medium text-slate-700">{c.name}</span>
           </nav>
           <h1 className="mt-3 max-w-3xl text-2xl font-bold tracking-tight [text-wrap:balance] sm:text-3xl md:text-4xl">
-            De bedste ejendomsinvesteringer {c.in} lige nu
+            Investeringsejendomme til salg {c.in}
           </h1>
+          <p className="mt-2 text-[15px] font-medium text-slate-500">De bedste udlejningsboliger lige nu, regnet igennem af Deal-motoren</p>
           <p className="mt-3 max-w-2xl text-slate-600 sm:text-lg">
             {c.note}{" "}
             {snap
