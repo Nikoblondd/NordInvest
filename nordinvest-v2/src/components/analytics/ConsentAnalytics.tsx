@@ -43,8 +43,51 @@ async function startPostHog() {
   }
 }
 
+// The banner waits until the visitor has engaged: their first click or tap,
+// or 60 seconds on the site (counted across pages in this visit). Nothing that
+// needs consent runs before they answer, so waiting is safe; it just stops the
+// banner from greeting people before they have seen the page.
+const ENGAGE_AFTER_MS = 60_000;
+const START_KEY = "ni_visit_start";
+const READY_KEY = "ni_consent_ready";
+
+function useEngaged(active: boolean) {
+  const [engaged, setEngaged] = useState(false);
+  useEffect(() => {
+    if (!active) return;
+    let start = Date.now();
+    try {
+      if (sessionStorage.getItem(READY_KEY) === "1") { setEngaged(true); return; }
+      const stored = Number(sessionStorage.getItem(START_KEY));
+      if (stored > 0) start = stored;
+      else sessionStorage.setItem(START_KEY, String(start));
+    } catch { /* blocked */ }
+    let done = false;
+    const fire = () => {
+      if (done) return;
+      done = true;
+      try { sessionStorage.setItem(READY_KEY, "1"); } catch { /* blocked */ }
+      setEngaged(true);
+    };
+    // After the first click, wait a beat so the click itself (a link, a button)
+    // completes before anything slides in.
+    const onInteract = () => window.setTimeout(fire, 1200);
+    const timer = window.setTimeout(fire, Math.max(0, ENGAGE_AFTER_MS - (Date.now() - start)));
+    window.addEventListener("pointerdown", onInteract, { once: true, passive: true });
+    window.addEventListener("keydown", onInteract, { once: true });
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("pointerdown", onInteract);
+      window.removeEventListener("keydown", onInteract);
+    };
+  }, [active]);
+  return engaged;
+}
+
 export function ConsentAnalytics() {
   const [consent, setConsent] = useState<"accepted" | "declined" | "unset" | "loading">("loading");
+  const engaged = useEngaged(consent === "unset");
+  const open = consent === "unset" && engaged;
 
   useEffect(() => {
     let stored: string | null = null;
@@ -54,31 +97,44 @@ export function ConsentAnalytics() {
     else setConsent("unset");
   }, []);
 
+  // Let other bottom-pinned UI (the blog's analyse bar) step aside while open.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (open) root.setAttribute("data-consent-open", "");
+    else root.removeAttribute("data-consent-open");
+    window.dispatchEvent(new Event("ni-consent"));
+  }, [open]);
+
   const choose = (v: "accepted" | "declined") => {
     try { localStorage.setItem("ni_consent", v); } catch { /* blocked */ }
     setConsent(v);
     if (v === "accepted") startPostHog();
   };
 
-  if (consent !== "unset") return null;
+  if (!open) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[60] p-3 sm:p-4">
-      <div className="mx-auto flex max-w-3xl flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl sm:flex-row sm:items-center sm:gap-4">
-        <p className="flex-1 text-sm leading-relaxed text-slate-600">
-          Vi bruger cookies til at forstå, hvordan siden bruges, så vi kan gøre den bedre. Du bestemmer selv.{" "}
-          <Link href="/juridisk/cookies" prefetch={false} className="font-semibold text-slate-900 underline">Læs mere</Link>.
+    <div
+      role="region"
+      aria-label="Cookies"
+      className="fixed inset-x-0 bottom-0 z-[60] px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] motion-safe:animate-[consent-in_220ms_ease-out] sm:inset-x-auto sm:bottom-4 sm:left-4 sm:px-0 sm:pb-0"
+    >
+      <div className="mx-auto flex items-center gap-2 rounded-2xl border border-slate-200 bg-white/95 py-2 pl-3.5 pr-2 shadow-[0_10px_30px_-12px_rgba(15,23,42,0.35)] backdrop-blur sm:w-[380px] sm:flex-col sm:items-stretch sm:gap-3 sm:p-4">
+        <p className="min-w-0 flex-1 text-[13px] leading-snug text-slate-600 sm:text-sm">
+          <span className="sm:hidden">Cookies til statistik? </span>
+          <span className="hidden sm:inline">Må vi bruge cookies til at forstå, hvordan siden bruges? Det hjælper os med at gøre den bedre. </span>
+          <Link href="/juridisk/cookies" prefetch={false} className="whitespace-nowrap font-semibold text-slate-900 underline">Læs mere</Link>
         </p>
-        <div className="flex shrink-0 gap-2">
+        <div className="flex shrink-0 gap-1.5 sm:gap-2">
           <button
             onClick={() => choose("declined")}
-            className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+            className="min-h-10 rounded-full border border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 transition-colors hover:bg-slate-50 sm:flex-1 sm:text-sm"
           >
             Afvis
           </button>
           <button
             onClick={() => choose("accepted")}
-            className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
+            className="min-h-10 rounded-full bg-slate-900 px-3.5 text-[13px] font-semibold text-white transition-colors hover:bg-slate-800 sm:flex-1 sm:text-sm"
           >
             Accepter
           </button>

@@ -23,14 +23,15 @@ export function StickyAnalyzeBar({ slug, endId }: { slug: string; endId: string 
     const io = end ? new IntersectionObserver(([e]) => { endVisible = e.isIntersecting; update(); }) : null;
     if (end && io) io.observe(end);
     function update() {
-      let consent = true;
-      try { const v = localStorage.getItem("ni_consent"); consent = v === "accepted" || v === "declined"; } catch { /* blocked */ }
+      // Step aside while the cookie banner is up (it sits in the same spot).
+      const consent = !document.documentElement.hasAttribute("data-consent-open");
       const past = window.scrollY > document.documentElement.scrollHeight * 0.25;
       setShow(consent && past && !endVisible);
     }
     window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("ni-consent", update);
     update();
-    return () => { window.removeEventListener("scroll", update); io?.disconnect(); };
+    return () => { window.removeEventListener("scroll", update); window.removeEventListener("ni-consent", update); io?.disconnect(); };
   }, [endId]);
 
   if (!show) return null;
