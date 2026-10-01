@@ -51,17 +51,20 @@ export async function POST(req: Request) {
   // and change the plan in place (proration, no second subscription).
   if (productId) {
     try {
+      // A product can have a monthly AND a yearly price: keep the subscriber
+      // on the interval they already pay (a monthly customer stays monthly).
+      const sub = await stripe.subscriptions.retrieve(profile.stripe_subscription_id);
+      const itemId = sub.items.data[0]?.id;
+      if (!itemId) throw new Error("no subscription item");
+      const interval = sub.items.data[0]?.price.recurring?.interval ?? "month";
       const prices = await stripe.prices.list({
         product: productId,
         active: true,
         type: "recurring",
-        limit: 1,
+        limit: 20,
       });
-      const priceId = prices.data[0]?.id;
+      const priceId = prices.data.find((p) => p.recurring?.interval === interval)?.id;
       if (priceId) {
-        const sub = await stripe.subscriptions.retrieve(profile.stripe_subscription_id);
-        const itemId = sub.items.data[0]?.id;
-        if (!itemId) throw new Error("no subscription item");
         await stripe.subscriptions.update(profile.stripe_subscription_id, {
           items: [{ id: itemId, price: priceId }],
           proration_behavior: "always_invoice",
