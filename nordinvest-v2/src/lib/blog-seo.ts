@@ -76,6 +76,16 @@ export const BLOG_SEO: Record<string, { title?: string; description?: string }> 
       "Det skal internationale investorer vide, før de køber ejendom i Danmark: opholdsregler, finansiering, afkast, skat og en realistisk strategi.",
   },
   "sadan-analyserer-du-en-nordisk-ejendomsinvestering": { title: "Sådan analyserer du en ejendomsinvestering trin for trin" },
+  "bedste-boliginvesteringer-oktober-2026": {
+    title: "3 bedste boliginvesteringer i Danmark, oktober 2026",
+    description:
+      "Deal-motoren har regnet over 16.500 boliger til salg igennem som udlejning. Se oktobers tre bedste med cashflow, nettoafkast og nul-punkts-leje.",
+  },
+  "bedste-erhvervsinvesteringer-oktober-2026": {
+    title: "3 bedste erhvervsinvesteringer i Danmark, oktober 2026",
+    description:
+      "Oktobers tre stærkeste erhvervsejendomme til salg, rangeret på afkast og risiko. Se pris, afkast og cashflow ved 30 % udbetaling.",
+  },
   "bedste-boliginvesteringer-september-2026": {
     title: "3 bedste boliginvesteringer i Danmark, september 2026",
     description:

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { pendingDest } from "@/lib/checkout-intent";
+import { DEALS_OPTIN_TEXT, optInMetadata } from "@/lib/deals-optin";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -54,6 +55,7 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [dealsOptIn, setDealsOptIn] = useState(false);
 
   const redirectTo =
     typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined;
@@ -80,7 +82,7 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name, phone }, emailRedirectTo: redirectTo },
+        options: { data: { full_name: name, phone, ...(dealsOptIn ? optInMetadata(true) : {}) }, emailRedirectTo: redirectTo },
       });
       const alreadyExists =
         /already|registered|exists/i.test(error?.message ?? "") ||
@@ -200,6 +202,12 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
               )}
               <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" placeholder="dig@email.dk" />
               <Input label="Adgangskode" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete={isSignup ? "new-password" : "current-password"} minLength={8} placeholder="Mindst 8 tegn" />
+              {isSignup && (
+                <label className="flex items-start gap-3 pt-1 text-left text-[13px] leading-snug text-slate-500">
+                  <input type="checkbox" checked={dealsOptIn} onChange={(e) => setDealsOptIn(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600" />
+                  <span>{DEALS_OPTIN_TEXT}</span>
+                </label>
+              )}
               <button
                 type="submit"
                 disabled={!!loading}

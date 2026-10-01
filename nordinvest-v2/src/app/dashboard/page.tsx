@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { DealsOptIn } from "@/components/account/DealsOptIn";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Plus, ArrowUpRight, TrendingUp, Layers, Gauge, Rocket } from "lucide-react";
@@ -240,6 +241,10 @@ export default async function DashboardPage() {
 
         {/* Saved searches — "Vagt på søgning" */}
         <SavedSearches initial={savedSearches} />
+
+        <div className="mt-6">
+          <DealsOptIn />
+        </div>
 
         {/* portfolio */}
         <div className="mt-10 flex items-center justify-between">

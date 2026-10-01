@@ -11,6 +11,10 @@
     {
       "path": "/api/lifecycle/run",
       "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/lifecycle/monthly-deals",
+      "schedule": "0 9 1 * *"
     }
   ]
 }

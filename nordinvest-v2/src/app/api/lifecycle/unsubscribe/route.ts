@@ -35,6 +35,15 @@ export async function GET(req: Request) {
   const res = await fetch(`${URL_BASE}/auth/v1/admin/users/${u}`, { headers: h, cache: "no-store" });
   if (!res.ok) return page("Noget gik galt", "Prøv igen om lidt, eller skriv til contact@nordinvest.io.", 500);
   const user: any = await res.json();
+  if (sp.get("type") === "deals") {
+    // Opt out of the monthly deals email only (consent lives in user_metadata).
+    await fetch(`${URL_BASE}/auth/v1/admin/users/${u}`, {
+      method: "PUT",
+      headers: h,
+      body: JSON.stringify({ user_metadata: { ...(user.user_metadata ?? {}), deals_optin: false, deals_optout_at: new Date().toISOString() } }),
+    });
+    return page("Du er afmeldt", "Du får ikke flere mails med månedens deals. Du kan altid tilmelde dig igen på dit dashboard.");
+  }
   await fetch(`${URL_BASE}/auth/v1/admin/users/${u}`, {
     method: "PUT",
     headers: h,

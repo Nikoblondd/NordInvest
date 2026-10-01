@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { DealsOptIn } from "@/components/account/DealsOptIn";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -100,6 +101,7 @@ export default function VelkommenPage() {
                   className="mt-1 w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-500"
                 />
               </label>
+              <DealsOptIn compact />
               <button
                 type="submit"
                 disabled={saving}

@@ -41,12 +41,13 @@ export default function Page() {
           h: "3. Formål og retsgrundlag",
           p: [
             "Vi behandler oplysningerne for at levere tjenesten og håndtere dit abonnement (retsgrundlag: opfyldelse af aftalen, databeskyttelsesforordningen art. 6, stk. 1, litra b), for at forebygge misbrug og forbedre produktet (legitim interesse, litra f) samt for at overholde lovkrav som bogføringsloven (retlig forpligtelse, litra c).",
+            "Vi sender mails om din konto, fx hjælp til at komme i gang og besked, når dine gratis analyser er brugt (legitim interesse, litra f). Hver mail har et link, så du kan framelde dig. Månedens deals sender vi kun, hvis du selv har sagt ja til det ved oprettelsen eller på dit dashboard (samtykke, litra a, og markedsføringslovens § 10). Vi gemmer, hvornår du sagde ja, og du kan trække samtykket tilbage med ét klik i mailen eller på dit dashboard.",
           ],
         },
         {
           h: "4. Deling af data",
           p: [
-            "Vi sælger aldrig dine data. Vi deler kun oplysninger med databehandlere, der leverer infrastruktur til os — herunder hosting og cookiefri webanalyse (Vercel), produktanalyse med dit samtykke (PostHog, EU-hosting), database og login (Supabase) og betaling (Stripe) — under databehandleraftaler. PostHog bruges kun, hvis du accepterer analyse-cookies, og det, du taster, maskeres i eventuelle sessionsoptagelser.",
+            "Vi sælger aldrig dine data. Vi deler kun oplysninger med databehandlere, der leverer infrastruktur til os — herunder hosting og cookiefri webanalyse (Vercel), produktanalyse med dit samtykke (PostHog, EU-hosting), database og login (Supabase), afsendelse af mails (Resend) og betaling (Stripe) — under databehandleraftaler. PostHog bruges kun, hvis du accepterer analyse-cookies, og det, du taster, maskeres i eventuelle sessionsoptagelser.",
           ],
         },
         {
