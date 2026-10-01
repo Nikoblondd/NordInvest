@@ -9,6 +9,12 @@ export type Tier = {
   stripePriceEnv?: string;
   stripeLink?: string; // Stripe Payment Link (paid tiers only)
   priceId?: string; // Stripe recurring Price id (price_…) — enables in-app plan upgrades
+  /** Kept for existing subscribers and the webhook, but not offered anywhere. */
+  hidden?: boolean;
+  /** Yearly price in DKK and its Stripe Payment Link. The yearly toggle on
+   * /priser only appears once every visible paid tier has an annualLink. */
+  annualPrice?: number;
+  annualLink?: string;
 };
 
 // Fill these with the Stripe Product ids (Products → the product → "prod_…").
@@ -29,7 +35,7 @@ export const tiers: Tier[] = [
     id: "free",
     name: "Gratis",
     price: 0,
-    blurb: "Til dine første boliger.",
+    blurb: "Se om den bolig, du kigger på, er en god handel.",
     cta: { label: "Opret gratis", href: "/auth/signup" },
     features: ["3 analyser om måneden", "Hele analysen: score, cashflow og risici", "Deal-motoren uden grænse", "Gem boliger og prisvagt"],
   },
@@ -37,7 +43,8 @@ export const tiers: Tier[] = [
     id: "starter",
     name: "Starter",
     price: 129,
-    blurb: "Når du leder aktivt efter din næste bolig.",
+    blurb: "Find den bolig, der giver plus, og tag tallene med i banken.",
+    annualPrice: 1_290,
     featured: true,
     cta: { label: "Køb Starter", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_STARTER",
@@ -49,6 +56,7 @@ export const tiers: Tier[] = [
     name: "Plus",
     price: 200,
     blurb: "Når du regner på flere boliger om ugen.",
+    hidden: true,
     cta: { label: "Køb Plus", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_PLUS",
     stripeLink: "https://buy.stripe.com/eVq9AV7Ne2ve2j0bpebwk02",
@@ -58,17 +66,19 @@ export const tiers: Tier[] = [
     id: "pro",
     name: "Pro",
     price: 350,
-    blurb: "Når du screener markedet dagligt.",
+    blurb: "Regn alt igennem, du overvejer, uden at tælle analyser.",
+    annualPrice: 3_490,
     cta: { label: "Køb Pro", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_PRO",
     stripeLink: "https://buy.stripe.com/cNieVf5F6edW8Ho3WMbwk03",
-    features: ["25 analyser om måneden", "Bankrapport og Excel", "Prioriteret support"],
+    features: ["Ubegrænsede analyser", "Bankrapport og Excel", "Prioriteret support", "Alt fra Starter"],
   },
   {
     id: "unlimited",
     name: "Ubegrænset",
     price: 500,
     blurb: "Til rådgivere og professionelle investorer.",
+    hidden: true,
     cta: { label: "Køb Ubegrænset", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_UNLIMITED",
     stripeLink: "https://buy.stripe.com/6oU14p1oQ8TC8Ho8d2bwk01",
@@ -80,6 +90,12 @@ export const limits: Record<Tier["id"], number> = {
   free: 3,
   starter: 10,
   plus: 15,
-  pro: 25,
+  pro: 999999, // Pro is the unlimited plan since 2026-10 (was 25)
   unlimited: 999999,
 };
+
+/** The plans offered on /priser and in the app (hidden legacy tiers left out). */
+export const offeredTiers = tiers.filter((t) => !t.hidden);
+
+/** Yearly billing is offered only when every offered paid plan has a yearly link. */
+export const annualReady = offeredTiers.filter((t) => t.price > 0).every((t) => !!t.annualLink && !!t.annualPrice);

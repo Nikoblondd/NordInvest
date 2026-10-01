@@ -16,13 +16,15 @@ export function BuyButton({
   tierId,
   label,
   featured,
+  period = "month",
 }: {
   tierId: string;
   stripeLink?: string;
   label: string;
   featured?: boolean;
+  period?: "month" | "year";
 }) {
-  const { href, ready, signedIn, onClick } = useCheckout(tierId);
+  const { href, ready, signedIn, onClick } = useCheckout(tierId, period);
 
   useEffect(() => {
     if (!ready || !signedIn) return;

@@ -82,7 +82,7 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name, phone, ...(dealsOptIn ? optInMetadata(true) : {}) }, emailRedirectTo: redirectTo },
+        options: { data: { full_name: name, ...(phone.trim() ? { phone } : {}), ...(dealsOptIn ? optInMetadata(true) : {}) }, emailRedirectTo: redirectTo },
       });
       const alreadyExists =
         /already|registered|exists/i.test(error?.message ?? "") ||
@@ -193,9 +193,9 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
                 <>
                   <Input label="Fulde navn" value={name} onChange={(e) => setName(e.target.value)} required autoComplete="name" placeholder="Fornavn Efternavn" />
                   <label className="block text-left">
-                    <span className="text-sm font-medium text-slate-600">Telefonnummer</span>
+                    <span className="text-sm font-medium text-slate-600">Telefonnummer (valgfrit)</span>
                     <div className="mt-1">
-                      <PhoneInput value={phone} onChange={setPhone} required />
+                      <PhoneInput value={phone} onChange={setPhone} />
                     </div>
                   </label>
                 </>

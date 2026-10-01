@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { CancelFlow } from "@/components/subscription/CancelFlow";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Nav } from "@/components/Nav";
@@ -41,7 +42,7 @@ export default async function AbonnementPage() {
           <p className="mt-2 text-slate-600">
             Du er på <b>{tierLabel}-planen</b>
             {max >= 999999 ? " med ubegrænsede analyser." : ` med ${max} analyser om måneden.`}{" "}
-            {tier !== "unlimited" && "Få mere ud af NordInvest med en større plan."}
+            {max < 999999 && "Få mere ud af NordInvest med en større plan."}
           </p>
         </div>
 
@@ -52,12 +53,14 @@ export default async function AbonnementPage() {
         {/* Small, understated cancel/manage link at the very bottom */}
         {hasSub && (
           <div className="mt-12 border-t border-slate-200 pt-6">
-            <ManageSubscriptionButton
-              label="Opsig eller administrer betaling"
-              showIcon={false}
-              className="text-sm font-medium text-slate-400 underline underline-offset-2 hover:text-slate-600"
-            />
-            <p className="mt-1 text-xs text-slate-400">Åbner Stripe, hvor du kan opsige eller opdatere dit betalingskort.</p>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <ManageSubscriptionButton
+                label="Opdater betalingskort"
+                showIcon={false}
+                className="text-sm font-medium text-slate-400 underline underline-offset-2 hover:text-slate-600"
+              />
+              <CancelFlow tier={tier} />
+            </div>
           </div>
         )}
       </main>

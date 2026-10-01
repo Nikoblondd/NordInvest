@@ -7,7 +7,10 @@ export const dynamic = "force-dynamic";
 
 // Map a Stripe amount (in øre) to a tier id, using the prices in pricing.ts.
 const AMOUNT_TO_TIER: Record<number, string> = Object.fromEntries(
-  tiers.filter((t) => t.price > 0).map((t) => [t.price * 100, t.id]),
+  tiers.filter((t) => t.price > 0).flatMap((t) => [
+    [t.price * 100, t.id],
+    ...(t.annualPrice ? [[t.annualPrice * 100, t.id]] : []),
+  ]),
 );
 
 const VALID_TIERS = new Set<string>(tiers.map((t) => t.id));

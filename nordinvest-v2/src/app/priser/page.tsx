@@ -48,7 +48,7 @@ const faq = [
 // Arriving from an upgrade prompt: say why they're here, in their words.
 const CONTEXT: Record<string, string> = {
   graense: "Du har brugt dine 3 gratis analyser i denne måned. Starter giver dig 10 og låser analysen op med det samme.",
-  forbrug: "Du er ved at løbe tør for analyser i denne måned. En større plan giver dig flere med det samme.",
+  forbrug: "Du er ved at løbe tør for analyser i denne måned. Pro giver ubegrænsede analyser med det samme.",
   report: "Bankrapporten er med i alle betalte planer, fra Starter til 129 kr./md.",
   excel: "Excel-modellen er med i alle betalte planer, fra Starter til 129 kr./md.",
 };
@@ -56,7 +56,7 @@ const CONTEXT: Record<string, string> = {
 const FIT = [
   { who: "Kigger du på en bolig i ny og næ", plan: "Gratis", why: "3 fulde analyser om måneden er nok til at vurdere en konkret bolig." },
   { who: "Leder du aktivt efter din næste bolig", plan: "Starter", why: "10 analyser om måneden, og bankrapporten, når du skal til møde om finansieringen." },
-  { who: "Screener du flere boliger hver uge", plan: "Pro eller Ubegrænset", why: "Nok analyser til at regne alt igennem, du overvejer, uden at tælle." },
+  { who: "Screener du flere boliger hver uge", plan: "Pro", why: "Ubegrænsede analyser, så du kan regne alt igennem, du overvejer, uden at tælle." },
 ];
 
 export default function PriserPage({ searchParams }: { searchParams?: { fra?: string } }) {
@@ -67,11 +67,11 @@ export default function PriserPage({ searchParams }: { searchParams?: { fra?: st
 
       <section className="px-6 pt-24 pb-16 text-center">
         <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
-          Gennemsigtige priser for seriøse investorer
+          Køb den rigtige bolig. Spring de dårlige over.
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg text-slate-600">
-          Start gratis med 3 analyser om måneden. Betal først, når du regner på flere boliger,
-          eller når du skal i banken med tallene.
+          En udlejningsbolig med 2.000 kr. i minus om måneden koster dig 24.000 kr. om året. NordInvest viser
+          det, før du byder. Start gratis, og betal først, når du regner på flere boliger.
         </p>
         {context && (
           <p role="status" className="mx-auto mt-6 max-w-xl rounded-2xl bg-blue-50 px-5 py-3.5 text-[15px] font-medium text-blue-900 ring-1 ring-inset ring-blue-100">

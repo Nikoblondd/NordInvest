@@ -37,7 +37,7 @@ export function AuthCodeHandler() {
           .select("phone")
           .eq("id", user.id)
           .single();
-        if (profile?.phone) dest = "/dashboard?welcome=1";
+        if (profile?.phone || user.user_metadata?.onboarded) dest = "/dashboard?welcome=1";
       }
       window.location.replace(pendingDest() ?? dest);
     })();

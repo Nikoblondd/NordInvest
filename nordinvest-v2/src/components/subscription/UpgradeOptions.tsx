@@ -16,7 +16,7 @@ export function UpgradeOptions({ currentTier }: { currentTier: string }) {
 
   const currentIdx = ORDER.indexOf(currentTier);
   const currentMax = limits[(currentTier as keyof typeof limits)] ?? 3;
-  const upgrades = tiers.filter((t) => ORDER.indexOf(t.id) > currentIdx && t.id !== "free");
+  const upgrades = tiers.filter((t) => ORDER.indexOf(t.id) > currentIdx && t.id !== "free" && !t.hidden);
 
   const choose = async (tierId: string) => {
     setBusy(tierId);
@@ -49,7 +49,7 @@ export function UpgradeOptions({ currentTier }: { currentTier: string }) {
     return (
       <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-8 text-center">
         <Sparkles className="mx-auto text-emerald-600" size={28} />
-        <p className="mt-3 text-lg font-semibold text-emerald-900">Du er på vores højeste plan 🎉</p>
+        <p className="mt-3 text-lg font-semibold text-emerald-900">Du er på vores højeste plan</p>
         <p className="mt-1 text-sm text-emerald-700">Ubegrænset adgang til alt. Tak fordi du investerer med NordInvest.</p>
       </div>
     );

@@ -12,8 +12,9 @@ import { captureEvent } from "@/lib/analytics-events";
  * signed in: signup, with the plan remembered (lib/checkout-intent) so the
  * user continues straight to checkout afterwards.
  */
-export function useCheckout(tierId: string) {
-  const link = tiers.find((t) => t.id === tierId)?.stripeLink ?? "";
+export function useCheckout(tierId: string, period: "month" | "year" = "month") {
+  const tier = tiers.find((t) => t.id === tierId);
+  const link = (period === "year" ? tier?.annualLink : tier?.stripeLink) ?? "";
   const [href, setHref] = useState("/auth/signup?next=/priser");
   const [ready, setReady] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
@@ -37,7 +38,7 @@ export function useCheckout(tierId: string) {
 
   /** Call from the button's onClick; `from` says which prompt sold it. */
   const onClick = (from: string) => {
-    captureEvent("checkout_clicked", { tier: tierId, from });
+    captureEvent("checkout_clicked", { tier: tierId, from, period });
     if (!signedIn) setCheckoutIntent(tierId);
   };
 

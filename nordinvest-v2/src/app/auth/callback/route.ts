@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       .select("phone")
       .eq("id", user.id)
       .single();
-    if (profile?.phone) dest = "/dashboard?welcome=1";
+    if (profile?.phone || user.user_metadata?.onboarded) dest = "/dashboard?welcome=1";
   }
 
   // Came here from a "Køb <plan>" button: finish the purchase first.

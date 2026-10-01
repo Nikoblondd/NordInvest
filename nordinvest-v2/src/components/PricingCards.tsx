@@ -1,6 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
-import { tiers } from "@/lib/pricing";
+import { annualReady, offeredTiers } from "@/lib/pricing";
 import { clsx } from "@/lib/clsx";
 import { BuyButton } from "@/components/BuyButton";
 
@@ -9,18 +12,42 @@ import { BuyButton } from "@/components/BuyButton";
 // with a subtle grid pattern and a proper accent ribbon), and check-marks are
 // small custom marks — not the default lucide `CheckCircle2` icon that ships
 // on every SaaS landing page.
+const kr = (n: number) => Math.round(n).toLocaleString("da-DK");
+
 export function PricingCards() {
+  const [period, setPeriod] = useState<"month" | "year">("month");
+  const yearly = annualReady && period === "year";
   return (
-    <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
-      {tiers.map((t) => {
+    <div className="w-full">
+      {annualReady && (
+        <div className="mb-8 flex justify-center">
+          <div role="radiogroup" aria-label="Betaling" className="inline-flex rounded-full border border-slate-200 bg-white p-1 text-sm font-semibold">
+            {(["month", "year"] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                role="radio"
+                aria-checked={period === p}
+                onClick={() => setPeriod(p)}
+                className={clsx("rounded-full px-4 py-2 transition-colors", period === p ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900")}
+              >
+                {p === "month" ? "Månedlig" : "Årlig · 2 måneder gratis"}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-5 md:grid-cols-3">
+      {offeredTiers.map((t) => {
         const featured = t.featured;
+        const perMonth = yearly && t.annualPrice ? t.annualPrice / 12 : t.price;
         return (
           <div
             key={t.id}
             className={clsx(
               "relative flex flex-col overflow-hidden rounded-2xl border p-6 transition-all duration-300 lg:p-7",
               featured
-                ? "border-slate-800 bg-slate-900 text-white shadow-[0_20px_50px_-20px_rgba(15,23,42,0.4)] sm:col-span-2 lg:col-span-1 lg:-translate-y-3"
+                ? "border-slate-800 bg-slate-900 text-white shadow-[0_20px_50px_-20px_rgba(15,23,42,0.4)] md:-translate-y-3"
                 : "border-slate-200/80 bg-white shadow-card hover:-translate-y-[1px] hover:shadow-card-lift",
             )}
             style={
@@ -74,7 +101,7 @@ export function PricingCards() {
                     featured ? "text-white" : "text-slate-900",
                   )}
                 >
-                  {t.price}
+                  {kr(perMonth)}
                 </span>
                 <span
                   className={clsx(
@@ -85,6 +112,11 @@ export function PricingCards() {
                   kr / md.
                 </span>
               </div>
+              {yearly && t.annualPrice ? (
+                <p className={clsx("mt-1.5 text-[13px]", featured ? "text-slate-400" : "text-slate-500")}>
+                  {kr(t.annualPrice)} kr. betalt én gang om året
+                </p>
+              ) : null}
               <p
                 className={clsx(
                   "mt-2 text-sm leading-relaxed",
@@ -131,10 +163,11 @@ export function PricingCards() {
             <div className="relative z-10 mt-7">
               {t.stripeLink ? (
                 <BuyButton
+                  key={period}
                   tierId={t.id}
-                  stripeLink={t.stripeLink}
                   label={t.cta.label}
                   featured={featured}
+                  period={yearly ? "year" : "month"}
                 />
               ) : (
                 <Link
@@ -153,6 +186,7 @@ export function PricingCards() {
           </div>
         );
       })}
+    </div>
     </div>
   );
 }
