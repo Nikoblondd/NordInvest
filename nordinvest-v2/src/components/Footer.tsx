@@ -10,6 +10,7 @@ const columns = [
       { href: "/analyseren", label: "Analyseren" },
       { href: "/deals", label: "Deal-motor" },
       { href: "/beregn-husleje", label: "Beregn husleje" },
+      { href: "/beregn-afkast", label: "Beregn afkast" },
       { href: "/priser", label: "Priser" },
       { href: "/#hvordan", label: "Sådan virker det" },
       { href: "/dashboard", label: "Dashboard" },
@@ -22,7 +23,7 @@ const columns = [
       { href: "/methodology", label: "Metode & datakilder" },
       { href: "/data", label: "Åbent datagrundlag" },
       { href: "/investment-models", label: "Investeringsstrategier" },
-      { href: "/glossary", label: "Ordbog" },
+      { href: "/ordbog", label: "Ordbog" },
     ],
   },
   {

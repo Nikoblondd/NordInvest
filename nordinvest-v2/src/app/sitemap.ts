@@ -3,6 +3,7 @@ import { getAllPosts } from "@/lib/blog";
 import { CITIES } from "@/lib/cities";
 import { ALL_DEAL_CITIES as DEAL_CITIES } from "@/lib/deal-cities";
 import { getFeatureExtras } from "@/lib/blog-feature";
+import { TERMS } from "@/lib/terms";
 
 const BASE = "https://nordinvest.io";
 // When the static pages last changed. Bump it when their content changes; a
@@ -23,6 +24,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/glossary", priority: 0.7, freq: "monthly" },
     { path: "/data", priority: 0.6, freq: "monthly" },
     { path: "/beregn-husleje", priority: 0.8, freq: "monthly" },
+    { path: "/beregn-afkast", priority: 0.8, freq: "monthly" },
+    { path: "/ordbog", priority: 0.6, freq: "monthly" },
+    ...TERMS.map((t) => ({ path: `/ordbog/${t.slug}`, priority: 0.6, freq: "monthly" as const })),
     { path: "/om", priority: 0.5, freq: "monthly" },
     { path: "/presse", priority: 0.6, freq: "daily" },
     { path: "/kontakt", priority: 0.5, freq: "monthly" },
