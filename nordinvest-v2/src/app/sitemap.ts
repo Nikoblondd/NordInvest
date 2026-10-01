@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/blog";
 import { CITIES } from "@/lib/cities";
-import { DEAL_CITIES } from "@/lib/deal-cities";
+import { ALL_DEAL_CITIES as DEAL_CITIES } from "@/lib/deal-cities";
 import { getFeatureExtras } from "@/lib/blog-feature";
 
 const BASE = "https://nordinvest.io";

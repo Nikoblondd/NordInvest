@@ -5,6 +5,8 @@
  * rank.
  */
 
+import { MORE_DEAL_CITIES } from "@/lib/deal-kommuner";
+
 export type DealCity = {
   slug: string; // kommune slug, as in lib/kommuner
   name: string;
@@ -33,4 +35,7 @@ export const DEAL_CITIES: DealCity[] = [
   { slug: "fredericia", name: "Fredericia", in: "i Fredericia", note: "Trekantsområdets havneby, hvor lave priser giver plads til et bedre cashflow." },
 ];
 
-export const dealCity = (slug: string) => DEAL_CITIES.find((c) => c.slug === slug);
+/** The 16 hand-written cities plus every other kommune with enough listings. */
+export const ALL_DEAL_CITIES: DealCity[] = [...DEAL_CITIES, ...MORE_DEAL_CITIES];
+
+export const dealCity = (slug: string) => ALL_DEAL_CITIES.find((c) => c.slug === slug);

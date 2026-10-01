@@ -1,6 +1,6 @@
 import { getAllPosts } from "@/lib/blog";
 import { CITIES } from "@/lib/cities";
-import { DEAL_CITIES } from "@/lib/deal-cities";
+import { ALL_DEAL_CITIES as DEAL_CITIES } from "@/lib/deal-cities";
 import { site } from "@/lib/site";
 
 export const dynamic = "force-static";
