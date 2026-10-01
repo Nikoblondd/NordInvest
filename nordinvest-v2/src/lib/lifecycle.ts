@@ -108,7 +108,7 @@ export function limitEmail(p: { name: string | null; unsubUrl: string; resetsOn:
     html: layout(
       `<p>${hi}</p>
       <p>Du har brugt de 3 gratis analyser, der følger med din konto i denne måned. De kommer igen den ${date}.</p>
-      <p>Regner du på flere boliger før det, giver Starter 10 analyser om måneden for 129 kr. Du kan opsige når som helst.</p>
+      <p>Regner du på flere boliger før det, giver Starter 10 analyser om måneden for 129 kr., eller 107,50 kr. om måneden med årlig betaling. Du kan opsige når som helst.</p>
       ${button(`${SITE}/priser`, "Se planerne")}
       <p style="color:#64748b;font-size:14px;">Deal-motoren er gratis og uden grænse, hvis du vil se, hvilke boliger der giver plus lige nu: <a href="${SITE}/deals" style="color:#2563eb;">nordinvest.io/deals</a>.</p>`,
       p.unsubUrl,

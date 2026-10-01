@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const supabase = createClient();
   if (!supabase) return NextResponse.json({ error: "not_configured" }, { status: 500 });
 
-  const { tier } = (await req.json().catch(() => ({}))) as { tier?: string };
+  const { tier, period } = (await req.json().catch(() => ({}))) as { tier?: string; period?: string };
   const target = tiers.find((t) => t.id === tier);
   if (!target || target.id === "free") {
     return NextResponse.json({ error: "invalid_tier" }, { status: 400 });
@@ -42,9 +42,15 @@ export async function POST(req: Request) {
   const productId = PRODUCT_IDS[target.id];
 
   // Free / no active subscription → start a fresh subscription via Payment Link.
+  // The link carries the user's email and "<userId>__<tier>" so the webhook can
+  // attach the payment to this account (same as BuyButton).
   if (!profile?.stripe_subscription_id || !profile.stripe_customer_id) {
-    if (target.stripeLink) return NextResponse.json({ url: target.stripeLink });
-    return NextResponse.json({ error: "no_link" }, { status: 400 });
+    const link = period === "year" && target.annualLink ? target.annualLink : target.stripeLink;
+    if (!link) return NextResponse.json({ error: "no_link" }, { status: 400 });
+    const u = new URL(link);
+    if (user.email) u.searchParams.set("prefilled_email", user.email);
+    u.searchParams.set("client_reference_id", `${user.id}__${target.id}`);
+    return NextResponse.json({ url: u.toString() });
   }
 
   // Existing subscriber + a configured Product id → resolve its recurring price

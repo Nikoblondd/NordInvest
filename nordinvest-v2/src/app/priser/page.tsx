@@ -11,13 +11,17 @@ import { Testimonials } from "@/components/Testimonials";
 export const metadata: Metadata = {
   title: "Priser: gratis og betalte planer",
   description:
-    "Start gratis med 3 analyser om måneden. Starter fra 129 kr./md. med bankrapport og Excel-model. Uden binding, opsig med ét klik.",
+    "Start gratis med 3 analyser om måneden. Starter fra 107,50 kr./md. ved årlig betaling, med bankrapport og Excel-model. Opsig med ét klik.",
 };
 
 const faq = [
   {
     q: "Hvad får jeg med en betalt plan?",
     a: "Flere analyser om måneden, bankrapporten til dit møde om finansieringen og den redigerbare Excel-model. Gratis-planen giver adgang til hele analysen, Deal-motoren, gemte boliger og prisvagt.",
+  },
+  {
+    q: "Hvordan virker årlig betaling?",
+    a: "Du betaler for 12 måneder på én gang og får 2 måneder gratis: Starter koster 1.290 kr. om året (107,50 kr. om måneden) i stedet for 1.548 kr., og Pro 3.490 kr. i stedet for 4.200 kr. Abonnementet fornyes efter et år. Du kan opsige når som helst før fornyelsen og beholder adgangen året ud.",
   },
   {
     q: "Hvad hvis jeg ikke bruger alle mine analyser?",
@@ -84,7 +88,7 @@ export default function PriserPage({ searchParams }: { searchParams?: { fra?: st
         <div className="mx-auto flex max-w-7xl flex-col items-center">
           <PricingCards />
           <p className="mt-8 text-center text-sm text-slate-500">
-            Uden binding · Opsig med ét klik · Sikker betaling via Stripe · {site.business.legalName}, CVR {site.business.cvr}
+            Månedlig uden binding · Opsig med ét klik · Sikker betaling via Stripe · {site.business.legalName}, CVR {site.business.cvr}
           </p>
 
           <div className="mt-16 w-full">

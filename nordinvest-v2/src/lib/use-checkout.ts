@@ -39,7 +39,7 @@ export function useCheckout(tierId: string, period: "month" | "year" = "month") 
   /** Call from the button's onClick; `from` says which prompt sold it. */
   const onClick = (from: string) => {
     captureEvent("checkout_clicked", { tier: tierId, from, period });
-    if (!signedIn) setCheckoutIntent(tierId);
+    if (!signedIn) setCheckoutIntent(tierId, period);
   };
 
   return { href, ready, signedIn, onClick };

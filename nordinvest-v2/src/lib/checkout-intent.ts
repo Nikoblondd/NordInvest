@@ -9,16 +9,36 @@ const TIER = /^[a-z]{2,20}$/;
 
 export const validTier = (t: string | null | undefined): t is string => !!t && TIER.test(t);
 
-/** Where to send a freshly signed-in user who has a pending checkout, else null. */
-export const checkoutDest = (tier: string | null | undefined) => (validTier(tier) ? `/priser?koeb=${tier}` : null);
-
-export function setCheckoutIntent(tier: string) {
-  if (validTier(tier)) document.cookie = `${CHECKOUT_COOKIE}=${tier}; Max-Age=3600; Path=/; SameSite=Lax`;
+/** The cookie holds "<tier>" or "<tier>:year" (the billing period they picked). */
+function parse(raw: string | null | undefined): { tier: string; period: "month" | "year" } | null {
+  if (!raw) return null;
+  const [tier, p] = decodeURIComponent(raw).split(":");
+  return validTier(tier) ? { tier, period: p === "year" ? "year" : "month" } : null;
 }
 
-export function readCheckoutIntent(): string | null {
+/** Where to send a freshly signed-in user who has a pending checkout, else null. */
+export const checkoutDest = (raw: string | null | undefined) => {
+  const i = parse(raw);
+  return i ? `/priser?koeb=${i.tier}&periode=${i.period === "year" ? "aar" : "maaned"}` : null;
+};
+
+export function setCheckoutIntent(tier: string, period: "month" | "year" = "month") {
+  if (validTier(tier)) document.cookie = `${CHECKOUT_COOKIE}=${tier}${period === "year" ? ":year" : ""}; Max-Age=3600; Path=/; SameSite=Lax`;
+}
+
+function rawIntent(): string | null {
   const m = document.cookie.match(new RegExp(`(?:^|; )${CHECKOUT_COOKIE}=([^;]*)`));
-  return m && validTier(m[1]) ? m[1] : null;
+  return m ? m[1] : null;
+}
+
+/** The plan a visitor picked before signing up (tier id), if any. */
+export function readCheckoutIntent(): string | null {
+  return parse(rawIntent())?.tier ?? null;
+}
+
+/** The billing period that goes with it. */
+export function readCheckoutPeriod(): "month" | "year" {
+  return parse(rawIntent())?.period ?? "month";
 }
 
 export function clearCheckoutIntent() {
@@ -54,7 +74,7 @@ export function clearReturnPath() {
 
 /** Client: where a user who just signed in should go (pending checkout, then pending task). */
 export function pendingDest(): string | null {
-  const buy = checkoutDest(readCheckoutIntent());
+  const buy = checkoutDest(rawIntent());
   if (buy) return buy;
   const back = readReturnPath();
   if (back) clearReturnPath();

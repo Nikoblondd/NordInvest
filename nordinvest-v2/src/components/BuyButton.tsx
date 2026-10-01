@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { captureEvent } from "@/lib/analytics-events";
 import { clsx } from "@/lib/clsx";
-import { clearCheckoutIntent, readCheckoutIntent } from "@/lib/checkout-intent";
+import { clearCheckoutIntent, readCheckoutIntent, readCheckoutPeriod } from "@/lib/checkout-intent";
 import { useCheckout } from "@/lib/use-checkout";
 
 /**
@@ -29,12 +29,12 @@ export function BuyButton({
   useEffect(() => {
     if (!ready || !signedIn) return;
     const wanted = new URLSearchParams(window.location.search).get("koeb");
-    if (wanted === tierId && readCheckoutIntent() === tierId) {
+    if (wanted === tierId && readCheckoutIntent() === tierId && readCheckoutPeriod() === period) {
       clearCheckoutIntent();
-      captureEvent("checkout_resumed", { tier: tierId });
+      captureEvent("checkout_resumed", { tier: tierId, period });
       window.location.assign(href);
     }
-  }, [ready, signedIn, href, tierId]);
+  }, [ready, signedIn, href, tierId, period]);
 
   return (
     <a

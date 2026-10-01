@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { captureEvent } from "@/lib/analytics-events";
 import { Lock, Check, Loader2, ArrowRight } from "lucide-react";
 import { useCheckout } from "@/lib/use-checkout";
-import { tiers } from "@/lib/pricing";
+import { krFmt, tiers, yearly, type Period } from "@/lib/pricing";
+import { PeriodChoice } from "@/components/upgrade/PeriodChoice";
 import { clsx } from "@/lib/clsx";
 
 const starter = tiers.find((t) => t.id === "starter")!;
@@ -14,7 +15,7 @@ const PERKS = [
   "Hele analysen for denne bolig, låst op nu",
   "Bankrapport til dit bankmøde",
   "Redigerbar Excel-model",
-  "Uden binding, opsig med ét klik",
+  "Opsig med ét klik, og behold adgangen perioden ud",
 ];
 
 /**
@@ -36,11 +37,15 @@ export function PaywallGate({
   max: number;
   scoreColor: string;
 }) {
-  const { href, ready, onClick } = useCheckout("starter");
+  const [period, setPeriod] = useState<Period>("year");
+  const { href, ready, onClick } = useCheckout("starter", period);
   useEffect(() => captureEvent("paywall_shown", { tier: "starter" }), []);
   const resets = new Intl.DateTimeFormat("da-DK", { day: "numeric", month: "long" }).format(
     new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
   );
+
+  const y = yearly(starter);
+  const ctaPrice = period === "year" && y ? `${krFmt(y.total)} kr./år` : `${krFmt(starter.price)} kr./md.`;
 
   return (
     <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
@@ -75,16 +80,21 @@ export function PaywallGate({
             ))}
           </ul>
 
+          <div className="mx-auto mt-7 max-w-sm">
+            <PeriodChoice tierId="starter" period={period} onChange={setPeriod} />
+          </div>
+
           <a
+            key={period}
             href={href}
             aria-disabled={!ready}
             onClick={() => onClick("paywall")}
             className={clsx(
-              "mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-colors hover:bg-blue-700",
+              "mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-colors hover:bg-blue-700",
               !ready && "pointer-events-none opacity-70",
             )}
           >
-            {ready ? <>Fortsæt med Starter · {starter.price} kr./md. <ArrowRight size={16} /></> : <Loader2 size={16} className="animate-spin" />}
+            {ready ? <>Fortsæt med Starter · {ctaPrice} <ArrowRight size={16} /></> : <Loader2 size={16} className="animate-spin" />}
           </a>
           <p className="mt-3 text-xs text-slate-400">
             Sikker betaling via Stripe.{" "}

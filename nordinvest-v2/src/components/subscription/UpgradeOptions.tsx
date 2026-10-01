@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowUpRight, Check, Sparkles } from "lucide-react";
-import { tiers, limits } from "@/lib/pricing";
+import { tiers, limits, annualReady, krFmt, yearly, type Period } from "@/lib/pricing";
+import { BillingSwitch } from "@/components/upgrade/BillingSwitch";
 import { clsx } from "@/lib/clsx";
 
 const ORDER = ["free", "starter", "plus", "pro", "unlimited"];
@@ -13,6 +14,9 @@ export function UpgradeOptions({ currentTier }: { currentTier: string }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // New subscriptions start on yearly; an existing subscriber keeps the
+  // interval they pay (handled by /api/stripe/change-plan).
+  const [period, setPeriod] = useState<Period>("year");
 
   const currentIdx = ORDER.indexOf(currentTier);
   const currentMax = limits[(currentTier as keyof typeof limits)] ?? 3;
@@ -25,7 +29,7 @@ export function UpgradeOptions({ currentTier }: { currentTier: string }) {
       const res = await fetch("/api/stripe/change-plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier: tierId }),
+        body: JSON.stringify({ tier: tierId, period }),
       });
       const data = await res.json();
       if (data.url) {
@@ -69,12 +73,20 @@ export function UpgradeOptions({ currentTier }: { currentTier: string }) {
         </div>
       )}
 
+      {!isSubscriber && annualReady && (
+        <div className="mb-6">
+          <BillingSwitch period={period} onChange={setPeriod} />
+        </div>
+      )}
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {upgrades.map((t, i) => {
           const max = limits[t.id];
           const extra = max >= 999999 ? "Ubegrænset" : `${max - currentMax} flere`;
           const recommended = i === 0; // nearest upgrade = best value
-          const perAnalysis = max >= 999999 ? null : Math.round((t.price / max) * 10) / 10;
+          const y = yearly(t);
+          const showYear = !isSubscriber && annualReady && period === "year";
+          const perAnalysis = max >= 999999 ? null : Math.round(((showYear && y ? y.perMonth : t.price) / max) * 10) / 10;
           return (
             <div
               key={t.id}
@@ -90,9 +102,14 @@ export function UpgradeOptions({ currentTier }: { currentTier: string }) {
               )}
               <div className="text-lg font-bold">{t.name}</div>
               <div className="mt-1 flex items-baseline gap-1">
-                <span className="text-3xl font-bold">{t.price} kr.</span>
+                <span className="text-3xl font-bold">{krFmt(showYear && y ? y.perMonth : t.price)} kr.</span>
                 <span className={clsx("text-sm", recommended ? "text-slate-400" : "text-slate-500")}>/md</span>
               </div>
+              {showYear && y && (
+                <div className={clsx("mt-1 text-xs", recommended ? "text-slate-400" : "text-slate-500")}>
+                  {krFmt(y.total)} kr. om året · du sparer {krFmt(y.saves)} kr.
+                </div>
+              )}
               <div className={clsx("mt-1 text-sm font-medium", recommended ? "text-blue-300" : "text-blue-600")}>
                 {extra} analyser om måneden
               </div>

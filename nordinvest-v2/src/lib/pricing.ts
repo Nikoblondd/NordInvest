@@ -45,6 +45,7 @@ export const tiers: Tier[] = [
     price: 129,
     blurb: "Find den bolig, der giver plus, og tag tallene med i banken.",
     annualPrice: 1_290,
+    annualLink: "https://buy.stripe.com/fZu5kFaZqedW6zgbpebwk06",
     featured: true,
     cta: { label: "Køb Starter", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_STARTER",
@@ -68,6 +69,7 @@ export const tiers: Tier[] = [
     price: 350,
     blurb: "Regn alt igennem, du overvejer, uden at tælle analyser.",
     annualPrice: 3_490,
+    annualLink: "https://buy.stripe.com/cNi3cx8Rid9SbTA78Ybwk07",
     cta: { label: "Køb Pro", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_PRO",
     stripeLink: "https://buy.stripe.com/cNieVf5F6edW8Ho3WMbwk03",
@@ -99,3 +101,18 @@ export const offeredTiers = tiers.filter((t) => !t.hidden);
 
 /** Yearly billing is offered only when every offered paid plan has a yearly link. */
 export const annualReady = offeredTiers.filter((t) => t.price > 0).every((t) => !!t.annualLink && !!t.annualPrice);
+
+export type Period = "month" | "year";
+
+/** Kroner, with øre only when there are some: 129 → "129", 107.5 → "107,50". */
+export const krFmt = (n: number) =>
+  Number.isInteger(Math.round(n * 100) / 100)
+    ? Math.round(n).toLocaleString("da-DK")
+    : n.toLocaleString("da-DK", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+/** What a plan costs per month on yearly billing, and what the year saves. */
+export const yearly = (t: Tier) =>
+  t.annualPrice ? { perMonth: t.annualPrice / 12, total: t.annualPrice, saves: t.price * 12 - t.annualPrice } : null;
+
+/** The biggest yearly saving among offered plans (for "spar op til …"). */
+export const maxYearlySaving = Math.max(0, ...offeredTiers.map((t) => yearly(t)?.saves ?? 0));

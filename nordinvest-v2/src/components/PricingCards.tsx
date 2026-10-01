@@ -1,46 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
-import { annualReady, offeredTiers } from "@/lib/pricing";
+import { annualReady, krFmt, offeredTiers, yearly as yearlyOf, type Period } from "@/lib/pricing";
+import { BillingSwitch } from "@/components/upgrade/BillingSwitch";
 import { clsx } from "@/lib/clsx";
 import { BuyButton } from "@/components/BuyButton";
 
-// Five-tier pricing grid with real product-designer craft: cards have layered
+// Three-plan pricing grid with real product-designer craft: cards have layered
 // depth, the recommended tier gets a genuinely different treatment (dark card
 // with a subtle grid pattern and a proper accent ribbon), and check-marks are
 // small custom marks — not the default lucide `CheckCircle2` icon that ships
 // on every SaaS landing page.
-const kr = (n: number) => Math.round(n).toLocaleString("da-DK");
-
 export function PricingCards() {
-  const [period, setPeriod] = useState<"month" | "year">("month");
+  // Yearly first (the switch starts on), unless the visitor came back from
+  // signup having picked monthly (?periode=maaned).
+  const [period, setPeriod] = useState<Period>("year");
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("periode") === "maaned") setPeriod("month");
+  }, []);
   const yearly = annualReady && period === "year";
   return (
     <div className="w-full">
       {annualReady && (
-        <div className="mb-8 flex justify-center">
-          <div role="radiogroup" aria-label="Betaling" className="inline-flex rounded-full border border-slate-200 bg-white p-1 text-sm font-semibold">
-            {(["month", "year"] as const).map((p) => (
-              <button
-                key={p}
-                type="button"
-                role="radio"
-                aria-checked={period === p}
-                onClick={() => setPeriod(p)}
-                className={clsx("rounded-full px-4 py-2 transition-colors", period === p ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900")}
-              >
-                {p === "month" ? "Månedlig" : "Årlig · 2 måneder gratis"}
-              </button>
-            ))}
-          </div>
+        <div className="mb-10">
+          <BillingSwitch period={period} onChange={setPeriod} />
         </div>
       )}
     <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-5 md:grid-cols-3">
       {offeredTiers.map((t) => {
         const featured = t.featured;
-        const perMonth = yearly && t.annualPrice ? t.annualPrice / 12 : t.price;
+        const y = yearlyOf(t);
+        const perMonth = yearly && y ? y.perMonth : t.price;
         return (
           <div
             key={t.id}
@@ -101,7 +93,7 @@ export function PricingCards() {
                     featured ? "text-white" : "text-slate-900",
                   )}
                 >
-                  {kr(perMonth)}
+                  {krFmt(perMonth)}
                 </span>
                 <span
                   className={clsx(
@@ -112,10 +104,24 @@ export function PricingCards() {
                   kr / md.
                 </span>
               </div>
-              {yearly && t.annualPrice ? (
-                <p className={clsx("mt-1.5 text-[13px]", featured ? "text-slate-400" : "text-slate-500")}>
-                  {kr(t.annualPrice)} kr. betalt én gang om året
-                </p>
+              {yearly && y ? (
+                <>
+                  <p className={clsx("mt-1.5 text-[13px]", featured ? "text-slate-400" : "text-slate-500")}>
+                    <s className="mr-1.5">{krFmt(t.price)} kr.</s>
+                    {krFmt(y.total)} kr. om året
+                  </p>
+                  <p className="mt-2 inline-flex rounded-full bg-emerald-500/15 px-2.5 py-1 text-[12px] font-semibold text-emerald-600 ring-1 ring-inset ring-emerald-500/25">
+                    Du sparer {krFmt(y.saves)} kr. om året
+                  </p>
+                </>
+              ) : y && annualReady ? (
+                <button
+                  type="button"
+                  onClick={() => setPeriod("year")}
+                  className={clsx("mt-1.5 text-left text-[13px] underline underline-offset-2", featured ? "text-blue-300" : "text-blue-700")}
+                >
+                  Spar {krFmt(y.saves)} kr. med årlig betaling
+                </button>
               ) : null}
               <p
                 className={clsx(

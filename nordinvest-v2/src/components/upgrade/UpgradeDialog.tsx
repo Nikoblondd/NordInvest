@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Check, FileSpreadsheet, FileText, X } from "lucide-react";
 import { captureEvent } from "@/lib/analytics-events";
-import { tiers } from "@/lib/pricing";
+import { krFmt, tiers, yearly, type Period } from "@/lib/pricing";
+import { PeriodChoice } from "@/components/upgrade/PeriodChoice";
 import { useCheckout } from "@/lib/use-checkout";
 import { clsx } from "@/lib/clsx";
 
@@ -24,7 +25,7 @@ const COPY: Record<UpgradeReason, { icon: typeof FileText; title: string; body: 
   },
 };
 
-const PERKS = ["10 analyser om måneden", "Bankrapport til dit bankmøde", "Redigerbar Excel-model", "Uden binding, opsig med ét klik"];
+const PERKS = ["10 analyser om måneden", "Bankrapport til dit bankmøde", "Redigerbar Excel-model", "Opsig med ét klik, og behold adgangen perioden ud"];
 
 /**
  * Shown when someone on the free plan (or without an account) reaches for a
@@ -32,7 +33,8 @@ const PERKS = ["10 analyser om måneden", "Bankrapport til dit bankmøde", "Redi
  * their intent instead of interrupting it.
  */
 export function UpgradeDialog({ reason, onClose }: { reason: UpgradeReason | null; onClose: () => void }) {
-  const { href, ready, signedIn, onClick } = useCheckout("starter");
+  const [period, setPeriod] = useState<Period>("year");
+  const { href, ready, signedIn, onClick } = useCheckout("starter", period);
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -50,6 +52,8 @@ export function UpgradeDialog({ reason, onClose }: { reason: UpgradeReason | nul
   }, [reason, onClose]);
 
   if (!reason) return null;
+  const y = yearly(starter);
+  const ctaPrice = period === "year" && y ? `${krFmt(y.total)} kr./år` : `${krFmt(starter.price)} kr./md.`;
   const c = COPY[reason];
   const Icon = c.icon;
 
@@ -88,16 +92,21 @@ export function UpgradeDialog({ reason, onClose }: { reason: UpgradeReason | nul
           ))}
         </ul>
 
+        <div className="mt-6">
+          <PeriodChoice tierId="starter" period={period} onChange={setPeriod} />
+        </div>
+
         <a
+          key={period}
           href={href}
           aria-disabled={!ready}
           onClick={() => onClick(`dialog_${reason}`)}
           className={clsx(
-            "mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-[15px] font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-[background-color,transform] hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:scale-[0.98]",
+            "mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-[15px] font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-[background-color,transform] hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:scale-[0.98]",
             !ready && "pointer-events-none opacity-70",
           )}
         >
-          {signedIn ? `Fortsæt med Starter · ${starter.price} kr./md.` : `Opret konto og fortsæt · ${starter.price} kr./md.`}
+          {signedIn ? `Fortsæt med Starter · ${ctaPrice}` : `Opret konto og fortsæt · ${ctaPrice}`}
           <ArrowRight aria-hidden size={16} />
         </a>
         <p className="mt-3 text-center text-[13px] leading-snug text-slate-500">
