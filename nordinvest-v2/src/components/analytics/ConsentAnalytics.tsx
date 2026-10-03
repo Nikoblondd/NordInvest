@@ -10,7 +10,13 @@ const PH_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://eu.i.posthog.co
 
 let started = false;
 async function startPostHog() {
-  if (started || !PH_KEY || typeof window === "undefined") return;
+  if (typeof window === "undefined" || !PH_KEY) return;
+  if (started) {
+    // Accepted again after withdrawing in the same visit.
+    const ph = (window as unknown as { __ph?: { opt_in_capturing?: () => void } }).__ph;
+    try { ph?.opt_in_capturing?.(); } catch { /* best-effort */ }
+    return;
+  }
   started = true;
   try {
     const posthog = (await import("posthog-js")).default;
@@ -41,6 +47,12 @@ async function startPostHog() {
   } catch {
     /* analytics is best-effort — never break the page */
   }
+}
+
+// Withdrawing consent stops tracking at once, not only from the next visit.
+function stopPostHog() {
+  const ph = (window as unknown as { __ph?: { opt_out_capturing?: () => void; stopSessionRecording?: () => void } }).__ph;
+  try { ph?.stopSessionRecording?.(); ph?.opt_out_capturing?.(); } catch { /* best-effort */ }
 }
 
 // The banner waits until the visitor has engaged: their first click or tap,
@@ -87,7 +99,13 @@ function useEngaged(active: boolean) {
 export function ConsentAnalytics() {
   const [consent, setConsent] = useState<"accepted" | "declined" | "unset" | "loading">("loading");
   const engaged = useEngaged(consent === "unset");
-  const open = consent === "unset" && engaged;
+  // "Cookie-indstillinger" in the footer reopens the banner straight away.
+  const [reopened, setReopened] = useState(false);
+  useEffect(() => {
+    const reopen = () => { setReopened(true); setConsent("unset"); };
+    window.addEventListener("ni-consent-reopen", reopen);
+    return () => window.removeEventListener("ni-consent-reopen", reopen);
+  }, []);
 
   useEffect(() => {
     let stored: string | null = null;
@@ -96,6 +114,8 @@ export function ConsentAnalytics() {
     else if (stored === "declined") setConsent("declined");
     else setConsent("unset");
   }, []);
+
+  const open = consent === "unset" && (engaged || reopened);
 
   // Let other bottom-pinned UI (the blog's analyse bar) step aside while open.
   useEffect(() => {
@@ -108,7 +128,9 @@ export function ConsentAnalytics() {
   const choose = (v: "accepted" | "declined") => {
     try { localStorage.setItem("ni_consent", v); } catch { /* blocked */ }
     setConsent(v);
+    setReopened(false);
     if (v === "accepted") startPostHog();
+    else stopPostHog();
   };
 
   if (!open) return null;

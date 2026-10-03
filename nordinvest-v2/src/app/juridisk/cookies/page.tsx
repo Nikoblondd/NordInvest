@@ -40,7 +40,7 @@ export default function Page() {
         {
           h: "5. Dit valg",
           p: [
-            "Første gang du besøger siden, spørger vi, om du vil acceptere analyse-cookies. Vælger du “Afvis”, sætter vi ingen analyse-cookies — kun de teknisk nødvendige. Du kan altid ændre dit valg ved at slette cookies i din browser, hvorefter banneret vises igen.",
+            "Første gang du besøger siden, spørger vi, om du vil acceptere analyse-cookies. Vælger du “Afvis”, sætter vi ingen analyse-cookies — kun de teknisk nødvendige. Du kan altid ændre dit valg under “Cookie-indstillinger” nederst på hver side. Trækker du samtykket tilbage, stopper analysen med det samme.",
           ],
         },
       ]}

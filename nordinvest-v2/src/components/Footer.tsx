@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { CookieSettingsButton } from "./analytics/CookieSettingsButton";
 import { CITIES } from "@/lib/cities";
 import { site } from "@/lib/site";
 
@@ -81,6 +82,11 @@ export function Footer() {
                     </Link>
                   </li>
                 ))}
+                {col.title === "NordInvest" && (
+                  <li>
+                    <CookieSettingsButton className="inline-block py-1.5 text-left text-sm text-slate-600 transition-colors hover:text-blue-600" />
+                  </li>
+                )}
               </ul>
             </div>
           ))}
