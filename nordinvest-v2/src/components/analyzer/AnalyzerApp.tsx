@@ -37,6 +37,7 @@ import { NumberInput } from "@/components/ui/NumberInput";
 import { SignupGate } from "@/components/analyzer/SignupGate";
 import { UpgradeDialog, type UpgradeReason } from "@/components/upgrade/UpgradeDialog";
 import { UsageNudge } from "@/components/upgrade/UsageNudge";
+import { ShareAnalysis } from "@/components/analyzer/ShareAnalysis";
 import { ANON_FREE, countAnonAnalysis, fetchPlan, usePlan } from "@/lib/plan";
 import { TimeSavingsCapture } from "@/components/analyzer/TimeSavingsCapture";
 import { captureEvent } from "@/lib/analytics-events";
@@ -1256,6 +1257,19 @@ export function AnalyzerApp() {
                     </button>
                   )
                 )}
+                <ShareAnalysis
+                  className={darkPill}
+                  title={address ? `Analyse af ${address.split(",")[0]}` : "Min analyse af boligen"}
+                  params={{
+                    url: urlParam,
+                    addr: address,
+                    price: inputs.price,
+                    rent: inputs.monthlyRent,
+                    opex: inputs.monthlyOpex,
+                    downPaymentPct: inputs.downPaymentPct,
+                    interestRate: inputs.interestRate,
+                  }}
+                />
               </div>
               <div aria-live="polite">
                 {save.status === "limit" && (

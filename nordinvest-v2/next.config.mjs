@@ -42,7 +42,7 @@ const nextConfig = {
   // the cache instead of the function. The data itself only changes every 6 h.
   async headers() {
     const edge = [{ key: "Vercel-CDN-Cache-Control", value: "max-age=3600, stale-while-revalidate=86400" }];
-    return ["/deals", "/deals/:by", "/om", "/presse", "/beregn-afkast"].map((source) => ({ source, headers: edge }));
+    return ["/deals", "/deals/:by", "/om", "/presse", "/beregn-afkast", "/embed/deals/:by"].map((source) => ({ source, headers: edge }));
   },
 
   async redirects() {

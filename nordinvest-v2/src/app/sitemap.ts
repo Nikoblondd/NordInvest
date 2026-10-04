@@ -30,6 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...TERMS.map((t) => ({ path: `/ordbog/${t.slug}`, priority: 0.6, freq: "monthly" as const })),
     { path: "/om", priority: 0.5, freq: "monthly" },
     { path: "/presse", priority: 0.6, freq: "daily" },
+    { path: "/widget", priority: 0.5, freq: "weekly" },
     { path: "/kontakt", priority: 0.5, freq: "monthly" },
     { path: "/blog", priority: 0.8, freq: "weekly" },
     { path: "/spil", priority: 0.9, freq: "weekly" },

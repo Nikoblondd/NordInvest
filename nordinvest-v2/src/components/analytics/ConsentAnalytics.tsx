@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 // PostHog is loaded ONLY after the visitor accepts. Key is optional — the banner
 // still shows so consent is captured; tracking activates once the key is set.
@@ -97,6 +98,9 @@ function useEngaged(active: boolean) {
 }
 
 export function ConsentAnalytics() {
+  // The news-site widget (/embed/…) runs inside other sites' pages: no banner,
+  // no tracking there.
+  const embedded = usePathname()?.startsWith("/embed") ?? false;
   const [consent, setConsent] = useState<"accepted" | "declined" | "unset" | "loading">("loading");
   const engaged = useEngaged(consent === "unset");
   // "Cookie-indstillinger" in the footer reopens the banner straight away.
@@ -110,7 +114,7 @@ export function ConsentAnalytics() {
   useEffect(() => {
     let stored: string | null = null;
     try { stored = localStorage.getItem("ni_consent"); } catch { /* blocked */ }
-    if (stored === "accepted") { setConsent("accepted"); startPostHog(); }
+    if (stored === "accepted") { setConsent("accepted"); if (!window.location.pathname.startsWith("/embed")) startPostHog(); }
     else if (stored === "declined") setConsent("declined");
     else setConsent("unset");
   }, []);
@@ -133,7 +137,7 @@ export function ConsentAnalytics() {
     else stopPostHog();
   };
 
-  if (!open) return null;
+  if (!open || embedded) return null;
 
   return (
     <div

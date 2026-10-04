@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { DealFinder } from "@/components/deals/DealFinder";
+import { CityDealsOptIn } from "@/components/deals/CityDealsOptIn";
 import { getDealSnapshot } from "@/lib/deals-snapshot";
 import { dealCity } from "@/lib/deal-cities";
 import { Assumptions, CityLinks, DealRanking, Faq, InvestmentRanking, MarketFigures, dealsJsonLd } from "@/components/deals/DealsSeo";
@@ -113,6 +114,7 @@ export default async function CityDealsPage({ params }: { params: { by: string }
                 <DealRanking deals={snap.top} />
                 <Assumptions updated={snap.updated} />
               </div>
+              <CityDealsOptIn slug={c.slug} name={c.name} cityIn={c.in} />
               {snap.investments.length > 0 && (
                 <>
                   <h2 className="mt-10 text-xl font-semibold tracking-[-0.02em] sm:text-2xl">

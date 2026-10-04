@@ -8,12 +8,32 @@ import { HeroInput } from "@/components/home/HeroInput";
 import Link from "next/link";
 import { geist } from "@/components/home/fonts";
 
-export const metadata: Metadata = {
+const baseMeta: Metadata = {
   title: "Analysér en ejendomsinvestering gratis",
   description:
     "Gratis analyse af ejendomsinvestering i Danmark: indsæt et boliglink og få bruttoafkast, cash flow, rentestress-test og 5-årig prisprognose på sekunder.",
   alternates: { canonical: "/analyseren" },
 };
+
+// A shared analysis link gets its own preview: the address and what the
+// property gives each month, drawn by /api/og/analyse from the link's numbers.
+export function generateMetadata({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }): Metadata {
+  const one = (k: string) => (typeof searchParams[k] === "string" ? (searchParams[k] as string) : "");
+  if (!one("price")) return baseMeta;
+  const q = new URLSearchParams();
+  for (const k of ["addr", "price", "rent", "opex", "downPaymentPct", "interestRate"]) if (one(k)) q.set(k, one(k));
+  const where = one("addr").split(",")[0];
+  const title = where ? `Analyse af ${where}` : "Analyse af en bolig";
+  return {
+    ...baseMeta,
+    openGraph: {
+      title: `${title} · NordInvest`,
+      description: "Cash flow, afkast, rentestress og 10-års fremskrivning, regnet igennem på NordInvest.",
+      images: [{ url: `/api/og/analyse?${q.toString()}`, width: 1200, height: 630, alt: title }],
+    },
+    twitter: { card: "summary_large_image" },
+  };
+}
 
 // The analyser speaks in one typeface: Geist, for headlines and numbers alike.
 // Components that ask for `font-display`/`font-sans` resolve to it inside here,

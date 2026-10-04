@@ -40,6 +40,7 @@ const columns = [
     links: [
       { href: "/om", label: "Om os" },
       { href: "/presse", label: "Presse" },
+      { href: "/widget", label: "Widget til medier" },
       { href: "/kontakt", label: "Kontakt" },
       { href: "/juridisk/vilkaar", label: "Vilkår" },
       { href: "/juridisk/privatlivspolitik", label: "Privatlivspolitik" },

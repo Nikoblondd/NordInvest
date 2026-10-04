@@ -2,7 +2,10 @@
 import { NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email";
 import { monthKey, unsubscribeToken } from "@/lib/lifecycle";
-import { dealsEmail } from "@/lib/deals-email";
+import { cityDealsEmail, dealsEmail } from "@/lib/deals-email";
+import { dealCity } from "@/lib/deal-cities";
+import { getDealSnapshot } from "@/lib/deals-snapshot";
+import { unsubToken } from "@/lib/deal-subscribe";
 
 /*
  * "Månedens deals" to users who opted in (user_metadata.deals_optin, see
@@ -50,9 +53,17 @@ export async function GET(req: Request) {
   const optedIn = users.filter((u) => u.email && u.user_metadata?.deals_optin === true);
   const due = optedIn.filter((u) => !u.app_metadata?.lifecycle?.[key]);
 
+  // Visitors who confirmed "Månedens bedste køb i <by>" (deal_subscribers).
+  const month = monthKey(new Date());
+  const subs: any[] = await fetch(
+    `${URL_BASE}/rest/v1/deal_subscribers?select=id,email,kommune,last_sent&confirmed_at=not.is.null&unsubscribed_at=is.null&limit=5000`,
+    { headers: headers(), cache: "no-store" },
+  ).then((r) => (r.ok ? r.json() : [])).catch(() => []);
+  const subsDue = Array.isArray(subs) ? subs.filter((s) => s.last_sent !== month) : [];
+
   if (dry) {
     const mask = (e: string) => e.replace(/^(.).*(@.*)$/, "$1***$2");
-    return NextResponse.json({ dry: true, users: users.length, optedIn: optedIn.length, due: due.map((u) => mask(u.email)) });
+    return NextResponse.json({ dry: true, users: users.length, optedIn: optedIn.length, due: due.map((u) => mask(u.email)), citySubscribers: subsDue.map((s) => `${mask(s.email)} · ${s.kommune}`) });
   }
 
   let sent = 0;
@@ -71,5 +82,27 @@ export async function GET(req: Request) {
       });
     } else reasons.push(res.reason);
   }
-  return NextResponse.json({ users: users.length, optedIn: optedIn.length, due: due.length, sent, reasons: Array.from(new Set(reasons)) });
+  // City emails: one snapshot per kommune, shared by its subscribers.
+  let citySent = 0;
+  const snaps = new Map<string, Awaited<ReturnType<typeof getDealSnapshot>>>();
+  for (const s of subsDue.slice(0, 1000)) {
+    const c = dealCity(s.kommune);
+    if (!c) continue;
+    if (!snaps.has(c.slug)) snaps.set(c.slug, await getDealSnapshot(c.slug, 3).catch(() => null));
+    const snap = snaps.get(c.slug);
+    if (!snap || snap.top.length === 0) continue;
+    const unsubUrl = `${SITE}/api/deals/subscribe/unsubscribe?e=${encodeURIComponent(s.email)}&k=${c.slug}&t=${unsubToken(s.email, c.slug)}`;
+    const mail = cityDealsEmail({ cityName: c.name, cityIn: c.in, slug: c.slug, deals: snap.top.slice(0, 3), scanned: snap.scanned, positive: snap.positive, unsubUrl });
+    const res = await sendEmail({ to: s.email, subject: mail.subject, html: mail.html, replyTo: "contact@nordinvest.io" });
+    if (res.ok) {
+      citySent++;
+      await fetch(`${URL_BASE}/rest/v1/deal_subscribers?id=eq.${s.id}`, {
+        method: "PATCH",
+        headers: { ...headers(), Prefer: "return=minimal" },
+        body: JSON.stringify({ last_sent: month }),
+      }).catch(() => null);
+    } else reasons.push(res.reason);
+  }
+
+  return NextResponse.json({ users: users.length, optedIn: optedIn.length, due: due.length, sent, citySubscribers: subsDue.length, citySent, reasons: Array.from(new Set(reasons)) });
 }
