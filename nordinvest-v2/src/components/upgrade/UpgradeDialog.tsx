@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Check, FileSpreadsheet, FileText, X } from "lucide-react";
+import { ArrowRight, Check, Coffee, FileSpreadsheet, FileText, X } from "lucide-react";
 import { captureEvent } from "@/lib/analytics-events";
-import { krFmt, tiers, yearly, type Period } from "@/lib/pricing";
+import { everyday, krFmt, tiers, yearly, type Period } from "@/lib/pricing";
 import { PeriodChoice } from "@/components/upgrade/PeriodChoice";
 import { useCheckout } from "@/lib/use-checkout";
 import { clsx } from "@/lib/clsx";
@@ -95,6 +95,12 @@ export function UpgradeDialog({ reason, onClose }: { reason: UpgradeReason | nul
         <div className="mt-6">
           <PeriodChoice tierId="starter" period={period} onChange={setPeriod} />
         </div>
+        <p className="mt-4 flex items-center gap-2.5 text-[14px] text-slate-600">
+          <Coffee aria-hidden size={17} strokeWidth={1.8} className="shrink-0 text-amber-700" />
+          <span>
+            <span className="font-semibold text-slate-900">{everyday(starter, period).perDayLabel} kr. om dagen.</span> {everyday(starter, period).coffee}.
+          </span>
+        </p>
 
         <a
           key={period}

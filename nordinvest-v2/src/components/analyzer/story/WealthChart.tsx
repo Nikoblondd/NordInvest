@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { clsx } from "@/lib/clsx";
 
 const dk = (n: number) => Math.round(n).toLocaleString("da-DK");
@@ -23,9 +23,14 @@ export type WealthYear = {
  * for the cash flow collected so far, and pills naming the end values.
  * Hover or focus a year for its exact numbers.
  */
-export function WealthChart({ data }: { data: WealthYear[] }) {
+export function WealthChart({ data, selected, onSelect }: { data: WealthYear[]; selected?: number | null; onSelect?: (i: number) => void }) {
   const reduce = useReducedMotion();
   const [active, setActive] = useState<number | null>(null);
+  // Watch the chart box, not the bars: a bar at scaleY(0) has no height and
+  // would never register as on screen.
+  const boxRef = useRef<HTMLDivElement>(null);
+  const seen = useInView(boxRef, { once: true, margin: "-40px 0px" });
+  const show = seen || !!reduce;
   if (data.length === 0) return null;
 
   // Light segment = what you paid in and paid off; dark = value growth. A fall
@@ -44,7 +49,10 @@ export function WealthChart({ data }: { data: WealthYear[] }) {
   const lastEquity = last.paid + last.growth;
   const cfPositive = last.cumulativeCashFlow >= 0;
   const linePts = data.map((d, i) => `${colX(i)},${y(d.cumulativeCashFlow)}`).join(" ");
-  const shown = active ?? null;
+  // Controlled by the year scrubber when onSelect is given; hover then moves the
+  // scrubber instead of opening a tooltip.
+  const shown = onSelect ? (selected ?? null) : (active ?? null);
+  const pick = (i: number) => (onSelect ? onSelect(i) : setActive(i));
 
   return (
     <div>
@@ -61,10 +69,11 @@ export function WealthChart({ data }: { data: WealthYear[] }) {
       </div>
 
       <div
+        ref={boxRef}
         className="relative mt-6 h-[280px] sm:h-[340px]"
         role="img"
         aria-label={`Friværdi efter ${last.year} år: ${dk(lastEquity)} kr, heraf ${dk(last.growth)} kr i værdistigning. Samlet cash flow: ${dk(last.cumulativeCashFlow)} kr.`}
-        onMouseLeave={() => setActive(null)}
+        onMouseLeave={() => !onSelect && setActive(null)}
       >
         {/* faint guides + zero baseline */}
         {[0.25, 0.5, 0.75].map((f) => (
@@ -89,8 +98,7 @@ export function WealthChart({ data }: { data: WealthYear[] }) {
                   className="absolute left-1/2 w-[46%] max-w-[34px] -translate-x-1/2 origin-bottom"
                   style={{ top: `${eqTop}%`, bottom: `${100 - zeroY}%` }}
                   initial={reduce ? false : { scaleY: 0 }}
-                  whileInView={{ scaleY: 1 }}
-                  viewport={{ once: true, margin: "-40px" }}
+                  animate={{ scaleY: show ? 1 : 0 }}
                   transition={{ duration: 0.7, delay: reduce ? 0 : i * 0.05, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <div className="absolute inset-x-0 top-0 rounded-t-[7px] bg-blue-600" style={{ height: `${((paidTop - eqTop) / (zeroY - eqTop || 1)) * 100}%` }} />
@@ -115,8 +123,7 @@ export function WealthChart({ data }: { data: WealthYear[] }) {
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
             initial={reduce ? false : { opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-40px" }}
+            animate={{ opacity: show ? 1 : 0 }}
             transition={{ duration: 0.6, delay: reduce ? 0 : 0.45 }}
           />
         </svg>
@@ -159,15 +166,16 @@ export function WealthChart({ data }: { data: WealthYear[] }) {
               key={d.year}
               type="button"
               aria-label={`År ${d.year}: friværdi ${dk(d.paid + d.growth)} kr, samlet cash flow ${dk(d.cumulativeCashFlow)} kr`}
-              onMouseEnter={() => setActive(i)}
-              onFocus={() => setActive(i)}
-              onBlur={() => setActive(null)}
+              onMouseEnter={() => pick(i)}
+              onFocus={() => pick(i)}
+              onBlur={() => !onSelect && setActive(null)}
+              onClick={() => pick(i)}
               className="h-full cursor-default rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-600"
             />
           ))}
         </div>
 
-        {shown !== null && (
+        {shown !== null && !onSelect && (
           <div
             aria-hidden
             className={clsx(

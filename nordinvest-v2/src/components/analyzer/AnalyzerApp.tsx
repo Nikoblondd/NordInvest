@@ -26,7 +26,7 @@ import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import { Comparables } from "@/components/analyzer/Comparables";
 import { ExpenseCheck } from "@/components/analyzer/ExpenseCheck";
 import { DealHero, type HeroMetric } from "@/components/analyzer/story/DealHero";
-import { CashflowWaterfall } from "@/components/analyzer/story/CashflowWaterfall";
+import { MoneyFlow } from "@/components/analyzer/story/MoneyFlow";
 import { Chapter, ChapterNav, Details, Panel, type ChapterAnswer, type NavItem } from "@/components/analyzer/story/Chapter";
 import { RateStress } from "@/components/analyzer/story/RateStress";
 import type { Tone } from "@/components/analyzer/story/tone";
@@ -506,7 +506,7 @@ export function AnalyzerApp() {
         const d = await res.json();
         if (d?.ok && d.id) { usageRowIdRef.current = d.id as string; setAnalysisLogged(true); }
         if (d?.authenticated === false) {
-          // No account: two analyses free, the third asks for a free account.
+          // No account: three analyses free, the fourth asks for a free account.
           const n = countAnonAnalysis(sig);
           setUsage({ authenticated: false, used: n, max: ANON_FREE, unlimited: false });
           if (n > ANON_FREE) setSignupGated(true);
@@ -1030,7 +1030,7 @@ export function AnalyzerApp() {
 
           <Chapter id="oekonomi" question="Tjener den penge?" answer={cashAnswer} tint={tint()}>
             <Panel>
-              <CashflowWaterfall
+              <MoneyFlow
                 rent={r.annualRent / 12}
                 vacancy={r.opex.vacancy / 12}
                 maintenance={r.opex.maintenance / 12}
@@ -1162,8 +1162,9 @@ export function AnalyzerApp() {
               <RateStress
                 rate={inputs.interestRate}
                 breakEvenRate={r.breakEvenRate}
-                cashFlowNow={r.cashFlow}
-                stress={r.stress}
+                loan={r.loan}
+                termYears={inputs.termYears ?? 30}
+                noiMonthly={r.noi / 12}
               />
             </Panel>
             {address && <FutureBurdens address={address} />}
@@ -1191,6 +1192,7 @@ export function AnalyzerApp() {
             <Panel>
               <ProjectionStory
                 data={r.projection.map((y) => ({ year: y.year, paid: inputs.price - y.loanBalance, growth: y.propertyValue - inputs.price, cumulativeCashFlow: y.cumulativeCashFlow }))}
+                downPayment={r.downPayment}
                 holdYears={r.holdYears}
                 totalProfit={r.totalProfit}
                 netSaleProceeds={r.netSaleProceeds}

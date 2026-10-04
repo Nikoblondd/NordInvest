@@ -10,37 +10,34 @@ import { clsx } from "@/lib/clsx";
 
 const starter = tiers.find((t) => t.id === "starter")!;
 const month = () => new Intl.DateTimeFormat("da-DK", { month: "long" }).format(new Date());
+const nextMonth = () => new Intl.DateTimeFormat("da-DK", { month: "long" }).format(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1));
 const plural = (n: number) => (n === 1 ? "analyse" : "analyser");
 
 /**
- * One line under the analysis that says where the visitor stands: how many
- * analyses are left, and the next step when that runs low. Quiet while there
- * is room, specific when there isn't; never shown to unlimited plans.
+ * One line under the analysis that says where the visitor stands. Silent while
+ * free analyses are left, so the first ones are about the product, not the
+ * price; it speaks once, on the last free one. Never shown to unlimited plans.
  */
 export function UsageNudge({ authenticated, used, max, unlimited }: { authenticated: boolean; used: number; max: number; unlimited: boolean }) {
   const left = Math.max(0, max - used);
-  const urgent = left <= 1;
-  const show = !unlimited && max > 0;
+  const free = !authenticated || max <= FREE_LIMIT;
+  const urgent = free ? left === 0 : left <= 1;
+  const show = !unlimited && max > 0 && urgent;
 
   useEffect(() => {
-    if (show && urgent) captureEvent("usage_nudge_shown", { authenticated, left });
-  }, [show, urgent, authenticated, left]);
+    if (show) captureEvent("usage_nudge_shown", { authenticated, left });
+  }, [show, authenticated, left]);
   if (!show) return null;
 
   let text: string;
   let cta: { href: string; label: string; onClick?: () => void } | null = null;
   if (!authenticated) {
-    text = left === 0
-      ? "Det var din sidste analyse uden konto. Med en gratis konto får du " + FREE_LIMIT + " om måneden og kan gemme boligen."
-      : `Du har ${left} ${plural(left)} tilbage uden konto. En gratis konto giver ${FREE_LIMIT} om måneden.`;
+    text = `Det var din sidste analyse uden konto. Med en gratis konto får du ${FREE_LIMIT} om måneden og kan gemme boligen.`;
     cta = { href: "/auth/signup", label: "Opret gratis konto", onClick: () => setReturnPath(window.location.pathname + window.location.search) };
-  } else if (max <= FREE_LIMIT) {
-    text = left === 0
-      ? `Det var din sidste gratis analyse i ${month()}. Starter giver 10 om måneden for ${starter.price} kr.`
-      : `Analyse ${used} af ${max} gratis i ${month()}.`;
-    if (urgent) cta = { href: "/priser?fra=forbrug", label: "Se Starter" };
+  } else if (free) {
+    text = `Det var din sidste gratis analyse i ${month()}. De kommer igen den 1. ${nextMonth()}, eller fortsæt med Starter for ${starter.price} kr. om måneden.`;
+    cta = { href: "/priser?fra=forbrug", label: "Se Starter" };
   } else {
-    if (!urgent) return null;
     text = `${left} ${plural(left)} tilbage i ${month()} på din plan.`;
     cta = { href: "/priser?fra=forbrug", label: "Se større planer" };
   }

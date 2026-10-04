@@ -85,7 +85,7 @@ export function monthlyPayment(loan: number, annualRatePct: number, termYears: n
   return annuity(loan, annualRatePct, termYears);
 }
 
-function annuity(loan: number, annualRatePct: number, termYears: number): number {
+export function annuity(loan: number, annualRatePct: number, termYears: number): number {
   const r = annualRatePct / 100 / 12;
   const n = termYears * 12;
   if (r === 0) return loan / n;

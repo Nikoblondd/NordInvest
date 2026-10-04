@@ -302,3 +302,41 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Range slider used by the rate test and the year scrubber in the analysis.
+   The track is drawn by the element's own background (set inline), so the
+   colours can carry meaning (green until break-even, red after). A 28px thumb
+   with a 44px touch area works on a phone. */
+.ni-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+  touch-action: pan-y;
+  background: #e2e8f0;
+}
+.ni-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #0f172a;
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.35);
+  transition: transform 120ms ease-out;
+}
+.ni-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #0f172a;
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.35);
+}
+.ni-range:active::-webkit-slider-thumb { transform: scale(1.12); }
+.ni-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.35); }
+.ni-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.35); }

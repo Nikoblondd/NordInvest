@@ -1,108 +1,134 @@
 "use client";
 
+import { useState } from "react";
+import { annuity } from "@/lib/analysis";
 import { clsx } from "@/lib/clsx";
 
 const dk = (n: number) => Math.round(n).toLocaleString("da-DK");
 const p1 = (n: number) => n.toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 /**
- * How much rate pain the deal can take. A single gauge: green up to the
- * break-even rate, red beyond it, with a marker at today's rate — the gap
- * between marker and the red zone IS the safety margin, visible at a glance.
+ * How much rate pain the deal can take, as something to try: drag the rate and
+ * the monthly cash flow is recalculated with the same loan, term and running
+ * costs. The track is green up to the break-even rate and red after it, so the
+ * buffer is the distance between today's marker and the colour change.
  */
 export function RateStress({
   rate,
   breakEvenRate,
-  cashFlowNow,
-  stress,
+  loan,
+  termYears,
+  noiMonthly,
 }: {
   rate: number;
   breakEvenRate: number;
-  cashFlowNow: number;
-  stress: { rate: number; cashFlow: number }[];
+  loan: number;
+  termYears: number;
+  noiMonthly: number;
 }) {
+  const [test, setTest] = useState(rate);
   const be = Number.isFinite(breakEvenRate) ? breakEvenRate : rate;
-  const max = Math.max(be, rate + 2, ...stress.map((s) => s.rate)) + 1;
-  const pctOf = (x: number) => Math.max(0, Math.min(100, (x / max) * 100));
-  const at = (x: number) => `${pctOf(x)}%`;
+  const max = Math.max(8, Math.ceil(Math.max(be, rate) + 3));
+  const cf = (r: number) => noiMonthly - annuity(loan, r, termYears);
+  const now = cf(rate);
+  const atTest = cf(test);
+  const diff = atTest - now;
   const headroom = be - rate;
+  const pos = (x: number) => Math.max(0, Math.min(100, (x / max) * 100));
+  const changed = Math.abs(test - rate) > 0.001;
 
-  const rows = [{ rate, cashFlow: cashFlowNow, now: true }, ...stress.map((s) => ({ ...s, now: false }))];
+  const track = `linear-gradient(to right, #10b981 0%, #10b981 ${pos(be)}%, #fb7185 ${pos(be)}%, #fb7185 100%)`;
+  const presets = [0, 1, 2, 3].map((d) => ({ d, r: Math.min(max, rate + d) }));
 
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-        <div>
-          <div className="text-[15px] font-medium text-slate-500">Buffer før du taber penge</div>
+      <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+        <div className="min-w-0">
+          <div className="text-[15px] font-medium text-slate-500">
+            Cash flow ved <span className="font-semibold text-slate-900 tabular-nums">{p1(test)} %</span> rente
+          </div>
           <div
+            aria-live="polite"
             className={clsx(
-              "mt-1 text-[44px] font-semibold leading-none tabular-nums tracking-[-0.035em] sm:text-[56px]",
-              headroom >= 2 ? "text-emerald-600" : headroom >= 0 ? "text-amber-600" : "text-rose-600",
+              "mt-1 whitespace-nowrap text-[44px] font-semibold leading-none tabular-nums tracking-[-0.035em] sm:text-[56px]",
+              atTest >= 0 ? "text-emerald-600" : "text-rose-600",
             )}
           >
-            {headroom >= 0 ? "+" : "−"}
-            {p1(Math.abs(headroom))}
-            <span className="ml-1.5 text-2xl font-medium tracking-normal text-slate-400">%-point</span>
+            {atTest >= 0 ? "+" : "−"}
+            {dk(Math.abs(atTest))}
+            <span className="ml-1.5 text-2xl font-medium tracking-normal text-slate-400">kr/md.</span>
           </div>
+          <p className={clsx("mt-2 h-5 text-[14px] tabular-nums", diff < 0 ? "text-rose-600" : "text-emerald-700")}>
+            {changed && <>{diff < 0 ? "−" : "+"}{dk(Math.abs(diff))} kr om måneden i forhold til i dag</>}
+          </p>
         </div>
-        <p className="max-w-sm text-[15px] leading-relaxed text-slate-500">
-          {headroom >= 0
-            ? `Renten kan stige fra ${p1(rate)} % til ${p1(be)} %, før cash flow bliver negativt.`
-            : `Handlen taber allerede penge ved ${p1(rate)} %. Renten skal ned på ${p1(be)} %, før den går i nul.`}
-        </p>
+        <span
+          className={clsx(
+            "inline-flex items-center rounded-full px-3 py-1.5 text-[14px] font-semibold ring-1 ring-inset",
+            headroom >= 2 ? "bg-emerald-50 text-emerald-800 ring-emerald-200" : headroom >= 0 ? "bg-amber-50 text-amber-900 ring-amber-200" : "bg-rose-50 text-rose-800 ring-rose-200",
+          )}
+        >
+          Buffer {headroom >= 0 ? "+" : "−"}{p1(Math.abs(headroom))} %-point
+        </span>
       </div>
 
-      {/* Gauge: green up to break-even, red beyond. The gap between the two markers is the buffer. */}
-      <div
-        role="img"
-        aria-label={`Din rente ${p1(rate)} %, break-even ved ${p1(be)} %`}
-        className="relative mt-8 pb-8 pt-8"
-      >
-        <div className="relative h-2 overflow-hidden rounded-full bg-rose-200">
-          <div className="absolute inset-y-0 left-0 rounded-full bg-emerald-500" style={{ width: at(be) }} />
+      <div className="relative mt-10">
+        {/* thumb label */}
+        <div className="pointer-events-none absolute -top-8" style={{ left: `calc(${pos(test)}% + ${14 - pos(test) * 0.28}px)` }}>
+          <span className="block -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-900 px-2.5 py-1 text-[12px] font-semibold tabular-nums text-white">
+            Rente {p1(test)} %
+          </span>
         </div>
-        <Marker pct={pctOf(rate)} label={`Din rente ${p1(rate)} %`} top />
-        <Marker pct={pctOf(be)} label={`Break-even ${p1(be)} %`} />
+        <input
+          type="range"
+          className="ni-range"
+          min={0}
+          max={max}
+          step={0.05}
+          value={test}
+          onChange={(e) => setTest(Number(e.target.value))}
+          aria-label="Prøv en anden rente"
+          aria-valuetext={`${p1(test)} procent, cash flow ${dk(atTest)} kroner om måneden`}
+          style={{ background: track }}
+        />
+        {/* today and break-even ticks */}
+        <div aria-hidden className="relative mt-2 h-12 text-[12px]">
+          <Tick at={pos(rate)} label={`I dag ${p1(rate)} %`} />
+          <Tick at={pos(be)} label={`Break-even ${p1(be)} %`} strong low={Math.abs(pos(be) - pos(rate)) < 28} />
+        </div>
       </div>
 
-      <dl className="mt-2 grid grid-cols-3 border-t border-slate-200 pt-5">
-        {rows.map((r, i) => (
-          <div key={r.rate} className={clsx("min-w-0", i > 0 && "border-l border-slate-200 pl-4 sm:pl-6")}>
-            <dt className={clsx("text-[13px] sm:text-sm", r.now ? "font-semibold text-slate-900" : "font-medium text-slate-500")}>
-              {r.now ? "Nu" : "Ved"} {p1(r.rate)}&nbsp;%
-            </dt>
-            <dd
-              className={clsx(
-                "mt-1 whitespace-nowrap text-xl font-semibold tabular-nums tracking-[-0.02em] sm:text-2xl",
-                r.cashFlow >= 0 ? "text-emerald-600" : "text-rose-600",
-              )}
-            >
-              {r.cashFlow >= 0 ? "+" : "−"}
-              {dk(Math.abs(r.cashFlow))}
-              <span className="block text-xs font-medium tracking-normal text-slate-400 sm:ml-1 sm:inline sm:text-sm">kr/md.</span>
-            </dd>
-          </div>
+      <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-200 pt-5">
+        {presets.map(({ d, r }) => (
+          <button
+            key={d}
+            type="button"
+            onClick={() => setTest(r)}
+            aria-pressed={Math.abs(test - r) < 0.001}
+            className={clsx(
+              "min-h-10 rounded-full px-4 text-[14px] font-semibold tabular-nums ring-1 ring-inset transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+              Math.abs(test - r) < 0.001 ? "bg-slate-900 text-white ring-slate-900" : "bg-white text-slate-700 ring-slate-200 hover:bg-slate-50",
+            )}
+          >
+            {d === 0 ? "Renten i dag" : `+${d} %-point`}
+          </button>
         ))}
-      </dl>
+      </div>
+      <p className="mt-4 text-[15px] leading-relaxed text-slate-500">
+        {headroom >= 0
+          ? `Renten kan stige fra ${p1(rate)} % til ${p1(be)} %, før cash flow bliver negativt. Træk i renten for at se, hvad det koster dig.`
+          : `Handlen taber allerede penge ved ${p1(rate)} %. Renten skal ned på ${p1(be)} %, før den går i nul.`}
+      </p>
     </div>
   );
 }
 
-function Marker({ pct, label, top }: { pct: number; label: string; top?: boolean }) {
-  // Keep the label inside the gauge near either edge.
-  const align = pct < 18 ? "translate-x-0" : pct > 82 ? "-translate-x-full" : "-translate-x-1/2";
+function Tick({ at, label, strong, low }: { at: number; label: string; strong?: boolean; low?: boolean }) {
+  const align = at < 15 ? "translate-x-0" : at > 85 ? "-translate-x-full" : "-translate-x-1/2";
   return (
-    <div className="absolute inset-y-0" style={{ left: `${pct}%` }}>
-      <div className="absolute top-6 h-6 -translate-x-1/2 border-l-2 border-slate-900" />
-      <div
-        className={clsx(
-          "absolute whitespace-nowrap rounded-full bg-slate-900 px-2 py-0.5 text-xs font-semibold text-white",
-          align,
-          top ? "top-0" : "bottom-0",
-        )}
-      >
-        {label}
-      </div>
+    <div className="absolute top-0" style={{ left: `${at}%` }}>
+      <div className={clsx("border-l-2", low ? "h-6" : "h-2.5", strong ? "border-slate-900" : "border-slate-400")} />
+      <span className={clsx("absolute block", low ? "top-[26px]" : "top-3", "whitespace-nowrap", align, strong ? "font-semibold text-slate-900" : "text-slate-500")}>{label}</span>
     </div>
   );
 }

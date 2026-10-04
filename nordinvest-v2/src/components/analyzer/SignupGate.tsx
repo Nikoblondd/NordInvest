@@ -14,7 +14,7 @@ const PERKS = [
 ];
 
 /**
- * Shown on the third analysis without an account. The verdict stays visible
+ * Shown on the fourth analysis without an account. The verdict stays visible
  * (the reason to continue); the rest needs a free account, and signup brings
  * the visitor straight back to this analysis.
  */

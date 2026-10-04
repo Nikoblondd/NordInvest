@@ -49,11 +49,12 @@ export function usePlan(): Plan {
 }
 
 /*
- * Analyses without an account. Two are free so the product proves itself;
- * the third asks for a free account (which comes with 3 a month). Counted per
+ * Analyses without an account. Three are free, with no prompts to pay or sign
+ * up while they are used, so the product proves itself first; the fourth asks
+ * for a free account (which comes with 3 a month). Counted per
  * distinct property on this device; a soft wall, not a security boundary.
  */
-export const ANON_FREE = 2;
+export const ANON_FREE = 3;
 const ANON_KEY = "ni_anon_analyses";
 
 export function countAnonAnalysis(sig: string): number {

@@ -116,3 +116,19 @@ export const yearly = (t: Tier) =>
 
 /** The biggest yearly saving among offered plans (for "spar op til …"). */
 export const maxYearlySaving = Math.max(0, ...offeredTiers.map((t) => yearly(t)?.saves ?? 0));
+
+/*
+ * The price in everyday terms: per day, and against a café coffee. A cup in
+ * Copenhagen costs 35 to 45 kr.; 40 kr. is the yardstick. Starter on yearly
+ * billing is 1.290 / 52 = 24,81 kr. a week, so "under a coffee a week".
+ */
+export const COFFEE_KR = 40;
+
+export function everyday(t: Tier, period: Period) {
+  const perYear = period === "year" && t.annualPrice ? t.annualPrice : t.price * 12;
+  const perDay = perYear / 365;
+  const perWeek = perYear / 52;
+  const cups = Math.max(1, Math.ceil(perWeek / COFFEE_KR));
+  const coffee = cups === 1 ? "Mindre end én kop kaffe om ugen" : `Mindre end ${cups} kopper kaffe om ugen`;
+  return { perDay, perWeek, perYear, coffee, perDayLabel: perDay.toLocaleString("da-DK", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) };
+}
