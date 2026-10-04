@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { DealSnapshot, SnapshotDeal, SnapshotInvestment } from "@/lib/deals-snapshot";
 import { DEAL_CITIES } from "@/lib/deal-cities";
@@ -35,24 +34,12 @@ function Score({ score }: { score: number }) {
   );
 }
 
-// Listing photos are full-size originals (often 100 KB+). Hosts that next.config
-// allows go through the image optimizer at thumbnail size; anything else falls
-// back to a plain lazy <img>.
-const OPTIMIZABLE = /(^|\.)(boligsiden|ejendomstorvet|edc|home|danbolig|nybolig|estate)\.dk$/;
-const optimizable = (src: string) => {
-  try {
-    const u = new URL(src);
-    return u.protocol === "https:" && OPTIMIZABLE.test(u.hostname);
-  } catch {
-    return false;
-  }
-};
 
 function Thumb({ src, alt }: { src: string | null; alt: string }) {
   const cls = "h-[54px] w-[72px] shrink-0 rounded-lg object-cover ring-1 ring-slate-200 sm:h-[72px] sm:w-[96px]";
-  if (src && optimizable(src)) {
-    return <Image src={src} alt={alt} width={96} height={72} sizes="(min-width: 640px) 96px, 72px" quality={70} className={cls} />;
-  }
+  // Listing photos are loaded straight from the broker, not through Vercel's
+  // image optimisation: they change daily across 84 kommune pages, and every
+  // new source image is billed, for a 96 px thumbnail.
   return src ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} width={96} height={72} loading="lazy" decoding="async" className={cls} />

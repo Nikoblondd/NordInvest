@@ -36,6 +36,15 @@ const nextConfig = {
     optimizePackageImports: ["lucide-react", "framer-motion", "recharts"],
   },
 
+  // The Deal-motor pages are rendered on the server (fresh market data), which
+  // costs a function run per request. Let Vercel's edge keep each page for an
+  // hour and serve a stale copy while it refreshes, so bots and visitors hit
+  // the cache instead of the function. The data itself only changes every 6 h.
+  async headers() {
+    const edge = [{ key: "Vercel-CDN-Cache-Control", value: "max-age=3600, stale-while-revalidate=86400" }];
+    return ["/deals", "/deals/:by", "/om", "/presse", "/beregn-afkast"].map((source) => ({ source, headers: edge }));
+  },
+
   async redirects() {
     return [
       // --- URL-structure changes (301, preserve link equity) ---
