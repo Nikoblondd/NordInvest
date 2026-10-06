@@ -71,8 +71,13 @@ Imens giver ${pct(ranked[0].share)} % af boligerne til salg i ${ranked[0].name} 
 Se hvor din kommune ligger: ${SITE}/udlejerindeks`,
   };
 
-  const snap = await getDealSnapshot(null, 1).catch(() => null);
-  const d = snap?.top[0];
+  // The engine's #1 is sometimes a listing with a wrong area or price. Only a
+  // deal that looks like a real, lettable home goes into a public post.
+  const snap = await getDealSnapshot(null, 25).catch(() => null);
+  const d = snap?.top.find((x) => {
+    const m2 = x.area ? x.price / x.area : 0;
+    return x.area != null && x.area >= 40 && x.area <= (x.type === "condo" ? 150 : 250) && m2 >= 4000 && x.cashFlow > 0 && x.cashFlow <= 6000;
+  });
   const deal: Post | null = d
     ? {
         title: "Ugens skæve handel",
@@ -83,9 +88,9 @@ En ${TYPE[d.type] ?? "bolig"} i ${d.city} til ${dkn(d.price)} kr.${d.area ? ` ${
 
 Med 20 % udbetaling og 5 % rente giver den efter vores beregning +${dkn(d.cashFlow)} kr. om måneden efter alle udgifter.
 
-Til sammenligning koster en etværelses i ${kbh ? "København" : "de store byer"} typisk det samme som hele huset i udbetaling.
+${kbh ? `Til sammenligning giver ${dkn(kbh.positive)} af ${dkn(kbh.scanned)} boliger til salg i København plus lige nu.
 
-Er det en god handel? Det kommer an på stand, udlejningsmulighed og lokalplan. Det er derfor, vi regner hele analysen igennem, ikke kun overskriften.
+` : ""}Er det en god handel? Det kommer an på stand, udlejningsmulighed og lokalplan. Det er derfor, vi regner hele analysen igennem, ikke kun overskriften.
 
 Deal-motoren finder dem hver 6. time: ${SITE}/deals`,
       }
@@ -155,7 +160,7 @@ export async function GET(req: Request) {
   const ps = await posts(idx, week);
   const text = [
     `Mandagspakken, uge ${week}`,
-    "To opslag, klar til at kopiere. Tallene er fra i morges. Post gerne tirsdag til torsdag mellem kl. 7 og 9, og svar på kommentarerne den første time.",
+    "To opslag, klar til at kopiere. Tallene er fra i dag. Post gerne tirsdag til torsdag mellem kl. 7 og 9, og svar på kommentarerne den første time.",
     ...ps.map((p, i) => `========== OPSLAG ${i + 1}: ${p.title} ==========\n\nBillede (gem og vedhæft): ${p.image}\n\n${p.text}`),
     "NordInvest",
   ].join("\n\n");
