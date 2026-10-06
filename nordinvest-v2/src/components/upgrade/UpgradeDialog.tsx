@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Check, Coffee, FileSpreadsheet, FileText, X } from "lucide-react";
+import { ArrowRight, Bell, Check, Coffee, FileSpreadsheet, FileText, Map as MapIcon, Search, SlidersHorizontal, X } from "lucide-react";
 import { captureEvent } from "@/lib/analytics-events";
 import { everyday, krFmt, tiers, yearly, type Period } from "@/lib/pricing";
 import { PeriodChoice } from "@/components/upgrade/PeriodChoice";
 import { useCheckout } from "@/lib/use-checkout";
 import { clsx } from "@/lib/clsx";
 
-export type UpgradeReason = "report" | "excel";
+export type UpgradeReason = "report" | "excel" | "deals" | "map" | "filters" | "alerts";
 
 const starter = tiers.find((t) => t.id === "starter")!;
 
@@ -23,9 +23,31 @@ const COPY: Record<UpgradeReason, { icon: typeof FileText; title: string; body: 
     title: "Excel-modellen er med i Starter",
     body: "Få hele regnestykket som redigerbart regneark med levende formler, så du selv kan justere leje, rente og drift.",
   },
+  deals: {
+    icon: Search,
+    title: "Se alle handler i Deal-motoren",
+    body: "Med Starter ser du hver eneste bolig, der matcher din søgning, ikke kun de første. Det er dér, de gode handler gemmer sig.",
+  },
+  map: {
+    icon: MapIcon,
+    title: "Kortet er med i Starter",
+    body: "Se alle boliger til salg på kortet med pris, cashflow og score, og find de lommer, hvor lejen kan betale lånet.",
+  },
+  filters: {
+    icon: SlidersHorizontal,
+    title: "Avancerede filtre er med i Starter",
+    body: "Filtrér på minimum cashflow, afkast, score, energimærke, byggeår og gældsdækning, så du kun ser de handler, der passer til din strategi.",
+  },
+  alerts: {
+    icon: Bell,
+    title: "Deal-vagt er med i Starter",
+    body: "Få en mail, så snart en ny bolig matcher din søgning. De bedste handler er ofte væk inden for få dage.",
+  },
 };
 
-const PERKS = ["10 analyser om måneden", "Bankrapport til dit bankmøde", "Redigerbar Excel-model", "Opsig med ét klik, og behold adgangen perioden ud"];
+const DEAL_REASONS: UpgradeReason[] = ["deals", "map", "filters", "alerts"];
+const PERKS_DEALS = ["Hele Deal-motoren: alle handler, kort og filtre", "Deal-vagt: mail om nye handler", "10 analyser om måneden med bankrapport og Excel", "Opsig med ét klik, og behold adgangen perioden ud"];
+const PERKS_REPORT = ["10 analyser om måneden", "Bankrapport til dit bankmøde", "Redigerbar Excel-model", "Hele Deal-motoren med kort, filtre og Deal-vagt", "Opsig med ét klik, og behold adgangen perioden ud"];
 
 /**
  * Shown when someone on the free plan (or without an account) reaches for a
@@ -84,7 +106,7 @@ export function UpgradeDialog({ reason, onClose }: { reason: UpgradeReason | nul
         <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{c.body}</p>
 
         <ul className="mt-5 space-y-2 text-[15px] text-slate-700">
-          {PERKS.map((p) => (
+          {(DEAL_REASONS.includes(reason) ? PERKS_DEALS : PERKS_REPORT).map((p) => (
             <li key={p} className="flex items-start gap-2.5">
               <Check aria-hidden size={17} strokeWidth={2.4} className="mt-0.5 shrink-0 text-emerald-600" />
               {p}

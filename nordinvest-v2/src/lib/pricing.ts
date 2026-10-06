@@ -37,7 +37,7 @@ export const tiers: Tier[] = [
     price: 0,
     blurb: "Se om den bolig, du kigger på, er en god handel.",
     cta: { label: "Opret gratis", href: "/auth/signup" },
-    features: ["3 analyser om måneden", "Hele analysen: score, cashflow og risici", "Deal-motoren uden grænse", "Gem boliger og prisvagt"],
+    features: ["3 analyser om måneden", "Hele analysen: score, cashflow og risici", "Deal-motoren: top 10 i hver søgning", "Gem boliger"],
   },
   {
     id: "starter",
@@ -50,7 +50,7 @@ export const tiers: Tier[] = [
     cta: { label: "Køb Starter", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_STARTER",
     stripeLink: "https://buy.stripe.com/6oU7sN8Rigm47Dkdxmbwk00",
-    features: ["10 analyser om måneden", "Bankrapport til dit bankmøde", "Redigerbar Excel-model", "Alt fra Gratis"],
+    features: ["Hele Deal-motoren: alle handler, kort og filtre", "Deal-vagt: mail om nye handler", "10 analyser om måneden", "Bankrapport og redigerbar Excel-model"],
   },
   {
     id: "plus",
@@ -84,7 +84,7 @@ export const tiers: Tier[] = [
     cta: { label: "Køb Ubegrænset", href: "/priser" },
     stripePriceEnv: "STRIPE_PRICE_UNLIMITED",
     stripeLink: "https://buy.stripe.com/6oU14p1oQ8TC8Ho8d2bwk01",
-    features: ["Ubegrænsede analyser", "Bankrapport og Excel", "Prioriteret support"],
+    features: ["Ubegrænsede analyser", "Bankrapport og Excel", "Prioriteret support", "Alt fra Starter"],
   },
 ];
 

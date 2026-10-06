@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Loader2, Search, TrendingUp, MapPin, Sparkles, ArrowUpRight, Info, Home, Building2, Bell, Check, SlidersHorizontal, ChevronDown, X, Map as MapIcon, LayoutGrid } from "lucide-react";
+import { Loader2, Search, TrendingUp, MapPin, Sparkles, ArrowUpRight, Info, Home, Building2, Bell, Check, SlidersHorizontal, ChevronDown, X, Map as MapIcon, LayoutGrid, Lock } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { num, kr } from "@/lib/analysis";
 import type { AnalyzedDeal, InvestmentDeal } from "@/lib/deals";
@@ -12,6 +12,10 @@ import { MUNICIPALITIES } from "@/lib/kommuner";
 import { captureEvent } from "@/lib/analytics-events";
 import { NumberInput } from "@/components/ui/NumberInput";
 import type { MapPoint } from "./DealMap";
+import { LockedDeals } from "./LockedDeals";
+import { UpgradeDialog, type UpgradeReason } from "@/components/upgrade/UpgradeDialog";
+import { usePlan } from "@/lib/plan";
+import type { DealAccess, LockedSummary } from "@/lib/deal-tiers";
 
 // Leaflet touches `window`, so the map is client-only (no SSR).
 const DealMap = dynamic(() => import("./DealMap"), {
@@ -162,7 +166,18 @@ const SUBCATS = ["Boligudlejning", "Kontor", "Detailhandel & butik", "Lager & pr
 const ENERGY_LEVELS = ["A", "B", "C", "D", "E", "F", "G"];
 
 // A compact labelled input for the advanced-filter grid.
-function Adv({ label, children }: { label: string; children: React.ReactNode }) {
+function Adv({ label, children, locked, onLocked }: { label: string; children: React.ReactNode; locked?: boolean; onLocked?: () => void }) {
+  if (locked) {
+    // Paid filter: visible so people know it exists, opens the upgrade prompt.
+    return (
+      <button type="button" onClick={onLocked} className="block text-left">
+        <span className="flex items-center gap-1 text-xs font-medium text-slate-500">
+          {label} <Lock aria-hidden size={11} strokeWidth={2} className="text-slate-400" />
+        </span>
+        <span className="mt-1 flex w-full items-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-400">Starter</span>
+      </button>
+    );
+  }
   return (
     <label className="block">
       <span className="text-xs font-medium text-slate-500">{label}</span>
@@ -344,6 +359,11 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   const [mapState, setMapState] = useState<{ status: "idle" | "loading" | "done" | "error"; points: MapPoint[] }>({ status: "idle", points: [] });
   type Criteria = { market: string; cities: string[]; type: string; sort: string; priceMax: number | "" };
   const [criteria, setCriteria] = useState<Criteria | null>(null);
+  const plan = usePlan();
+  const [access, setAccess] = useState<DealAccess | null>(null);
+  const paid = access === "paid" || (plan.loaded && plan.paid);
+  const [locked, setLocked] = useState<LockedSummary>(null);
+  const [upgrade, setUpgrade] = useState<UpgradeReason | null>(null);
   const [advOpen, setAdvOpen] = useState(false);
   const [adv, setAdv] = useState<Record<string, string>>({
     priceMin: "", areaMin: "", minYield: "", minCashflow: "", minScore: "",
@@ -355,6 +375,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   // Save the current criteria as a standing search — the "Vagt på søgning" cron
   // then emails the user when a NEW listing matches.
   const saveSearch = async () => {
+    if (!paid) { setUpgrade("alerts"); return; }
     const { loadSupabase } = await import("@/lib/supabase/lazy");
     const supabase = await loadSupabase();
     const toSignup = async () => {
@@ -396,6 +417,8 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   // the map shows exactly the same filtered set as the list.
   const buildParams = (c: Criteria): URLSearchParams => {
     const q = new URLSearchParams({ market: c.market, municipality: c.cities.join(","), type: c.type, sort: c.sort, strategy });
+    // A paid plan lists up to 100 (larger requests are map requests).
+    if (paid) q.set("limit", "100");
     // No kommune selected = search the whole country.
     if (c.cities.length === 0) q.set("all", "1");
     if (c.priceMax) q.set("priceMax", String(c.priceMax));
@@ -427,7 +450,12 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
       const res = await fetch(`/api/deals/search?${buildParams(c).toString()}`);
       const data = await res.json();
       if (!data.ok) { setErr("Kunne ikke søge lige nu. Prøv igen."); setDeals([]); }
-      else { setDeals(data.deals); setMeta({ scanned: data.scanned, rentFactor: data.rentFactor ?? 1 }); }
+      else {
+        setDeals(data.deals);
+        setMeta({ scanned: data.scanned, rentFactor: data.rentFactor ?? 1 });
+        setAccess(data.access ?? null);
+        setLocked(data.locked ?? null);
+      }
     } catch {
       setErr("Netværksfejl. Prøv igen.");
       setDeals([]);
@@ -479,6 +507,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   };
 
   const openMap = () => {
+    if (!paid) { setUpgrade("map"); return; }
     setResultView("kort");
     if (mapState.status === "loading" || mapState.status === "done") return;
     if (criteria) loadMap(criteria);
@@ -487,6 +516,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
 
   // Standalone "open the whole-market map" entry — works without a search.
   const openNationwideMap = () => {
+    if (!paid) { setUpgrade("map"); return; }
     setCriteria(null);
     setResultView("kort");
     setMapState({ status: "idle", points: [] });
@@ -599,17 +629,17 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
             <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
               <Adv label="Min. pris (kr)"><NumberInput value={adv.priceMin} decimals={0} onValueChange={(n) => setA("priceMin", n == null ? "" : String(n))} placeholder="0" className={advInput} /></Adv>
               <Adv label="Min. areal (m²)"><NumberInput value={adv.areaMin} decimals={0} onValueChange={(n) => setA("areaMin", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
-              <Adv label="Min. afkast (%)"><NumberInput value={adv.minYield} decimals={1} onValueChange={(n) => setA("minYield", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
-              <Adv label="Min. cashflow (kr/md.)"><NumberInput value={adv.minCashflow} decimals={0} onValueChange={(n) => setA("minCashflow", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
-              <Adv label="Min. score"><NumberInput value={adv.minScore} decimals={0} group={false} onValueChange={(n) => setA("minScore", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+              <Adv label="Min. afkast (%)" locked={!paid} onLocked={() => setUpgrade("filters")}><NumberInput value={adv.minYield} decimals={1} onValueChange={(n) => setA("minYield", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+              <Adv label="Min. cashflow (kr/md.)" locked={!paid} onLocked={() => setUpgrade("filters")}><NumberInput value={adv.minCashflow} decimals={0} onValueChange={(n) => setA("minCashflow", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+              <Adv label="Min. score" locked={!paid} onLocked={() => setUpgrade("filters")}><NumberInput value={adv.minScore} decimals={0} group={false} onValueChange={(n) => setA("minScore", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
               <Adv label="Udbetaling (%)"><NumberInput value={adv.downPayment} decimals={1} onValueChange={(n) => setA("downPayment", n == null ? "" : String(n))} placeholder={market === "investering" ? "30" : "20"} className={advInput} /></Adv>
               <Adv label="Rente (%)"><NumberInput value={adv.interest} decimals={2} onValueChange={(n) => setA("interest", n == null ? "" : String(n))} placeholder="5" className={advInput} /></Adv>
 
               {market === "bolig" ? (
                 <>
-                  <Adv label="Min. værelser"><NumberInput value={adv.roomsMin} decimals={0} group={false} onValueChange={(n) => setA("roomsMin", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
-                  <Adv label="Byggeår fra"><NumberInput value={adv.yearFrom} decimals={0} group={false} onValueChange={(n) => setA("yearFrom", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
-                  <Adv label="Energimærke mindst">
+                  <Adv label="Min. værelser" locked={!paid} onLocked={() => setUpgrade("filters")}><NumberInput value={adv.roomsMin} decimals={0} group={false} onValueChange={(n) => setA("roomsMin", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+                  <Adv label="Byggeår fra" locked={!paid} onLocked={() => setUpgrade("filters")}><NumberInput value={adv.yearFrom} decimals={0} group={false} onValueChange={(n) => setA("yearFrom", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+                  <Adv label="Energimærke mindst" locked={!paid} onLocked={() => setUpgrade("filters")}>
                     <select value={adv.energy.split(",").pop() || ""} onChange={(e) => setA("energy", e.target.value ? ENERGY_LEVELS.slice(0, ENERGY_LEVELS.indexOf(e.target.value) + 1).join(",") : "")} className={advInput}>
                       <option value="">Alle</option>
                       {ENERGY_LEVELS.map((l) => <option key={l} value={l}>{l} eller bedre</option>)}
@@ -618,8 +648,8 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
                 </>
               ) : (
                 <>
-                  <Adv label="Min. gældsdækning (DSCR)"><NumberInput value={adv.minDscr} decimals={2} onValueChange={(n) => setA("minDscr", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
-                  <Adv label="Ejendomstype">
+                  <Adv label="Min. gældsdækning (DSCR)" locked={!paid} onLocked={() => setUpgrade("filters")}><NumberInput value={adv.minDscr} decimals={2} onValueChange={(n) => setA("minDscr", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
+                  <Adv label="Ejendomstype" locked={!paid} onLocked={() => setUpgrade("filters")}>
                     <select value={adv.subcat} onChange={(e) => setA("subcat", e.target.value)} className={advInput}>
                       <option value="">Alle typer</option>
                       {SUBCATS.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -670,7 +700,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
                   <>
                     <TrendingUp size={16} className="shrink-0 text-emerald-500" />
                     <span className="truncate">
-                      {deals?.length ?? 0} bedste handler
+                      {(deals?.length ?? 0) + (locked?.count ?? 0)} bedste handler
                       {meta && <span className="font-normal text-slate-400"> · {meta.scanned} boliger scannet</span>}
                     </span>
                   </>
@@ -717,6 +747,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
                 {market === "investering"
                   ? (deals as InvestmentDeal[]).map((d) => <InvestmentCard key={d.id} d={d} dp={effDp} ir={effIr} />)
                   : (deals as AnalyzedDeal[]).map((d) => <DealCard key={d.id} d={d} dp={effDp} ir={effIr} />)}
+                {locked && access && access !== "paid" && <LockedDeals locked={locked} access={access} onUpgrade={() => setUpgrade("deals")} />}
               </div>
             ) : mapState.status === "loading" ? (
               <div className="flex h-[600px] items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-400">
@@ -754,6 +785,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
           </div>
         )}
       </div>
+      <UpgradeDialog reason={upgrade} onClose={() => setUpgrade(null)} />
     </div>
   );
 }

@@ -68,7 +68,7 @@ export function CancelFlow({ tier }: { tier: string }) {
     if (reason === "price" && tier === "pro")
       return { text: "Starter koster 129 kr./md. og har 10 analyser om måneden, bankrapport og Excel. Det er nok for de fleste, der leder efter én bolig.", action: { label: "Skift til Starter i stedet", run: downgrade } };
     if (reason === "price" || reason === "usage")
-      return { text: "Opsiger du, beholder du din gratis konto: 3 analyser om måneden, Deal-motoren, dine gemte boliger og prisvagter. Du kan altid opgradere igen, når du er på jagt." };
+      return { text: "Opsiger du, beholder du din gratis konto: 3 analyser om måneden, Deal-motorens top 10, dine gemte boliger og prisvagter. Du kan altid opgradere igen, når du er på jagt." };
     if (reason === "done")
       return { text: "Tillykke, hvis du har købt. Dine gemte boliger og prisvagter bliver på din gratis konto, så du har tallene, næste gang du leder." };
     if (reason === "numbers")

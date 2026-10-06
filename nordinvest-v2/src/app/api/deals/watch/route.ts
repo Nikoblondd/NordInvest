@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { sendEmail, savedSearchEmail } from "@/lib/email";
+import { effectiveLimit } from "@/lib/access";
+import { limits } from "@/lib/pricing";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -61,7 +63,8 @@ export async function GET(req: Request) {
     if (s.price_max) q.set("priceMax", String(s.price_max));
     q.set("sort", s.sort ?? "score");
 
-    const data = await fetch(`${SITE}/api/deals/search?${q.toString()}`, { cache: "no-store" })
+    // Our own secret gets the full, unlocked result.
+    const data = await fetch(`${SITE}/api/deals/search?${q.toString()}`, { cache: "no-store", headers: { Authorization: `Bearer ${process.env.CRON_SECRET ?? ""}` } })
       .then((r) => r.json())
       .catch(() => null);
 
@@ -84,9 +87,11 @@ export async function GET(req: Request) {
       patch.last_match = { address: top.address ?? top.road ?? "", price: top.price, score: top.score };
 
       // Email the owner about the new matches.
-      const prof = await fetch(`${base}/rest/v1/profiles?id=eq.${s.user_id}&select=email,full_name`, { headers, cache: "no-store" })
+      const prof = await fetch(`${base}/rest/v1/profiles?id=eq.${s.user_id}&select=email,full_name,subscription_tier`, { headers, cache: "no-store" })
         .then((r) => r.json()).catch(() => []);
-      const email = Array.isArray(prof) && prof[0]?.email ? prof[0].email : null;
+      // Deal-vagt is a paid feature: only paying customers (and admins) get the email.
+      const paid = Array.isArray(prof) && prof[0] && effectiveLimit(prof[0].subscription_tier, prof[0].email) > limits.free;
+      const email = paid && prof[0]?.email ? prof[0].email : null;
       if (email && s.label) {
         const { subject, html } = savedSearchEmail({
           name: prof[0]?.full_name ?? null,

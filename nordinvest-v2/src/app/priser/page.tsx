@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 const faq = [
   {
     q: "Hvad får jeg med en betalt plan?",
-    a: "Flere analyser om måneden, bankrapporten til dit møde om finansieringen og den redigerbare Excel-model. Gratis-planen giver adgang til hele analysen, Deal-motoren, gemte boliger og prisvagt.",
+    a: "Flere analyser om måneden, bankrapporten til dit møde om finansieringen, den redigerbare Excel-model og hele Deal-motoren: alle handler, kortet, de avancerede filtre og Deal-vagt. Gratis-planen giver adgang til hele analysen, de 10 bedste handler i hver Deal-motor-søgning og gemte boliger.",
   },
   {
     q: "Hvordan virker årlig betaling?",

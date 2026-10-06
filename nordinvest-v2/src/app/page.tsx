@@ -25,7 +25,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Er NordInvest gratis?",
-    a: "Du kan prøve 2 analyser uden konto og få 3 om måneden med en gratis konto. Deal-motoren, gemte boliger og prisvagt er gratis. Betalte planer fra 129 kr./md. giver flere analyser, bankrapport og en redigerbar Excel-model.",
+    a: "Du kan prøve 3 analyser uden konto og få 3 om måneden med en gratis konto, og Deal-motoren viser de bedste handler i hver søgning gratis. Betalte planer fra 129 kr./md. giver flere analyser, bankrapport, en redigerbar Excel-model og hele Deal-motoren med kort, filtre og Deal-vagt.",
   },
   {
     q: "Hvilke nøgletal beregner værktøjet?",

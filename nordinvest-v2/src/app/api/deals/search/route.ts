@@ -5,6 +5,8 @@ import { readBoligDeals, readInvestmentDeals } from "@/lib/portals/marketdb";
 import { zipToMunicipality } from "@/lib/kommuner";
 import { analyzeDeal, sortDeals, analyzeInvestment, sortInvestments, type AnalyzedDeal, type InvestmentDeal, type DealSort } from "@/lib/deals";
 import type { Strategy } from "@/lib/analysis";
+import { dealAccess } from "@/lib/deal-access";
+import { DEAL_ROWS, MAP_LIMIT, type DealAccess } from "@/lib/deal-tiers";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -46,6 +48,14 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, error: "missing_area", deals: [] }, { status: 200 });
   }
 
+  // The engine is the paid product: without a paid plan a search shows its top
+  // rows only, the advanced filters are ignored and the map is closed.
+  const access = await dealAccess(req);
+  const paid = access === "paid";
+  if (!paid && num(p.get("limit"), 36) > MAP_LIMIT) {
+    return NextResponse.json({ ok: false, error: "locked", lock: "map", access, deals: [] }, { status: 200 });
+  }
+
   const market = p.get("market") || "bolig";
   const strategy = (p.get("strategy") as Strategy) || "cashflow";
   const sort = (p.get("sort") as DealSort) || "score";
@@ -53,6 +63,9 @@ export async function GET(req: Request) {
   const interestRate = num(p.get("interestRate"), 5);
   // Default 36 for the list; the map view requests many more (with coordinates).
   const limit = Math.min(4000, num(p.get("limit"), 36));
+  // Score the whole area, not just the newest rows, so "best" means best;
+  // `limit` only caps how many come back.
+  const pool = Math.max(limit, nationwide && municipalities.length === 0 ? 4000 : 1500);
   const typeParam = p.get("type") || "condo";
   // `type=all` (used by the nationwide map) means every residential type.
   const type = typeParam === "all" ? undefined : typeParam;
@@ -71,6 +84,11 @@ export async function GET(req: Request) {
     minDscr: opt(p.get("minDscr")),
     subcat: p.get("subcat") || undefined,
   };
+  if (!paid) {
+    f.minYield = f.minCashflow = f.minScore = f.minDscr = f.roomsMin = f.yearFrom = undefined;
+    f.energy = undefined;
+    f.subcat = undefined;
+  }
 
   const passCommon = (d: { price: number; area: number | null; capRate: number; cashFlow: number; score: number }) => {
     if (f.priceMin != null && d.price < f.priceMin) return false;
@@ -87,7 +105,7 @@ export async function GET(req: Request) {
     // Provinces spanned by the selected kommuner (for the coarse live fallback).
     const provinces = Array.from(new Set(municipalities.map((m) => CITY_PROVINCE[m]).filter(Boolean)));
     // Prefer the agent's fresh, deduped dataset — filtered to the EXACT kommuner.
-    let listings = await readInvestmentDeals({ municipalities, limit });
+    let listings = await readInvestmentDeals({ municipalities, limit: pool });
     let servedFrom = "agent";
     if (!listings || listings.length === 0) {
       // Live fallback: Ejendomstorvet's own area params are coarse, so fetch each
@@ -105,10 +123,10 @@ export async function GET(req: Request) {
       .filter((d) => passCommon(d))
       .filter((d) => (f.minDscr == null || d.dscr >= f.minDscr))
       .filter((d) => (!f.subcat || d.subcategory === f.subcat));
-    const ranked = sortInvestments(analyzed, sort).slice(0, limit);
+    const g = gate(sortInvestments(analyzed, sort), access, limit);
     return NextResponse.json({
-      ok: true, market, servedFrom, count: ranked.length, scanned: listings.length,
-      assumptions: { downPaymentPct, interestRate, strategy }, deals: ranked,
+      ok: true, market, servedFrom, count: g.deals.length, scanned: listings.length,
+      assumptions: { downPaymentPct, interestRate, strategy }, access, locked: g.locked, deals: g.deals,
     });
   }
 
@@ -122,7 +140,7 @@ export async function GET(req: Request) {
   }
 
   // Prefer the agent's fresh, deduped dataset; fall back to a live fetch.
-  let listings = await readBoligDeals({ municipalities, zip, type, limit });
+  let listings = await readBoligDeals({ municipalities, zip, type, limit: pool });
   let servedFrom = "agent";
   if (!listings || listings.length === 0) {
     // Boligsiden's `municipalities` param takes ONE slug, so fetch each selected
@@ -151,10 +169,23 @@ export async function GET(req: Request) {
     .filter((d) => (f.yearFrom == null || (d.yearBuilt != null && d.yearBuilt >= f.yearFrom)))
     .filter((d) => (!f.energy || (d.energyLabel != null && f.energy.has(d.energyLabel))));
 
-  const ranked = sortDeals(analyzed, sort).slice(0, limit);
+  const g = gate(sortDeals(analyzed, sort), access, limit);
 
   return NextResponse.json({
-    ok: true, market: "bolig", servedFrom, count: ranked.length, scanned: listings.length, rentFactor,
-    assumptions: { downPaymentPct, interestRate, strategy }, deals: ranked,
+    ok: true, market: "bolig", servedFrom, count: g.deals.length, scanned: listings.length, rentFactor,
+    assumptions: { downPaymentPct, interestRate, strategy }, access, locked: g.locked, deals: g.deals,
   });
+}
+
+// Only the visible rows leave the server; the rest are summed up so the UI can
+// say what is behind the lock without giving the deals away.
+function gate<T extends { cashFlow: number }>(ranked: T[], access: DealAccess, limit: number) {
+  const cap = Math.min(limit, DEAL_ROWS[access]);
+  const hidden = access === "paid" ? [] : ranked.slice(cap);
+  return {
+    deals: ranked.slice(0, cap),
+    locked: hidden.length
+      ? { count: hidden.length, positive: hidden.filter((d) => d.cashFlow > 0).length, bestCashflow: Math.max(...hidden.map((d) => d.cashFlow)) }
+      : null,
+  };
 }

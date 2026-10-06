@@ -24,7 +24,7 @@ export const maxDuration = 60;
 
 const TITLE = "Deal-motor: find de bedste investeringsboliger";
 const DESCRIPTION =
-  "Deal-motoren scanner hele det danske boligmarked og rangerer boliger og erhvervsejendomme efter cashflow, afkast og score. Gratis og opdateret løbende.";
+  "Deal-motoren scanner hele det danske boligmarked og rangerer boliger og erhvervsejendomme efter cashflow, afkast og score. Se de bedste handler gratis, opdateret hver 6. time.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -38,7 +38,7 @@ export default async function DealsPage() {
   const faq = [
     {
       q: "Hvad er NordInvests Deal-motor?",
-      a: "Deal-motoren er et gratis søgeværktøj, der gennemgår helårsboliger og erhvervsejendomme til salg i hele Danmark og regner hver enkelt igennem som investering. Den anslår markedslejen, trækker finansiering og driftsudgifter fra og giver hver bolig en score fra 0 til 100. Du kan filtrere på kommune, boligtype, pris og afkast og åbne en fuld analyse af enhver bolig med ét klik.",
+      a: "Deal-motoren er et søgeværktøj, der gennemgår helårsboliger og erhvervsejendomme til salg i hele Danmark og regner hver enkelt igennem som investering. Den anslår markedslejen, trækker finansiering og driftsudgifter fra og giver hver bolig en score fra 0 til 100. Du kan filtrere på kommune, boligtype, pris og afkast og åbne en fuld analyse af enhver bolig med ét klik.",
     },
     {
       q: "Hvordan beregner Deal-motoren cashflow?",
@@ -60,7 +60,7 @@ export default async function DealsPage() {
     },
     {
       q: "Koster Deal-motoren noget?",
-      a: "Nej. Søgning, filtre, kort og rangering er gratis og kræver ikke konto. Med en konto kan du oprette en prisvagt, der giver besked, når en ny bolig matcher din søgning.",
+      a: "Du kan prøve den gratis: uden konto ser du de 3 bedste handler i hver søgning, og med en gratis konto de 10 bedste. Med Starter (fra 129 kr./md.) ser du alle handler og får kortet, de avancerede filtre og Deal-vagt, der mailer dig, når en ny handel dukker op.",
     },
   ];
   const jsonLd = dealsJsonLd({
