@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { PITCH_FROM, PITCH_REPLY_TO, REPORT_FROM, REPORT_TO, dkDay, dkTime, pitchesOn } from "@/lib/outreach/schedule";
 
 /*
- * Press outreach, week 41. A Vercel cron calls this at 08:00 Danish time,
- * Monday to Friday; it queues that day's pitches in Resend, each at its own
+ * Press outreach. A Vercel cron calls this at 08:00 Danish time every
+ * weekday; it queues that day's pitches in Resend, each at its own
  * time between 09:00 and 11:00, from Nikolaj's address with replies to the
- * shared inbox. One mail per news desk, plain text, no tracking. Idempotency
+ * shared inbox. One mail per journalist or desk, plain text, no tracking. Idempotency
  * keys mean a repeated call can never send a pitch twice. On days without
  * pitches it does nothing.
  */
@@ -27,15 +27,25 @@ export async function GET(req: Request) {
   if (!key) return NextResponse.json({ ok: false, error: "resend_not_configured" }, { status: 500 });
 
   const results: { id: string; to: string; at: string; ok: boolean; info: string }[] = [];
+  // Resend allows 10 requests a second; pause between calls and retry once on 429.
+  const send = async (p: (typeof todays)[number], future: boolean) => {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Idempotency-Key": `press-${p.id}-${day}` },
+        body: JSON.stringify({ from: PITCH_FROM, to: [p.to], reply_to: PITCH_REPLY_TO, subject: p.subject, text: p.text, ...(future ? { scheduled_at: p.sendAt } : {}) }),
+      }).catch((e: Error) => ({ ok: false, status: 0, json: async () => ({ message: e.message }) }) as Response);
+      if (res.status !== 429) return res;
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+    return { ok: false, json: async () => ({ message: "rate limited three times" }) } as Response;
+  };
   for (const p of todays) {
     const future = new Date(p.sendAt).getTime() > now.getTime() + 60_000;
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Idempotency-Key": `press-${p.id}-${day}` },
-      body: JSON.stringify({ from: PITCH_FROM, to: [p.to], reply_to: PITCH_REPLY_TO, subject: p.subject, text: p.text, ...(future ? { scheduled_at: p.sendAt } : {}) }),
-    }).catch((e: Error) => ({ ok: false, json: async () => ({ message: e.message }) }) as Response);
+    const res = await send(p, future);
     const data = await res.json().catch(() => ({}));
     results.push({ id: p.id, to: p.to, at: future ? p.sendAt : now.toISOString(), ok: res.ok, info: res.ok ? data?.id ?? "queued" : data?.message ?? "failed" });
+    await new Promise((r) => setTimeout(r, 250));
   }
 
   const lines = results.map((r) => `${r.ok ? "OK  " : "FEJL"}  ${dkTime(r.at)}  ${r.to}${r.ok ? "" : `  (${r.info})`}`).join("\n");

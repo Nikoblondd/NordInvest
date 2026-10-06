@@ -89,7 +89,7 @@ export async function GET(req: Request) {
     `I MORGEN (${next.length})`,
     next.length ? next.join("\n") : "Ingen planlagt.",
     "",
-    `Sendt i alt i ugen: ${doneTotal} af ${PITCHES.length}.`,
+    `Sendt i alt i pressekampagnen: ${doneTotal} af ${PITCHES.length} (sidste udsendelse ${dkDay(new Date(PITCHES[PITCHES.length - 1].sendAt))}).`,
     "Svar fra journalister lander i contact@nordinvest.io. Den indbakke kan jeg ikke se, så tjek den, og svar hurtigt.",
     "",
     "NordInvest",
