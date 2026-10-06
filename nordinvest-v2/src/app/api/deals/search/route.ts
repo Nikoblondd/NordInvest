@@ -3,7 +3,7 @@ import { searchBoligsiden } from "@/lib/portals/boligsiden";
 import { searchEjendomstorvet } from "@/lib/portals/ejendomstorvet";
 import { readBoligDeals, readInvestmentDeals } from "@/lib/portals/marketdb";
 import { zipToMunicipality } from "@/lib/kommuner";
-import { analyzeDeal, sortDeals, analyzeInvestment, sortInvestments, type AnalyzedDeal, type InvestmentDeal, type DealSort } from "@/lib/deals";
+import { analyzeDeal, isPlausible, sortDeals, analyzeInvestment, sortInvestments, type AnalyzedDeal, type InvestmentDeal, type DealSort } from "@/lib/deals";
 import type { Strategy } from "@/lib/analysis";
 import { dealAccess } from "@/lib/deal-access";
 import { DEAL_ROWS, MAP_LIMIT, type DealAccess } from "@/lib/deal-tiers";
@@ -169,7 +169,11 @@ export async function GET(req: Request) {
     .filter((d) => (f.yearFrom == null || (d.yearBuilt != null && d.yearBuilt >= f.yearFrom)))
     .filter((d) => (!f.energy || (d.energyLabel != null && f.energy.has(d.energyLabel))));
 
-  const g = gate(sortDeals(analyzed, sort), access, limit);
+  // Implausible listings (wrong area or price in the ad) are kept so nobody
+  // loses a listing, but flagged and sorted after every plausible one.
+  const flagged = analyzed.map((d) => (isPlausible(d) ? d : { ...d, suspect: true }));
+  const ranked = [...sortDeals(flagged.filter((d) => !d.suspect), sort), ...sortDeals(flagged.filter((d) => d.suspect), sort)];
+  const g = gate(ranked, access, limit);
 
   return NextResponse.json({
     ok: true, market: "bolig", servedFrom, count: g.deals.length, scanned: listings.length, rentFactor,

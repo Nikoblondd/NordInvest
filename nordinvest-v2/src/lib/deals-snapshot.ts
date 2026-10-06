@@ -2,7 +2,7 @@ import { unstable_cache } from "next/cache";
 import { readBoligDeals, readInvestmentDeals } from "@/lib/portals/marketdb";
 import { searchBoligsiden } from "@/lib/portals/boligsiden";
 import { searchEjendomstorvet } from "@/lib/portals/ejendomstorvet";
-import { analyzeDeal, analyzeInvestment, sortDeals, sortInvestments, type AnalyzedDeal, type InvestmentDeal } from "@/lib/deals";
+import { analyzeDeal, analyzeInvestment, plausibilityIssue, sortDeals, sortInvestments, type AnalyzedDeal, type InvestmentDeal } from "@/lib/deals";
 import { dealHref, investHref } from "@/lib/deal-links";
 import { zipToMunicipality } from "@/lib/kommuner";
 
@@ -115,6 +115,20 @@ async function readHomes(municipality: string | null) {
   return searchBoligsiden({ addressTypes: "condo", municipalities: municipality ?? undefined }).catch(() => []);
 }
 
+function logPlausibility(municipality: string | null, all: AnalyzedDeal[], kept: number) {
+  const removed = all.length - kept;
+  const byRule: Record<string, number> = {};
+  for (const d of all) {
+    const rule = plausibilityIssue(d);
+    if (rule) byRule[rule] = (byRule[rule] ?? 0) + 1;
+  }
+  console.info(
+    `[deal-snapshot] ${municipality ?? "national"}: plausibility filter ${all.length} -> ${kept}` +
+      ` (removed ${removed}, ${all.length ? ((removed / all.length) * 100).toFixed(1) : "0"} %)`,
+    byRule,
+  );
+}
+
 async function build(municipality: string | null, topN: number): Promise<DealSnapshot | null> {
   try {
     const homes = await readHomes(municipality);
@@ -124,7 +138,11 @@ async function build(municipality: string | null, topN: number): Promise<DealSna
       invest = municipality ? live.filter((l) => zipToMunicipality(l.zip) === municipality) : live;
     }
 
-    const analyzed = homes.map((l) => analyzeDeal(l, BOLIG)).filter((d): d is AnalyzedDeal => d !== null);
+    const all = homes.map((l) => analyzeDeal(l, BOLIG)).filter((d): d is AnalyzedDeal => d !== null);
+    // Drop listings whose area or price can't be real before anything is
+    // counted or ranked, so a typo in an ad never becomes the #1 deal.
+    const analyzed = all.filter((d) => plausibilityIssue(d) === null);
+    logPlausibility(municipality, all, analyzed.length);
     if (analyzed.length === 0) return null;
     // Nationally there are always enough homes with a monthly surplus to fill
     // the list; in a single kommune there may be none, so rank by score and let
@@ -152,4 +170,4 @@ async function build(municipality: string | null, topN: number): Promise<DealSna
   }
 }
 
-export const getDealSnapshot = unstable_cache(build, ["deal-snapshot-v3"], { revalidate: 21600 });
+export const getDealSnapshot = unstable_cache(build, ["deal-snapshot-v4"], { revalidate: 21600 });

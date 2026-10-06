@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { readBoligDeals } from "@/lib/portals/marketdb";
-import { analyzeDeal, sortDeals, type AnalyzedDeal } from "@/lib/deals";
+import { analyzeDeal, isPlausible, sortDeals, type AnalyzedDeal } from "@/lib/deals";
 import { dealHref } from "@/lib/deal-links";
 import { MUNICIPALITIES, zipToMunicipality } from "@/lib/kommuner";
 import { ALL_DEAL_CITIES } from "@/lib/deal-cities";
@@ -56,7 +56,9 @@ async function build(): Promise<Udlejerindeks | null> {
     const slug = l.municipality || zipToMunicipality(l.zip);
     if (!slug) continue;
     const d = analyzeDeal(l, BOLIG);
-    if (!d) continue;
+    // Same plausibility filter as deals-snapshot, so the counts here match the
+    // kommune pages.
+    if (!d || !isPlausible(d)) continue;
     (by.get(slug) ?? by.set(slug, []).get(slug)!).push(d);
   }
   const pages = new Set(ALL_DEAL_CITIES.map((c) => c.slug));
@@ -92,7 +94,7 @@ async function build(): Promise<Udlejerindeks | null> {
   };
 }
 
-export const getUdlejerindeks = unstable_cache(build, ["udlejerindeks-v1"], { revalidate: 21600 });
+export const getUdlejerindeks = unstable_cache(build, ["udlejerindeks-v2"], { revalidate: 21600 });
 
 /* ---------- monthly readings (Supabase table udlejerindeks_maalinger) ---------- */
 

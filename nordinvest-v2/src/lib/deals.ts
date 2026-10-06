@@ -45,6 +45,8 @@ export type AnalyzedDeal = DealListing & {
   capRate: number; // %
   grossYield: number; // %
   cashOnCash: number; // %
+  /** Set by the search API when the listing fails isPlausible(); sorted last. */
+  suspect?: boolean;
 };
 
 // Round a rent to the nearest 100 kr, keep it sane.
@@ -79,6 +81,33 @@ export function analyzeDeal(l: DealListing, a: DealAssumptions): AnalyzedDeal | 
     cashOnCash: r.cashOnCash,
   };
 }
+
+// ── Plausibility ─────────────────────────────────────────────
+// Some ads carry a wrong area or price (e.g. a 267 m² condo for 475.000 kr).
+// The engine then shows a huge surplus and the listing tops every ranking.
+// These limits catch homes whose numbers can't be real.
+export const PLAUSIBLE_AREA_MIN = 15; // m²
+export const PLAUSIBLE_AREA_MAX = 400; // m²
+export const PLAUSIBLE_CONDO_AREA_MAX = 200; // m²
+export const PLAUSIBLE_PRICE_MIN = 150_000; // kr
+export const PLAUSIBLE_PRICE_PER_M2_MIN = 3000; // kr/m²
+export const PLAUSIBLE_CASHFLOW_YIELD_MAX = 0.15; // yearly cash flow / price
+
+export type PlausibilityRule = "area" | "condoArea" | "price" | "pricePerM2" | "cashFlow";
+
+type Checkable = { price: number; area: number | null; type: string; cashFlow: number };
+
+/** The first rule a home listing fails, or null when its numbers look real. */
+export function plausibilityIssue(d: Checkable): PlausibilityRule | null {
+  if (d.area == null || d.area < PLAUSIBLE_AREA_MIN || d.area > PLAUSIBLE_AREA_MAX) return "area";
+  if (d.type === "condo" && d.area > PLAUSIBLE_CONDO_AREA_MAX) return "condoArea";
+  if (d.price < PLAUSIBLE_PRICE_MIN) return "price";
+  if (d.price / d.area < PLAUSIBLE_PRICE_PER_M2_MIN) return "pricePerM2";
+  if ((d.cashFlow * 12) / d.price > PLAUSIBLE_CASHFLOW_YIELD_MAX) return "cashFlow";
+  return null;
+}
+
+export const isPlausible = (d: Checkable) => plausibilityIssue(d) === null;
 
 // ── Investment properties (Ejendomstorvet) ──────────────────
 // These publish a real starting yield, so we reconstruct the actual NOI and run

@@ -245,6 +245,11 @@ function DealCard({ d, dp, ir }: { d: AnalyzedDeal; dp: string; ir: string }) {
           {d.yearBuilt && <span>· {d.yearBuilt}</span>}
           {d.energyLabel && <span>· {d.energyLabel}</span>}
         </div>
+        {d.suspect && (
+          <div className="mt-2 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[11px] font-medium text-amber-700">
+            Usikre data – tjek annoncen
+          </div>
+        )}
 
         <div className="mt-4 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-center">
           <div>

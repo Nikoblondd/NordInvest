@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUdlejerindeks, previousReading, monthKey, pct, dkn, type Udlejerindeks } from "@/lib/udlejerindeks";
 import { getDealSnapshot } from "@/lib/deals-snapshot";
+import { isPlausible } from "@/lib/deals";
 import { REPORT_FROM, REPORT_TO } from "@/lib/outreach/schedule";
 
 /*
@@ -71,12 +72,12 @@ Imens giver ${pct(ranked[0].share)} % af boligerne til salg i ${ranked[0].name} 
 Se hvor din kommune ligger: ${SITE}/udlejerindeks`,
   };
 
-  // The engine's #1 is sometimes a listing with a wrong area or price. Only a
-  // deal that looks like a real, lettable home goes into a public post.
+  // The snapshot already drops implausible listings (isPlausible). A public
+  // post is held to a stricter bar on top: a typical, lettable home.
   const snap = await getDealSnapshot(null, 25).catch(() => null);
   const d = snap?.top.find((x) => {
     const m2 = x.area ? x.price / x.area : 0;
-    return x.area != null && x.area >= 40 && x.area <= (x.type === "condo" ? 150 : 250) && m2 >= 4000 && x.cashFlow > 0 && x.cashFlow <= 6000;
+    return isPlausible(x) && x.area != null && x.area >= 40 && x.area <= (x.type === "condo" ? 150 : 250) && m2 >= 4000 && x.cashFlow > 0 && x.cashFlow <= 6000;
   });
   const deal: Post | null = d
     ? {
