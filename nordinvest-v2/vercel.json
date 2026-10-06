@@ -23,6 +23,14 @@
     {
       "path": "/api/report/daily",
       "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/udlejerindeks/snapshot",
+      "schedule": "0 5 1 * *"
+    },
+    {
+      "path": "/api/content/weekly",
+      "schedule": "30 5 * * 1"
     }
   ]
 }

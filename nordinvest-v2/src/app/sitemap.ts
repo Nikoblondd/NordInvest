@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/analyseren", priority: 0.9, freq: "weekly" },
     { path: "/analyse-af-ejendomsinvestering", priority: 0.95, freq: "monthly" },
     { path: "/deals", priority: 0.9, freq: "daily" },
+    { path: "/udlejerindeks", priority: 0.8, freq: "daily" },
     { path: "/priser", priority: 0.8, freq: "monthly" },
     { path: "/methodology", priority: 0.7, freq: "monthly" },
     { path: "/investment-models", priority: 0.7, freq: "monthly" },
@@ -44,7 +45,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
     url: `${BASE}${p.path}`,
     // The Deal-motor rankings are rebuilt every 6 hours; everything else is static.
-    lastModified: p.path === "/deals" ? now : STATIC_UPDATED,
+    lastModified: p.path === "/deals" || p.path === "/udlejerindeks" ? now : STATIC_UPDATED,
     changeFrequency: p.freq,
     priority: p.priority,
   }));

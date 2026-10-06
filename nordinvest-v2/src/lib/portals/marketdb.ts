@@ -55,7 +55,7 @@ async function queryAll(params: string, limit: number): Promise<any[] | null> {
   return first.rows.concat(...rest.map((r) => r?.rows ?? []));
 }
 
-const BOLIG_COLS = "id,url,image,address,road,zip,city,price,area,rooms,year_built,energy_label,type,lat,lon";
+const BOLIG_COLS = "id,url,image,address,road,zip,city,price,area,rooms,year_built,energy_label,type,lat,lon,municipality";
 
 function num(v: any): number | null {
   const n = Number(v);
@@ -104,6 +104,7 @@ export async function readBoligDeals(opts: {
     bfe: null,
     lat: num(r.lat),
     lon: num(r.lon),
+    municipality: r.municipality ?? null,
   }));
 }
 

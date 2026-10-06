@@ -34,6 +34,8 @@ export type DealListing = {
   bfe: number | null;
   lat: number | null;
   lon: number | null;
+  /** Kommune slug from the market table, when the row came from there. */
+  municipality?: string | null;
 };
 
 export type AnalyzedDeal = DealListing & {
