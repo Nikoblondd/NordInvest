@@ -16,7 +16,7 @@ export function AnalyzeInline({ from, title, sub, dark }: { from: string; title:
   const router = useRouter();
   const go = () => {
     captureEvent("analyze_started", { from, fromLink: url.trim().length > 0 });
-    router.push(`/analyseren${url.trim() ? `?url=${encodeURIComponent(url.trim())}` : ""}`);
+    router.push(url.trim() ? `/analyseren/start?url=${encodeURIComponent(url.trim())}` : "/analyseren");
   };
   return (
     <div className={clsx("not-prose rounded-2xl p-5 sm:p-6", dark ? "bg-white/5 ring-1 ring-inset ring-white/10" : "border border-slate-200 bg-white shadow-card")}>

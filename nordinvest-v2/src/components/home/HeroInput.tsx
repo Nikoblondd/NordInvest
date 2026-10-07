@@ -12,7 +12,7 @@ export function HeroInput() {
   const go = () => {
     captureEvent("analyze_started", { fromLink: url.trim().length > 0 });
     const q = url.trim() ? `?url=${encodeURIComponent(url.trim())}` : "";
-    router.push(`/analyseren${q}`);
+    router.push(url.trim() ? `/analyseren/start${q}` : "/analyseren");
   };
 
   return (

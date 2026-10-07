@@ -1,0 +1,116 @@
+{
+ "laminat": {
+  "label": "Laminatgulv",
+  "unit": "m2",
+  "inc": "laminatgulv",
+  "exc": "forsegl|liste|underlag|skinne|lim|tilbeh"
+ },
+ "vinylgulv": {
+  "label": "Vinylgulv",
+  "unit": "m2",
+  "inc": "vinyl",
+  "exc": "liste|lim|tilbeh|tæppe|mæppe"
+ },
+ "vaegflise": {
+  "label": "Vægfliser",
+  "unit": "m2",
+  "inc": "vægflise|flise",
+  "exc": "have|terrasse|lim|klæb|fuge|kant"
+ },
+ "gulvflise": {
+  "label": "Gulvfliser (inde)",
+  "unit": "m2",
+  "inc": "gulvflise|klinke|flise",
+  "exc": "have|terrasse|granit|beton|lim|klæb|fuge|kant"
+ },
+ "fliseklaeb": {
+  "label": "Fliseklæb",
+  "unit": "stk",
+  "inc": "klæb",
+  "exc": ""
+ },
+ "vaegmaling": {
+  "label": "Vægmaling",
+  "unit": "l",
+  "inc": "vægmaling",
+  "exc": ""
+ },
+ "spartel": {
+  "label": "Spartelmasse",
+  "unit": "l",
+  "inc": "spartel",
+  "exc": "spatel|kniv"
+ },
+ "gipsplade": {
+  "label": "Gipsplade",
+  "unit": "stk",
+  "inc": "gips",
+  "exc": "skrue|spartel"
+ },
+ "toilet": {
+  "label": "Toilet",
+  "unit": "stk",
+  "inc": "toilet|wc",
+  "exc": "rens|ring|tilslut|sæde|papir|børste|cisterne|skyl|knap|bøjle|holder|ventil|kobling|bolt|pakning|skrue"
+ },
+ "badmoebel": {
+  "label": "Badeværelsesmøbel med vask",
+  "unit": "stk",
+  "inc": "badmøbel|møbel med vask|vaskeskab|vask med",
+  "exc": "greb|spejl|skab uden|ben|håndtag|knop"
+ },
+ "brusesaet": {
+  "label": "Brusesæt/termostat",
+  "unit": "stk",
+  "inc": "brus|termostat",
+  "exc": "slange|holder|hoved alene|rens|forhæng"
+ },
+ "brusevaeg": {
+  "label": "Brusevæg",
+  "unit": "stk",
+  "inc": "brusevæg|brusehjørne",
+  "exc": "stang|arm|forhæng|holder|tætningsliste"
+ },
+ "bordplade": {
+  "label": "Køkkenbordplade",
+  "unit": "stk",
+  "inc": "bordplade",
+  "exc": "lim|olie|beslag|skinne|endeliste"
+ },
+ "koekkenarmatur": {
+  "label": "Køkkenarmatur",
+  "unit": "stk",
+  "inc": "armatur",
+  "exc": "slange|perlator|reservedel"
+ },
+ "koekkenvask": {
+  "label": "Køkkenvask",
+  "unit": "stk",
+  "inc": "vask",
+  "exc": "middel|rens|propper|si|vandlås|klud|maskine|strainer|ventil|bundprop|overløb|afløb"
+ },
+ "indvdoer": {
+  "label": "Indvendig dør",
+  "unit": "stk",
+  "inc": "dør",
+  "exc": "greb|hængsel|stop|liste|karm alene|lås"
+ },
+ "fodliste": {
+  "label": "Fodliste",
+  "unit": "stk",
+  "inc": "fodliste",
+  "exc": "lim|søm|hjørne|samle"
+ },
+ "stikkontakt": {
+  "label": "Stikkontakt",
+  "unit": "stk",
+  "inc": "stikkontakt",
+  "exc": "tester|adapter|timer|smart|forlænger|lås|sikring|afdækning|ramme"
+ },
+ "loftlampe": {
+  "label": "Loftlampe",
+  "unit": "stk",
+  "inc": "loft|plafond",
+  "exc": "pære|kabel|krog"
+ }
+}
