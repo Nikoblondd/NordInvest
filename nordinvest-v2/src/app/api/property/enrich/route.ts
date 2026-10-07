@@ -29,6 +29,12 @@ const dec = (map: Record<string, string>, code: unknown) =>
 const numOr = (v: unknown) => (v == null || v === "" ? null : Number(v));
 
 type Bygning = Record<string, any>;
+
+// BBR livscyklus codes for records that no longer describe reality
+// (9 afsluttet, 10 historisk, 11 fejlregistreret, 12 midl. afsluttet,
+// 14 henlagt). BFE lookups return these alongside the live rows — often first.
+const RETIRED = new Set(["9", "10", "11", "12", "14"]);
+const live = <T extends Record<string, any>>(rows: T[]) => rows.filter((r) => !RETIRED.has(String(r?.status ?? "")));
 type Enhed = Record<string, any>;
 
 function merge(grund: any[], bygninger: Bygning[], enheder: Enhed[]) {
@@ -139,14 +145,19 @@ async function enrich(adresse: string | null, bfeIn: string | null) {
   // Live BBR lookup: BFE → grund → bygninger → enheder. Fully graceful — any
   // failure returns enriched:false so the analyzer runs on scraped data alone.
   try {
-    const grund = await getGrundByBFE(bfe).catch(() => []);
-    const grundId = (grund[0] as any)?.id_lokalId;
-    if (!grundId) {
+    // Prefer the gældende (status 7) grund; then any non-retired one.
+    const grundAll = live((await getGrundByBFE(bfe).catch(() => [])) as any[]);
+    const grund = [...grundAll.filter((g) => String(g.status) === "7"), ...grundAll.filter((g) => String(g.status) !== "7")];
+    if (grund.length === 0) {
       return NextResponse.json({ enriched: false, reason: "no_bbr_data", bfe });
     }
 
-    const bygninger = await getBygningerByGrund(String(grundId)).catch(() => []);
-    if (!Array.isArray(bygninger) || bygninger.length === 0) {
+    let bygninger: Bygning[] = [];
+    for (const g of grund.slice(0, 3)) {
+      bygninger = live((await getBygningerByGrund(String(g.id_lokalId)).catch(() => [])) as Bygning[]);
+      if (bygninger.length > 0) break;
+    }
+    if (bygninger.length === 0) {
       return NextResponse.json({ enriched: false, reason: "no_bbr_data", bfe });
     }
 
@@ -155,7 +166,7 @@ async function enrich(adresse: string | null, bfeIn: string | null) {
       (a: any, b: any) => (Number(b.byg038SamletBygningsareal) || 0) - (Number(a.byg038SamletBygningsareal) || 0),
     )[0] as any;
     const bygId = primary?.id_lokalId;
-    const enheder = bygId ? await getEnhederByBygning(String(bygId)).catch(() => []) : [];
+    const enheder = bygId ? live((await getEnhederByBygning(String(bygId)).catch(() => [])) as Enhed[]) : [];
 
     const bbr = merge(grund as any[], bygninger as any[], enheder as any[]);
     await cacheSet(bfe, bbr);
