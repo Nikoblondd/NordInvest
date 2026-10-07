@@ -26,6 +26,7 @@ export type FlipAnswers = {
   rate: number; // % a year
   sales: "0" | "1-2" | "3+"; // homes sold in the last 5 years
   target: number; // required profit, % of the sale price
+  bigLot?: boolean; // grund over 1.400 m²: parcelhusreglen gælder som udgangspunkt ikke
 };
 
 export const DEFAULT_ANSWERS: FlipAnswers = {
@@ -278,7 +279,7 @@ export type FlipResult = {
 };
 
 export function taxCaseFor(a: FlipAnswers): TaxCase {
-  if (a.strategy === "live_flip") return "live_in";
+  if (a.strategy === "live_flip") return a.bigLot ? "private" : "live_in";
   if (a.sales === "3+" || a.role === "contractor" || a.role === "pro_investor") return "business";
   return "private";
 }

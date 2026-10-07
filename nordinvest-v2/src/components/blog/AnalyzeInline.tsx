@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Link as LinkIcon } from "lucide-react";
 import { captureEvent } from "@/lib/analytics-events";
@@ -11,12 +12,16 @@ import { clsx } from "@/lib/clsx";
  * the first analysis (that is where NordInvest proves itself), not a sale, so
  * the action here is "regn på en bolig", right where the reader is.
  */
+const JourneyModal = dynamic(() => import("@/components/journey/Journey").then((m) => m.JourneyModal), { ssr: false });
+
 export function AnalyzeInline({ from, title, sub, dark }: { from: string; title: string; sub: string; dark?: boolean }) {
   const [url, setUrl] = useState("");
+  const [open, setOpen] = useState<string | null>(null);
   const router = useRouter();
   const go = () => {
     captureEvent("analyze_started", { from, fromLink: url.trim().length > 0 });
-    router.push(url.trim() ? `/analyseren/start?url=${encodeURIComponent(url.trim())}` : "/analyseren");
+    if (/^https?:\/\//i.test(url.trim())) setOpen(url.trim());
+    else router.push("/analyseren");
   };
   return (
     <div className={clsx("not-prose rounded-2xl p-5 sm:p-6", dark ? "bg-white/5 ring-1 ring-inset ring-white/10" : "border border-slate-200 bg-white shadow-card")}>
@@ -50,6 +55,7 @@ export function AnalyzeInline({ from, title, sub, dark }: { from: string; title:
           Regn den igennem <ArrowRight aria-hidden size={16} />
         </button>
       </form>
+      {open && <JourneyModal url={open} onClose={() => setOpen(null)} />}
     </div>
   );
 }

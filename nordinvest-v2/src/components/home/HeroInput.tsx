@@ -1,18 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { captureEvent } from "@/lib/analytics-events";
 import { Link as LinkIcon, ArrowUpRight } from "lucide-react";
 
+// The question flow opens on top of the page; loaded on demand to keep the page light.
+const JourneyModal = dynamic(() => import("@/components/journey/Journey").then((m) => m.JourneyModal), { ssr: false });
+
 export function HeroInput() {
   const [url, setUrl] = useState("");
+  const [open, setOpen] = useState<string | null>(null);
   const router = useRouter();
 
   const go = () => {
     captureEvent("analyze_started", { fromLink: url.trim().length > 0 });
-    const q = url.trim() ? `?url=${encodeURIComponent(url.trim())}` : "";
-    router.push(url.trim() ? `/analyseren/start${q}` : "/analyseren");
+    if (/^https?:\/\//i.test(url.trim())) setOpen(url.trim());
+    else router.push("/analyseren");
   };
 
   return (
@@ -34,6 +39,7 @@ export function HeroInput() {
       >
         Få analysen <ArrowUpRight size={18} />
       </button>
+      {open && <JourneyModal url={open} onClose={() => setOpen(null)} />}
     </div>
   );
 }

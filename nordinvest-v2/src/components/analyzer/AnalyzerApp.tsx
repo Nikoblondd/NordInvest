@@ -308,6 +308,10 @@ export function AnalyzerApp() {
   const savedParam = searchParams.get("saved");
   const priceParam = searchParams.get("price");
   const dealSeededRef = useRef(false);
+  // Answers from the question flow (/analyseren/start or the front-page pop-up),
+  // applied once the listing's own numbers are in so the user's answers win.
+  const journeyApplied = useRef(false);
+  const [journeyNote, setJourneyNote] = useState<string | null>(null);
 
   // Seed from the deal engine's reliable Boligsiden numbers (price, area, rooms,
   // ejerudgift, estimated rent). The listing URL is still used below to fetch
@@ -458,6 +462,35 @@ export function AnalyzerApp() {
     run();
     return () => { cancelled = true; };
   }, [urlParam]);
+
+  useEffect(() => {
+    if (journeyApplied.current || (ex.status !== "ok" && ex.status !== "fail")) return;
+    const raw = searchParams.get("j");
+    if (!raw) return;
+    journeyApplied.current = true;
+    let j: Record<string, unknown>;
+    try { j = JSON.parse(decodeURIComponent(escape(atob(raw)))); } catch { return; }
+    const patch = pickInputs(j);
+    const adminPct = Number(j.adminPct) || 0;
+    setInputs((prev) => {
+      const next = { ...prev, ...patch };
+      if (adminPct > 0) next.monthlyOpex = Math.round(prev.monthlyOpex + (next.monthlyRent * adminPct) / 100);
+      return next;
+    });
+    if (patch.monthlyRent) setRentEstimated(false);
+    const bits = [
+      patch.downPaymentPct != null && (patch.downPaymentPct >= 100 ? "kontant køb" : `${patch.downPaymentPct} % udbetaling`),
+      patch.downPaymentPct != null && patch.downPaymentPct < 100 && patch.interestRate != null && `${String(patch.interestRate).replace(".", ",")} % rente`,
+      patch.monthlyRent != null && `leje ${Math.round(patch.monthlyRent).toLocaleString("da-DK")} kr./md.`,
+      adminPct > 0 && `administrator ${adminPct} % af lejen`,
+      patch.vacancyPct === 0 && "ingen tomgang",
+      patch.maintenancePct != null && `vedligehold ${patch.maintenancePct} % af lejen`,
+      patch.holdYears != null && `ejertid ${patch.holdYears} år`,
+      patch.strategy === "appreciation" && "vægt på værdistigning",
+    ].filter(Boolean);
+    setJourneyNote(bits.join(" · "));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ex.status]);
 
   const r = useMemo(() => analyze(inputs), [inputs]);
   // Fase 3 — Monte Carlo confidence bands. Recomputes only when inputs or the
@@ -1013,6 +1046,14 @@ export function AnalyzerApp() {
             </div>
           )}
 
+          {journeyNote && (
+            <div className="border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
+              <p className="mx-auto max-w-[1080px] text-[14px] text-slate-600">
+                <span className="font-semibold text-slate-900">Tilpasset dine svar:</span> {journeyNote}.{" "}
+                <button type="button" onClick={() => setSheetOpen(true)} className="font-medium text-blue-700 underline underline-offset-2">Ret tallene</button>
+              </p>
+            </div>
+          )}
           <DealHero
             images={images}
             address={address}
