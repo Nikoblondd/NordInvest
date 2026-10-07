@@ -11,10 +11,12 @@
 //     sewer) usually means future separatkloakering with 40-100k+ owner cost.
 //
 // All queries hit plandata's public WFS at geoserver.plandata.dk — no auth,
-// no quota, GeoJSON responses. The address→coord step goes through DAWA in
-// UTM32 (EPSG:25832) so we can drop a POINT filter straight onto the WFS.
+// no quota, GeoJSON responses. The address→coord step goes through
+// Datafordeler DAR (see ./dar — DAWA is shut down) in UTM32 (EPSG:25832) so we
+// can drop a POINT filter straight onto the WFS.
 
-const DAWA = "https://api.dataforsyningen.dk";
+import { resolveAddress } from "./dar";
+
 const WFS = "https://geoserver.plandata.dk/geoserver/ows";
 
 const wfsQuery = (typeName: string, x: number, y: number, count = 5) =>
@@ -33,61 +35,18 @@ const wfsRadiusQuery = (typeName: string, x: number, y: number, radiusMeters = 5
   `&count=${count}` +
   `&CQL_FILTER=${encodeURIComponent(`DWITHIN(geometri,POINT(${x} ${y}),${radiusMeters},meters)`)}`;
 
-/** Strip floor/door tokens ("1.tv", "st. th", "2 mf") so DAWA's building-
- *  level `/adgangsadresser` finds the address. The plandata lookups are
+/** Address → adgangspunkt in EPSG:25832 (UTM32) via Datafordeler DAR.
+ *  Floor/door tokens are ignored by the parser; the plandata lookups are
  *  point-in-polygon, so building-level precision is enough. */
-function stripFloorAndDoor(address: string): string {
-  return address
-    // remove tokens like " 1.tv", " 1 tv", " 1.th.", " 2.mf.", " st.", " kl.", " -1"
-    .replace(/\s+(?:st(?:uen)?|kld|kl|nord|syd|vest|oest|øst|tv|th|mf|ov|nd)\b\.?/gi, "")
-    .replace(/\s+\d{1,2}(?:\.|\s)(?:st|kld|kl|tv|th|mf|ov|nd|nord|syd|vest|oest|øst)\b\.?/gi, "")
-    .replace(/\s+\d{1,2}\.(?=\s)/g, " ") // lone " 2." between street and zip
-    .replace(/\s{2,}/g, " ")
-    .trim();
-}
-
-/** DAWA → adgangspunkt in EPSG:25832 (UTM32). The `mini` struct returns
- *  coordinates flat as `x`/`y` when `srid=25832`; the full struct nests them
- *  under `adgangspunkt.koordinater`. Read both. */
 async function addressToCoord(address: string): Promise<{
   x: number;
   y: number;
   kommunekode: string | null;
   betegnelse: string;
 } | null> {
-  const clean = stripFloorAndDoor(address);
-  try {
-    const q = `${DAWA}/adgangsadresser?q=${encodeURIComponent(clean)}&per_side=1&srid=25832&struktur=mini`;
-    const res = await fetch(q, { next: { revalidate: 60 * 60 * 24 * 7 } });
-    if (!res.ok) return null;
-    const rows = (await res.json()) as Array<{
-      x?: number;
-      y?: number;
-      adgangspunkt?: { koordinater?: [number, number] };
-      betegnelse?: string;
-      kommunekode?: string;
-    }>;
-    const hit = rows?.[0];
-    if (!hit) return null;
-    let x: number | undefined;
-    let y: number | undefined;
-    if (Number.isFinite(hit.x) && Number.isFinite(hit.y)) {
-      x = hit.x;
-      y = hit.y;
-    } else if (hit.adgangspunkt?.koordinater?.length === 2) {
-      x = hit.adgangspunkt.koordinater[0];
-      y = hit.adgangspunkt.koordinater[1];
-    }
-    if (x == null || y == null) return null;
-    return {
-      x,
-      y,
-      kommunekode: hit.kommunekode ?? null,
-      betegnelse: hit.betegnelse ?? address,
-    };
-  } catch {
-    return null;
-  }
+  const r = await resolveAddress(address);
+  if (!r || r.x == null || r.y == null) return null;
+  return { x: r.x, y: r.y, kommunekode: r.kommunekode, betegnelse: r.betegnelse ?? address };
 }
 
 type WfsFeature = {

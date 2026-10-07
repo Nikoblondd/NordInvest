@@ -211,7 +211,7 @@ export function FutureBurdens({ address }: { address: string | null }) {
       </div>
 
       <p className="mt-3 text-xs leading-relaxed text-slate-500">
-        Kilde: Plandata.dk (Erhvervsstyrelsen) + DAWA. Tjekket {new Date(checkedAt).toLocaleDateString("da-DK")}.
+        Kilde: Plandata.dk (Erhvervsstyrelsen) + DAR (Datafordeler). Tjekket {new Date(checkedAt).toLocaleDateString("da-DK")}.
         Beslutningsstøtte — bekræft altid med kommunens spildevandsplan og gældende lokalplan hos kommunen.
       </p>
     </section>

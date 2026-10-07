@@ -39,7 +39,7 @@ const steps: {
     desc: "Vi trækker offentlige registre (BBR) og annoncens tal for kontantpris, ejerudgifter, kvadratmeter og energimærke ind i én arbejdsgang.",
     icon: Database,
     accent: "navy",
-    hint: "BBR · DAWA · Boligannoncen",
+    hint: "BBR · DAR · Boligannoncen",
   },
   {
     n: "03",

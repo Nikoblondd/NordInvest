@@ -49,7 +49,7 @@ const SOURCES = [
   "BBR via Datafordeler",
   "Danmarks Statistik",
   "Plandata.dk",
-  "DAWA-adresser",
+  "DAR-adresser og matrikel (MAT)",
   "Aktive boligannoncer",
 ];
 

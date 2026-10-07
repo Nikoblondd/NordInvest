@@ -111,7 +111,7 @@ async function enrich(adresse: string | null, bfeIn: string | null) {
   let bfe = bfeIn?.trim() || null;
   let betegnelse: string | null = null;
 
-  // Address → BFE (free DAWA path)
+  // Address → BFE (Datafordeler DAR + MAT)
   if (!bfe && adresse) {
     try {
       const r = await getAddressToBFE(adresse);
