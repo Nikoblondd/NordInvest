@@ -81,7 +81,7 @@ export default async function UdlejerindeksPage() {
   const top = ranked[0];
   const nat = idx ? idx.positive / idx.scanned : 0;
   const max = top?.share ?? 1;
-  const zeroNames = ranked.filter((r) => r.positive === 0).map((r) => r.name);
+  const zeroNames = ranked.filter((r) => r.positive === 0).sort((a, b) => b.scanned - a.scanned).map((r) => r.name);
   const when = idx ? dateDa(idx.updated) : "";
 
   const jsonLd = idx && {
