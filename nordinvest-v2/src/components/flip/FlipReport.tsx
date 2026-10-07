@@ -108,12 +108,23 @@ export function FlipReport() {
     [property, plan, overrides],
   );
 
-  const suggestedArv = useMemo(() => {
+  // After-renovation value. The postnummer's renovated median is the ceiling,
+  // but a house priced well under its postnummer usually has a reason (a road,
+  // the countryside, the plot), so we start from its own price per m² and add
+  // what renovation adds in the postnummer: renovated minus standard, or minus
+  // needs-work for a total renovation.
+  const arvBasis = useMemo(() => {
     if (!property || !market?.ok) return null;
     const all = market.comps.map((c) => c.perM2).sort((x, y) => x - y);
-    const perM2 = market.medianRenovated ?? all[Math.floor(all.length * 0.75)] ?? null;
-    return perM2 ? Math.round((perM2 * property.area) / 5000) * 5000 : null;
-  }, [market, property]);
+    const ceiling = market.medianRenovated ?? all[Math.floor(all.length * 0.75)] ?? null;
+    if (!ceiling) return null;
+    const own = property.price / property.area;
+    const base = answers.level === "total" ? market.medianNeedsWork : market.medianStandard;
+    const uplift = base ? Math.max(0, ceiling - base) : own * 0.2;
+    const anchored = own + uplift;
+    return anchored < ceiling ? { perM2: anchored, anchored: true } : { perM2: ceiling, anchored: false };
+  }, [market, property, answers.level]);
+  const suggestedArv = arvBasis ? Math.round((arvBasis.perM2 * property!.area) / 5000) * 5000 : null;
   useEffect(() => { if (!arvTouched && suggestedArv) setArv(suggestedArv); }, [suggestedArv, arvTouched]);
 
   const result = useMemo(() => (property && arv && lines ? flip(property, arv, answers, lines) : null), [property, arv, answers, lines]);
@@ -256,7 +267,7 @@ export function FlipReport() {
           <p className="mt-4 max-w-2xl text-sm text-slate-400">
             {property.price > result.maxBid
               ? `Udbudsprisen er ${kr(property.price)}, ${kr(property.price - result.maxBid)} over dit maksimale bud. Byd ${kr(result.maxBid)} eller mindre, eller vælg en billigere plan.`
-              : `Udbudsprisen er ${kr(property.price)}. Du har ${kr(result.maxBid - property.price)} at give af i forhandlingen og når stadig ${answers.target} %.`}
+              : `Udbudsprisen er ${kr(property.price)} Du har ${kr(result.maxBid - property.price)} at give af i forhandlingen og når stadig ${answers.target} %.`}
           </p>
           {ai.status === "running" && (
             <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[13px] text-slate-200 ring-1 ring-inset ring-white/15">
@@ -328,7 +339,11 @@ export function FlipReport() {
                 <NumberInput value={arv ?? 0} onValueChange={(n) => { setArv(n ?? 0); setArvTouched(true); }} className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-lg font-semibold tabular-nums outline-none focus:border-blue-500" />
                 {arvTouched && suggestedArv && <button type="button" onClick={() => { setArv(suggestedArv); setArvTouched(false); }} className="no-print shrink-0 text-sm text-blue-700 underline underline-offset-2">Nulstil</button>}
               </div>
-              <span className="mt-1.5 block text-[13px] text-slate-500">{suggestedArv ? `Vores bud: ${kr(suggestedArv)} (${property.area} m² × median for renoverede). Kender du området bedre, så ret den.` : "Indtast din egen salgspris."}</span>
+              <span className="mt-1.5 block text-[13px] text-slate-500">{suggestedArv && arvBasis
+                  ? arvBasis.anchored
+                    ? `Vores bud: ${kr(suggestedArv)} Boligen er sat til ${kr(property.price / property.area)} pr. m², under postnummerets niveau, så vi lægger renoveringens løft i området oven i dens egen pris i stedet for at bruge medianen. Kender du området bedre, så ret den.`
+                    : `Vores bud: ${kr(suggestedArv)} (${property.area} m² × median for renoverede). Kender du området bedre, så ret den.`
+                  : "Indtast din egen salgspris."}</span>
             </label>
           </div>
           <CompList comps={comps} />
