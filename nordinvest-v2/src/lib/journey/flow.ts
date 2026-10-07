@@ -1,5 +1,5 @@
 import { DEFAULT_ANSWERS, type FlipAnswers } from "@/lib/flip/model";
-import { rentPerM2 } from "@/lib/rent-estimate";
+import { estimateMonthlyRent } from "@/lib/rent-estimate";
 
 /*
  * The question flow behind every analysis. Each answer decides the next
@@ -10,17 +10,26 @@ import { rentPerM2 } from "@/lib/rent-estimate";
 
 export type Goal = "cashflow" | "parents" | "flip" | "live_flip";
 export type Answers = Record<string, string>;
-export type Ctx = { area: number | null; rent: number | null; address: string | null; zip: string | null };
+export type Ctx = { area: number | null; rent: number | null; address: string | null; zip: string | null; type?: string | null };
+
+/** The listing's own property type in the flip model's terms, when Boligsiden states it. */
+export function listingType(raw: string | null | undefined): "villa" | "terraced" | "condo" | null {
+  const t = (raw ?? "").toLowerCase();
+  if (/terraced|række/.test(t)) return "terraced";
+  if (/condo|ejerlejlighed|apartment|lejlighed/.test(t)) return "condo";
+  if (/villa|house|hus/.test(t) && !/holiday|sommer|farm/.test(t)) return "villa";
+  return null;
+}
 
 export type Option = { value: string; label: string; sub?: string };
 export type Question =
   | { key: string; kind: "choice"; title: string; hint?: string; options: Option[] }
   | { key: string; kind: "number"; title: string; hint?: string; unit: string; suggest?: number | null; min: number; max: number };
 
-// The listing's own rent if it states one; otherwise the same per-postnummer
-// rent rate the Deal-motor uses, times the area.
+// The listing's own rent if it states one; otherwise the analyser's estimate
+// for the postnummer and size.
 const marketRent = (ctx: Ctx) =>
-  ctx.rent ? ctx.rent : ctx.area ? Math.round((ctx.area * (ctx.zip ? rentPerM2(Number(ctx.zip)) : 110)) / 100) * 100 : null;
+  ctx.rent ? ctx.rent : ctx.area ? estimateMonthlyRent(ctx.zip ? Number(ctx.zip) : null, ctx.area) : null;
 
 /** The goal after any switch: a rental that needs too much work can become a flip. */
 export function goalOf(a: Answers): Goal | null {
@@ -75,14 +84,15 @@ export function questionsFor(a: Answers, ctx: Ctx): Question[] {
 
   // Flip and bo og flip.
   const g = goalOf(a);
-  q.push({ key: "type", kind: "choice", title: "Hvilken type bolig er det?", options: [
+  // Asked only when the listing doesn't say.
+  if (!ctx.type) q.push({ key: "type", kind: "choice", title: "Hvilken type bolig er det?", options: [
     { value: "villa", label: "Villa" }, { value: "terraced", label: "Rækkehus" }, { value: "condo", label: "Ejerlejlighed" } ] });
   q.push({ key: "role", kind: "choice", title: "Hvem er du?", hint: "Det ændrer, hvad håndværk og materialer koster dig.", options: [
     { value: "private", label: "Privat investor", sub: "Håndværkere udfører arbejdet" },
     { value: "tradesman", label: "Håndværker", sub: "Fagrabat på materialer" },
     { value: "contractor", label: "Entreprenør eller byggefirma", sub: "Eget sjak, køber el og VVS" },
     { value: "pro_investor", label: "Professionel investor", sub: "Flere projekter om året" } ] });
-  if (a.role && a.role !== "contractor") q.push({ key: "diy", kind: "choice", title: "Hvor meget laver du selv?", options: [
+  if (a.role !== "contractor") q.push({ key: "diy", kind: "choice", title: "Hvor meget laver du selv?", options: [
     { value: "none", label: "Intet", sub: "Alt går til håndværkere" },
     { value: "paint_floors", label: "Maling og gulve" },
     { value: "most", label: "Det meste", sub: "Ikke el og VVS, det kræver autorisation" },

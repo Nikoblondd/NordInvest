@@ -25,3 +25,16 @@ export function rentPerM2(zip: number): number {
   if (zip >= 4000 && zip <= 4400) return 95; // Roskilde/Sjælland
   return 88; // resten af landet — bevidst konservativt
 }
+
+// Rent does not grow in step with size: a 228 m² villa in Struer does not let
+// for three times a 76 m² one. The first 80 m² count in full, the next 60 at
+// 60 % and the rest at 30 %, which keeps large houses near what they let for.
+export function effectiveRentArea(area: number): number {
+  if (!Number.isFinite(area) || area <= 0) return 0;
+  return Math.min(area, 80) + 0.6 * Math.max(0, Math.min(area, 140) - 80) + 0.3 * Math.max(0, area - 140);
+}
+
+/** Estimated market rent in kr./md. for a home with no stated rent, rounded to 100. */
+export function estimateMonthlyRent(zip: number | null, area: number, factor = 1): number {
+  return Math.round((effectiveRentArea(area) * (zip ? rentPerM2(zip) : 88) * factor) / 100) * 100;
+}

@@ -226,7 +226,9 @@ export function computeRentReserve(input: RentReserveInput): RentReserveResult |
     ? "Omkostningsbestemt leje (BRL, opført før 1992)"
     : yearBuilt == null
     ? "Fri lejefastsættelse (byggeår ukendt — antaget efter 1991)"
-    : "Fri lejefastsættelse (opført efter 1991)";
+    : yearBuilt >= 1992
+    ? "Fri lejefastsættelse (opført efter 1991)"
+    : "Fri lejefastsættelse (ureguleret kommune)";
 
   // Headline in Danish, feeds the UI card
   let headline: string;

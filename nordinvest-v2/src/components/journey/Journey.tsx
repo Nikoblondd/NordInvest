@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Hammer, Home, KeyRound, Link2, Loader2, Repeat, Users, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { captureEvent } from "@/lib/analytics-events";
-import { flipAnswers, goalOf, questionsFor, rentalParams, type Answers, type Goal, type Question } from "@/lib/journey/flow";
+import { flipAnswers, goalOf, listingType, questionsFor, rentalParams, type Answers, type Goal, type Question } from "@/lib/journey/flow";
 
 /*
  * The start of every analysis: paste a link, see the home, say what you want
@@ -27,6 +27,7 @@ type Listing = {
   yearBuilt: number | null;
   monthlyExpenses: number | null;
   monthlyRent: number | null;
+  type: string | null;
   images: string[];
 };
 
@@ -54,6 +55,7 @@ function readListing(u: string, d: Record<string, unknown>): Listing {
     yearBuilt: Number(f.yearBuilt) || null,
     monthlyExpenses: Number(f.monthlyExpenses) || null,
     monthlyRent: Number(f.monthlyRent) || null,
+    type: listingType(f.propertyType ? String(f.propertyType) : null),
     images: Array.isArray(d?.images) ? (d.images as string[]).slice(0, 12) : [],
   };
 }
@@ -90,7 +92,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
 
   useEffect(() => { if (initialUrl) fetchListing(initialUrl); }, [initialUrl, fetchListing]);
 
-  const ctx = useMemo(() => ({ area: listing?.area ?? null, rent: listing?.monthlyRent ?? null, address: listing?.address ?? null, zip: listing?.zip ?? null }), [listing]);
+  const ctx = useMemo(() => ({ area: listing?.area ?? null, rent: listing?.monthlyRent ?? null, address: listing?.address ?? null, zip: listing?.zip ?? null, type: listing?.type ?? null }), [listing]);
   const path = useMemo(() => questionsFor(answers, ctx), [answers, ctx]);
   const q: Question | undefined = path[qi];
   const linkStep = initialUrl ? 0 : 1;
@@ -110,7 +112,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
     try { sessionStorage.setItem(STORE, JSON.stringify({ listing: l })); } catch { /* the analysis refetches */ }
     const u = l?.url ?? url;
     if (goal === "flip" || goal === "live_flip") {
-      const p = new URLSearchParams({ url: u, a: b64(flipAnswers(a)) });
+      const p = new URLSearchParams({ url: u, a: b64(flipAnswers({ ...(l?.type ? { type: l.type } : {}), ...a })) });
       setTimeout(() => router.push(`/analyseren/flip?${p.toString()}`), 900);
       return;
     }
@@ -235,11 +237,13 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.05 * i, ease: EASE }}
-                  className="group relative flex min-h-[118px] flex-col items-start rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-card transition-[transform,border-color,box-shadow] hover:-translate-y-[1px] hover:border-blue-300 hover:shadow-card-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:p-5"
+                  className="group relative flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-card transition-[transform,border-color,box-shadow] hover:-translate-y-[1px] hover:border-blue-300 hover:shadow-card-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 sm:min-h-[118px] sm:flex-col sm:items-start sm:gap-0 sm:p-5"
                 >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-100"><Icon size={18} strokeWidth={1.8} /></span>
-                  <span className="mt-3 text-[17px] font-semibold tracking-[-0.01em] text-slate-900">{s.title}</span>
-                  <span className="mt-0.5 text-[14px] leading-snug text-slate-600">{s.sub}</span>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-100 sm:h-9 sm:w-9"><Icon size={18} strokeWidth={1.8} /></span>
+                  <span className="flex min-w-0 flex-col sm:mt-3">
+                    <span className="text-[16px] font-semibold tracking-[-0.01em] text-slate-900 sm:text-[17px]">{s.title}</span>
+                    <span className="mt-0.5 text-[13.5px] leading-snug text-slate-600 sm:text-[14px]">{s.sub}</span>
+                  </span>
                   <span className="absolute right-4 top-4 hidden h-6 w-6 items-center justify-center rounded-md border border-slate-200 text-[11px] font-semibold text-slate-400 sm:flex">{i + 1}</span>
                 </motion.button>
               );
@@ -338,6 +342,9 @@ export function JourneyModal({ url, onClose }: { url: string; onClose: () => voi
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // Take focus off the link field behind the pop-up so the number keys
+    // answer questions instead of typing into it (and the phone keyboard closes).
+    (document.activeElement as HTMLElement | null)?.blur?.();
     return () => { document.body.style.overflow = prev; };
   }, []);
   // Portalled to <body> so no transformed ancestor can trap the fixed overlay.

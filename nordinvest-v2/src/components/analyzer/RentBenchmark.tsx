@@ -22,6 +22,7 @@ export function RentBenchmark({
   type,
   analysisId,
   areaM2,
+  estimated = false,
 }: {
   benchmark: Bench;
   currentRent: number; // kr/md the analyzer is using now
@@ -29,6 +30,7 @@ export function RentBenchmark({
   type: string;
   analysisId: string | null;
   areaM2: number | null;
+  estimated?: boolean; // the rent is our own estimate, not one the user gave
 }) {
   const b = benchmark;
   // Compare the analyzer's per-m² rent to the benchmark
@@ -87,10 +89,16 @@ export function RentBenchmark({
         </div>
       </div>
 
-      <div className={clsx("mt-4 flex items-center gap-2 text-sm font-semibold", tone)}>
-        <Icon size={16} />
-        <span>Din leje ligger {verdict}.</span>
-      </div>
+      {estimated ? (
+        <p className="mt-4 text-sm leading-relaxed text-slate-600">
+          Vi har regnet med {Math.round(currentRent).toLocaleString("da-DK")} kr./md., et forsigtigt skøn for postnummeret, hvor store boliger tæller lavere pr. m². Kender du lejen, så ret den under Justér.
+        </p>
+      ) : (
+        <div className={clsx("mt-4 flex items-center gap-2 text-sm font-semibold", tone)}>
+          <Icon size={16} />
+          <span>Din leje ligger {verdict}.</span>
+        </div>
+      )}
 
       <p className="mt-3 text-xs leading-relaxed text-slate-500">
         Kilde: {b.source}. Vokset {b.growthPct >= 0 ? "+" : ""}

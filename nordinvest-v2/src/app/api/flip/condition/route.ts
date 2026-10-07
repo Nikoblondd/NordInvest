@@ -43,6 +43,9 @@ Svar UDELUKKENDE med ét JSON-objekt:
   "confidence": <0-1>
 }`;
 
+// Cut long notes at a word, never mid-word.
+const clip = (s: string, n: number) => (s.length <= n ? s : `${s.slice(0, s.lastIndexOf(" ", n) > n * 0.6 ? s.lastIndexOf(" ", n) : n).replace(/[\s,.;:–-]+$/, "")} …`);
+
 const clampAction = (a: any): Action => (["keep", "refresh", "replace", "unseen"].includes(a) ? a : "unseen");
 
 export async function POST(req: Request) {
@@ -77,7 +80,7 @@ export async function POST(req: Request) {
     const elements: Record<string, { action: Action; note: string }> = {};
     for (const e of ELEMENTS) {
       const v = raw?.elements?.[e] ?? {};
-      elements[e] = { action: clampAction(v.action), note: typeof v.note === "string" ? v.note.slice(0, 160) : "" };
+      elements[e] = { action: clampAction(v.action), note: typeof v.note === "string" ? clip(v.note, 220) : "" };
     }
     const level = ["cosmetic", "medium", "total"].includes(raw?.level) ? raw.level : "medium";
     return NextResponse.json({
@@ -88,7 +91,7 @@ export async function POST(req: Request) {
         level,
         summary: typeof raw?.summary === "string" ? raw.summary.slice(0, 400) : null,
         elements,
-        warnings: Array.isArray(raw?.warnings) ? raw.warnings.filter((w: any) => typeof w === "string").slice(0, 5).map((w: string) => w.slice(0, 160)) : [],
+        warnings: Array.isArray(raw?.warnings) ? raw.warnings.filter((w: any) => typeof w === "string").slice(0, 5).map((w: string) => clip(w, 200)) : [],
         confidence: Math.min(1, Math.max(0, Number(raw?.confidence) || 0.5)),
       },
     });

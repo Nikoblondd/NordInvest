@@ -144,11 +144,43 @@ export function FlipReport() {
 
   if (failed) return <p className="mt-20 text-center text-slate-600">Vi kunne ikke hente boligen. <Link className="text-blue-700 underline" href="/analyseren/start">Prøv igen</Link></p>;
   if (!listing || !market || !result || !property || !grid || !lines || !weeks || !shop) {
+    // Each step ticks off when its data has actually arrived.
+    const steps = [
+      { label: "Læser annoncen", done: !!listing },
+      { label: listing?.zip ? `Sorterer boliger til salg i ${listing.zip} efter stand` : "Sorterer boliger til salg i postnummeret efter stand", done: !!market },
+      { label: "Prissætter renoveringen med Silvan- og XL-BYG-priser", done: !!lines },
+      { label: "Regner skat, tidsplan og dit maksimale bud", done: !!result && !!grid },
+    ];
+    const active = steps.findIndex((x) => !x.done);
     return (
-      <div className="flex min-h-[70vh] flex-col items-center justify-center px-4 text-center">
-        <Loader2 className="animate-spin text-blue-600" size={28} />
-        <p className="mt-5 text-[20px] font-semibold tracking-[-0.02em]">Bygger din flip-analyse</p>
-        <p className="mt-2 text-[15px] text-slate-500">Sammenligner med renoverede og urenoverede boliger i postnummeret</p>
+      <div className="flex min-h-[75vh] items-center justify-center px-4 py-16">
+        <div className="w-full max-w-md">
+          {listing?.address && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-white p-3 shadow-card">
+              {listing.images[0] && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={listing.images[0]} alt={`Salgsbillede af ${listing.address}`} className="h-14 w-20 shrink-0 rounded-xl object-cover" />
+              )}
+              <div className="min-w-0">
+                <p className="truncate text-[15px] font-semibold text-slate-900">{listing.address}</p>
+                <p className="text-[13.5px] tabular-nums text-slate-500">
+                  {listing.price ? `${listing.price.toLocaleString("da-DK")} kr.` : ""}{listing.area ? ` · ${listing.area} m²` : ""}{listing.yearBuilt ? ` · opført ${listing.yearBuilt}` : ""}
+                </p>
+              </div>
+            </motion.div>
+          )}
+          <p className="text-[22px] font-semibold tracking-[-0.02em] text-slate-900">Bygger din flip-analyse</p>
+          <ol className="mt-5 space-y-3">
+            {steps.map((x, i) => (
+              <motion.li key={x.label} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.08 * i }} className="flex items-center gap-3 text-[15px]">
+                <span className={clsx("flex h-6 w-6 shrink-0 items-center justify-center rounded-full", x.done ? "bg-emerald-500 text-white" : i === active ? "bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-200" : "bg-slate-100 text-slate-400")}>
+                  {x.done ? <Check size={14} strokeWidth={2.6} /> : i === active ? <Loader2 size={13} className="animate-spin" /> : <span className="text-[11px] font-semibold">{i + 1}</span>}
+                </span>
+                <span className={clsx(x.done ? "text-slate-900" : i === active ? "text-slate-900" : "text-slate-400")}>{x.label}</span>
+              </motion.li>
+            ))}
+          </ol>
+        </div>
       </div>
     );
   }
@@ -166,8 +198,8 @@ export function FlipReport() {
       <div className="px-4 py-12 sm:px-6">
         <div className="mx-auto max-w-[1080px]">
           {gate === "signup"
-            ? <SignupGate score={flipScore(result.margin)} rating={rating} verdict={verdict} scoreColor={scoreColor} />
-            : <PaywallGate score={flipScore(result.margin)} rating={rating} verdict={verdict} max={freeMax} scoreColor={scoreColor} />}
+            ? <SignupGate kind="flip" score={flipScore(result.margin)} rating={rating} verdict={verdict} scoreColor={scoreColor} />
+            : <PaywallGate kind="flip" score={flipScore(result.margin)} rating={rating} verdict={verdict} max={freeMax} scoreColor={scoreColor} />}
         </div>
       </div>
     );
@@ -226,6 +258,16 @@ export function FlipReport() {
               ? `Udbudsprisen er ${kr(property.price)}, ${kr(property.price - result.maxBid)} over dit maksimale bud. Byd ${kr(result.maxBid)} eller mindre, eller vælg en billigere plan.`
               : `Udbudsprisen er ${kr(property.price)}. Du har ${kr(result.maxBid - property.price)} at give af i forhandlingen og når stadig ${answers.target} %.`}
           </p>
+          {ai.status === "running" && (
+            <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[13px] text-slate-200 ring-1 ring-inset ring-white/15">
+              <Loader2 size={13} className="animate-spin" /> AI&apos;en gennemgår billederne. Tallene opdateres, når planen er klar.
+            </p>
+          )}
+          {ai.status === "done" && planFromAi && (
+            <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-400/10 px-3 py-1.5 text-[13px] text-emerald-200 ring-1 ring-inset ring-emerald-300/20">
+              <Check size={13} strokeWidth={2.6} /> Regnet med AI&apos;ens plan ud fra {ai.images} billeder
+            </p>
+          )}
         </div>
       </section>
 

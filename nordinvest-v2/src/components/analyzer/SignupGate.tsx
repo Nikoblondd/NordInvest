@@ -18,7 +18,7 @@ const PERKS = [
  * (the reason to continue); the rest needs a free account, and signup brings
  * the visitor straight back to this analysis.
  */
-export function SignupGate({ score, rating, verdict, scoreColor }: { score: number; rating: string; verdict: string; scoreColor: string }) {
+export function SignupGate({ score, rating, verdict, scoreColor, kind = "rental" }: { score: number; rating: string; verdict: string; scoreColor: string; kind?: "rental" | "flip" }) {
   useEffect(() => captureEvent("signup_gate_shown", { after: ANON_FREE }), []);
   const remember = (to: string) => {
     setReturnPath(window.location.pathname + window.location.search);
@@ -28,7 +28,7 @@ export function SignupGate({ score, rating, verdict, scoreColor }: { score: numb
   return (
     <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white" aria-labelledby="signup-gate-h">
       <div className="border-b border-slate-100 p-6 md:p-8">
-        <div className="text-[13px] font-medium text-slate-500">Investeringsscore</div>
+        <div className="text-[13px] font-medium text-slate-500">{kind === "flip" ? "Flip-score" : "Investeringsscore"}</div>
         <div className="mt-1 flex items-end gap-2.5">
           <span className={clsx("text-7xl font-bold leading-none tnum", scoreColor)}>{score}</span>
           <span className="mb-1.5 text-sm font-medium text-slate-500">af 100 · {rating}</span>
@@ -44,8 +44,11 @@ export function SignupGate({ score, rating, verdict, scoreColor }: { score: numb
             Se hele analysen med en gratis konto
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-slate-600">
-            Du har brugt dine {ANON_FREE} analyser uden konto. Med en gratis konto ser du cashflow, risici, lån og
-            datagrundlag for denne bolig, og du kommer direkte tilbage hertil.
+            Du har brugt dine {ANON_FREE} analyser uden konto. Med en gratis konto ser du{" "}
+            {kind === "flip"
+              ? "renoveringsbudgettet, salgsprisen efter renovering, skatten og dit maksimale bud"
+              : "cashflow, risici, lån og datagrundlag"}{" "}
+            for denne bolig, og du kommer direkte tilbage hertil.
           </p>
           <ul className="mx-auto mt-6 max-w-sm space-y-2.5 text-left">
             {PERKS.map((p) => (

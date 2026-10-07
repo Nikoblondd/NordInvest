@@ -23,12 +23,14 @@ export function PaywallGate({
   verdict,
   max,
   scoreColor,
+  kind = "rental",
 }: {
   score: number;
   rating: string;
   verdict: string;
   max: number;
   scoreColor: string;
+  kind?: "rental" | "flip";
 }) {
   const [period, setPeriod] = useState<Period>("year");
   const [later, setLater] = useState(false);
@@ -67,9 +69,9 @@ export function PaywallGate({
           </div>
         </div>
         <div aria-hidden className="mt-4 space-y-2 blur-[5px] select-none">
-          <div className="flex justify-between text-[14px] text-slate-500"><span>Cash flow pr. md.</span><span className="font-semibold text-emerald-600">+ 2.4·· kr</span></div>
+          <div className="flex justify-between text-[14px] text-slate-500"><span>{kind === "flip" ? "Fortjeneste efter skat" : "Cash flow pr. md."}</span><span className="font-semibold text-emerald-600">{kind === "flip" ? "+ 1··.··· kr" : "+ 2.4·· kr"}</span></div>
           <div className="h-2.5 rounded-full bg-gradient-to-r from-blue-600 via-blue-300 to-emerald-500" />
-          <div className="flex justify-between text-[14px] text-slate-500"><span>Buffer før tab</span><span className="font-semibold text-slate-900">+1,· %-point</span></div>
+          <div className="flex justify-between text-[14px] text-slate-500"><span>{kind === "flip" ? "Dit maksimale bud" : "Buffer før tab"}</span><span className="font-semibold text-slate-900">{kind === "flip" ? "·.···.··· kr" : "+1,· %-point"}</span></div>
         </div>
       </div>
 

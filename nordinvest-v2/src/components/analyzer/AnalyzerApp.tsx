@@ -34,6 +34,7 @@ import { RateStress } from "@/components/analyzer/story/RateStress";
 import type { Tone } from "@/components/analyzer/story/tone";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
+import { effectiveRentArea, estimateMonthlyRent } from "@/lib/rent-estimate";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { SignupGate } from "@/components/analyzer/SignupGate";
@@ -275,6 +276,7 @@ export function AnalyzerApp() {
   // its boligareal is the whole building — so the listing wins for the unit.
   const [propMeta, setPropMeta] = useState<{ area: number | null; rooms: number | null }>({ area: null, rooms: null });
   const [priceBench, setPriceBench] = useState<PriceBenchmark | null>(null);
+  const [listingType, setListingType] = useState<string | null>(null);
   const [rentBench, setRentBench] = useState<RentBench | null>(null);
   const [gated, setGated] = useState(false);
   const [freeMax, setFreeMax] = useState(3);
@@ -398,6 +400,7 @@ export function AnalyzerApp() {
       if (cancelled) return;
 
       if (Array.isArray(d.images)) setImages(d.images as string[]);
+      if (d?.fields?.propertyType) setListingType(String(d.fields.propertyType));
       // Seeded from a deal: keep the aggregator's reliable core numbers, but pull
       // the listing's own ejerudgift (and stated rent, if any) from the mægler
       // page so those figures become DOCUMENTED instead of estimated. The deal
@@ -423,6 +426,16 @@ export function AnalyzerApp() {
             const i = estimated.indexOf("leje");
             if (i >= 0) estimated.splice(i, 1);
           }
+          // No rent passed in and none in the listing: estimate it, never keep
+          // the form's example rent.
+          if (!foundKeys.includes("monthlyRent") && !(Number(searchParams.get("rent")) > 0)) {
+            const a = Number(searchParams.get("area"));
+            const z = (searchParams.get("addr") ?? "").match(/\b(\d{4})\b/);
+            if (a > 10) {
+              patch.monthlyRent = estimateMonthlyRent(z ? Number(z[1]) : null, a, calRef.current.rentFactor);
+              setRentEstimated(true);
+            }
+          }
           if (Object.keys(patch).length) setInputs((prev) => ({ ...prev, ...patch }));
         }
         if (!investmentSeed && !foundKeys.includes("monthlyExpenses")) estimated.push("faste udgifter");
@@ -435,7 +448,11 @@ export function AnalyzerApp() {
         const estimated: string[] = [];
         if (fld.price) patch.price = Number(fld.price);
         if (fld.monthlyRent) patch.monthlyRent = Number(fld.monthlyRent);
-        else if (fld.area) { patch.monthlyRent = Math.round((Number(fld.area) * 110 * calRef.current.rentFactor) / 100) * 100; estimated.push("leje"); }
+        else if (fld.area) {
+          const z = String(fld.address ?? "").match(/\b(\d{4})\b/);
+          patch.monthlyRent = estimateMonthlyRent(z ? Number(z[1]) : null, Number(fld.area), calRef.current.rentFactor);
+          estimated.push("leje");
+        }
         if (fld.monthlyExpenses) patch.monthlyOpex = Number(fld.monthlyExpenses);
         else if (fld.area) { patch.monthlyOpex = Math.round((Number(fld.area) * 35) / 50) * 50; estimated.push("faste udgifter"); }
         if (fld.address) setAddress(String(fld.address));
@@ -461,6 +478,7 @@ export function AnalyzerApp() {
     };
     run();
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlParam]);
 
   useEffect(() => {
@@ -582,16 +600,20 @@ export function AnalyzerApp() {
   useEffect(() => {
     if (isInvestment || !zip) { setPriceBench(null); return; }
     let cancelled = false;
-    fetch(`/api/reference?zip=${zip}`)
+    const t = searchParams.get("subcat") || listingType;
+    fetch(`/api/reference?zip=${zip}${t ? `&type=${encodeURIComponent(t)}` : ""}`)
       .then((r) => r.json())
       .then((d) => { if (!cancelled) setPriceBench(d?.benchmark ?? null); })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [zip, isInvestment]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zip, isInvestment, listingType]);
 
   // Documented rent benchmark — DST HUS1-anchored + user observations overlay.
   // Residential only; commercial rent is baked into the NOI on those deals.
-  const propType = searchParams.get("subcat") || "condo";
+  // The listing's own type wins over the default; a villa compared with
+  // ejerlejligheder gets every benchmark wrong.
+  const propType = searchParams.get("subcat") || listingType || "condo";
   // Effect uses `propMeta.area ?? bbr enhed` directly (the `area` const is
   // declared further down, so we can't reference it here — TDZ).
   const rentBenchArea = propMeta.area ?? bbr?.bbr?.enhedsareal_m2 ?? null;
@@ -629,19 +651,28 @@ export function AnalyzerApp() {
   );
   const rentRule = useMemo(() => rentRegulationRule(byggeaar), [byggeaar]);
 
+  // The benchmark is kr./m² for a typical unit; scale it down for large homes
+  // the same way the rent estimate does, so a big villa isn't "under market".
+  const rentBenchSized = useMemo(
+    () => (rentBench && area && area > 10 ? { ...rentBench, value: (rentBench.value * effectiveRentArea(area)) / area } : rentBench),
+    [rentBench, area],
+  );
+
   // Lejereserve — residential rental cases with a market rent + real area.
   const rentReserve = useMemo(() => {
-    if (isInvestment || !rentBench || !area || area <= 10) return null;
+    // A reserve only exists against a rent someone actually pays; our own
+    // estimate compared with the benchmark says nothing.
+    if (isInvestment || rentEstimated || !rentBenchSized || !area || area <= 10) return null;
     return computeRentReserve({
       currentMonthlyRent: inputs.monthlyRent,
-      marketRentPerM2Month: rentBench.value,
+      marketRentPerM2Month: rentBenchSized.value,
       areaM2: area,
       yearBuilt: byggeaar,
       zip,
       regionalCapRate: 5.0,
       propertyType: propType,
     });
-  }, [isInvestment, rentBench, area, inputs.monthlyRent, byggeaar, zip, propType]);
+  }, [isInvestment, rentEstimated, rentBenchSized, area, inputs.monthlyRent, byggeaar, zip, propType]);
 
   /* ---------- The story: one answer per question ---------- */
   const p1 = (n: number) => n.toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -672,16 +703,23 @@ export function AnalyzerApp() {
 
   const priceDelta = priceBench && propertyPriceM2 ? ((propertyPriceM2 - priceBench.value) / priceBench.value) * 100 : null;
   const showPriceChapter = !isInvestment && (!!priceBench || !!rentBench || (!!zip && !!area && area > 10));
+  // Say what the price is compared with: a regional median for the type, not
+  // this street.
+  const PLURAL: Record<string, string> = { condo: "ejerlejligheder", cooperative: "andelsboliger", "villa apartment": "villalejligheder", "terraced house": "rækkehuse", villa: "villaer", "holiday house": "sommerhuse", farm: "landejendomme" };
+  const bench = priceBench as (typeof priceBench & { type?: string; scope?: string }) | null;
+  const benchScope = bench
+    ? `medianen for ${bench.scope === "region-type" && bench.type ? PLURAL[bench.type] ?? "boliger" : "boliger"} i ${bench.regionLabel}`
+    : "markedet";
   const priceAnswer: ChapterAnswer =
     priceDelta == null
       ? { tone: "neutral", text: "Se hvad lignende boliger koster" }
       : priceDelta <= -3
-      ? { tone: "good", text: `Ja, ${Math.round(Math.abs(priceDelta))} % under markedet pr. m²` }
+      ? { tone: "good", text: `Ja, ${Math.round(Math.abs(priceDelta))} % under ${benchScope} pr. m²` }
       : priceDelta <= 3
-      ? { tone: "good", text: "Ja, på niveau med markedet pr. m²" }
+      ? { tone: "good", text: `Ja, på niveau med ${benchScope} pr. m²` }
       : priceDelta <= 15
-      ? { tone: "warn", text: `Lidt dyr: ${Math.round(priceDelta)} % over markedet pr. m²` }
-      : { tone: "bad", text: `Nej, ${Math.round(priceDelta)} % over markedet pr. m²` };
+      ? { tone: "warn", text: `Lidt dyr: ${Math.round(priceDelta)} % over ${benchScope} pr. m²` }
+      : { tone: "bad", text: `Nej, ${Math.round(priceDelta)} % over ${benchScope} pr. m²` };
 
   const headroom = Number.isFinite(r.breakEvenRate) ? r.breakEvenRate - inputs.interestRate : 0;
   const riskAnswer: ChapterAnswer =
@@ -1182,12 +1220,13 @@ export function AnalyzerApp() {
                   )}
                   {rentBench && (
                     <RentBenchmark
-                      benchmark={rentBench}
+                      benchmark={rentBenchSized ?? rentBench}
                       currentRent={inputs.monthlyRent}
                       region={rentBench.region}
                       type={rentBench.type}
                       analysisId={usageRowIdRef.current}
                       areaM2={area}
+                      estimated={rentEstimated}
                     />
                   )}
                 </div>
