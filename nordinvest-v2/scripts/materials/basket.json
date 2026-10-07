@@ -51,7 +51,7 @@
   "label": "Toilet",
   "unit": "stk",
   "inc": "toilet|wc",
-  "exc": "rens|ring|tilslut|sæde|papir|børste|cisterne|skyl|knap|bøjle|holder|ventil|kobling|bolt|pakning|skrue"
+  "exc": "rens|ring|tilslut|sæde|papir|børste|cisterne|skyl|knap|bøjle|holder|ventil|kobling|bolt|pakning|skrue|besætning|dør|lås|greb"
  },
  "badmoebel": {
   "label": "Badeværelsesmøbel med vask",
@@ -105,7 +105,7 @@
   "label": "Stikkontakt",
   "unit": "stk",
   "inc": "stikkontakt",
-  "exc": "tester|adapter|timer|smart|forlænger|lås|sikring|afdækning|ramme"
+  "exc": "tester|adapter|timer|smart|forlænger|lås|sikring|afdækning|ramme|udendørs"
  },
  "loftlampe": {
   "label": "Loftlampe",

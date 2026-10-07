@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -1173,6 +1175,18 @@ export function AnalyzerApp() {
 
           <Chapter id="potentiale" question="Er der skjult potentiale?" answer={potentialAnswer} tint={tint()}>
             {rentReserve && <RentReserve reserve={rentReserve} />}
+            {listingUrl && (
+              <Link
+                href={`/analyseren/start?url=${encodeURIComponent(listingUrl)}`}
+                className="mb-5 flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-blue-300"
+              >
+                <span className="min-w-0">
+                  <span className="block text-[15px] font-semibold text-slate-900">Vil du renovere og sælge i stedet?</span>
+                  <span className="block text-[14px] text-slate-600">Flip-analysen giver værdi efter renovering, budget med rigtige priser, skat og dit maksimale bud.</span>
+                </span>
+                <span className="shrink-0 text-[14px] font-semibold text-blue-700">Prøv flip →</span>
+              </Link>
+            )}
             <RenovationModule
               price={inputs.price}
               downPaymentPct={inputs.downPaymentPct}

@@ -35,12 +35,32 @@ for k, spec in basket.items():
     rows.sort(key=lambda t: t[0])
     us = [u for u, _ in rows]
     budget = us[int(0.2 * len(us))]
-    pick = min(rows, key=lambda t: abs(t[0] - budget))[1]
-    host = urlparse(pick['url']).netloc.replace('www.', '')
+    def pack(x):
+        n = (x.get('name') or '').lower()
+        if spec['unit'] == 'm2':
+            return x.get('m2pack') or 1
+        if spec['unit'] == 'l':
+            return liters(n) or 1
+        return 1
+    def prod(u, x):
+        host = urlparse(x['url']).netloc.replace('www.', '')
+        return {'name': x['name'], 'url': x['url'], 'store': STORE.get(host, host), 'price': x['price'], 'pack': round(pack(x), 2), 'unitPrice': round(u, 2)}
+    pick = min(rows, key=lambda t: abs(t[0] - budget))
+    # Cheaper real options: the three lowest unit prices from the 10th percentile up
+    # (the very cheapest are often clearance or the wrong product).
+    lo = int(0.1 * len(rows))
+    alts, seen = [], {pick[1]['name']}
+    for u, x in rows[lo:]:
+        if x['name'] in seen:
+            continue
+        seen.add(x['name'])
+        alts.append(prod(u, x))
+        if len(alts) == 3:
+            break
     out[k] = {
         'label': spec['label'], 'unit': spec['unit'],
         'budget': round(budget, 2), 'standard': round(statistics.median(us), 2), 'n': len(rows),
-        'product': {'name': pick['name'], 'url': pick['url'], 'store': STORE.get(host, host), 'price': pick['price']},
+        'product': prod(*pick), 'alternatives': alts,
     }
 json.dump({'fetched': datetime.date.today().isoformat(), 'items': out}, open('src/data/materialepriser.json', 'w'), ensure_ascii=False, indent=1)
 for k, v in out.items():

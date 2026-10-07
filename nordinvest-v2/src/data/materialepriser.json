@@ -11,8 +11,36 @@
     "name": "Migadan MigaFloor, Laminatgulv, grå, 8x194x1286 mm",
     "url": "https://www.silvan.dk/produkt/migadan-migafloor-laminatgulv-graa-8x194x1286-mm-5102-9853106",
     "store": "Silvan",
-    "price": 182.0
-   }
+    "price": 182.0,
+    "pack": 2.0,
+    "unitPrice": 91.0
+   },
+   "alternatives": [
+    {
+     "name": "Wallmann, Laminatgulv, Advanced Plank, Eg Hvid Trend, 8x193x1380 mm",
+     "url": "https://www.silvan.dk/produkt/wallmann-laminatgulv-advanced-plank-eg-hvid-trend-8x193x1380-mm-5102-1832209",
+     "store": "Silvan",
+     "price": 189.57,
+     "pack": 2.13,
+     "unitPrice": 89.0
+    },
+    {
+     "name": "Wallmann, Laminatgulv, Advanced Plank, Eg 3125 Natur, 8x193x1380 mm",
+     "url": "https://www.silvan.dk/produkt/wallmann-laminatgulv-advanced-plank-eg-3125-natur-8x193x1380-mm-5102-1892179",
+     "store": "Silvan",
+     "price": 189.57,
+     "pack": 2.13,
+     "unitPrice": 89.0
+    },
+    {
+     "name": "Egger, Laminatgulv, Home, Kurimo Oak, 7x193x1292 mm",
+     "url": "https://www.silvan.dk/produkt/egger-laminatgulv-home-kurimo-oak-7x193x1292-mm-5102-9850019",
+     "store": "Silvan",
+     "price": 223.98,
+     "pack": 2.49,
+     "unitPrice": 89.95
+    }
+   ]
   },
   "vinylgulv": {
    "label": "Vinylgulv",
@@ -24,8 +52,36 @@
     "name": "Manon, Sildebensvinylgulv, LVT Dryback, natur",
     "url": "https://www.silvan.dk/produkt/manon-sildebensvinylgulv-lvt-dryback-natur-5102-9853086",
     "store": "Silvan",
-    "price": 202.27
-   }
+    "price": 202.27,
+    "pack": 1.13,
+    "unitPrice": 179.0
+   },
+   "alternatives": [
+    {
+     "name": "ACC, Vinylgulv, Apollo, lyst træ",
+     "url": "https://www.silvan.dk/produkt/acc-vinylgulv-apollo-lyst-trae-2501-9845710",
+     "store": "Silvan",
+     "price": 117.0,
+     "pack": 1,
+     "unitPrice": 117.0
+    },
+    {
+     "name": "ACC, Vinylgulv, Saturn, mørkegrå flise",
+     "url": "https://www.silvan.dk/produkt/acc-vinylgulv-saturn-moerkegraa-flise-2501-9847909",
+     "store": "Silvan",
+     "price": 117.0,
+     "pack": 1,
+     "unitPrice": 117.0
+    },
+    {
+     "name": "ACC, Vinylgulv, grå beton",
+     "url": "https://www.silvan.dk/produkt/acc-vinylgulv-graa-beton-2501-9846032",
+     "store": "Silvan",
+     "price": 119.0,
+     "pack": 1,
+     "unitPrice": 119.0
+    }
+   ]
   },
   "vaegflise": {
    "label": "Vægfliser",
@@ -37,8 +93,36 @@
     "name": "Rako, Vægflise, blank lysegrå, 15x15 cm",
     "url": "https://www.silvan.dk/produkt/rako-vaegflise-blank-lysegraa-15x15-cm-6800-1912750",
     "store": "Silvan",
-    "price": 241.95
-   }
+    "price": 241.95,
+    "pack": 1.0,
+    "unitPrice": 241.95
+   },
+   "alternatives": [
+    {
+     "name": "XL-BYG AMSTERDAM DARK GREY GULVFLISE 30X60 MØRK GRÅ",
+     "url": "https://www.xl-byg.dk/produkt/xl-byg-amsterdam-dark-grey-gulvflise-30x60-moerk-graa-1222548",
+     "store": "XL-BYG",
+     "price": 215.95,
+     "pack": 1,
+     "unitPrice": 199.95
+    },
+    {
+     "name": "XL-BYG SOLID BLACK GULVFLISE 30X60 SORT",
+     "url": "https://www.xl-byg.dk/produkt/xl-byg-solid-black-gulvflise-30x60-sort-1224250",
+     "store": "XL-BYG",
+     "price": 331.11,
+     "pack": 1,
+     "unitPrice": 229.94
+    },
+    {
+     "name": "XL-BYG CAPITAL ICE VÆGFLISE 15X15 LYS GRÅ",
+     "url": "https://www.xl-byg.dk/produkt/xl-byg-capital-ice-vaegflise-15x15-lys-graa-1224704",
+     "store": "XL-BYG",
+     "price": 229.95,
+     "pack": 1,
+     "unitPrice": 229.95
+    }
+   ]
   },
   "gulvflise": {
    "label": "Gulvfliser (inde)",
@@ -50,8 +134,36 @@
     "name": "XL-BYG ARGOS GREY GULVFLISE 60X60 GRÅ",
     "url": "https://www.xl-byg.dk/produkt/xl-byg-argos-grey-gulvflise-60x60-graa-1224884",
     "store": "XL-BYG",
-    "price": 485.86
-   }
+    "price": 485.86,
+    "pack": 1.8,
+    "unitPrice": 269.92
+   },
+   "alternatives": [
+    {
+     "name": "XL-BYG ASPEN GRIGIO GULVFLISE 60X60 LYS GRÅ",
+     "url": "https://www.xl-byg.dk/produkt/xl-byg-aspen-grigio-gulvflise-60x60-lys-graa-1222713",
+     "store": "XL-BYG",
+     "price": 413.95,
+     "pack": 1.8,
+     "unitPrice": 229.97
+    },
+    {
+     "name": "XL-BYG SHELLSTONE BEIGE GULVFLISE 60X60 BEIGE",
+     "url": "https://www.xl-byg.dk/produkt/xl-byg-shellstone-beige-gulvflise-60x60-beige-1224863",
+     "store": "XL-BYG",
+     "price": 449.87,
+     "pack": 1,
+     "unitPrice": 249.93
+    },
+    {
+     "name": "XL-BYG SOLID BLACK GULVFLISE 60X60 SORT",
+     "url": "https://www.xl-byg.dk/produkt/xl-byg-solid-black-gulvflise-60x60-sort-1224486",
+     "store": "XL-BYG",
+     "price": 359.91,
+     "pack": 1,
+     "unitPrice": 249.94
+    }
+   ]
   },
   "fliseklaeb": {
    "label": "Fliseklæb",
@@ -63,8 +175,36 @@
     "name": "LIP, Fliseklæb, grå, 20 kg",
     "url": "https://www.silvan.dk/produkt/lip-fliseklaeb-graa-20-kg-6880-1972505",
     "store": "Silvan",
-    "price": 229.95
-   }
+    "price": 229.95,
+    "pack": 1,
+    "unitPrice": 229.95
+   },
+   "alternatives": [
+    {
+     "name": "LIP, Multi-fliseklæb, grå, 20 kg",
+     "url": "https://www.silvan.dk/produkt/lip-multi-fliseklaeb-graa-20-kg-6880-1972506",
+     "store": "Silvan",
+     "price": 199.95,
+     "pack": 1,
+     "unitPrice": 199.95
+    },
+    {
+     "name": "LIP, Multi-fliseklæb, hvid, 20 kg",
+     "url": "https://www.silvan.dk/produkt/lip-multi-fliseklaeb-hvid-20-kg-6880-1972507",
+     "store": "Silvan",
+     "price": 239.0,
+     "pack": 1,
+     "unitPrice": 239.0
+    },
+    {
+     "name": "LIP Prius 527, Fliseklæb, 20 kg",
+     "url": "https://www.silvan.dk/produkt/lip-prius-527-fliseklaeb-20-kg-6880-2315679",
+     "store": "Silvan",
+     "price": 264.95,
+     "pack": 1,
+     "unitPrice": 264.95
+    }
+   ]
   },
   "vaegmaling": {
    "label": "Vægmaling",
@@ -76,8 +216,36 @@
     "name": "Dyrup, Vægmaling, Classic 10, hvid, 9 L",
     "url": "https://www.silvan.dk/produkt/dyrup-vaegmaling-classic-10-hvid-9-l-2860-1835403",
     "store": "Silvan",
-    "price": 545.0
-   }
+    "price": 545.0,
+    "pack": 9.0,
+    "unitPrice": 60.56
+   },
+   "alternatives": [
+    {
+     "name": "Silvanol, Vægmaling 10, hvid, 4,5 L",
+     "url": "https://www.silvan.dk/produkt/silvanol-vaegmaling-10-hvid-45-l-2860-9726539",
+     "store": "Silvan",
+     "price": 249.0,
+     "pack": 4.5,
+     "unitPrice": 55.33
+    },
+    {
+     "name": "Silvanol, Vægmaling 10, hvid, 2,25 L",
+     "url": "https://www.silvan.dk/produkt/silvanol-vaegmaling-10-hvid-225-l-2860-9726536",
+     "store": "Silvan",
+     "price": 149.0,
+     "pack": 2.25,
+     "unitPrice": 66.22
+    },
+    {
+     "name": "Dyrup, Vægmaling, Strukturmaling 10, hvid, 9 L",
+     "url": "https://www.silvan.dk/produkt/dyrup-vaegmaling-strukturmaling-10-hvid-9-l-2860-2597125",
+     "store": "Silvan",
+     "price": 775.0,
+     "pack": 9.0,
+     "unitPrice": 86.11
+    }
+   ]
   },
   "spartel": {
    "label": "Spartelmasse",
@@ -89,8 +257,36 @@
     "name": "Dana Lim, Letspartel, Medium 622, 10 L",
     "url": "https://www.silvan.dk/produkt/dana-lim-letspartel-medium-622-10-l-2840-5009449",
     "store": "Silvan",
-    "price": 199.95
-   }
+    "price": 199.95,
+    "pack": 10.0,
+    "unitPrice": 19.99
+   },
+   "alternatives": [
+    {
+     "name": "Silvanol, Spartelmasse, lys grå, 10 L",
+     "url": "https://www.silvan.dk/produkt/silvanol-spartelmasse-lys-graa-10-l-2840-9848378",
+     "store": "Silvan",
+     "price": 169.95,
+     "pack": 10.0,
+     "unitPrice": 16.99
+    },
+    {
+     "name": "Dana Lim, Letspartel, Medium Extra 623, lys grå, 10 L",
+     "url": "https://www.silvan.dk/produkt/dana-lim-letspartel-medium-extra-623-lys-graa-10-l-2840-5184878",
+     "store": "Silvan",
+     "price": 209.0,
+     "pack": 10.0,
+     "unitPrice": 20.9
+    },
+    {
+     "name": "LIP, Håndspartel let, grå, 10 L",
+     "url": "https://www.silvan.dk/produkt/lip-haandspartel-let-graa-10-l-6880-5891560",
+     "store": "Silvan",
+     "price": 209.95,
+     "pack": 10.0,
+     "unitPrice": 20.99
+    }
+   ]
   },
   "gipsplade": {
    "label": "Gipsplade",
@@ -102,21 +298,69 @@
     "name": "Knauf, Gipsplade, 13x900x2400 mm",
     "url": "https://www.silvan.dk/produkt/knauf-gipsplade-13x900x2400-mm-4100-1410293",
     "store": "Silvan",
-    "price": 69.95
-   }
+    "price": 69.95,
+    "pack": 1,
+    "unitPrice": 69.95
+   },
+   "alternatives": [
+    {
+     "name": "Knauf, Classic 1 Board, Gipsplade, 13x900x2400 mm",
+     "url": "https://www.silvan.dk/produkt/knauf-classic-1-board-gipsplade-13x900x2400-mm-4100-5600054",
+     "store": "Silvan",
+     "price": 74.95,
+     "pack": 1,
+     "unitPrice": 74.95
+    },
+    {
+     "name": "Knauf, Gipsplade, 13x1200x2400 mm",
+     "url": "https://www.silvan.dk/produkt/knauf-gipsplade-13x1200x2400-mm-4100-5726565",
+     "store": "Silvan",
+     "price": 74.95,
+     "pack": 1,
+     "unitPrice": 74.95
+    }
+   ]
   },
   "toilet": {
    "label": "Toilet",
    "unit": "stk",
-   "budget": 749.95,
-   "standard": 2353.0,
-   "n": 42,
+   "budget": 1299.95,
+   "standard": 2390.0,
+   "n": 27,
    "product": {
-    "name": "Ifö, Væghængt toilet, Cera 3875",
-    "url": "https://www.silvan.dk/produkt/if%c3%b6-vaeghaengt-toilet-cera-3875-2601-9839218",
+    "name": "NAUTIC væghængt toiletskål",
+    "url": "https://www.silvan.dk/produkt/nautic-vaeghaengt-toiletskaal-2601-1527896",
     "store": "Silvan",
-    "price": 749.95
-   }
+    "price": 1299.95,
+    "pack": 1,
+    "unitPrice": 1299.95
+   },
+   "alternatives": [
+    {
+     "name": "Jika, Væghængt toilet, Lyra",
+     "url": "https://www.silvan.dk/produkt/jika-vaeghaengt-toilet-lyra-2601-9853364",
+     "store": "Silvan",
+     "price": 604.95,
+     "pack": 1,
+     "unitPrice": 604.95
+    },
+    {
+     "name": "Ifö, Væghængt toilet, Cera 3875",
+     "url": "https://www.silvan.dk/produkt/if%c3%b6-vaeghaengt-toilet-cera-3875-2601-9839218",
+     "store": "Silvan",
+     "price": 749.95,
+     "pack": 1,
+     "unitPrice": 749.95
+    },
+    {
+     "name": "LAUFEN PRO N PRO N VÆGHÆNGT TOILET",
+     "url": "https://www.xl-byg.dk/produkt/laufen-pro-n-pro-n-vaeghaengt-toilet-2343385",
+     "store": "XL-BYG",
+     "price": 899.0,
+     "pack": 1,
+     "unitPrice": 899.0
+    }
+   ]
   },
   "badmoebel": {
    "label": "Badeværelsesmøbel med vask",
@@ -128,8 +372,36 @@
     "name": "Nortiq, Badmøbelsæt, Pisa, 40 cm, støvet grøn",
     "url": "https://www.silvan.dk/produkt/nortiq-badmoebelsaet-pisa-40-cm-stoevet-groen-5500-9876838",
     "store": "Silvan",
-    "price": 1599.0
-   }
+    "price": 1599.0,
+    "pack": 1,
+    "unitPrice": 1599.0
+   },
+   "alternatives": [
+    {
+     "name": "VASSO MILANO SOFTCLOSE BADMØBEL HVID 2 SKUFFER 80 CM",
+     "url": "https://www.xl-byg.dk/produkt/vasso-milano-softclose-badmoebel-hvid-2-skuffer-80-cm-2393425",
+     "store": "XL-BYG",
+     "price": 1399.0,
+     "pack": 1,
+     "unitPrice": 1399.0
+    },
+    {
+     "name": "VASSO MILANO SOFTCLOSE BADMØBEL VARM EG 2 SKUFFER 80 CM",
+     "url": "https://www.xl-byg.dk/produkt/vasso-milano-softclose-badmoebel-varm-eg-2-skuffer-80-cm-2393431",
+     "store": "XL-BYG",
+     "price": 1399.0,
+     "pack": 1,
+     "unitPrice": 1399.0
+    },
+    {
+     "name": "VASSO MILANO SOFTCLOSE BADMØBEL SORT 2 SKUFFER 80 CM",
+     "url": "https://www.xl-byg.dk/produkt/vasso-milano-softclose-badmoebel-sort-2-skuffer-80-cm-2393428",
+     "store": "XL-BYG",
+     "price": 1399.0,
+     "pack": 1,
+     "unitPrice": 1399.0
+    }
+   ]
   },
   "brusesaet": {
    "label": "Brusesæt/termostat",
@@ -141,8 +413,36 @@
     "name": "Adora, Brusesæt, Pompan 110",
     "url": "https://www.silvan.dk/produkt/adora-brusesaet-pompan-110-2602-1678457",
     "store": "Silvan",
-    "price": 399.95
-   }
+    "price": 399.95,
+    "pack": 1,
+    "unitPrice": 399.95
+   },
+   "alternatives": [
+    {
+     "name": "Hansgrohe, Brusesæt, Crometta Vario, krom",
+     "url": "https://www.silvan.dk/produkt/hansgrohe-brusesaet-crometta-vario-krom-2602-9725277",
+     "store": "Silvan",
+     "price": 359.95,
+     "pack": 1,
+     "unitPrice": 359.95
+    },
+    {
+     "name": "Adora, Brusesæt, Dominus 115, krom",
+     "url": "https://www.silvan.dk/produkt/adora-brusesaet-dominus-115-krom-2602-1252192",
+     "store": "Silvan",
+     "price": 379.95,
+     "pack": 1,
+     "unitPrice": 379.95
+    },
+    {
+     "name": "Bluerain, Brusesæt, 3 Spray, matsort",
+     "url": "https://www.silvan.dk/produkt/bluerain-brusesaet-3-spray-matsort-2602-9846565",
+     "store": "Silvan",
+     "price": 399.0,
+     "pack": 1,
+     "unitPrice": 399.0
+    }
+   ]
   },
   "brusevaeg": {
    "label": "Brusevæg",
@@ -154,8 +454,36 @@
     "name": "Milobad, Brusevæg, klart glas, 60x190 cm",
     "url": "https://www.silvan.dk/produkt/milobad-brusevaeg-klart-glas-60x190-cm-5500-2540814",
     "store": "Silvan",
-    "price": 749.0
-   }
+    "price": 749.0,
+    "pack": 1,
+    "unitPrice": 749.0
+   },
+   "alternatives": [
+    {
+     "name": "Milobad, Brusevæg, frostet glas, 80x190 cm",
+     "url": "https://www.silvan.dk/produkt/milobad-brusevaeg-frostet-glas-80x190-cm-2603-1902155",
+     "store": "Silvan",
+     "price": 736.95,
+     "pack": 1,
+     "unitPrice": 736.95
+    },
+    {
+     "name": "MILOBAD 90X190 BRUSEVÆG KLAR GLAS 90 CM",
+     "url": "https://www.xl-byg.dk/produkt/milobad-0-90x190-brusevaeg-klar-glas-90-cm-1902157",
+     "store": "XL-BYG",
+     "price": 737.0,
+     "pack": 1,
+     "unitPrice": 737.0
+    },
+    {
+     "name": "Mikelo, Brusevæg, sort, 60x200 cm",
+     "url": "https://www.silvan.dk/produkt/mikelo-brusevaeg-sort-60x200-cm-5500-2540833",
+     "store": "Silvan",
+     "price": 749.0,
+     "pack": 1,
+     "unitPrice": 749.0
+    }
+   ]
   },
   "bordplade": {
    "label": "Køkkenbordplade",
@@ -167,8 +495,36 @@
     "name": "Skabt med omtanke, Bordplade, massiv bøg, 26x610x2020 mm",
     "url": "https://www.silvan.dk/produkt/skabt-med-omtanke-bordplade-massiv-boeg-26x610x2020-mm-3500-9851618",
     "store": "Silvan",
-    "price": 829.95
-   }
+    "price": 829.95,
+    "pack": 1,
+    "unitPrice": 829.95
+   },
+   "alternatives": [
+    {
+     "name": "Bordplade, massiv gran, 27x630x2000 mm",
+     "url": "https://www.silvan.dk/produkt/bordplade-massiv-gran-27x630x2000-mm-3500-1420821",
+     "store": "Silvan",
+     "price": 614.95,
+     "pack": 1,
+     "unitPrice": 614.95
+    },
+    {
+     "name": "Bordplade, massiv gran, 27x630x2250 mm",
+     "url": "https://www.silvan.dk/produkt/bordplade-massiv-gran-27x630x2250-mm-3500-1420822",
+     "store": "Silvan",
+     "price": 719.95,
+     "pack": 1,
+     "unitPrice": 719.95
+    },
+    {
+     "name": "Bordplade, massiv gran, 27x780x1200 mm",
+     "url": "https://www.silvan.dk/produkt/bordplade-massiv-gran-27x780x1200-mm-3500-1420824",
+     "store": "Silvan",
+     "price": 749.95,
+     "pack": 1,
+     "unitPrice": 749.95
+    }
+   ]
   },
   "koekkenarmatur": {
    "label": "Køkkenarmatur",
@@ -180,8 +536,36 @@
     "name": "Desá, Køkkenarmatur, Contempo 2, mat sort",
     "url": "https://www.silvan.dk/produkt/des%c3%a1-koekkenarmatur-contempo-2-mat-sort-2602-9853367",
     "store": "Silvan",
-    "price": 599.95
-   }
+    "price": 599.95,
+    "pack": 1,
+    "unitPrice": 599.95
+   },
+   "alternatives": [
+    {
+     "name": "Bluerain, Køkkenarmatur, krom, 11 L/min",
+     "url": "https://www.silvan.dk/produkt/bluerain-koekkenarmatur-krom-11-l_min-2602-9850257",
+     "store": "Silvan",
+     "price": 495.0,
+     "pack": 1,
+     "unitPrice": 495.0
+    },
+    {
+     "name": "VASSO KV11 KØKKENARMATUR KROM",
+     "url": "https://www.xl-byg.dk/produkt/vasso-0-kv11-koekkenarmatur-krom-2173043",
+     "store": "XL-BYG",
+     "price": 499.0,
+     "pack": 1,
+     "unitPrice": 499.0
+    },
+    {
+     "name": "Desá, Køkkenarmatur, Contempo 2, blankt krom, 9 L/min",
+     "url": "https://www.silvan.dk/produkt/des%c3%a1-koekkenarmatur-contempo-2-blankt-krom-9-l_min-2602-9844444",
+     "store": "Silvan",
+     "price": 529.95,
+     "pack": 1,
+     "unitPrice": 529.95
+    }
+   ]
   },
   "koekkenvask": {
    "label": "Køkkenvask",
@@ -193,8 +577,36 @@
     "name": "Intra Juvel, Køkkenvask, BK400-R01, poleret stål, 460x400 mm",
     "url": "https://www.silvan.dk/produkt/intra-juvel-koekkenvask-bk400-r01-poleret-staal-460x400-mm-2601-4399911",
     "store": "Silvan",
-    "price": 565.95
-   }
+    "price": 565.95,
+    "pack": 1,
+    "unitPrice": 565.95
+   },
+   "alternatives": [
+    {
+     "name": "JUVEL BMK480 KØKKENVASK 540 MM",
+     "url": "https://www.xl-byg.dk/produkt/juvel-bmk480-koekkenvask-540-mm-4399929",
+     "store": "XL-BYG",
+     "price": 549.0,
+     "pack": 1,
+     "unitPrice": 549.0
+    },
+    {
+     "name": "JUVEL BMK400 KØKKENVASK 400 MM",
+     "url": "https://www.xl-byg.dk/produkt/juvel-bmk400-koekkenvask-400-mm-4399911",
+     "store": "XL-BYG",
+     "price": 549.0,
+     "pack": 1,
+     "unitPrice": 549.0
+    },
+    {
+     "name": "Intra Juvel, Køkkenvask, BK400-R02, poleret stål, 460x400 mm",
+     "url": "https://www.silvan.dk/produkt/intra-juvel-koekkenvask-bk400-r02-poleret-staal-460x400-mm-2601-5661829",
+     "store": "Silvan",
+     "price": 549.95,
+     "pack": 1,
+     "unitPrice": 549.95
+    }
+   ]
   },
   "indvdoer": {
    "label": "Indvendig dør",
@@ -206,8 +618,36 @@
     "name": "Swedoor, Indvendig dør m. glas, Purity GW03L, hvid, M8x21, 725x2040 mm",
     "url": "https://www.silvan.dk/produkt/swedoor-indvendig-doer-m-glas-purity-gw03l-hvid-m8x21-725x2040-mm-5200-5064311",
     "store": "Silvan",
-    "price": 1689.0
-   }
+    "price": 1689.0,
+    "pack": 1,
+    "unitPrice": 1689.0
+   },
+   "alternatives": [
+    {
+     "name": "Swedoor, Indvendig dør, Compact 03, hvid, M8x21, 725x2040 mm",
+     "url": "https://www.silvan.dk/produkt/swedoor-indvendig-doer-compact-03-hvid-m8x21-725x2040-mm-5200-5178485",
+     "store": "Silvan",
+     "price": 1006.0,
+     "pack": 1,
+     "unitPrice": 1006.0
+    },
+    {
+     "name": "Swedoor, Indvendig dør, Compact 03, hvid, M7x21, 625x2040 mm",
+     "url": "https://www.silvan.dk/produkt/swedoor-indvendig-doer-compact-03-hvid-m7x21-625x2040-mm-5200-5178484",
+     "store": "Silvan",
+     "price": 1006.0,
+     "pack": 1,
+     "unitPrice": 1006.0
+    },
+    {
+     "name": "Swedoor, Indvendig dør, Easy GW, ubeslået, hvid, M8x21, 725x2040 mm",
+     "url": "https://www.silvan.dk/produkt/swedoor-indvendig-doer-easy-gw-ubeslaaet-hvid-m8x21-725x2040-mm-5200-5686224",
+     "store": "Silvan",
+     "price": 1460.0,
+     "pack": 1,
+     "unitPrice": 1460.0
+    }
+   ]
   },
   "fodliste": {
    "label": "Fodliste",
@@ -219,21 +659,77 @@
     "name": "Hornbaek, Almuefodliste, fyr, 15x91x1200 mm",
     "url": "https://www.silvan.dk/produkt/hornbaek-almuefodliste-fyr-15x91x1200-mm-5400-9700986",
     "store": "Silvan",
-    "price": 65.95
-   }
+    "price": 65.95,
+    "pack": 1,
+    "unitPrice": 65.95
+   },
+   "alternatives": [
+    {
+     "name": "Hornbaek, Fodliste, hvidmalet fyr, 14x65x1200 mm",
+     "url": "https://www.silvan.dk/produkt/hornbaek-fodliste-hvidmalet-fyr-14x65x1200-mm-5400-2102469",
+     "store": "Silvan",
+     "price": 56.5,
+     "pack": 1,
+     "unitPrice": 56.5
+    },
+    {
+     "name": "Hornbaek, Fodliste, fyr, 14x65x3600 mm",
+     "url": "https://www.silvan.dk/produkt/hornbaek-fodliste-fyr-14x65x3600-mm-5400-9701497",
+     "store": "Silvan",
+     "price": 60.95,
+     "pack": 1,
+     "unitPrice": 60.95
+    },
+    {
+     "name": "MOLAND 15X27 MM FODLISTE EG 15 X 27 X 0 MM",
+     "url": "https://www.xl-byg.dk/produkt/moland-15x27-mm-fodliste-eg-15-x-27-x-0-mm-5911258",
+     "store": "XL-BYG",
+     "price": 65.0,
+     "pack": 1,
+     "unitPrice": 65.0
+    }
+   ]
   },
   "stikkontakt": {
    "label": "Stikkontakt",
    "unit": "stk",
-   "budget": 35.95,
-   "standard": 170.16,
-   "n": 36,
+   "budget": 113.0,
+   "standard": 178.47,
+   "n": 28,
    "product": {
-    "name": "E-Line, Stikkontakt m/jord og afbryder, grå",
-    "url": "https://www.silvan.dk/produkt/e-line-stikkontakt-m_jord-og-afbryder-graa-2680-2559612",
+    "name": "LK Fuga, Stikkontaktindsats m/jord, 1 modul, hvid",
+    "url": "https://www.silvan.dk/produkt/lk-fuga-stikkontaktindsats-m_jord-1-modul-hvid-2680-1254884",
     "store": "Silvan",
-    "price": 35.95
-   }
+    "price": 113.0,
+    "pack": 1,
+    "unitPrice": 113.0
+   },
+   "alternatives": [
+    {
+     "name": "E-Line, Stikkontakt m/jord, IP54, grå",
+     "url": "https://www.silvan.dk/produkt/e-line-stikkontakt-m_jord-ip54-graa-2680-2559594",
+     "store": "Silvan",
+     "price": 26.95,
+     "pack": 1,
+     "unitPrice": 26.95
+    },
+    {
+     "name": "E-Line, Dobbelt stikkontakt m/jord, IP54, grå",
+     "url": "https://www.silvan.dk/produkt/e-line-dobbelt-stikkontakt-m_jord-ip54-graa-2680-2559592",
+     "store": "Silvan",
+     "price": 32.95,
+     "pack": 1,
+     "unitPrice": 32.95
+    },
+    {
+     "name": "E-Line, Stikkontakt m/jord og afbryder, grå",
+     "url": "https://www.silvan.dk/produkt/e-line-stikkontakt-m_jord-og-afbryder-graa-2680-2559612",
+     "store": "Silvan",
+     "price": 35.95,
+     "pack": 1,
+     "unitPrice": 35.95
+    }
+   ]
   },
   "loftlampe": {
    "label": "Loftlampe",
@@ -245,8 +741,36 @@
     "name": "Eglo Fueva 5, Plafond, sort, Ø21 cm",
     "url": "https://www.silvan.dk/produkt/eglo-fueva-5-plafond-sort-oe21-cm-2682-2132232",
     "store": "Silvan",
-    "price": 179.95
-   }
+    "price": 179.95,
+    "pack": 1,
+    "unitPrice": 179.95
+   },
+   "alternatives": [
+    {
+     "name": "Eglo Frania, Plafond, hvid, Ø22 cm",
+     "url": "https://www.silvan.dk/produkt/eglo-frania-plafond-hvid-oe22-cm-2682-1976839",
+     "store": "Silvan",
+     "price": 149.95,
+     "pack": 1,
+     "unitPrice": 149.95
+    },
+    {
+     "name": "Eglo Poglioa-s, Plafond, hvid, Ø26 cm",
+     "url": "https://www.silvan.dk/produkt/eglo-poglioa-s-plafond-hvid-oe26-cm-2682-9852236",
+     "store": "Silvan",
+     "price": 157.95,
+     "pack": 1,
+     "unitPrice": 157.95
+    },
+    {
+     "name": "PHILIPS TWIRLY PLAFOND 12W HVID 29 CM",
+     "url": "https://www.xl-byg.dk/produkt/philips-0-twirly-plafond-12w-hvid-29-cm-1808033",
+     "store": "XL-BYG",
+     "price": 159.0,
+     "pack": 1,
+     "unitPrice": 159.0
+    }
+   ]
   }
  }
 }

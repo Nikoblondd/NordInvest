@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
+import { fetchImageB64, parseJson } from "@/lib/vision-images";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -90,49 +91,6 @@ function sanitize(raw: any) {
     confidence: clamp(raw?.confidence, 0, 1, 0.5),
     summary: typeof raw?.summary === "string" ? raw.summary.slice(0, 300) : null,
   };
-}
-
-const OK_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-
-async function fetchImageB64(url: string): Promise<{ media_type: string; data: string } | null> {
-  try {
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36",
-        // Request only formats Anthropic accepts — never avif (CDNs will serve it if offered).
-        Accept: "image/jpeg,image/png,image/webp,image/*;q=0.8",
-      },
-    });
-    clearTimeout(t);
-    if (!res.ok) return null;
-    let type = (res.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
-    if (type === "image/jpg") type = "image/jpeg";
-    if (!OK_TYPES.has(type)) return null;
-    const buf = Buffer.from(await res.arrayBuffer());
-    if (buf.length < 1024 || buf.length > 5_000_000) return null; // skip tiny icons / huge files
-    return { media_type: type, data: buf.toString("base64") };
-  } catch {
-    return null;
-  }
-}
-
-function parseJson(text: string): any | null {
-  try {
-    return JSON.parse(text);
-  } catch {
-    const m = text.match(/\{[\s\S]*\}/); // salvage a JSON object from any wrapping
-    if (m) {
-      try {
-        return JSON.parse(m[0]);
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  }
 }
 
 export async function POST(req: Request) {
