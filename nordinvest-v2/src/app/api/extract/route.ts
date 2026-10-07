@@ -119,6 +119,7 @@ export async function GET(req: NextRequest) {
   f.address ??= metaContent(html, ["og:title"]) ?? titleTag(html) ?? undefined;
   // Source 3: visible-text labelled patterns (fills gaps)
   fromText(f, htmlToText(html));
+  fillGaps(f, html);
 
   // Derive rent from yield if rent missing
   if (!f.annualRent && !f.monthlyRent && f.yieldPct && f.price) {
@@ -380,6 +381,7 @@ async function extractFromMaeglerUrl(mUrl: string): Promise<{ ok: boolean; field
     for (const obj of collectJson(html)) mergeFromJson(f, obj);
     f.address ??= metaContent(html, ["og:title"]) ?? titleTag(html) ?? undefined;
     fromText(f, htmlToText(html));
+    fillGaps(f, html);
     if (f.annualRent && !f.monthlyRent) f.monthlyRent = Math.round(f.annualRent / 12);
     if (f.monthlyRent && !f.annualRent) f.annualRent = Math.round(f.monthlyRent * 12);
     const found = Object.entries(f)
@@ -556,6 +558,21 @@ const K = {
   rent: ["annualrent", "yearlyrent", "rentalincome", "lejeindtaegt", "lejeindtaegtaar", "aarligleje", "rent", "leje", "husleje"],
   yield: ["yield", "afkast", "returnrate", "startyield", "startafkast", "forrentning"],
 };
+
+// Mægler pages (EDC and others) often give the street without postnummer and
+// keep the price in microdata; fill both from the raw HTML so no listing
+// arrives without them.
+function fillGaps(f: Fields, html: string) {
+  if (f.address && !/\b\d{4}\b/.test(String(f.address))) {
+    const zip = html.match(/"(?:postalCode|zipCode|zipcode)"\s*:\s*"?(\d{4})/)?.[1] ?? html.match(/postalCode"?>\s*(\d{4})</)?.[1];
+    const city = html.match(/"addressLocality"\s*:\s*"([^"]{2,40})"/)?.[1];
+    if (zip) f.address = `${f.address}, ${zip}${city ? ` ${city}` : ""}`;
+  }
+  if (!f.price) {
+    const p = Number(html.match(/"price"\s*:\s*(?:\{\s*"value"\s*:\s*)?(\d{6,9})\b/)?.[1]);
+    if (p > 100000) f.price = p;
+  }
+}
 
 function norm(k: string): string {
   return k.toLowerCase().replace(/[^a-z0-9]/g, "");

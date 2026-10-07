@@ -70,13 +70,19 @@ export function FlipReport() {
       .catch(() => setFailed(true));
   }, [url]);
 
+  // Without a postnummer and area there is nothing to compare; say so instead
+  // of waiting. The market call also gets a time limit.
+  const missing = listing ? [!listing.zip && "postnummer", !listing.area && "boligareal", !listing.price && "pris"].filter(Boolean) as string[] : [];
   useEffect(() => {
     if (!listing?.zip || !listing.area) return;
+    const t = setTimeout(() => setMarket((m) => m ?? { ok: false, reason: "fetch_failed" }), 20_000);
     setPrice((p) => p ?? listing.price);
     fetch(`/api/flip/market?zip=${listing.zip}&type=${type}&area=${listing.area}${listing.yearBuilt ? `&year=${listing.yearBuilt}` : ""}`)
       .then((r) => r.json())
       .then((m: FlipMarket) => setMarket(m))
-      .catch(() => setMarket({ ok: false, reason: "fetch_failed" }));
+      .catch(() => setMarket({ ok: false, reason: "fetch_failed" }))
+      .finally(() => clearTimeout(t));
+    return () => clearTimeout(t);
   }, [listing, type]);
 
   // The AI looks at the photos once; its plan replaces the default plan.
@@ -154,6 +160,15 @@ export function FlipReport() {
   }, [result, property, listing, url]);
 
   if (failed) return <p className="mt-20 text-center text-slate-600">Vi kunne ikke hente boligen. <Link className="text-blue-700 underline" href="/analyseren/start">Prøv igen</Link></p>;
+  if (listing && missing.length) {
+    return (
+      <div className="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center px-4 py-16">
+        <p className="text-[22px] font-semibold tracking-[-0.02em] text-slate-900">Vi mangler {missing.join(" og ")}</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-slate-600">Mæglerens side viste ikke alle tal{listing.address ? ` for ${listing.address}` : ""}. Find boligen på Boligsiden og indsæt det link i stedet, så har vi alt.</p>
+        <Link href="/analyseren/start" className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl bg-blue-600 px-6 text-[15px] font-semibold text-white hover:bg-blue-700">Prøv et andet link</Link>
+      </div>
+    );
+  }
   if (!listing || !market || !result || !property || !grid || !lines || !weeks || !shop) {
     // Each step ticks off when its data has actually arrived.
     const steps = [
