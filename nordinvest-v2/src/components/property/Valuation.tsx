@@ -103,7 +103,7 @@ export function Valuation({ bfe, price, area }: { bfe: number | null | undefined
         </div>
         <div className="min-w-0 px-3 py-3.5 sm:px-6">
           <dt className="text-[12px] text-slate-500">{diff < 0 ? "Under vurdering" : "Over vurdering"}</dt>
-          <dd className={`mt-0.5 text-[14px] font-semibold tabular-nums sm:text-[17px] ${tone}`}>{price > 0 ? `${diff > 0 ? "+" : diff < 0 ? "−" : ""}${Math.abs(Math.round(diff * 100))} %` : "–"}</dd>
+          <dd className={`mt-0.5 text-[14px] font-semibold tabular-nums sm:text-[17px] ${tone}`}>{price > 0 ? `${Math.abs(Math.round(diff * 100))} %` : "–"}</dd>
         </div>
         <div className="min-w-0 px-3 py-3.5 sm:px-6">
           <dt className="text-[12px] text-slate-500">{area ? "Pr. m²" : "Vurderet år"}</dt>
