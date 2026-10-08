@@ -48,6 +48,9 @@ export function WealthChart({ data, selected, onSelect }: { data: WealthYear[]; 
   const last = data[data.length - 1];
   const lastEquity = last.paid + last.growth;
   const cfPositive = last.cumulativeCashFlow >= 0;
+  // The two end pills sit at their values; when those are close, the cash
+  // flow pill moves below its dot so they never overlap.
+  const pillsClash = Math.abs(y(equity(last)) - y(last.cumulativeCashFlow)) < 16;
   const linePts = data.map((d, i) => `${colX(i)},${y(d.cumulativeCashFlow)}`).join(" ");
   // Controlled by the year scrubber when onSelect is given; hover then moves the
   // scrubber instead of opening a tooltip.
@@ -94,12 +97,14 @@ export function WealthChart({ data, selected, onSelect }: { data: WealthYear[]; 
                     shown === i ? "bg-slate-900/[0.04]" : "bg-transparent",
                   )}
                 />
+                {/* Grows in once seen; never stays at zero height if the
+                    observer misses (a chapter opened from a link). */}
                 <motion.div
                   className="absolute left-1/2 w-[46%] max-w-[34px] -translate-x-1/2 origin-bottom"
                   style={{ top: `${eqTop}%`, bottom: `${100 - zeroY}%` }}
-                  initial={reduce ? false : { scaleY: 0 }}
-                  animate={{ scaleY: show ? 1 : 0 }}
-                  transition={{ duration: 0.7, delay: reduce ? 0 : i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                  initial={reduce ? false : { scaleY: 0.0001 }}
+                  animate={{ scaleY: 1 }}
+                  transition={{ duration: 0.7, delay: reduce ? 0 : (show ? 0 : 0.2) + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <div className="absolute inset-x-0 top-0 rounded-t-[7px] bg-blue-600" style={{ height: `${((paidTop - eqTop) / (zeroY - eqTop || 1)) * 100}%` }} />
                   <div
@@ -123,7 +128,7 @@ export function WealthChart({ data, selected, onSelect }: { data: WealthYear[]; 
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
             initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: show ? 1 : 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: reduce ? 0 : 0.45 }}
           />
         </svg>
@@ -145,7 +150,7 @@ export function WealthChart({ data, selected, onSelect }: { data: WealthYear[]; 
           className="absolute -translate-x-full whitespace-nowrap rounded-full bg-blue-600 px-3 py-1 text-[13px] font-semibold tabular-nums text-white shadow-[0_6px_16px_-6px_rgba(37,99,235,0.6)]"
           style={{ left: `calc(${colX(data.length - 1)}% + 18px)`, top: `calc(${y(equity(last))}% - 36px)` }}
         >
-          {dk(lastEquity)} kr
+          {dk(lastEquity)} kr.
         </span>
         <span
           aria-hidden
@@ -153,10 +158,10 @@ export function WealthChart({ data, selected, onSelect }: { data: WealthYear[]; 
             "absolute -translate-x-full whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold tabular-nums ring-1 ring-inset",
             cfPositive ? "bg-emerald-50 text-emerald-700 ring-emerald-200" : "bg-rose-50 text-rose-700 ring-rose-200",
           )}
-          style={{ left: `calc(${colX(data.length - 1)}% - 12px)`, top: `calc(${y(last.cumulativeCashFlow)}% - 11px)` }}
+          style={{ left: `calc(${colX(data.length - 1)}% - 12px)`, top: pillsClash ? `calc(${y(last.cumulativeCashFlow)}% + 12px)` : `calc(${y(last.cumulativeCashFlow)}% - 11px)` }}
         >
           {cfPositive ? "+" : "−"}
-          {dk(Math.abs(last.cumulativeCashFlow))} kr
+          {dk(Math.abs(last.cumulativeCashFlow))} kr.
         </span>
 
         {/* hover / focus targets per year */}

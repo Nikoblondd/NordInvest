@@ -39,12 +39,14 @@ export function MoneyFlow({
   const k = yearly ? 12 : 1;
   const positive = cashFlow >= 0;
 
-  const parts: Part[] = [
+  const all: Part[] = [
     { id: "laan", label: "Lån", amount: mortgage, bar: "bg-blue-600", ink: "text-white", explain: "Ydelsen på lånet: renter og afdrag. Afdraget bliver til friværdi i boligen, så den del er opsparing, ikke tabte penge." },
     { id: "faste", label: "Faste udgifter", amount: fixed, bar: "bg-[#93b4f5]", ink: "text-slate-900", explain: "Ejerudgiften: ejendomsskat, forsikring, fællesudgifter og andre faste regninger, som følger med boligen uanset lejer." },
     { id: "vedl", label: "Vedligehold", amount: maintenance, bar: "bg-slate-400", ink: "text-white", explain: "Penge lagt til side til reparationer og slid: maling, hvidevarer, tag og vinduer. Bruges ikke hver måned, men kommer." },
     { id: "tomgang", label: "Tomgang", amount: vacancy, bar: "bg-slate-300", ink: "text-slate-900", explain: "Måneder uden lejer mellem to lejemål, fordelt ud over året. Selv gode boliger står tomme en gang imellem." },
   ];
+  // A zero post (no ejerudgift entered, say) would only print "−0 kr".
+  const parts = all.filter((p) => Math.round(p.amount) > 0);
   if (positive) {
     parts.push({ id: "dig", label: "Til dig", amount: cashFlow, bar: "bg-emerald-500", ink: "text-white", explain: "Det, der er tilbage, når lejen har betalt lånet og alle udgifter. Det lander på din konto." });
   }
