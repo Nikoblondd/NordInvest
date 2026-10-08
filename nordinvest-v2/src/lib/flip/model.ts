@@ -229,6 +229,24 @@ export type Costs = {
 
 const VAT = 1.25;
 
+export type LineCost = { line: Line; materials: number; labour: number; diy: boolean };
+
+/** Materials and labour for each line, exactly as renovationCost() adds them up. */
+export function lineCosts(lines: Line[], p: Property, a: FlipAnswers): LineCost[] {
+  const rates = RATES[region(p.zip)];
+  const skip = new Set(DIY_SKIPS[a.diy]);
+  const matFactor = a.role === "tradesman" || a.role === "contractor" ? 0.85 : 1;
+  return lines.map((l) => {
+    const materials = l.qty * l.unitPrice * matFactor;
+    if (!l.trade || !l.hours) return { line: l, materials, labour: 0, diy: false };
+    const diy = skip.has(l.trade) || (a.role === "contractor" && l.trade !== "el" && l.trade !== "vvs");
+    return { line: l, materials, labour: diy ? 0 : l.hours * rates[l.trade] * VAT, diy };
+  });
+}
+
+/** Buffer for hidden faults: 10 % on a cosmetic job, 15 % medium, 20 % total. */
+export const bufferPct = (level: Level) => (level === "cosmetic" ? 10 : level === "medium" ? 15 : 20);
+
 export function renovationCost(lines: Line[], p: Property, a: FlipAnswers): Costs {
   const rates = RATES[region(p.zip)];
   const skip = new Set(DIY_SKIPS[a.diy]);
@@ -250,7 +268,7 @@ export function renovationCost(lines: Line[], p: Property, a: FlipAnswers): Cost
     byTrade[l.trade] = (byTrade[l.trade] ?? 0) + cost;
   }
   // Hidden faults: 10 % on a cosmetic job, 15 % medium, 20 % total.
-  const bufPct = a.level === "cosmetic" ? 0.1 : a.level === "medium" ? 0.15 : 0.2;
+  const bufPct = bufferPct(a.level) / 100;
   const buffer = (materials + labour) * bufPct;
   return { materials, labour, labourByTrade: byTrade, diyHours, buffer, renovation: materials + labour + buffer };
 }

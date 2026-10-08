@@ -8,7 +8,7 @@ import { PeriodChoice } from "@/components/upgrade/PeriodChoice";
 import { useCheckout } from "@/lib/use-checkout";
 import { clsx } from "@/lib/clsx";
 
-export type UpgradeReason = "report" | "excel" | "deals" | "map" | "filters" | "alerts";
+export type UpgradeReason = "report" | "excel" | "flip_excel" | "deals" | "map" | "filters" | "alerts";
 
 const starter = tiers.find((t) => t.id === "starter")!;
 
@@ -22,6 +22,11 @@ const COPY: Record<UpgradeReason, { icon: typeof FileText; title: string; body: 
     icon: FileSpreadsheet,
     title: "Excel-modellen er med i Starter",
     body: "Få hele regnestykket som redigerbart regneark med levende formler, så du selv kan justere leje, rente og drift.",
+  },
+  flip_excel: {
+    icon: FileSpreadsheet,
+    title: "Flip-kalkulen i Excel er med i Starter",
+    body: "Få hele flippen som regneark med levende formler og hele renoveringsbudgettet med produktlinks. Send det til banken eller din makker, og regn videre selv.",
   },
   deals: {
     icon: Search,

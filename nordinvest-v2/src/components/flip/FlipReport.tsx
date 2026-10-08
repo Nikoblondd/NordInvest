@@ -7,12 +7,14 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Check, ChevronDown, Copy, ExternalLink, FileDown, Info, Loader2, ScanSearch, ShieldAlert, ShoppingCart } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { NumberInput } from "@/components/ui/NumberInput";
+import { FlipSheet } from "@/components/flip/FlipSheet";
+import { UpgradeDialog } from "@/components/upgrade/UpgradeDialog";
 import { SignupGate } from "@/components/analyzer/SignupGate";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
 import { ANON_FREE, countAnonAnalysis } from "@/lib/plan";
 import { captureEvent } from "@/lib/analytics-events";
 import {
-  DEFAULT_ANSWERS, PRICES_FETCHED, TRADE_LABEL, flip, region, renovationLines, shoppingList, stress, timeline,
+  DEFAULT_ANSWERS, PRICES_FETCHED, TRADE_LABEL, bufferPct, flip, lineCosts, region, renovationLines, shoppingList, stress, timeline,
   type FlipAnswers, type Line, type Property, type TaxCase,
 } from "@/lib/flip/model";
 import { ACTION_LABEL, ELEMENTS, ELEMENT_LABEL, defaultPlan, planFromCondition, type Action, type Condition, type Element, type Plan } from "@/lib/flip/plan";
@@ -55,6 +57,8 @@ export function FlipReport() {
   const [gate, setGate] = useState<"none" | "signup" | "paywall">("none");
   const [freeMax, setFreeMax] = useState(3);
   const [copied, setCopied] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [upgrade, setUpgrade] = useState(false);
 
   useEffect(() => {
     let stored: { listing?: Listing } | null = null;
@@ -124,7 +128,9 @@ export function FlipReport() {
     const all = market.comps.map((c) => c.perM2).sort((x, y) => x - y);
     const ceiling = market.medianRenovated ?? all[Math.floor(all.length * 0.75)] ?? null;
     if (!ceiling) return null;
-    const own = property.price / property.area;
+    // The listing's asking price, never the user's bid: a lower bid doesn't
+    // make the house worth less.
+    const own = (listing?.price ?? property.price) / property.area;
     const base = answers.level === "total" ? market.medianNeedsWork : market.medianStandard;
     // When the postnummer's listings show no premium for renovated homes
     // (too few, or mixed wording), assume a modest 10 % and say so.
@@ -132,13 +138,13 @@ export function FlipReport() {
     const uplift = weak ? own * 0.1 : ceiling - base;
     const anchored = own + uplift;
     return anchored < ceiling || weak ? { perM2: anchored, anchored: true, weak } : { perM2: ceiling, anchored: false, weak };
-  }, [market, property, answers.level]);
+  }, [market, property, listing, answers.level]);
   // Too few homes for sale in the postnummer (or the lookup failed): start at
   // 20 % over the asking price, say so, and let the user set it.
   const suggestedArv = arvBasis
     ? Math.round((arvBasis.perM2 * property!.area) / 5000) * 5000
     : property && market
-    ? Math.round((property.price * 1.2) / 5000) * 5000
+    ? Math.round(((listing?.price ?? property.price) * 1.2) / 5000) * 5000
     : null;
   useEffect(() => { if (!arvTouched && suggestedArv) setArv(suggestedArv); }, [suggestedArv, arvTouched]);
 
@@ -227,6 +233,75 @@ export function FlipReport() {
   const set = (patch: Partial<FlipAnswers>) => setAnswers((a) => ({ ...a, ...patch }));
   const comps = market.ok ? market.comps : [];
   const scoreColor = good ? "text-emerald-600" : ok ? "text-amber-600" : "text-rose-500";
+  // "Udskift køkken og bad, opfrisk vægge og gulve"
+  const listOf = (a: Action) => ELEMENTS.filter((e) => plan[e] === a).map((e) => ELEMENT_LABEL[e].toLowerCase());
+  const joinDa = (xs: string[]) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} og ${xs[xs.length - 1]}` : xs[0] ?? "");
+  const planSummary = [listOf("replace").length && `udskift ${joinDa(listOf("replace"))}`, listOf("refresh").length && `opfrisk ${joinDa(listOf("refresh"))}`]
+    .filter(Boolean).join(", ").replace(/^./, (c) => c.toUpperCase()) || "Intet arbejde valgt";
+  const arvNote = arvTouched ? "Din egen salgspris." : suggestedArv && arvBasis
+                  ? arvBasis.weak
+                    ? `Vores bud: ${kr(suggestedArv)} Annoncerne i postnummeret viser ingen klar merpris for renoverede boliger, så vi regner med 10 % over boligens egen pris pr. m². Kender du området bedre, så ret den.`
+                    : arvBasis.anchored
+                    ? `Vores bud: ${kr(suggestedArv)} Boligen er sat til ${kr((listing?.price ?? property.price) / property.area)} pr. m², under postnummerets niveau, så vi lægger renoveringens løft i området oven i dens egen pris i stedet for at bruge medianen. Kender du området bedre, så ret den.`
+                    : `Vores bud: ${kr(suggestedArv)} (${property.area} m² × median for renoverede). Kender du området bedre, så ret den.`
+                  : suggestedArv
+                  ? `Vi fandt for få boliger til salg i postnummeret til en sikker værdi, så vi har sat den til 20 % over udbudsprisen. Ret den til det, du tror, den kan sælges for.`
+                  : "Indtast din egen salgspris.";
+
+  // The same numbers as the sheet, as a workbook with live formulas (paid).
+  const exportExcel = async () => {
+    setExporting(true);
+    captureEvent("flip_excel_clicked", {});
+    try {
+      const res = await fetch("/api/export/flip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          address: listing.address ?? "Bolig",
+          zip: property.zip,
+          area: property.area,
+          price: property.price,
+          arv: arv ?? 0,
+          arvNote,
+          downPct: answers.finance === "cash" ? 100 : answers.downPct,
+          rate: answers.rate,
+          months: answers.months,
+          monthlyRunning: (property.monthlyExpenses ?? Math.round(property.area * 30)) + 1200,
+          lawyer: result.buy.lawyer,
+          reports: result.sell.reports,
+          other: result.sell.other,
+          bufferPct: bufferPct(answers.level),
+          taxCase: result.taxCase,
+          target: answers.target,
+          maxBid: result.maxBid,
+          lines: lineCosts(lines, property, answers).map((c) => ({
+            element: ELEMENT_LABEL[c.line.element],
+            label: c.line.label,
+            qty: c.line.qty,
+            unit: c.line.unit,
+            materials: c.materials,
+            hours: c.line.hours,
+            labour: c.labour,
+            diy: c.diy,
+            product: c.line.product ? { name: c.line.product.name, url: c.line.product.url, store: c.line.product.store } : null,
+            estimate: c.line.source === "estimate",
+          })),
+        }),
+      });
+      if (res.status === 402) { setUpgrade(true); return; }
+      if (!res.ok) throw new Error(String(res.status));
+      const u = URL.createObjectURL(await res.blob());
+      const a = document.createElement("a");
+      a.href = u;
+      a.download = `NordInvest-flip-${(listing.address ?? "bolig").replace(/[^A-Za-z0-9æøåÆØÅ]+/g, "-")}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(u);
+    } catch {
+      alert("Excel-filen kunne ikke laves lige nu. Prøv igen om lidt.");
+    } finally {
+      setExporting(false);
+    }
+  };
 
   if (gate !== "none") {
     return (
@@ -306,8 +381,32 @@ export function FlipReport() {
         </div>
       </section>
 
+      {/* The deal as one sheet: what a bank, a partner or an investor reads first. */}
+      <section id="kalkule" className="bg-[#f4f6f9] px-4 py-10 sm:px-6 sm:py-14">
+        <div className="mx-auto max-w-[1080px]">
+          <h2 className="text-[26px] font-semibold tracking-[-0.03em] sm:text-[32px]">Hele regnestykket</h2>
+          <p className="mt-2 max-w-2xl text-[16px] text-slate-600">Ret et blåt felt, og resten regner med. Klik på en række for at se, hvordan tallet er regnet. Afsnittene under er dokumentationen bag hver række.</p>
+          <div className="mt-6">
+            <FlipSheet
+              property={property}
+              result={result}
+              answers={answers}
+              arv={arv ?? 0}
+              arvSource={arvNote}
+              bufferPct={bufferPct(answers.level)}
+              set={set}
+              setPrice={(n) => setPrice(n)}
+              setArv={(n) => { setArv(n); setArvTouched(true); }}
+              onExport={exportExcel}
+              exporting={exporting}
+            />
+          </div>
+        </div>
+      </section>
+      {upgrade && <UpgradeDialog reason="flip_excel" onClose={() => setUpgrade(false)} />}
+
       {/* Condition and plan */}
-      <Band id="stand" title="Hvad skal laves?" answer={ai.status === "done" ? `AI'en har set ${ai.images} billeder og lagt planen. Ret den, hvor du ved bedre.` : ai.status === "running" ? "AI'en kigger på billederne fra annoncen …" : "Vælg, hvad der skal laves. Budgettet følger med."} tone="neutral">
+      <Band id="stand" title="Hvad skal laves?" answer={ai.status === "running" ? "AI'en kigger på billederne fra annoncen …" : `${ai.status === "done" ? `AI'en har set ${ai.images} billeder: ` : ""}${planSummary}. Ret planen, hvor du ved bedre.`} tone="neutral">
         {ai.status === "running" && (
           <div className="mb-5 flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50/60 px-4 py-3 text-[14px] text-blue-900">
             <ScanSearch size={18} className="shrink-0 animate-pulse" /> Vurderer køkken, bad, gulve, vinduer, tag og facade ud fra annoncens billeder. Det tager 20 til 40 sekunder.
@@ -363,15 +462,7 @@ export function FlipReport() {
                 <NumberInput value={arv ?? 0} onValueChange={(n) => { setArv(n ?? 0); setArvTouched(true); }} className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-lg font-semibold tabular-nums outline-none focus:border-blue-500" />
                 {arvTouched && suggestedArv && <button type="button" onClick={() => { setArv(suggestedArv); setArvTouched(false); }} className="no-print shrink-0 text-sm text-blue-700 underline underline-offset-2">Nulstil</button>}
               </div>
-              <span className="mt-1.5 block text-[13px] text-slate-500">{suggestedArv && arvBasis
-                  ? arvBasis.weak
-                    ? `Vores bud: ${kr(suggestedArv)} Annoncerne i postnummeret viser ingen klar merpris for renoverede boliger, så vi regner med 10 % over boligens egen pris pr. m². Kender du området bedre, så ret den.`
-                    : arvBasis.anchored
-                    ? `Vores bud: ${kr(suggestedArv)} Boligen er sat til ${kr(property.price / property.area)} pr. m², under postnummerets niveau, så vi lægger renoveringens løft i området oven i dens egen pris i stedet for at bruge medianen. Kender du området bedre, så ret den.`
-                    : `Vores bud: ${kr(suggestedArv)} (${property.area} m² × median for renoverede). Kender du området bedre, så ret den.`
-                  : suggestedArv
-                  ? `Vi fandt for få boliger til salg i postnummeret til en sikker værdi, så vi har sat den til 20 % over udbudsprisen. Ret den til det, du tror, den kan sælges for.`
-                  : "Indtast din egen salgspris."}</span>
+              <span className="mt-1.5 block text-[13px] text-slate-500">{arvNote}</span>
             </label>
           </div>
           <CompList comps={comps} />
@@ -406,21 +497,6 @@ export function FlipReport() {
       </Band>
 
       {/* Waterfall */}
-      <Band id="regnestykket" title="Hele regnestykket" answer={`${signed(result.profit)} efter skat, ${pct(result.margin, 1)} af salgsprisen`} tone={good ? "good" : ok ? "warn" : "bad"}>
-        <Waterfall rows={result.waterfall} />
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <Fig k="Købsomkostninger" v={kr(result.buy.total)} sub={`Skøde ${kr(result.buy.tinglysning)}${result.buy.pant ? `, pant ${kr(result.buy.pant)}` : ""}, rådgiver ${kr(result.buy.lawyer)}`} />
-          <Fig k={`Ejertid, ${answers.months} mdr.`} v={kr(result.hold.total)} sub={`Renter ${kr(result.hold.interest)}, ejerudgift og forbrug ${kr(result.hold.running)}`} />
-          <Fig k="Salgsomkostninger" v={kr(result.sell.total)} sub={`Mægler ${kr(result.sell.broker)}, rapporter ${kr(result.sell.reports)}, øvrigt ${kr(result.sell.other)}`} />
-        </div>
-        <div className="no-print mt-6 flex flex-wrap items-end gap-4">
-          <Ctl label="Måneder fra køb til salg" value={answers.months} onChange={(n) => set({ months: n })} />
-          <Ctl label="Rente %" value={answers.rate} onChange={(n) => set({ rate: n })} decimals={1} />
-          <Ctl label="Udbetaling %" value={answers.finance === "cash" ? 100 : answers.downPct} onChange={(n) => set(n >= 100 ? { finance: "cash" } : { finance: "loan", downPct: n })} />
-          <Ctl label="Krævet fortjeneste %" value={answers.target} onChange={(n) => set({ target: n })} />
-          <Ctl label="Købspris" value={property.price} onChange={(n) => setPrice(n)} wide />
-        </div>
-      </Band>
 
       {/* Tax */}
       <Band id="skat" muted title="Hvad tager skatten?" answer={result.taxCase === "live_in" ? "Skattefri, hvis du bor i boligen" : `${kr(result.tax)} i skat ved ${TAX_LABEL[result.taxCase].title.toLowerCase()}`} tone={result.taxCase === "live_in" ? "good" : "neutral"}>
@@ -504,13 +580,30 @@ function flipScore(margin: number) {
   return Math.max(0, Math.min(100, Math.round(50 + margin * 250)));
 }
 
+// Each section is the evidence behind rows in the sheet: closed, it shows its
+// conclusion; it opens on click, from a link in the sheet (#id), and always in
+// print so the bank budget is complete.
 function Band({ id, title, answer, tone, muted, children }: { id: string; title: string; answer: string; tone: "good" | "warn" | "bad" | "neutral"; muted?: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const check = () => { if (window.location.hash === `#${id}`) setOpen(true); };
+    check();
+    window.addEventListener("hashchange", check);
+    return () => window.removeEventListener("hashchange", check);
+  }, [id]);
   return (
-    <section id={id} className={clsx("px-4 py-12 sm:px-6 sm:py-16", muted ? "bg-[#f4f6f9]" : "bg-white")}>
+    <section id={id} className={clsx("scroll-mt-20 border-t border-slate-200/70 px-4 sm:px-6", muted ? "bg-[#f4f6f9]" : "bg-white")}>
       <div className="mx-auto max-w-[1080px]">
-        <h2 className="text-[26px] font-semibold tracking-[-0.03em] [text-wrap:balance] sm:text-[32px]">{title}</h2>
-        <p className={clsx("mt-2 text-[17px] font-medium", tone === "good" ? "text-emerald-700" : tone === "warn" ? "text-amber-700" : tone === "bad" ? "text-rose-600" : "text-slate-600")}>{answer}</p>
-        <div className="mt-7">{children}</div>
+        <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="group flex w-full items-center gap-4 py-5 text-left sm:py-6">
+          <span className="min-w-0 flex-1">
+            <span className="block text-[19px] font-semibold tracking-[-0.02em] text-slate-900 sm:text-[22px]">{title}</span>
+            <span className={clsx("mt-0.5 block text-[15px] font-medium", tone === "good" ? "text-emerald-700" : tone === "warn" ? "text-amber-700" : tone === "bad" ? "text-rose-600" : "text-slate-600")}>{answer}</span>
+          </span>
+          <span className="no-print flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition group-hover:border-slate-300 group-hover:text-slate-900">
+            <ChevronDown size={18} className={clsx("transition-transform", open && "rotate-180")} />
+          </span>
+        </button>
+        <div className={clsx("pb-10 sm:pb-12", open ? "block" : "hidden print:block")}>{children}</div>
       </div>
     </section>
   );
@@ -523,15 +616,6 @@ function Fig({ k, v, sub }: { k: string; v: string; sub?: string }) {
       <dd className="mt-1 text-[20px] font-semibold tabular-nums">{v}</dd>
       {sub && <dd className="text-[12px] leading-snug text-slate-500">{sub}</dd>}
     </div>
-  );
-}
-
-function Ctl({ label, value, onChange, decimals = 0, wide }: { label: string; value: number; onChange: (n: number) => void; decimals?: number; wide?: boolean }) {
-  return (
-    <label className={clsx("block", wide ? "w-48" : "w-36")}>
-      <span className="text-xs font-medium text-slate-500">{label}</span>
-      <NumberInput value={value} decimals={decimals} onValueChange={(n) => n != null && onChange(n)} className="mt-1 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-semibold tabular-nums outline-none focus:border-blue-500" />
-    </label>
   );
 }
 
@@ -691,28 +775,6 @@ function Gantt({ phases, weeks }: { phases: { label: string; weeks: number; star
         <span />
         <div className="flex justify-between"><span>Uge 0</span><span>Uge {total}</span></div>
       </div>
-    </div>
-  );
-}
-
-function Waterfall({ rows }: { rows: { label: string; value: number; kind: string; note?: string }[] }) {
-  const max = Math.max(...rows.map((r) => Math.abs(r.value))) || 1;
-  return (
-    <div className="space-y-2">
-      {rows.map((r) => (
-        <div key={r.label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 sm:grid-cols-[220px_minmax(0,1fr)_140px]">
-          <div className="min-w-0">
-            <div className={clsx("truncate text-[14px]", r.kind === "result" || r.kind === "start" ? "font-semibold" : "text-slate-700")}>{r.label}</div>
-            {r.note && <div className="truncate text-[12px] text-slate-500">{r.note}</div>}
-          </div>
-          <div className="order-3 col-span-2 h-2 overflow-hidden rounded-full bg-slate-100 sm:order-none sm:col-span-1">
-            <div className={clsx("h-full rounded-full", r.kind === "start" ? "bg-slate-900" : r.kind === "result" ? (r.value >= 0 ? "bg-emerald-500" : "bg-rose-500") : r.kind === "tax" ? "bg-slate-600" : "bg-slate-400")} style={{ width: `${(Math.abs(r.value) / max) * 100}%` }} />
-          </div>
-          <div className={clsx("text-right text-[15px] font-semibold tabular-nums", r.kind === "result" ? (r.value >= 0 ? "text-emerald-700" : "text-rose-600") : "")}>
-            {r.kind === "start" ? kr(r.value) : signed(r.value)}
-          </div>
-        </div>
-      ))}
     </div>
   );
 }
