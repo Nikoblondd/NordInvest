@@ -86,9 +86,9 @@ export default async function DealsPage() {
               Find de bedste handler i hele Danmark.
             </h1>
             <p className="mt-2 text-sm text-slate-600 sm:mt-3 sm:text-base">
-              Vi scanner hele markedet — boliger fra EDC, Home, Nybolig og Danbolig, samt
-              investeringsejendomme fra Ejendomstorvet — og rangerer dem efter hvad de reelt
-              kan som investering.
+              Vi scanner hele markedet: boliger fra EDC, Home, Nybolig og Danbolig og
+              investeringsejendomme fra Ejendomstorvet. Derefter rangerer vi dem efter, hvad de
+              reelt kan som investering.
             </p>
           </div>
 

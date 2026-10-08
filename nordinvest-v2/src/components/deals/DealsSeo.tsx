@@ -204,27 +204,35 @@ const BANDS = [
   { range: "0–44", label: "Svag", text: "Afkast og gældsdækning bærer ikke handlen til den pris." },
 ];
 
+const BAND_TONE = ["bg-emerald-600", "bg-emerald-400", "bg-amber-400", "bg-rose-400"];
+
 export function ScoreBands() {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-      <table className="w-full text-left text-[15px]">
-        <thead className="bg-slate-50 text-sm text-slate-500">
-          <tr>
-            <th scope="col" className="px-4 py-3 font-medium sm:px-5">Score</th>
-            <th scope="col" className="px-4 py-3 font-medium sm:px-5">Vurdering</th>
-            <th scope="col" className="px-4 py-3 font-medium sm:px-5">Hvad det betyder</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-200">
-          {BANDS.map((b) => (
-            <tr key={b.range}>
-              <td className="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-slate-900 sm:px-5">{b.range}</td>
-              <td className="whitespace-nowrap px-4 py-3 font-medium text-slate-900 sm:px-5">{b.label}</td>
-              <td className="px-4 py-3 text-slate-600 sm:px-5">{b.text}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      {/* The 0-100 scale drawn to proportion, strongest band on the right. */}
+      <div className="px-4 pt-5 sm:px-5">
+        <div className="flex h-2.5 gap-0.5 overflow-hidden rounded-full">
+          {[...BANDS].reverse().map((b, i) => {
+            const [lo, hi] = b.range.split("–").map(Number);
+            return <span key={b.range} className={BAND_TONE[BANDS.length - 1 - i]} style={{ flex: hi - lo + 1 }} />;
+          })}
+        </div>
+        <div className="mt-1.5 flex justify-between text-[12px] tabular-nums text-slate-500"><span>0</span><span>45</span><span>65</span><span>80</span><span>100</span></div>
+      </div>
+      <ul className="mt-3 divide-y divide-slate-100">
+        {BANDS.map((b, i) => (
+          <li key={b.range} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 px-4 py-3.5 sm:grid-cols-[5rem_8rem_minmax(0,1fr)] sm:px-5">
+            <span className="flex items-center gap-2 font-semibold tabular-nums text-slate-900">
+              <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${BAND_TONE[i]}`} />
+              {b.range}
+            </span>
+            <span className="min-w-0 sm:contents">
+              <span className="block font-semibold text-slate-900 sm:font-medium">{b.label}</span>
+              <span className="mt-0.5 block text-[14px] leading-relaxed text-slate-600 sm:mt-0">{b.text}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

@@ -51,8 +51,8 @@ function CityPicker({ values, onChange }: { values: string[]; onChange: (slugs: 
         onClick={() => setOpen(true)}
       >
         {values.length === 0 && !q && (
-          <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
-            🇩🇰 Hele Danmark
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+            Hele Danmark
           </span>
         )}
         {values.map((slug) => (
@@ -74,7 +74,7 @@ function CityPicker({ values, onChange }: { values: string[]; onChange: (slugs: 
           onFocus={() => setOpen(true)}
           onChange={(e) => { setQ(e.target.value); setOpen(true); }}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
-          placeholder={values.length === 0 ? "Søg kommune, eller lad stå tom for hele landet…" : "Tilføj flere…"}
+          placeholder={values.length === 0 ? "Søg kommune…" : "Tilføj flere…"}
           className="min-w-[130px] flex-1 bg-transparent px-1 py-1 text-sm font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
         />
       </div>
@@ -88,7 +88,7 @@ function CityPicker({ values, onChange }: { values: string[]; onChange: (slugs: 
                 onMouseDown={(e) => { e.preventDefault(); onChange([]); setOpen(false); }}
                 className="flex w-full items-center justify-between border-b border-slate-100 px-3 py-2.5 text-left text-sm hover:bg-slate-50"
               >
-                <span className="font-semibold text-slate-900">🇩🇰 Hele Danmark <span className="font-normal text-slate-400">· søg i alle kommuner</span></span>
+                <span className="font-semibold text-slate-900">Hele Danmark <span className="font-normal text-slate-400">· søg i alle kommuner</span></span>
                 {values.length === 0 && <Check size={15} className="text-blue-600" />}
               </button>
               {/* Popular quick-picks */}
@@ -191,11 +191,27 @@ const dk = (n: number) => (Number.isFinite(n) ? Math.round(n).toLocaleString("da
 
 
 function ScorePill({ score }: { score: number }) {
-  const tone = score >= 65 ? "text-emerald-600" : score >= 45 ? "text-blue-600" : "text-slate-400";
+  // A small ring: the arc is the score out of 100, coloured by the same bands
+  // the analysis uses.
+  const stroke = score >= 65 ? "#059669" : score >= 45 ? "#d97706" : "#e11d48";
+  const r = 17, c = 2 * Math.PI * r;
   return (
-    <div className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl border border-slate-200 bg-white">
-      <span className={clsx("text-sm font-bold leading-none tnum", tone)}>{score}</span>
-      <span className="mt-0.5 text-[8px] font-medium uppercase tracking-wide text-slate-400">score</span>
+    <div className="flex shrink-0 flex-col items-center" aria-label={`Score ${score} af 100`}>
+      <svg width="42" height="42" viewBox="0 0 42 42" className="block">
+        <circle cx="21" cy="21" r={r} fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
+        <circle cx="21" cy="21" r={r} fill="none" stroke={stroke} strokeWidth="3.5" strokeLinecap="round" strokeDasharray={`${(c * Math.max(0, Math.min(100, score))) / 100} ${c}`} transform="rotate(-90 21 21)" />
+        <text x="21" y="25.5" textAnchor="middle" fontSize="13" fontWeight="700" fill="#0f172a" className="tabular-nums">{score}</text>
+      </svg>
+      <span className="mt-0.5 text-[11px] text-slate-500">score</span>
+    </div>
+  );
+}
+
+function Metric({ v, k, tone }: { v: string; k: string; tone?: string }) {
+  return (
+    <div className="min-w-0 px-2 first:pl-0 last:pr-0">
+      <div className={clsx("truncate text-[15px] font-semibold tabular-nums", tone ?? "text-slate-900")}>{v}</div>
+      <div className="mt-0.5 text-[12px] leading-tight text-slate-500">{k}</div>
     </div>
   );
 }
@@ -210,9 +226,9 @@ function DealCard({ d, dp, ir }: { d: AnalyzedDeal; dp: string; ir: string }) {
     <Link
       href={dealHref(d, dp, ir)}
       aria-label={`Åbn analyse: ${d.road || d.address}, ${d.zip} ${d.city}`}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_10px_28px_-16px_rgba(15,23,42,0.22)] transition-[box-shadow,transform] hover:-translate-y-px hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_16px_36px_-16px_rgba(15,23,42,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
     >
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
         {d.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={d.image} alt={d.address} loading="lazy" draggable={false} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
@@ -229,48 +245,36 @@ function DealCard({ d, dp, ir }: { d: AnalyzedDeal; dp: string; ir: string }) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col px-2.5 pb-2.5 pt-3.5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="truncate text-sm font-bold text-slate-900">{d.road}</div>
-            <div className="truncate text-xs text-slate-400">{d.zip} {d.city}</div>
+            <div className="truncate text-[15px] font-semibold text-slate-900">{d.road}</div>
+            <div className="truncate text-[13px] text-slate-500">{d.zip} {d.city}</div>
           </div>
           <ScorePill score={d.score} />
         </div>
 
-        <div className="mt-3 text-lg font-bold text-slate-900 tnum">{kr(d.price)}</div>
-        <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-slate-400">
+        <div className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.01em] text-slate-900 tnum">{kr(d.price)}</div>
+        <div className="mt-0.5 flex flex-wrap gap-x-1.5 gap-y-0.5 text-[13px] text-slate-500">
           {d.area && <span>{d.area} m²</span>}
           {d.rooms && <span>· {d.rooms} vær.</span>}
           {d.yearBuilt && <span>· {d.yearBuilt}</span>}
           {d.energyLabel && <span>· {d.energyLabel}</span>}
         </div>
         {d.suspect && (
-          <div className="mt-2 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[11px] font-medium text-amber-700">
+          <div className="mt-2 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[12px] font-medium text-amber-800">
             Usikre data – tjek annoncen
           </div>
         )}
 
-        <div className="mt-4 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-center">
-          <div>
-            <div className={clsx("text-sm font-bold tnum", cfTone)}>{dk(d.cashFlow)}</div>
-            <div className="mt-0.5 text-[9px] font-medium uppercase tracking-wide text-slate-400">cashflow/md</div>
-          </div>
-          <div>
-            <div className="text-sm font-bold text-slate-900 tnum">{num(d.capRate)}%</div>
-            <div className="mt-0.5 text-[9px] font-medium uppercase tracking-wide text-slate-400">afkast</div>
-          </div>
-          <div>
-            <div className="text-sm font-bold text-slate-900 tnum">{dk(d.estRent)}</div>
-            <div className="mt-0.5 text-[9px] font-medium uppercase tracking-wide text-slate-400">est. leje</div>
-          </div>
+        <div className="mt-3.5 grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 pt-3">
+          <Metric v={`${d.cashFlow > 0 ? "+" : ""}${dk(d.cashFlow)} kr.`} k="Cash flow pr. md." tone={cfTone} />
+          <Metric v={`${num(d.capRate)} %`} k="Afkast" />
+          <Metric v={`${dk(d.estRent)} kr.`} k="Anslået leje" />
         </div>
 
-        <span
-          aria-hidden
-          className="mt-4 flex items-center justify-center gap-1.5 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors group-hover:bg-slate-800 group-active:translate-y-px"
-        >
-          Fuld analyse <ArrowUpRight size={15} />
+        <span aria-hidden className="mt-auto flex items-center gap-1 pt-4 text-[14px] font-semibold text-blue-700">
+          Se hele analysen <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </span>
       </div>
     </Link>
@@ -286,9 +290,9 @@ function InvestmentCard({ d, dp, ir }: { d: InvestmentDeal; dp: string; ir: stri
     <Link
       href={investHref(d, dp, ir)}
       aria-label={`Åbn analyse: ${d.road || d.title}, ${d.zip} ${d.city}`}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_10px_28px_-16px_rgba(15,23,42,0.22)] transition-[box-shadow,transform] hover:-translate-y-px hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_16px_36px_-16px_rgba(15,23,42,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
     >
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
         {d.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={d.image} alt={d.address} loading="lazy" draggable={false} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
@@ -305,43 +309,31 @@ function InvestmentCard({ d, dp, ir }: { d: InvestmentDeal; dp: string; ir: stri
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col px-2.5 pb-2.5 pt-3.5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="truncate text-sm font-bold text-slate-900">{d.road || d.title}</div>
-            <div className="truncate text-xs text-slate-400">{d.zip} {d.city}</div>
+            <div className="truncate text-[15px] font-semibold text-slate-900">{d.road || d.title}</div>
+            <div className="truncate text-[13px] text-slate-500">{d.zip} {d.city}</div>
           </div>
           <ScorePill score={d.score} />
         </div>
 
-        <div className="mt-3 text-lg font-bold text-slate-900 tnum">{kr(d.price)}</div>
-        <div className="mt-0.5 flex flex-wrap gap-x-3 text-[11px] text-slate-400">
+        <div className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.01em] text-slate-900 tnum">{kr(d.price)}</div>
+        <div className="mt-0.5 flex flex-wrap gap-x-1.5 text-[13px] text-slate-500">
           {d.area && <span>{d.area} m²</span>}
           {d.energyLabel && <span>· {d.energyLabel}</span>}
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-center">
-          <div>
-            <div className={clsx("text-sm font-bold tnum", cfTone)}>{dk(d.cashFlow)}</div>
-            <div className="mt-0.5 text-[9px] font-medium uppercase tracking-wide text-slate-400">cashflow/md</div>
-          </div>
-          <div>
-            <div className="text-sm font-bold text-slate-900 tnum">{num(d.capRate)}%</div>
-            <div className="mt-0.5 text-[9px] font-medium uppercase tracking-wide text-slate-400">afkast</div>
-          </div>
-          <div>
-            <div className="text-sm font-bold text-slate-900 tnum">{dk(Math.round(d.noi / 12))}</div>
-            <div className="mt-0.5 text-[9px] font-medium uppercase tracking-wide text-slate-400">leje/md</div>
-          </div>
+        <div className="mt-3.5 grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 pt-3">
+          <Metric v={`${d.cashFlow > 0 ? "+" : ""}${dk(d.cashFlow)} kr.`} k="Cash flow pr. md." tone={cfTone} />
+          <Metric v={`${num(d.capRate)} %`} k="Afkast" />
+          <Metric v={`${dk(Math.round(d.noi / 12))} kr.`} k="Driftsresultat pr. md." />
         </div>
 
-        {d.note && <p className="mt-3 text-[11px] leading-snug text-slate-400">{d.note}</p>}
+        {d.note && <p className="mt-3 text-[12px] leading-snug text-slate-500">{d.note}</p>}
 
-        <span
-          aria-hidden
-          className="mt-4 flex items-center justify-center gap-1.5 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors group-hover:bg-slate-800 group-active:translate-y-px"
-        >
-          Fuld analyse <ArrowUpRight size={15} />
+        <span aria-hidden className="mt-auto flex items-center gap-1 pt-4 text-[14px] font-semibold text-blue-700">
+          Se hele analysen <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </span>
       </div>
     </Link>
@@ -612,8 +604,8 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
           <p className="flex items-center gap-1.5 text-xs text-slate-400">
             <Info size={13} />
             {market === "investering"
-              ? "Erhvervsejendomme fra Ejendomstorvet — cash flow og afkast beregnet ud fra det udbudte afkast og prisen."
-              : "Leje og cash flow er estimater — klik “Fuld analyse” for den præcise vurdering med BBR-data og fotos."}
+              ? "Erhvervsejendomme fra Ejendomstorvet. Cash flow og afkast er beregnet ud fra det udbudte afkast og prisen."
+              : "Leje og cash flow er estimater. Åbn den fulde analyse for den præcise vurdering med BBR-data og fotos."}
           </p>
           <div className="flex flex-wrap items-center gap-2">
             <button onClick={openNationwideMap}
@@ -697,7 +689,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
                   <>
                     <MapIcon size={16} className="shrink-0 text-blue-500" />
                     <span className="truncate">
-                      {mapState.points.length > 0 ? `${mapState.points.length} ejendomme på kortet` : "Kort over markedet"}
+                      {mapState.points.length > 0 ? `${dk(mapState.points.length)} ejendomme på kortet` : "Kort over markedet"}
                       {!criteria && <span className="font-normal text-slate-400"> · hele Danmark</span>}
                     </span>
                   </>
@@ -705,8 +697,8 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
                   <>
                     <TrendingUp size={16} className="shrink-0 text-emerald-500" />
                     <span className="truncate">
-                      {(deals?.length ?? 0) + (locked?.count ?? 0)} bedste handler
-                      {meta && <span className="font-normal text-slate-400"> · {meta.scanned} boliger scannet</span>}
+                      {dk((deals?.length ?? 0) + (locked?.count ?? 0))} handler fundet
+                      {meta && <span className="font-normal text-slate-400"> · {dk(meta.scanned)} scannet</span>}
                     </span>
                   </>
                 )}
@@ -769,7 +761,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
             ) : (
               <>
                 <p className="mb-3 text-xs text-slate-400">
-                  {mapState.points.length} ejendomme på kortet — klik på en markør for at se pris, cashflow og score. Tallene i cirklerne viser, hvor mange ejendomme der er samlet på ét område (zoom ind for at dele dem op).
+                  {dk(mapState.points.length)} ejendomme på kortet. Klik på en markør for at se pris, cashflow og score. Tallene i cirklerne viser, hvor mange ejendomme der er samlet på ét område (zoom ind for at dele dem op).
                 </p>
                 <DealMap points={mapState.points} />
               </>
@@ -778,17 +770,12 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
         )}
 
         {resultView === "liste" && !loading && deals && deals.length === 0 && !err && (
-          <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center text-sm text-slate-500">
+          <div className="rounded-2xl border border-slate-200 bg-white px-5 py-8 text-center text-sm text-slate-600">
             Ingen boliger fundet med de kriterier. Prøv en anden by, type eller en højere maks. pris.
           </div>
         )}
 
-        {!loading && !deals && (
-          <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center">
-            <Search size={26} className="mx-auto text-slate-300" />
-            <p className="mt-3 text-sm text-slate-500">Vælg by og kriterier, og tryk <b>Find handler</b> — så scanner vi hele markedet og rangerer de bedste investeringer for dig.</p>
-          </div>
-        )}
+
       </div>
       <UpgradeDialog reason={upgrade} onClose={() => setUpgrade(null)} />
     </div>
