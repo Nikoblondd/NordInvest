@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import type { FlipMarket } from "@/lib/flip/market";
 
 /*
@@ -45,98 +46,96 @@ export function PriceLadder({ market, asking, target }: { market: FlipMarket; as
 
   const lanes = LANES.map((l) => {
     const s = m.comps.filter((c) => c.condition === l.key).map((c) => c.perM2).sort((a, b) => a - b);
-    return { ...l, values: s, med: q(s, 0.5), q1: q(s, 0.25), q3: q(s, 0.75) };
-  });
-  // Axis: the 5th to 95th percentile of every listing plus both pins, so one
-  // odd listing can't squash the rest.
-  const all = lanes.flatMap((l) => l.values).sort((a, b) => a - b);
-  const pins = [asking, target ?? 0].filter((x) => x > 0);
-  const raw = [q(all, 0.05) ?? asking, q(all, 0.95) ?? asking, ...pins];
-  const step = (Math.max(...raw) - Math.min(...raw)) > 12000 ? 5000 : 2000;
-  const lo = Math.floor((Math.min(...raw) * 0.97) / step) * step;
-  const hi = Math.ceil((Math.max(...raw) * 1.03) / step) * step;
+    return { ...l, n: s.length, med: q(s, 0.5), q1: q(s, 0.25), q3: q(s, 0.75) };
+  }).filter((l) => l.med != null);
+  // Axis: the middle halves of every lane plus both pins, rounded out to a
+  // whole step, so the bands fill the width.
+  const raw = [...lanes.flatMap((l) => [l.q1!, l.q3!]), asking, ...(target ? [target] : [])];
+  const span = Math.max(...raw) - Math.min(...raw);
+  const step = span > 16000 ? 5000 : span > 6000 ? 2000 : 1000;
+  const lo = Math.max(0, Math.floor((Math.min(...raw) - step * 0.5) / step) * step);
+  const hi = Math.ceil((Math.max(...raw) + step * 0.5) / step) * step;
   const ticks: number[] = [];
   for (let t = lo; t <= hi; t += step) ticks.push(t);
 
-  const padX = 8;
+  const padX = 6;
   const iw = Math.max(1, W - padX * 2);
   const X = (v: number) => padX + ((Math.min(Math.max(v, lo), hi) - lo) / (hi - lo)) * iw;
-  const top = 46, laneH = 46, laneGap = 6;
-  const H = top + lanes.length * (laneH + laneGap) + 22;
+  const top = 58, laneH = 58;
+  const H = top + lanes.length * laneH + 34;
   const lift = target && asking ? target - asking : null;
 
-  // Pin labels: keep both inside the frame and apart from each other.
-  const pinW = 112;
-  const place = (x: number) => Math.min(Math.max(x - pinW / 2, 0), W - pinW);
+  // Flags: keep both inside the frame and apart from each other.
+  const flagW = 104;
+  const place = (x: number) => Math.min(Math.max(x - flagW / 2, 0), W - flagW);
   let ax = place(X(asking));
   let tx = target ? place(X(target)) : null;
-  if (tx != null && Math.abs(tx - ax) < pinW + 6) {
+  if (tx != null && Math.abs(tx - ax) < flagW + 6) {
     const mid = (ax + tx) / 2;
-    const [l, r] = ax <= tx ? [mid - pinW / 2 - 3, mid + pinW / 2 + 3] : [mid + pinW / 2 + 3, mid - pinW / 2 - 3];
-    ax = Math.min(Math.max(l, 0), W - pinW);
-    tx = Math.min(Math.max(r, 0), W - pinW);
+    const [l, r] = X(asking) <= X(target!) ? [mid - flagW / 2 - 3, mid + flagW / 2 + 3] : [mid + flagW / 2 + 3, mid - flagW / 2 - 3];
+    ax = Math.min(Math.max(l, 0), W - flagW);
+    tx = Math.min(Math.max(r, 0), W - flagW);
   }
+  const Flag = ({ x, px, fill, title, value }: { x: number; px: number; fill: string; title: string; value: number }) => (
+    <g>
+      <g transform={`translate(${x},0)`}>
+        <rect width={flagW} height="38" rx="7" fill={fill} />
+        <text x={flagW / 2} y="15" fontSize="11" fill="#fff" fillOpacity="0.85" textAnchor="middle">{title}</text>
+        <text x={flagW / 2} y="30" fontSize="12.5" fontWeight="600" fill="#fff" textAnchor="middle" className="tabular-nums">{n0(value)} kr.</text>
+      </g>
+      <path d={`M${px - 5},38 L${px + 5},38 L${px},44 Z`} fill={fill} />
+    </g>
+  );
 
   return (
     <div className="min-w-0">
       <div ref={ref} className="min-w-0">
         {W > 0 && (
-          <svg width={W} height={H} className="block" role="img" aria-label={`Pris pr. m² i ${m.zip}: denne bolig ${n0(asking)} kr., renoverede i midten ${lanes[2].med ? n0(lanes[2].med) : "ukendt"} kr.`}>
+          <svg width={W} height={H} className="block" role="img" aria-label={`Pris pr. m² i ${m.zip}: denne bolig ${n0(asking)} kr., renoverede i midten ${lanes.find((l) => l.key === "renovated")?.med ? n0(lanes.find((l) => l.key === "renovated")!.med!) : "ukendt"} kr.`}>
             {ticks.map((t) => (
-              <line key={t} x1={X(t)} x2={X(t)} y1={top - 4} y2={H - 20} stroke="#e2e8f0" strokeDasharray="2 3" />
+              <line key={t} x1={X(t)} x2={X(t)} y1={top} y2={H - 30} stroke="#eef2f6" />
             ))}
-            {/* Pins across every lane, behind the labels and dots */}
-            <line x1={X(asking)} x2={X(asking)} y1={30} y2={H - 20} stroke="#1e3a8a" strokeWidth="1.5" />
-            {target ? <line x1={X(target)} x2={X(target)} y1={30} y2={H - 20} stroke="#065f46" strokeWidth="1.5" /> : null}
+            {/* Marker lines behind the lane labels; the flags go on top. */}
+            <line x1={X(asking)} x2={X(asking)} y1={44} y2={H - 30} stroke="#0f172a" strokeWidth="1.5" strokeDasharray="4 3" />
+            {target ? <line x1={X(target)} x2={X(target)} y1={44} y2={H - 30} stroke="#047857" strokeWidth="1.5" strokeDasharray="4 3" /> : null}
             {lanes.map((l, i) => {
-              const y = top + i * (laneH + laneGap);
-              const cy = y + 30;
+              const y = top + i * laneH;
+              const cy = y + 32;
               return (
                 <g key={l.key}>
-                  <text x={padX} y={y + 11} fontSize="12" fill="#334155" fontWeight="600" stroke="#fff" strokeWidth="4" paintOrder="stroke" strokeLinejoin="round">
-                    {l.label}
-                    <tspan fill="#94a3b8" fontWeight="400">{`  ${l.values.length} ${l.values.length === 1 ? "bolig" : "boliger"}`}</tspan>
+                  <text x={padX} y={y + 14} fontSize="13" fill="#475569" stroke="#fff" strokeWidth="4" paintOrder="stroke" strokeLinejoin="round">
+                    {l.label}<tspan fill="#94a3b8" fontSize="12">{`  ${l.n} ${l.n === 1 ? "bolig" : "boliger"}`}</tspan>
                   </text>
-                  {l.med != null && (
-                    <text x={W - padX} y={y + 11} fontSize="12" fill={l.tick} fontWeight="600" textAnchor="end" stroke="#fff" strokeWidth="4" paintOrder="stroke" strokeLinejoin="round" className="tabular-nums">{n0(l.med)} kr.</text>
-                  )}
-                  <line x1={padX} x2={W - padX} y1={cy} y2={cy} stroke="#f1f5f9" strokeWidth="1" />
-                  {l.q1 != null && l.q3 != null && l.values.length >= 3 && (
-                    <rect x={X(l.q1)} y={cy - 8} width={Math.max(4, X(l.q3) - X(l.q1))} height="16" rx="8" fill={l.band} />
-                  )}
-                  {l.values.map((v, k) => (
-                    <circle key={k} cx={X(v)} cy={cy} r="3.25" fill={l.dot} fillOpacity="0.75" stroke="#fff" strokeWidth="1" />
-                  ))}
-                  {l.med != null && <rect x={X(l.med) - 1.5} y={cy - 11} width="3" height="22" rx="1.5" fill={l.tick} />}
+                  <text x={W - padX} y={y + 14} fontSize="13" textAnchor="end" stroke="#fff" strokeWidth="4" paintOrder="stroke" strokeLinejoin="round" className="tabular-nums">
+                    <tspan fill={l.tick} fillOpacity="0.8">Median </tspan><tspan fill={l.tick} fontWeight="700">{n0(l.med!)}</tspan>
+                  </text>
+                  <rect x={padX} y={cy - 7} width={iw} height="14" rx="7" fill={l.band} fillOpacity="0.55" />
+                  {l.n >= 3 && <rect x={X(l.q1!)} y={cy - 7} width={Math.max(14, X(l.q3!) - X(l.q1!))} height="14" rx="7" fill={l.dot} fillOpacity="0.45" />}
+                  <circle cx={X(l.med!)} cy={cy} r="7" fill={l.tick} stroke="#fff" strokeWidth="2" />
                 </g>
               );
             })}
-            <g transform={`translate(${ax},0)`}>
-              <rect width={pinW} height="26" rx="7" fill="#1e3a8a" />
-              <text x={pinW / 2} y="17" fontSize="11.5" fontWeight="600" fill="#fff" textAnchor="middle" className="tabular-nums">Denne {n0(asking)}</text>
-            </g>
-            {target && tx != null ? (
-              <g transform={`translate(${tx},0)`}>
-                <rect width={pinW} height="26" rx="7" fill="#065f46" />
-                <text x={pinW / 2} y="17" fontSize="11.5" fontWeight="600" fill="#fff" textAnchor="middle" className="tabular-nums">Salg {n0(target)}</text>
-              </g>
-            ) : null}
+            <Flag x={ax} px={X(asking)} fill="#0f172a" title="Denne bolig" value={asking} />
+            {target && tx != null ? <Flag x={tx} px={X(target)} fill="#047857" title="Din salgspris" value={target} /> : null}
             {ticks.map((t, i) => (
-              <text key={t} x={X(t)} y={H - 4} fontSize="11" fill="#64748b" textAnchor={i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"} className="tabular-nums">
-                {iw / ticks.length < 56 && i % 2 === 1 && i !== ticks.length - 1 ? "" : n0(t)}
-              </text>
+              <g key={t}>
+                <line x1={X(t)} x2={X(t)} y1={H - 30} y2={H - 25} stroke="#94a3b8" />
+                <text x={X(t)} y={H - 10} fontSize="11.5" fill="#64748b" textAnchor={i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"} className="tabular-nums">
+                  {iw / ticks.length < 70 && i % 2 === 1 ? "" : W < 480 ? n0(t) : `${n0(t)} kr.`}
+                </text>
+              </g>
             ))}
           </svg>
         )}
       </div>
       {lift != null && (
-        <p className="mt-3 text-[14px] text-slate-700">
-          Planen kræver et løft på <span className={`font-semibold tabular-nums ${lift > 0 ? "text-emerald-700" : "text-slate-900"}`}>{lift > 0 ? "+" : "−"}{n0(Math.abs(lift))} kr. pr. m²</span>
-          {lanes[2].med ? <> fra boligens pris til din salgspris. Renoverede boliger ligger i midten på {n0(lanes[2].med)} kr.</> : "."}
+        <p className="mt-4 flex items-center gap-2.5 rounded-xl border border-blue-100 bg-blue-50/70 px-4 py-3 text-[14px] text-slate-800">
+          <ArrowUpRight size={18} strokeWidth={2} className="shrink-0 text-blue-600" />
+          <span>Planen kræver et løft på <b className={`font-semibold tabular-nums ${lift > 0 ? "text-blue-700" : "text-slate-900"}`}>{lift > 0 ? "+" : "−"}{n0(Math.abs(lift))} kr. pr. m²</b></span>
         </p>
       )}
-      <p className="mt-2 text-[12px] leading-relaxed text-slate-500">
-        Udbudspris pr. m² for {m.sample} boliger til salg i {m.zip} af samme type og størrelse. Hver prik er en bolig, sorteret efter hvad dens egen annonce siger om standen. Det farvede felt er den midterste halvdel.
+      <p className="mt-3 text-[12px] leading-relaxed text-slate-500">
+        Udbudspriser pr. m² for {m.sample} boliger til salg i {m.zip} af samme type og størrelse, sorteret efter hvad annoncen siger om standen. Det mørke felt er den midterste halvdel, prikken er medianen.
       </p>
     </div>
   );

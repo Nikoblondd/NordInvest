@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Landmark } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import type { VurResult } from "@/lib/vur";
 
 /*
@@ -56,61 +56,52 @@ export function Valuation({ bfe, price, area }: { bfe: number | null | undefined
   const pv = v.latest.propertyValue;
   const land = v.latest.landValue && v.latest.landValue < pv ? v.latest.landValue : null;
   const diff = price > 0 ? (price - pv) / pv : 0;
+  const pct = Math.abs(Math.round(diff * 100));
   const pts = v.history.filter((h) => h.propertyValue) as { year: number; propertyValue: number }[];
-  const tone = diff <= -0.05 ? "text-emerald-700" : diff >= 0.15 ? "text-amber-600" : "text-slate-900";
+  const badge = diff <= -0.03
+    ? { cls: "bg-emerald-50 text-emerald-700", Icon: TrendingDown, text: `${pct} % under vurderingen` }
+    : diff >= 0.03
+      ? { cls: diff >= 0.15 ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-700", Icon: TrendingUp, text: `${pct} % over vurderingen` }
+      : { cls: "bg-slate-100 text-slate-700", Icon: null, text: "På niveau med vurderingen" };
+  const landPct = land != null ? Math.round((land / pv) * 100) : 0;
 
   return (
-    <div className="min-w-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.12)]">
-      <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3.5 sm:px-6">
-        <Landmark size={20} strokeWidth={1.6} className="shrink-0 text-slate-500" />
-        <div className="min-w-0">
-          <h3 className="text-[15px] font-semibold leading-tight text-slate-900">Offentlig ejendomsvurdering</h3>
-          <p className="text-[12px] text-slate-500">Kilde: Datafordeler · Skattestyrelsen</p>
-        </div>
-      </div>
+    <div className="min-w-0 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-18px_rgba(15,23,42,0.18)] sm:p-6">
+      <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-slate-900">Offentlig ejendomsvurdering</h3>
+      <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-slate-500"><span className="h-1.5 w-1.5 rounded-full bg-slate-400" />Datafordeler · Skattestyrelsen</p>
 
-      <div className="grid gap-6 px-4 py-5 sm:px-6 sm:py-6 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] md:gap-8">
+      <div className="mt-5 flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
           <p className="text-[28px] font-semibold leading-none tracking-[-0.02em] tabular-nums text-slate-900 sm:text-[32px]">{kr(pv)}</p>
-          <p className="mt-2 text-[13px] text-slate-500">Ejendomsværdi {v.latest.year}</p>
-          {land != null && (
-            <div className="mt-5">
-              <div className="flex h-2 overflow-hidden rounded-full bg-slate-100">
-                <span className="bg-emerald-500" style={{ width: `${(land / pv) * 100}%` }} />
-                <span className="ml-0.5 flex-1 bg-slate-700" />
-              </div>
-              <dl className="mt-2.5 grid grid-cols-2 gap-2 text-[13px]">
-                <div>
-                  <dt className="flex items-center gap-1.5 text-slate-500"><span className="h-2 w-2 rounded-full bg-emerald-500" />Grund</dt>
-                  <dd className="mt-0.5 font-semibold tabular-nums text-slate-900">{kr(land)}</dd>
-                </div>
-                <div>
-                  <dt className="flex items-center gap-1.5 text-slate-500"><span className="h-2 w-2 rounded-full bg-slate-700" />Bygning</dt>
-                  <dd className="mt-0.5 font-semibold tabular-nums text-slate-900">{kr(pv - land)}</dd>
-                </div>
-              </dl>
-              {v.latest.lotArea ? <p className="mt-2 text-[12px] text-slate-500">Grund {v.latest.lotArea.toLocaleString("da-DK")} m²</p> : null}
-            </div>
-          )}
+          <p className="mt-1.5 text-[13px] text-slate-600">Ejendomsværdi {v.latest.year}{area ? ` · ${kr(pv / area)} pr. m²` : ""}</p>
         </div>
-        {pts.length > 1 ? <HistoryChart pts={pts} price={price} /> : <div className="hidden md:block" />}
+        {price > 0 && (
+          <div className="flex flex-col items-start gap-1.5 sm:items-end">
+            <p className="text-[13px] text-slate-500">Udbudspris <span className="font-semibold tabular-nums text-slate-900">{kr(price)}</span></p>
+            <span className={`inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[13px] font-semibold ${badge.cls}`}>
+              {badge.Icon && <badge.Icon size={14} strokeWidth={2} />}{badge.text}
+            </span>
+          </div>
+        )}
       </div>
 
-      <dl className="grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 bg-slate-50/60">
-        <div className="min-w-0 px-3 py-3.5 sm:px-6">
-          <dt className="text-[12px] text-slate-500">Udbudspris</dt>
-          <dd className="mt-0.5 truncate text-[14px] font-semibold tabular-nums text-slate-900 sm:text-[17px]">{price > 0 ? kr(price) : "Ukendt"}</dd>
+      {pts.length > 1 && <div className="mt-6"><HistoryChart pts={pts} price={price} /></div>}
+
+      {land != null && (
+        <div className="mt-6">
+          <p className="text-[13px] font-medium text-slate-600">Ejendommens fordeling</p>
+          <div className="mt-2 flex h-8 overflow-hidden rounded-lg text-[12px] font-semibold tabular-nums">
+            <span className="flex items-center justify-center bg-slate-900 text-white" style={{ width: `${Math.max(landPct, 12)}%` }}>{landPct} %</span>
+            <span className="flex flex-1 items-center justify-center bg-slate-200 text-slate-700">{100 - landPct} %</span>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-slate-600">
+            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-slate-900" />Grund <b className="font-semibold tabular-nums text-slate-900">{kr(land)}</b></span>
+            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-slate-300" />Bygning <b className="font-semibold tabular-nums text-slate-900">{kr(pv - land)}</b></span>
+            {v.latest.lotArea ? <span>Grund {v.latest.lotArea.toLocaleString("da-DK")} m²</span> : null}
+          </div>
         </div>
-        <div className="min-w-0 px-3 py-3.5 sm:px-6">
-          <dt className="text-[12px] text-slate-500">{diff < 0 ? "Under vurdering" : "Over vurdering"}</dt>
-          <dd className={`mt-0.5 text-[14px] font-semibold tabular-nums sm:text-[17px] ${tone}`}>{price > 0 ? `${Math.abs(Math.round(diff * 100))} %` : "–"}</dd>
-        </div>
-        <div className="min-w-0 px-3 py-3.5 sm:px-6">
-          <dt className="text-[12px] text-slate-500">{area ? "Pr. m²" : "Vurderet år"}</dt>
-          <dd className="mt-0.5 truncate text-[14px] font-semibold tabular-nums text-slate-900 sm:text-[17px]">{area ? kr(pv / area) : v.latest.year}</dd>
-        </div>
-      </dl>
-      <p className="border-t border-slate-100 px-4 py-3 text-[12px] leading-relaxed text-slate-500 sm:px-6">
+      )}
+      <p className="mt-5 border-t border-slate-100 pt-4 text-[12px] leading-relaxed text-slate-500">
         Den værdi, ejendomsværdiskat og grundskyld beregnes af. Vurderingerne har stået stille i mange år, så en stor forskel er normal. Den er ikke en salgspris.
       </p>
     </div>
@@ -120,7 +111,7 @@ export function Valuation({ bfe, price, area }: { bfe: number | null | undefined
 function HistoryChart({ pts, price }: { pts: { year: number; propertyValue: number }[]; price: number }) {
   const [ref, W] = useWidth<HTMLDivElement>();
   const [hover, setHover] = useState<number | null>(null);
-  const H = 184;
+  const H = 200;
   const padL = 4, padR = 56, padT = 26, padB = 26;
   const vals = pts.map((p) => p.propertyValue);
   // Show the asking price only when it sits within reach of the history; a
@@ -145,7 +136,9 @@ function HistoryChart({ pts, price }: { pts: { year: number; propertyValue: numb
   const yearTicks = (() => {
     const step = span > 14 ? 5 : span > 6 ? 2 : 1;
     const out = [first];
-    for (let y = Math.ceil((first + 1) / step) * step; y < last; y += step) if (y - first >= step * 0.6 && last - y >= step * 0.6) out.push(y);
+    // Skip a tick that would crowd its neighbours at phone widths.
+    const minGap = 52 / Math.max(1, iw / span);
+    for (let y = Math.ceil((first + 1) / step) * step; y < last; y += step) if (y - first >= Math.max(step * 0.6, minGap) && last - y >= Math.max(step * 0.6, minGap)) out.push(y);
     out.push(last);
     return out;
   })();
@@ -175,8 +168,8 @@ function HistoryChart({ pts, price }: { pts: { year: number; propertyValue: numb
         >
           <defs>
             <linearGradient id="vur-fill" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stopColor="#1e3a8a" stopOpacity="0.14" />
-              <stop offset="1" stopColor="#1e3a8a" stopOpacity="0.01" />
+              <stop offset="0" stopColor="#2563eb" stopOpacity="0.16" />
+              <stop offset="1" stopColor="#2563eb" stopOpacity="0.01" />
             </linearGradient>
           </defs>
           {tk.map((t) => (
@@ -188,20 +181,24 @@ function HistoryChart({ pts, price }: { pts: { year: number; propertyValue: numb
           {showPrice && (
             <g>
               {price > pts[pts.length - 1].propertyValue && (
-                <rect x={padL} y={Y(price)} width={iw} height={Y(pts[pts.length - 1].propertyValue) - Y(price)} fill="#2563eb" opacity="0.05" />
+                <rect x={padL} y={Y(price)} width={iw} height={Y(pts[pts.length - 1].propertyValue) - Y(price)} fill="#2563eb" opacity="0.04" />
               )}
-              <line x1={padL} x2={padL + iw} y1={Y(price)} y2={Y(price)} stroke="#2563eb" strokeWidth="1.25" strokeDasharray="4 4" />
-              <text x={padL + 2} y={price >= pts[0].propertyValue ? Y(price) - 7 : Y(price) + 16} fontSize="12" fontWeight="600" fill="#2563eb" stroke="#fff" strokeWidth="4" paintOrder="stroke" strokeLinejoin="round">Udbudspris {mio(price)}</text>
+              <line x1={padL} x2={padL + iw} y1={Y(price)} y2={Y(price)} stroke="#2563eb" strokeWidth="1.5" strokeDasharray="5 4" />
+              <text x={padL + 2} y={Y(price) - 7} fontSize="12" fontWeight="600" fill="#2563eb" stroke="#fff" strokeWidth="4" paintOrder="stroke" strokeLinejoin="round">Udbudspris</text>
             </g>
           )}
           <path d={area} fill="url(#vur-fill)" />
-          <path d={d} fill="none" stroke="#1e293b" strokeWidth="1.75" strokeLinejoin="round" />
-          <line x1={ax} x2={ax} y1={ay} y2={padT + ih} stroke="#1e293b" strokeOpacity="0.15" />
-          <circle cx={ax} cy={ay} r="4" fill="#1e293b" stroke="#fff" strokeWidth="2" />
-          <g transform={`translate(${lx},${Math.max(2, ay - 34)})`}>
-            <rect width={lw} height="22" rx="6" fill="#0f172a" />
-            <text x={lw / 2} y="15" fontSize="11.5" fontWeight="600" fill="#fff" textAnchor="middle" className="tabular-nums">{label}</text>
-          </g>
+          <path d={d} fill="none" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" />
+          {hover != null && (
+            <g>
+              <line x1={ax} x2={ax} y1={ay} y2={padT + ih} stroke="#0f172a" strokeOpacity="0.15" />
+              <circle cx={ax} cy={ay} r="4" fill="#2563eb" stroke="#fff" strokeWidth="2" />
+              <g transform={`translate(${lx},${Math.max(2, ay - 34)})`}>
+                <rect width={lw} height="22" rx="6" fill="#0f172a" />
+                <text x={lw / 2} y="15" fontSize="11.5" fontWeight="600" fill="#fff" textAnchor="middle" className="tabular-nums">{label}</text>
+              </g>
+            </g>
+          )}
           {yearTicks.map((y, i) => (
             <text key={y} x={i === yearTicks.length - 1 ? padL + iw : X(y)} y={H - 6} fontSize="11" fill="#64748b" textAnchor={i === 0 ? "start" : i === yearTicks.length - 1 ? "end" : "middle"}>{y}</text>
           ))}
