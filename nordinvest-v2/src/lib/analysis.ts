@@ -1,3 +1,5 @@
+import { saleCosts } from "@/lib/dk-fees";
+
 export type Strategy = "cashflow" | "appreciation" | "value_add";
 
 export type AnalysisInput = {
@@ -221,9 +223,11 @@ export function analyze(input: AnalysisInput): AnalysisResult {
   }
 
   const saleValue = price * Math.pow(1 + appreciationPct / 100, holdYears);
-  const saleCostsPct = D.saleCostsPct;
+  // Broker at least 35.000 kr. plus reports and other costs, as when flipping.
+  const sellCosts = saleCosts(saleValue).total;
+  const saleCostsPct = saleValue > 0 ? (sellCosts / saleValue) * 100 : 0;
   const endBalance = loanBalance(loan, interestRate, termYears, holdYears);
-  const netSaleProceeds = saleValue * (1 - saleCostsPct / 100) - endBalance;
+  const netSaleProceeds = saleValue - sellCosts - endBalance;
   const totalProfit = cumulative + netSaleProceeds - cashInvested;
   const equityMultiple = cashInvested > 0 ? (cumulative + netSaleProceeds) / cashInvested : 0;
 

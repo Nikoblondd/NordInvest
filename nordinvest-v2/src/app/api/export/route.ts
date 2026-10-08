@@ -365,10 +365,10 @@ export async function POST(req: NextRequest) {
   P.ws.getCell(`A${tr}`).value = "Ved salg efter ejerperioden";
   P.ws.getCell(`A${tr}`).font = { bold: true, color: { argb: BLUE } };
   const trRows: [string, string, string][] = [
-    ["Nettoprovenu ved salg (÷ 1,5 % salgsomk.)", `H${last}*0.985-G${last}`, KR],
+    ["Nettoprovenu ved salg (÷ mægler 1,5 %, mindst 35.000 kr., + 35.000 kr. rapporter og øvrigt)", `H${last}-MAX(35000,H${last}*1.5%)-35000-G${last}`, KR],
     ["Kumuleret cashflow i perioden", `F${last}`, KR],
-    ["Samlet gevinst (cashflow + salg − egenbetaling)", `F${last}+(H${last}*0.985-G${last})-${FR.equityNeed}`, KR],
-    ["Equity multiple", `(F${last}+(H${last}*0.985-G${last}))/${FR.equityNeed}`, NUMX],
+    ["Samlet gevinst (cashflow + salg − egenbetaling)", `F${last}+(H${last}-MAX(35000,H${last}*1.5%)-35000-G${last})-${FR.equityNeed}`, KR],
+    ["Equity multiple", `(F${last}+(H${last}-MAX(35000,H${last}*1.5%)-35000-G${last}))/${FR.equityNeed}`, NUMX],
   ];
   trRows.forEach(([label, formula, fmt], i) => {
     const r = tr + 1 + i;

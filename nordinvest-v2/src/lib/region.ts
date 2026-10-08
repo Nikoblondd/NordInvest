@@ -1,3 +1,4 @@
+import { zipFromAddress } from "@/lib/zip";
 // Derives a region key from a scraped address so calibration can be segmented
 // per market (København, Aarhus, Fyn, Stockholm, Oslo) instead of only global.
 
@@ -18,9 +19,9 @@ export function regionFromAddress(address: string | null | undefined): string | 
   if (/aarhus|århus|risskov|viby|højbjerg|brabrand|åbyhøj/.test(a)) return "aarhus";
   if (/odense|svendborg|nyborg|middelfart|\bfyn\b|faaborg|assens|bogense|kerteminde/.test(a)) return "fyn";
 
-  const m = a.match(/\b(\d{4})\b/);
-  if (m) {
-    const p = parseInt(m[1], 10);
+  const z = zipFromAddress(a);
+  if (z) {
+    const p = parseInt(z, 10);
     if (p >= 1000 && p <= 2499) return "koebenhavn";
     if (p >= 5000 && p <= 5999) return "fyn";
     if (p >= 8000 && p <= 8399) return "aarhus";

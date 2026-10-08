@@ -30,29 +30,40 @@ export function Chapter({
   children: ReactNode;
 }) {
   const Icon = toneIcon[answer.tone];
+  // The sheet above carries the numbers; each chapter is the evidence behind
+  // them, closed to its answer until opened by click or by the menu bar (#id).
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const check = () => { if (window.location.hash === `#${id}`) setOpen(true); };
+    check();
+    window.addEventListener("hashchange", check);
+    return () => window.removeEventListener("hashchange", check);
+  }, [id]);
   return (
     <section
       id={id}
       aria-labelledby={`${id}-q`}
-      className={clsx("scroll-mt-32 px-4 py-14 sm:px-6 sm:py-20", tint === "tint" ? "bg-[#f4f6f9]" : "bg-white")}
+      className={clsx("scroll-mt-32 border-t border-slate-200/70 px-4 sm:px-6", tint === "tint" ? "bg-[#f4f6f9]" : "bg-white")}
     >
       <div className="mx-auto max-w-[1080px]">
-        <header className="mb-8 max-w-3xl sm:mb-10">
-          <h2
-            id={`${id}-q`}
-            className="text-[32px] font-semibold leading-[1.08] tracking-[-0.03em] text-slate-900 [text-wrap:balance] sm:text-[44px]"
-          >
-            {question}
-          </h2>
-          <p className={clsx("mt-3 flex items-start gap-2 text-lg font-medium leading-snug sm:text-[21px]", toneNum[answer.tone])}>
-            <Icon aria-hidden size={20} strokeWidth={2} className="mt-[3px] shrink-0 sm:mt-1" />
-            <span>
-              <span className="sr-only">{toneWord[answer.tone]}: </span>
-              {answer.text}
+        <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="group flex w-full items-center gap-4 py-6 text-left sm:py-7">
+          <span className="min-w-0 flex-1">
+            <span id={`${id}-q`} role="heading" aria-level={2} className="block text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] text-slate-900 [text-wrap:balance] sm:text-[28px]">
+              {question}
             </span>
-          </p>
-        </header>
-        <div className="space-y-5">{children}</div>
+            <span className={clsx("mt-1.5 flex items-start gap-2 text-[16px] font-medium leading-snug sm:text-[17px]", toneNum[answer.tone])}>
+              <Icon aria-hidden size={18} strokeWidth={2} className="mt-[2px] shrink-0" />
+              <span>
+                <span className="sr-only">{toneWord[answer.tone]}: </span>
+                {answer.text}
+              </span>
+            </span>
+          </span>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition group-hover:border-slate-300 group-hover:text-slate-900">
+            <ChevronDown aria-hidden size={18} className={clsx("transition-transform", open && "rotate-180")} />
+          </span>
+        </button>
+        {open && <div className="space-y-5 pb-12 sm:pb-16">{children}</div>}
       </div>
     </section>
   );

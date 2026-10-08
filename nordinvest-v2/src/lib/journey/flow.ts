@@ -103,6 +103,7 @@ export function questionsFor(a: Answers, ctx: Ctx): Question[] {
     { value: "total", label: "Totalrenovering", sub: "Plus el, varme, vand og vinduer" } ] });
   q.push({ key: "months", kind: "choice", title: g === "live_flip" ? "Hvor længe bor du der, før du sælger?" : "Hvor længe ejer du den, fra køb til salg?", hint: "Hver måned koster renter, ejerudgift og forbrug.", options: [
     { value: "3", label: "3 måneder" }, { value: "6", label: "6 måneder" }, { value: "12", label: "1 år" }, { value: "24", label: "2 år" } ] });
+  if (g === "live_flip") q.push({ key: "housing", kind: "number", title: "Hvad betaler du for at bo i dag?", hint: "Husleje, eller ydelse og faste udgifter på din nuværende bolig. Den udgift sparer du, mens du bor i den nye. Bor du gratis i dag, så skriv 0.", unit: "kr./md.", suggest: null, min: 0, max: 60000 });
   if (g === "live_flip") q.push({ key: "lot", kind: "choice", title: "Er grunden under 1.400 m²?", hint: "Parcelhusreglen gør gevinsten skattefri, men som udgangspunkt kun når grunden er under 1.400 m².", options: [
     { value: "small", label: "Ja, under 1.400 m²" }, { value: "big", label: "Nej, større" }, { value: "small_unknown", label: "Ved ikke", sub: "Vi regner skattefrit, men tjek det" } ] });
   if (g === "flip") q.push({ key: "sales", kind: "choice", title: "Hvor mange boliger har du solgt de sidste 5 år?", hint: "Sælger du mange, kan Skattestyrelsen se dig som næringsdrivende, og så beskattes gevinsten hårdere.", options: [
@@ -124,6 +125,7 @@ export function rentalParams(a: Answers) {
     vacancyPct: a.goal === "parents" ? 0 : 4,
   };
   if (a.rent) j.monthlyRent = Number(a.rent);
+  j.goal = a.goal === "parents" ? "parents" : "cashflow";
   if (a.mgmt === "admin") j.adminPct = 6;
   return { down, j };
 }
@@ -143,6 +145,7 @@ export function flipAnswers(a: Answers): FlipAnswers & { type: string } {
     sales: (a.sales as FlipAnswers["sales"]) ?? "0",
     target: Number(a.target) || 15,
     bigLot: a.lot === "big",
+    currentHousing: Number(a.housing) || 0,
     type: a.type ?? "villa",
   };
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { zipFromAddress } from "@/lib/zip";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -48,7 +49,7 @@ function readListing(u: string, d: Record<string, unknown>): Listing {
   return {
     url: u,
     address,
-    zip: address?.match(/\b(\d{4})\b/)?.[1] ?? null,
+    zip: zipFromAddress(address),
     price: Number(f.price) || null,
     area: Number(f.area) || null,
     rooms: Number(f.rooms) || null,

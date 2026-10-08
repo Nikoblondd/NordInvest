@@ -38,6 +38,7 @@ type Body = {
   rate: number;
   months: number;
   monthlyRunning: number; // ejerudgift + forbrug pr. md.
+  runningNote?: string;
   lawyer: number;
   reports: number;
   other: number;
@@ -130,7 +131,7 @@ export async function POST(req: NextRequest) {
   head(20, "EJERTID");
   input(21, "Måneder fra køb til salg", b.months, "0", "");
   input(22, "Rente", b.rate, PCT_IN, "Hele lånet, om året");
-  input(23, "Ejerudgift og forbrug pr. md.", b.monthlyRunning, KR, "Ejerudgift fra annoncen + 1.200 kr. forbrug");
+  input(23, "Ejerudgift og forbrug pr. md.", b.monthlyRunning, KR, b.runningNote ?? "Ejerudgift fra annoncen + 1.200 kr. forbrug");
   calc(24, "Renter", `${R(7)}*${R(22)}/100*${R(21)}/12`, KR);
   calc(25, "Ejerudgift og forbrug", `${R(23)}*${R(21)}`, KR);
   calc(26, "Ejertid i alt", `${R(24)}+${R(25)}`, KR, "", true);

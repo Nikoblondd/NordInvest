@@ -160,8 +160,13 @@ function parseBoligsidenSlug(url: string): BsAddress | null {
     const seg = parts.find((s) => /-\d{4}-/.test(s)) || parts[parts.length - 1];
     if (!seg) return null;
     const tokens = seg.split("-");
-    // Find the 4-digit zip
-    const zipIdx = tokens.findIndex((t) => /^\d{4}$/.test(t));
+    // The postnummer is the last 4-digit token, followed only by the city
+    // name. A door number can also be four digits ("vestervang-41-4-4145-
+    // 8000-aarhus-c"), so the first one is not enough.
+    let zipIdx = -1;
+    for (let i = tokens.length - 1; i >= 0; i--) {
+      if (/^\d{4}$/.test(tokens[i]) && tokens.slice(i + 1).every((t) => !/^\d+$/.test(t))) { zipIdx = i; break; }
+    }
     if (zipIdx < 2) return null;
     const zip = tokens[zipIdx];
     // Street + number [+ letter] live before the zip. House number is the
@@ -285,8 +290,14 @@ async function fromBoligsiden(url: string): Promise<BsResult | null> {
   // match — otherwise we'd swap the user's requested unit (2.tv) for a different
   // one on the same street (5.tv). Fall back to the address-only path instead
   // of silently returning the wrong apartment's numbers.
-  let winner: BsCase | undefined;
-  if (targetFloor && targetSide) {
+  // Best of all: Boligsiden's own slug for the listing, exactly as in the URL.
+  const urlSlug = (() => { try { return new URL(url).pathname.split("/").filter(Boolean).pop()?.toLowerCase() ?? ""; } catch { return ""; } })();
+  const exact = cases.find((c) => typeof (c as { slugAddress?: string }).slugAddress === "string" && (c as { slugAddress?: string }).slugAddress!.toLowerCase() === urlSlug);
+
+  let winner: BsCase | undefined = exact;
+  if (winner) {
+    // found by slug
+  } else if (targetFloor && targetSide) {
     winner = withDoor[0];
   } else if (targetFloor) {
     winner = withFloor[0];

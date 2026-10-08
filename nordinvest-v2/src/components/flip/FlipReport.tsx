@@ -1,5 +1,6 @@
 "use client";
 
+import { zipFromAddress } from "@/lib/zip";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -71,7 +72,7 @@ export function FlipReport() {
       .then((d) => {
         const f = (d?.fields ?? {}) as Record<string, string | number>;
         const address = f.address ? String(f.address) : null;
-        setListing({ url, address, zip: address?.match(/\b(\d{4})\b/)?.[1] ?? null, price: Number(f.price) || null, area: Number(f.area) || null, rooms: Number(f.rooms) || null, yearBuilt: Number(f.yearBuilt) || null, monthlyExpenses: Number(f.monthlyExpenses) || null, images: Array.isArray(d?.images) ? d.images.slice(0, 12) : [] });
+        setListing({ url, address, zip: zipFromAddress(address), price: Number(f.price) || null, area: Number(f.area) || null, rooms: Number(f.rooms) || null, yearBuilt: Number(f.yearBuilt) || null, monthlyExpenses: Number(f.monthlyExpenses) || null, images: Array.isArray(d?.images) ? d.images.slice(0, 12) : [] });
       })
       .catch(() => setFailed(true));
   }, [url]);
@@ -268,7 +269,8 @@ export function FlipReport() {
           downPct: answers.finance === "cash" ? 100 : answers.downPct,
           rate: answers.rate,
           months: answers.months,
-          monthlyRunning: (property.monthlyExpenses ?? Math.round(property.area * 30)) + 1200,
+          monthlyRunning: (property.monthlyExpenses ?? Math.round(property.area * 30)) + 1200 - (answers.strategy === "live_flip" ? answers.currentHousing ?? 0 : 0),
+          runningNote: answers.strategy === "live_flip" && answers.currentHousing ? `Ejerudgift + 1.200 kr. forbrug, minus din nuværende boligudgift på ${Math.round(answers.currentHousing).toLocaleString("da-DK")} kr., som du sparer` : undefined,
           lawyer: result.buy.lawyer,
           reports: result.sell.reports,
           other: result.sell.other,

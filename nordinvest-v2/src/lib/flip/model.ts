@@ -27,6 +27,7 @@ export type FlipAnswers = {
   sales: "0" | "1-2" | "3+"; // homes sold in the last 5 years
   target: number; // required profit, % of the sale price
   bigLot?: boolean; // grund over 1.400 m²: parcelhusreglen gælder som udgangspunkt ikke
+  currentHousing?: number; // bo og flip: what you pay to live today, saved while you live there (kr./md.)
 };
 
 export const DEFAULT_ANSWERS: FlipAnswers = {
@@ -279,7 +280,7 @@ export type FlipResult = {
   arv: number;
   costs: Costs;
   buy: { tinglysning: number; pant: number; lawyer: number; total: number };
-  hold: { interest: number; running: number; total: number; months: number };
+  hold: { interest: number; running: number; saved: number; total: number; months: number };
   sell: { broker: number; reports: number; other: number; total: number };
   equity: number; // own cash tied up
   loan: number;
@@ -312,7 +313,9 @@ function run(price: number, arv: number, p: Property, a: FlipAnswers, renovation
   const months = a.months;
   const interest = (loan * (a.rate / 100) * months) / 12;
   const running = (p.monthlyExpenses ?? Math.round(p.area * 30)) * months + 1200 * months; // ejerudgift + forbrug
-  const holdTotal = interest + running;
+  // Living there, you stop paying for where you live now.
+  const saved = a.strategy === "live_flip" ? Math.max(0, a.currentHousing ?? 0) * months : 0;
+  const holdTotal = interest + running - saved;
 
   const broker = Math.max(35000, arv * 0.015); // salær, skøn
   const reports = 15000; // tilstandsrapport + elinstallationsrapport
@@ -343,7 +346,7 @@ function run(price: number, arv: number, p: Property, a: FlipAnswers, renovation
     arv,
     costs: renovation,
     buy: { tinglysning, pant, lawyer, total: buyTotal },
-    hold: { interest, running, total: holdTotal, months },
+    hold: { interest, running, saved, total: holdTotal, months },
     sell: { broker, reports, other, total: sellTotal },
     equity,
     loan,
@@ -384,7 +387,7 @@ export function flip(p: Property, arv: number, a: FlipAnswers, lines: Line[]): F
     { label: "Købspris", value: -p.price, kind: "cost" },
     { label: "Købsomkostninger", value: -base.buy.total, kind: "cost", note: "Tinglysning, pant, rådgiver" },
     { label: "Renovering", value: -renovation.renovation, kind: "cost", note: "Materialer, håndværkere, buffer" },
-    { label: `Ejertid, ${a.months} mdr.`, value: -base.hold.total, kind: "cost", note: "Renter, ejerudgift, forbrug" },
+    { label: `Ejertid, ${a.months} mdr.`, value: -base.hold.total, kind: "cost", note: base.hold.saved ? "Renter, ejerudgift, forbrug minus din sparede boligudgift" : "Renter, ejerudgift, forbrug" },
     { label: "Salgsomkostninger", value: -base.sell.total, kind: "cost", note: "Mægler, rapporter, markedsføring" },
     { label: "Skat", value: -base.tax, kind: "tax" },
     { label: "Fortjeneste efter skat", value: base.profit, kind: "result" },

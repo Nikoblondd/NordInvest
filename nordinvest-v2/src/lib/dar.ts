@@ -1,3 +1,4 @@
+import { zipFromAddress } from "@/lib/zip";
 // Address → BFE (Bestemt Fast Ejendom) number + coordinates.
 //
 // DAWA (api.dataforsyningen.dk / dawa.aws.dk) is shut down — every endpoint
@@ -82,7 +83,7 @@ export function parseAddress(input: string): { vejHusnr: string; postnr: string 
   const vej = m[1].replace(/[\s,]+$/, "").trim();
   if (vej.length < 2) return null;
   const husnr = m[2] + (m[3] ? m[3].toUpperCase() : "");
-  const postnr = s.slice(m[0].length).match(/\b(\d{4})\b/)?.[1] ?? null;
+  const postnr = zipFromAddress(s.slice(m[0].length));
   return { vejHusnr: `${vej} ${husnr}`, postnr };
 }
 

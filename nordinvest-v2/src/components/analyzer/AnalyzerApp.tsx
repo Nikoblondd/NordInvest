@@ -1,5 +1,6 @@
 "use client";
 
+import { zipFromAddress } from "@/lib/zip";
 import Link from "next/link";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -35,6 +36,9 @@ import type { Tone } from "@/components/analyzer/story/tone";
 import type { RentBenchmark as RentBench } from "@/lib/rent";
 import { computeRentReserve } from "@/lib/rent-reserve";
 import { effectiveRentArea, estimateMonthlyRent } from "@/lib/rent-estimate";
+import { purchaseCostPct } from "@/lib/dk-fees";
+import { RentalSheet } from "@/components/analyzer/RentalSheet";
+import { parentsView } from "@/lib/parents";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { SignupGate } from "@/components/analyzer/SignupGate";
@@ -283,8 +287,8 @@ export function AnalyzerApp() {
   const region = useMemo(() => regionFromAddress(address), [address]);
   // Postnummer parsed from the address — keys the documented market benchmark.
   const zip = useMemo(() => {
-    const m = (address ?? "").match(/\b(\d{4})\b/);
-    return m ? Number(m[1]) : null;
+    const z = zipFromAddress(address);
+    return z ? Number(z) : null;
   }, [address]);
 
   // Enrich with official BBR building data once we have an address.
@@ -314,6 +318,9 @@ export function AnalyzerApp() {
   // applied once the listing's own numbers are in so the user's answers win.
   const journeyApplied = useRef(false);
   const [journeyNote, setJourneyNote] = useState<string | null>(null);
+  // What the buyer wants with the home, from the question flow: an ordinary
+  // rental, or a forældrekøb where their child is the tenant.
+  const [goal, setGoal] = useState<"cashflow" | "parents">("cashflow");
 
   // Seed from the deal engine's reliable Boligsiden numbers (price, area, rooms,
   // ejerudgift, estimated rent). The listing URL is still used below to fetch
@@ -430,9 +437,9 @@ export function AnalyzerApp() {
           // the form's example rent.
           if (!foundKeys.includes("monthlyRent") && !(Number(searchParams.get("rent")) > 0)) {
             const a = Number(searchParams.get("area"));
-            const z = (searchParams.get("addr") ?? "").match(/\b(\d{4})\b/);
+            const z = zipFromAddress(searchParams.get("addr"));
             if (a > 10) {
-              patch.monthlyRent = estimateMonthlyRent(z ? Number(z[1]) : null, a, calRef.current.rentFactor);
+              patch.monthlyRent = estimateMonthlyRent(z ? Number(z) : null, a, calRef.current.rentFactor);
               setRentEstimated(true);
             }
           }
@@ -449,8 +456,8 @@ export function AnalyzerApp() {
         if (fld.price) patch.price = Number(fld.price);
         if (fld.monthlyRent) patch.monthlyRent = Number(fld.monthlyRent);
         else if (fld.area) {
-          const z = String(fld.address ?? "").match(/\b(\d{4})\b/);
-          patch.monthlyRent = estimateMonthlyRent(z ? Number(z[1]) : null, Number(fld.area), calRef.current.rentFactor);
+          const z = zipFromAddress(String(fld.address ?? ""));
+          patch.monthlyRent = estimateMonthlyRent(z ? Number(z) : null, Number(fld.area), calRef.current.rentFactor);
           estimated.push("leje");
         }
         if (fld.monthlyExpenses) patch.monthlyOpex = Number(fld.monthlyExpenses);
@@ -489,6 +496,7 @@ export function AnalyzerApp() {
     let j: Record<string, unknown>;
     try { j = JSON.parse(decodeURIComponent(escape(atob(raw)))); } catch { return; }
     const patch = pickInputs(j);
+    if (j.goal === "parents") setGoal("parents");
     const adminPct = Number(j.adminPct) || 0;
     setInputs((prev) => {
       const next = { ...prev, ...patch };
@@ -509,6 +517,15 @@ export function AnalyzerApp() {
     setJourneyNote(bits.join(" · "));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ex.status]);
+
+  // Purchase costs follow the statutory fees for this price and loan (skøde,
+  // pantebrev, rådgiver) until the user sets their own under Justér.
+  const [acqTouched, setAcqTouched] = useState(false);
+  useEffect(() => {
+    if (acqTouched || !(inputs.price > 0)) return;
+    const pctNow = Math.round(purchaseCostPct(inputs.price, inputs.price * (1 - inputs.downPaymentPct / 100)) * 100) / 100;
+    if (Math.abs(pctNow - inputs.acqCostPct) > 0.01) setInputs((p) => ({ ...p, acqCostPct: pctNow }));
+  }, [acqTouched, inputs.price, inputs.downPaymentPct, inputs.acqCostPct]);
 
   const r = useMemo(() => analyze(inputs), [inputs]);
   // Fase 3 — Monte Carlo confidence bands. Recomputes only when inputs or the
@@ -680,6 +697,15 @@ export function AnalyzerApp() {
   const heroTone: Tone = displayScore >= 65 ? "good" : displayScore >= 45 ? "warn" : "bad";
   const heroHeadline =
     displayScore >= 80 ? "Stærk handel." : displayScore >= 65 ? "God handel." : displayScore >= 45 ? "Tvivlsom handel." : "Svag handel.";
+  // A forældrekøb is judged against the child renting, not as an investment.
+  const pv = goal === "parents" ? parentsView(inputs, r) : null;
+  const heroScoreShown = pv ? Math.max(0, Math.min(100, Math.round(50 + (pv.familyRent > 0 ? (pv.vsRenting / pv.familyRent) * 50 : 0)))) : displayScore;
+  const heroRatingShown = pv ? (pv.vsRenting >= 0 ? "Bedre end at leje" : "Dyrere end at leje") : displayRating;
+  const heroHeadlineShown = pv ? `${dk(Math.abs(pv.vsRenting))} kr. ${pv.vsRenting >= 0 ? "bedre" : "dyrere"} end at leje.` : heroHeadline;
+  const heroVerdictShown = pv
+    ? `${r.cashFlow >= 0 ? `Barnets husleje dækker alt og giver ${dk(r.cashFlow)} kr. i overskud om måneden.` : `Det koster jer ${dk(Math.abs(r.cashFlow))} kr. om måneden ud over barnets husleje.`} Når I sælger om ${pv.years} år, er ${dk(pv.familyRent)} kr. i husleje blevet i familien i stedet for at gå til en udlejer.`
+    : displayVerdict;
+  const heroToneShown: Tone = pv ? (pv.vsRenting >= 0 ? "good" : "bad") : heroTone;
   const heroNotes = [
     ...(inv?.note ? [inv.note.replace(" — ", ". ")] : []),
     ...(!isInvestment && rentEstimated ? ["Bygger på en estimeret leje. Bekræft den, før du handler."] : []),
@@ -695,6 +721,15 @@ export function AnalyzerApp() {
     { label: "Kontantafkast", value: num(r.cashOnCash), unit: "%", tone: r.cashOnCash >= 8 ? "good" : r.cashOnCash >= 0 ? "warn" : "bad" },
     { label: "Gældsdækning", value: num(r.dscr), tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
   ];
+
+  const heroMetricsShown: HeroMetric[] = pv
+    ? [
+        { label: r.cashFlow >= 0 ? "Overskud pr. md." : "Jeres udgift pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "warn" },
+        { label: "I forhold til leje", value: `${pv.vsRenting >= 0 ? "+" : "−"}${dk(Math.abs(pv.vsRenting))}`, unit: "kr", tone: pv.vsRenting >= 0 ? "good" : "bad" },
+        { label: "Husleje i familien", value: dk(pv.familyRent), unit: "kr", tone: "good" },
+        { label: `Gevinst efter ${pv.years} år`, value: `${pv.afterTax >= 0 ? "+" : "−"}${dk(Math.abs(pv.afterTax))}`, unit: "kr", tone: pv.afterTax >= 0 ? "good" : "warn" },
+      ]
+    : heroMetrics;
 
   const cashAnswer: ChapterAnswer =
     r.cashFlow >= 0
@@ -753,6 +788,7 @@ export function AnalyzerApp() {
 
   const navItems: NavItem[] = [
     { id: "overblik", label: "Dommen", tone: heroTone },
+    ...(isInvestment ? [] : [{ id: "kalkule", label: "Regnestykket", tone: (r.cashFlow >= 0 ? "good" : "bad") as Tone }]),
     { id: "oekonomi", label: "Økonomi", tone: cashAnswer.tone },
     ...(showPriceChapter ? [{ id: "pris", label: "Pris", tone: priceAnswer.tone }] : []),
     { id: "risici", label: "Risici", tone: riskAnswer.tone },
@@ -994,7 +1030,7 @@ export function AnalyzerApp() {
             <Field label="Ejerperiode" name="holdYears" value={inputs.holdYears} onChange={(n) => set({ holdYears: n })} suffix="år" />
             <Field label="Tomgang" name="vacancyPct" value={inputs.vacancyPct} onChange={(n) => set({ vacancyPct: n })} suffix="%" step={0.5} />
             <Field label="Vedligehold" name="maintenancePct" value={inputs.maintenancePct} onChange={(n) => set({ maintenancePct: n })} suffix="% af leje" step={0.5} />
-            <Field label="Købsomkostninger" name="acqCostPct" value={inputs.acqCostPct} onChange={(n) => set({ acqCostPct: n })} suffix="%" step={0.5} />
+            <Field label="Købsomkostninger" name="acqCostPct" value={inputs.acqCostPct} onChange={(n) => { setAcqTouched(true); set({ acqCostPct: n }); }} suffix="%" step={0.5} />
             <Field label="Værdistigning" name="appreciationPct" value={inputs.appreciationPct} onChange={(n) => set({ appreciationPct: n })} suffix="%/år" step={0.5} />
             <Field label="Lejevækst" name="rentGrowthPct" value={inputs.rentGrowthPct} onChange={(n) => set({ rentGrowthPct: n })} suffix="%/år" step={0.5} />
           </div>
@@ -1095,20 +1131,46 @@ export function AnalyzerApp() {
           <DealHero
             images={images}
             address={address}
-            score={displayScore}
-            rating={displayRating}
-            headline={heroHeadline}
-            verdict={displayVerdict}
-            tone={heroTone}
+            score={heroScoreShown}
+            rating={heroRatingShown}
+            headline={heroHeadlineShown}
+            verdict={heroVerdictShown}
+            tone={heroToneShown}
             notes={heroNotes}
-            metrics={heroMetrics}
+            metrics={heroMetricsShown}
             probability={{ pct: Math.round(uncertainty.pCashFlowPositive * 100), runs: uncertainty.runs }}
             listingUrl={listingUrl}
             sourceLabel={sourceName(listingUrl)}
-            kindLabel={isInvestment ? `Investeringsejendom${subcatParam ? `, ${subcatParam}` : ""}` : `Strategi: ${strategies.find((s) => s.id === inputs.strategy)?.label ?? ""}`}
+            kindLabel={isInvestment ? `Investeringsejendom${subcatParam ? `, ${subcatParam}` : ""}` : goal === "parents" ? "Forældrekøb" : `Strategi: ${strategies.find((s) => s.id === inputs.strategy)?.label ?? ""}`}
           />
 
           <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} />
+
+          {!isInvestment && (
+            <section id="kalkule" className="scroll-mt-32 bg-[#f4f6f9] px-4 py-10 sm:px-6 sm:py-14">
+              <div className="mx-auto max-w-[1080px]">
+                <h2 className="text-[26px] font-semibold tracking-[-0.03em] sm:text-[32px]">Hele regnestykket</h2>
+                <p className="mt-2 max-w-2xl text-[16px] text-slate-600">
+                  {goal === "parents"
+                    ? "Jeres forældrekøb fra købspris til det, der står tilbage, når barnet flytter. Ret et blåt felt, og resten regner med."
+                    : "Ret et blåt felt, og resten regner med. Klik på en række for at se, hvordan tallet er regnet. Kapitlerne under er dokumentationen."}
+                </p>
+                <div className="mt-6">
+                  <RentalSheet
+                    inputs={inputs}
+                    r={r}
+                    set={set}
+                    goal={goal}
+                    rentEstimated={rentEstimated}
+                    marketRent={zip && area && area > 10 ? estimateMonthlyRent(zip, area, cal.rentFactor || 1) : null}
+                    acqTouched={acqTouched}
+                    onExport={exportExcel}
+                    exporting={exporting}
+                  />
+                </div>
+              </div>
+            </section>
+          )}
 
           <Chapter id="oekonomi" question="Tjener den penge?" answer={cashAnswer} tint={tint()}>
             <Panel>
