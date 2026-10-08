@@ -12,6 +12,7 @@ import { FlipSheet } from "@/components/flip/FlipSheet";
 import { FlipScenarios, type Scenario } from "@/components/flip/FlipScenarios";
 import { FlipFeedback } from "@/components/flip/FlipFeedback";
 import { Valuation } from "@/components/property/Valuation";
+import { PriceLadder } from "@/components/flip/PriceLadder";
 import { UpgradeDialog } from "@/components/upgrade/UpgradeDialog";
 import { SignupGate } from "@/components/analyzer/SignupGate";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
@@ -483,7 +484,7 @@ export function FlipReport() {
 
       {/* ARV */}
       <Band id="vaerdi" muted title="Hvad er den værd efter renoveringen?" answer={market.ok && market.medianRenovated ? `Renoverede boliger i ${market.zip} er sat til salg til ${kr(market.medianRenovated)} pr. m²` : "For få renoverede boliger i postnummeret til en sikker værdi"} tone={market.ok && market.medianRenovated ? "good" : "warn"}>
-        <div className="mb-6"><Valuation bfe={listing.bfe} price={listing.price ?? property.price} /></div>
+        <div className="mb-6"><Valuation bfe={listing.bfe} price={listing.price ?? property.price} area={property.area} /></div>
         {market.ok && market.sold && (
           <p className="mb-6 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[14px] leading-relaxed text-emerald-900">
             <Check size={16} className="mt-0.5 shrink-0" />
@@ -496,10 +497,13 @@ export function FlipReport() {
             <span>Det her er udbudspriser, ikke salgspriser. {Math.round(market.shareCut * 100)} % af boligerne til salg i {market.zip} er allerede sat ned, i midten med {market.medianCut.toLocaleString("da-DK")} %. Det forsigtige scenarie regner med det samme afslag.</span>
           </p>
         )}
+        <div className="mb-6 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-6">
+          <h3 className="mb-4 text-[15px] font-semibold text-slate-900">Pris pr. m² i {market.ok ? market.zip : "postnummeret"}</h3>
+          <PriceLadder market={market} asking={(listing?.price ?? property.price) / property.area} target={arv ? arv / property.area : null} />
+        </div>
         <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
           <div>
-            <PerM2Bars market={market} asking={(listing?.price ?? property.price) / property.area} />
-            <label className="mt-6 block">
+            <label className="block">
               <span className="text-sm font-medium text-slate-700">Salgspris efter renovering</span>
               <div className="mt-1.5 flex items-center gap-3">
                 <NumberInput value={arv ?? 0} onValueChange={(n) => { setArv(n ?? 0); setArvTouched(true); }} className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-lg font-semibold tabular-nums outline-none focus:border-blue-500" />
@@ -664,33 +668,6 @@ function Fig({ k, v, sub }: { k: string; v: string; sub?: string }) {
       <dt className="text-xs text-slate-500">{k}</dt>
       <dd className="mt-1 text-[20px] font-semibold tabular-nums">{v}</dd>
       {sub && <dd className="text-[12px] leading-snug text-slate-500">{sub}</dd>}
-    </div>
-  );
-}
-
-function PerM2Bars({ market, asking }: { market: FlipMarket; asking: number }) {
-  if (!market.ok) return <p className="text-sm text-slate-500">Ingen sammenlignelige boliger til salg lige nu.</p>;
-  const rows = [
-    { label: "Trænger til renovering", v: market.medianNeedsWork, n: market.comps.filter((c) => c.condition === "needs_work").length, color: "bg-amber-400" },
-    { label: "Denne bolig (udbudspris)", v: asking, n: null, color: "bg-slate-900" },
-    { label: "Standard", v: market.medianStandard, n: market.comps.filter((c) => c.condition === "standard").length, color: "bg-slate-300" },
-    { label: "Renoveret", v: market.medianRenovated, n: market.comps.filter((c) => c.condition === "renovated").length, color: "bg-emerald-500" },
-  ];
-  const max = Math.max(...rows.map((r) => r.v ?? 0)) || 1;
-  return (
-    <div className="space-y-3">
-      {rows.map((r) => (
-        <div key={r.label}>
-          <div className="flex justify-between text-[13px]">
-            <span className="text-slate-700">{r.label}{r.n != null && <span className="text-slate-400"> · {r.n} boliger</span>}</span>
-            <span className="font-semibold tabular-nums">{r.v ? `${Math.round(r.v).toLocaleString("da-DK")} kr./m²` : "for få"}</span>
-          </div>
-          <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-white">
-            <div className={clsx("h-full rounded-full", r.color)} style={{ width: `${((r.v ?? 0) / max) * 100}%` }} />
-          </div>
-        </div>
-      ))}
-      <p className="pt-1 text-[12px] text-slate-500">Median udbudspris pr. m² for {market.sample} boliger til salg i {market.zip} af samme type og størrelse. Hver bolig er sorteret efter, hvad dens egen annonce siger om standen.</p>
     </div>
   );
 }
