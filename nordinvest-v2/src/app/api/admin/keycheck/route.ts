@@ -13,5 +13,5 @@ export async function GET() {
     body: JSON.stringify({ query: `{ DAR_Husnummer(first:1, virkningstid: "${t}", where:{adgangsadressebetegnelse:{startsWith:"Vindblæsvej 17,"}}){nodes{ adgangsadressebetegnelse }} }` }),
     cache: "no-store",
   }).then((x) => x.text()).catch((e) => String(e));
-  return NextResponse.json({ length: k.length, trailingWhitespace: /\s$/.test(k), accepted: r.includes('"data"'), error: r.includes('"data"') ? null : r.slice(0, 120) });
+  return NextResponse.json({ length: k.length, trailingWhitespace: /\s$/.test(k), accepted: r.includes('"data"'), error: r.includes('"data"') ? null : r.slice(0, 600) });
 }
