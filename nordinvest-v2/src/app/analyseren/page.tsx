@@ -89,7 +89,7 @@ export default function AnalyserenPage({
           <section aria-labelledby="next-property" className="bg-[#f4f6f9] px-4 py-16 sm:px-6 sm:py-20">
             <div className="mx-auto max-w-[1080px]">
               <h2 id="next-property" className="text-[28px] font-semibold tracking-[-0.03em] sm:text-[34px]">
-                Analysér en anden bolig.
+                Analysér en anden ejendom.
               </h2>
               <p className="mt-2 text-[17px] text-slate-600">Indsæt et nyt link, så er dommen klar på et øjeblik.</p>
               <div className="mt-6 max-w-2xl">

@@ -51,6 +51,7 @@ import { TimeSavingsCapture } from "@/components/analyzer/TimeSavingsCapture";
 import { captureEvent } from "@/lib/analytics-events";
 import { buildProvenance, rentRegulationRule } from "@/lib/provenance";
 import type { PriceBenchmark } from "@/lib/reference";
+import { CommercialStory } from "@/components/analyzer/CommercialStory";
 
 // The hero and the cash-flow waterfall open the result, so they're part of the
 // bundle: loading them late pushed the whole result down as they arrived (CLS).
@@ -705,7 +706,10 @@ export function AnalyzerApp() {
   const heroScoreShown = pv ? Math.max(0, Math.min(100, Math.round(50 + (pv.familyRent > 0 ? (pv.vsRenting / pv.familyRent) * 50 : 0)))) : displayScore;
   const heroRatingShown = pv ? (pv.vsRenting >= 0 ? "Bedre end at leje" : "Dyrere end at leje") : displayRating;
   const heroHeadlineShown = pv ? `${dk(Math.abs(pv.vsRenting))} kr. ${pv.vsRenting >= 0 ? "bedre" : "dyrere"} end at leje.` : heroHeadline;
-  const heroVerdictShown = pv
+  const investVerdict = r.cashFlow >= 0
+    ? `Lejen betaler lånet og giver ${dk(r.cashFlow)} kr. tilbage hver måned. ${r.dscr >= 1.25 ? "Der er god luft, hvis renten stiger." : "Der er ikke meget luft, hvis renten stiger."}`
+    : `Lejen betaler ikke hele lånet. Du skal selv lægge ${dk(Math.abs(r.cashFlow))} kr. til hver måned.`;
+  const heroVerdictShown = isInvestment ? investVerdict : pv
     ? `${r.cashFlow >= 0 ? `Barnets husleje dækker alt og giver ${dk(r.cashFlow)} kr. i overskud om måneden.` : `Det koster jer ${dk(Math.abs(r.cashFlow))} kr. om måneden ud over barnets husleje.`} Når I sælger om ${pv.years} år, er ${dk(pv.familyRent)} kr. i husleje blevet i familien i stedet for at gå til en udlejer.`
     : displayVerdict;
   const heroToneShown: Tone = pv ? (pv.vsRenting >= 0 ? "good" : "bad") : heroTone;
@@ -725,7 +729,14 @@ export function AnalyzerApp() {
     { label: "Gældsdækning", value: num(r.dscr), tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
   ];
 
-  const heroMetricsShown: HeroMetric[] = pv
+  // An investeringsejendom gets the same four numbers in plain words.
+  const investMetrics: HeroMetric[] = [
+    { label: r.cashFlow >= 0 ? "Overskud pr. md." : "Underskud pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "bad" },
+    { label: "Afkast om året", value: num(r.capRate), unit: "%", tone: inv && inv.score >= 62 ? "good" : inv && inv.score >= 45 ? "warn" : "bad" },
+    { label: "Du lægger selv", value: dk(r.cashInvested), unit: "kr", tone: "neutral" },
+    { label: "Lejen dækker lånet", value: num(r.dscr), unit: "gange", tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
+  ];
+  const heroMetricsShown: HeroMetric[] = isInvestment ? investMetrics : pv
     ? [
         { label: r.cashFlow >= 0 ? "Overskud pr. md." : "Jeres udgift pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "warn" },
         { label: "I forhold til leje", value: `${pv.vsRenting >= 0 ? "+" : "−"}${dk(Math.abs(pv.vsRenting))}`, unit: "kr", tone: pv.vsRenting >= 0 ? "good" : "bad" },
@@ -1141,12 +1152,16 @@ export function AnalyzerApp() {
             tone={heroToneShown}
             notes={heroNotes}
             metrics={heroMetricsShown}
-            probability={{ pct: Math.round(uncertainty.pCashFlowPositive * 100), runs: uncertainty.runs }}
+            probability={isInvestment ? null : { pct: Math.round(uncertainty.pCashFlowPositive * 100), runs: uncertainty.runs }}
             listingUrl={listingUrl}
             sourceLabel={sourceName(listingUrl)}
             kindLabel={isInvestment ? `Investeringsejendom${subcatParam ? `, ${subcatParam}` : ""}` : goal === "parents" ? "Forældrekøb" : `Strategi: ${strategies.find((s) => s.id === inputs.strategy)?.label ?? ""}`}
           />
 
+          {isInvestment ? (
+            <CommercialStory r={r} rate={inputs.interestRate} termYears={inputs.termYears ?? 30} subcategory={subcatParam} onAdjust={() => setSheetOpen(true)} />
+          ) : (
+            <>
           <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} />
 
           {!isInvestment && (
@@ -1376,6 +1391,8 @@ export function AnalyzerApp() {
             />
             {bbr && <BbrPanel data={bbr} />}
           </Chapter>
+            </>
+          )}
 
           {/* Next steps: one primary (blue), the rest as quiet outline pills. */}
           <section id="naeste" aria-labelledby="naeste-h" className="scroll-mt-32 bg-[#0a0e16] px-4 py-16 text-white sm:px-6 sm:py-20">

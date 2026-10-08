@@ -126,7 +126,7 @@ export type InvestmentDeal = InvestmentListing & {
 // yield well ABOVE the band almost always prices in real risk (vacancy, a single
 // tenant, secondary location, obsolescence) — so it must not be rewarded like
 // quality. Below the band means the property is priced expensively.
-const CLASS_YIELD: Record<string, { low: number; goodLo: number; goodHi: number; high: number }> = {
+export const CLASS_YIELD: Record<string, { low: number; goodLo: number; goodHi: number; high: number }> = {
   "Boligudlejning":        { low: 3.0, goodLo: 4.0, goodHi: 5.5, high: 6.5 },
   "Kontor":                { low: 4.0, goodLo: 5.0, goodHi: 6.5, high: 8.0 },
   "Detailhandel & butik":  { low: 4.5, goodLo: 5.5, goodHi: 7.0, high: 8.5 },
@@ -135,7 +135,7 @@ const CLASS_YIELD: Record<string, { low: number; goodLo: number; goodHi: number;
   "Grunde":                { low: 3.0, goodLo: 4.0, goodHi: 6.0, high: 8.0 },
   "Andre typer":           { low: 4.5, goodLo: 5.5, goodHi: 7.5, high: 9.0 },
 };
-const DEFAULT_YIELD = { low: 4.5, goodLo: 5.5, goodHi: 7.0, high: 9.0 };
+export const DEFAULT_YIELD = { low: 4.5, goodLo: 5.5, goodHi: 7.0, high: 9.0 };
 
 // A knowledge-based, asset-class-aware score for a commercial/investment deal.
 // Built from the property's OWN yield, financing safety (DSCR) and levered
@@ -187,9 +187,9 @@ export function assessInvestment(
   const score = scoreInvestment(capRate, dscr, cashOnCash, subcategory);
 
   let note: string | null = null;
-  if (capRate > b.high) note = "Usædvanligt højt afkast for typen — ofte tegn på tomgangs-, lejer- eller beliggenhedsrisiko. Verificér lejekontrakter og stand.";
-  else if (capRate > b.goodHi) note = "Højt afkast for typen — tjek risiko, beliggenhed og lejers bonitet.";
-  else if (capRate < b.low) note = "Lavt afkast for typen — prissat i den dyre ende.";
+  if (capRate > b.high) note = "Usædvanligt højt afkast for typen. Det er ofte et tegn på tomme lokaler, en svag lejer eller en dårlig beliggenhed. Se lejekontrakterne og ejendommen, før du byder.";
+  else if (capRate > b.goodHi) note = "Højt afkast for typen. Tjek beliggenheden, og om lejeren kan betale.";
+  else if (capRate < b.low) note = "Lavt afkast for typen. Prisen er høj i forhold til lejen.";
   else if (dscr < 1.1) note = "Gælden er kun lige dækket ved denne udbetaling og rente.";
 
   const rating = score >= 78 ? "Stærk" : score >= 62 ? "Solid" : score >= 45 ? "Middel" : "Svag";
