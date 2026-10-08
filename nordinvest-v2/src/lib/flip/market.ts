@@ -53,6 +53,8 @@ export type FlipMarket = {
   // been cut, and the median cut among them (%, positive number).
   shareCut: number;
   medianCut: number | null;
+  // Tinglyste handler in the postnummer (Ejerfortegnelsen), when available.
+  sold?: { n: number; medianM2: number; medianDiscount: number | null; asOf: string } | null;
   comps: FlipComp[];
 } | { ok: false; reason: string };
 

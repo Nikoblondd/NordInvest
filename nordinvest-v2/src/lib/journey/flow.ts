@@ -10,7 +10,7 @@ import { estimateMonthlyRent } from "@/lib/rent-estimate";
 
 export type Goal = "cashflow" | "parents" | "flip" | "live_flip";
 export type Answers = Record<string, string>;
-export type Ctx = { area: number | null; rent: number | null; address: string | null; zip: string | null; type?: string | null };
+export type Ctx = { area: number | null; rent: number | null; address: string | null; zip: string | null; type?: string | null; lotArea?: number | null };
 
 /** The listing's own property type in the flip model's terms, when Boligsiden states it. */
 export function listingType(raw: string | null | undefined): "villa" | "terraced" | "condo" | null {
@@ -104,7 +104,8 @@ export function questionsFor(a: Answers, ctx: Ctx): Question[] {
   q.push({ key: "months", kind: "choice", title: g === "live_flip" ? "Hvor længe bor du der, før du sælger?" : "Hvor længe ejer du den, fra køb til salg?", hint: "Hver måned koster renter, ejerudgift og forbrug.", options: [
     { value: "3", label: "3 måneder" }, { value: "6", label: "6 måneder" }, { value: "12", label: "1 år" }, { value: "24", label: "2 år" } ] });
   if (g === "live_flip") q.push({ key: "housing", kind: "number", title: "Hvad betaler du for at bo i dag?", hint: "Husleje, eller ydelse og faste udgifter på din nuværende bolig. Den udgift sparer du, mens du bor i den nye. Bor du gratis i dag, så skriv 0.", unit: "kr./md.", suggest: null, min: 0, max: 60000 });
-  if (g === "live_flip") q.push({ key: "lot", kind: "choice", title: "Er grunden under 1.400 m²?", hint: "Parcelhusreglen gør gevinsten skattefri, men som udgangspunkt kun når grunden er under 1.400 m².", options: [
+  // The lot size decides parcelhusreglen; asked only when the listing doesn't state it.
+  if (g === "live_flip" && !ctx.lotArea) q.push({ key: "lot", kind: "choice", title: "Er grunden under 1.400 m²?", hint: "Parcelhusreglen gør gevinsten skattefri, men som udgangspunkt kun når grunden er under 1.400 m².", options: [
     { value: "small", label: "Ja, under 1.400 m²" }, { value: "big", label: "Nej, større" }, { value: "small_unknown", label: "Ved ikke", sub: "Vi regner skattefrit, men tjek det" } ] });
   if (g === "flip") q.push({ key: "sales", kind: "choice", title: "Hvor mange boliger har du solgt de sidste 5 år?", hint: "Sælger du mange, kan Skattestyrelsen se dig som næringsdrivende, og så beskattes gevinsten hårdere.", options: [
     { value: "0", label: "Ingen" }, { value: "1-2", label: "1 til 2" }, { value: "3+", label: "3 eller flere" } ] });

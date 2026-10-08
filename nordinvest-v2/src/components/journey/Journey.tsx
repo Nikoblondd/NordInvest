@@ -29,6 +29,8 @@ type Listing = {
   monthlyExpenses: number | null;
   monthlyRent: number | null;
   type: string | null;
+  bfe: number | null;
+  lotArea: number | null;
   images: string[];
 };
 
@@ -57,6 +59,8 @@ function readListing(u: string, d: Record<string, unknown>): Listing {
     monthlyExpenses: Number(f.monthlyExpenses) || null,
     monthlyRent: Number(f.monthlyRent) || null,
     type: listingType(f.propertyType ? String(f.propertyType) : null),
+    bfe: Number(f.bfe) || null,
+    lotArea: Number(f.lotArea) || null,
     images: Array.isArray(d?.images) ? (d.images as string[]).slice(0, 12) : [],
   };
 }
@@ -93,7 +97,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
 
   useEffect(() => { if (initialUrl) fetchListing(initialUrl); }, [initialUrl, fetchListing]);
 
-  const ctx = useMemo(() => ({ area: listing?.area ?? null, rent: listing?.monthlyRent ?? null, address: listing?.address ?? null, zip: listing?.zip ?? null, type: listing?.type ?? null }), [listing]);
+  const ctx = useMemo(() => ({ area: listing?.area ?? null, rent: listing?.monthlyRent ?? null, address: listing?.address ?? null, zip: listing?.zip ?? null, type: listing?.type ?? null, lotArea: listing?.lotArea ?? null }), [listing]);
   const path = useMemo(() => questionsFor(answers, ctx), [answers, ctx]);
   const q: Question | undefined = path[qi];
   const linkStep = initialUrl ? 0 : 1;
@@ -113,7 +117,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
     try { sessionStorage.setItem(STORE, JSON.stringify({ listing: l })); } catch { /* the analysis refetches */ }
     const u = l?.url ?? url;
     if (goal === "flip" || goal === "live_flip") {
-      const p = new URLSearchParams({ url: u, a: b64(flipAnswers({ ...(l?.type ? { type: l.type } : {}), ...a })) });
+      const p = new URLSearchParams({ url: u, a: b64(flipAnswers({ ...(l?.type ? { type: l.type } : {}), ...(l?.lotArea && !a.lot ? { lot: l.lotArea > 1400 ? "big" : "small" } : {}), ...a })) });
       setTimeout(() => router.push(`/analyseren/flip?${p.toString()}`), 900);
       return;
     }

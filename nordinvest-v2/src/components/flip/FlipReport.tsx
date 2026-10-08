@@ -11,6 +11,7 @@ import { NumberInput } from "@/components/ui/NumberInput";
 import { FlipSheet } from "@/components/flip/FlipSheet";
 import { FlipScenarios, type Scenario } from "@/components/flip/FlipScenarios";
 import { FlipFeedback } from "@/components/flip/FlipFeedback";
+import { Valuation } from "@/components/property/Valuation";
 import { UpgradeDialog } from "@/components/upgrade/UpgradeDialog";
 import { SignupGate } from "@/components/analyzer/SignupGate";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
@@ -28,7 +29,7 @@ const signed = (n: number) => (Math.round(n) === 0 ? "0 kr." : `${n > 0 ? "+" : 
 const pct = (n: number, d = 0) => `${n < 0 ? "−" : ""}${Math.abs(n * 100).toLocaleString("da-DK", { maximumFractionDigits: d, minimumFractionDigits: d })} %`;
 const EASE = [0.2, 0.7, 0.2, 1] as const;
 
-type Listing = { url: string; address: string | null; zip: string | null; price: number | null; area: number | null; rooms: number | null; yearBuilt: number | null; monthlyExpenses: number | null; images: string[] };
+type Listing = { url: string; address: string | null; zip: string | null; price: number | null; area: number | null; rooms: number | null; yearBuilt: number | null; monthlyExpenses: number | null; images: string[]; bfe?: number | null; lotArea?: number | null };
 type Override = Partial<Pick<Line, "qty" | "unitPrice" | "hours" | "product">>;
 type Ai = { status: "idle" | "running" | "done" | "none" | "error"; condition?: Condition; images?: number };
 
@@ -72,7 +73,7 @@ export function FlipReport() {
       .then((d) => {
         const f = (d?.fields ?? {}) as Record<string, string | number>;
         const address = f.address ? String(f.address) : null;
-        setListing({ url, address, zip: zipFromAddress(address), price: Number(f.price) || null, area: Number(f.area) || null, rooms: Number(f.rooms) || null, yearBuilt: Number(f.yearBuilt) || null, monthlyExpenses: Number(f.monthlyExpenses) || null, images: Array.isArray(d?.images) ? d.images.slice(0, 12) : [] });
+        setListing({ url, address, zip: zipFromAddress(address), price: Number(f.price) || null, area: Number(f.area) || null, rooms: Number(f.rooms) || null, yearBuilt: Number(f.yearBuilt) || null, monthlyExpenses: Number(f.monthlyExpenses) || null, images: Array.isArray(d?.images) ? d.images.slice(0, 12) : [], bfe: Number(f.bfe) || null, lotArea: Number(f.lotArea) || null });
       })
       .catch(() => setFailed(true));
   }, [url]);
@@ -327,7 +328,8 @@ export function FlipReport() {
   // renovation runs 20 % over and the sale takes the realistic time plus 3
   // months. Optimistic: the price lands at the upper quartile of renovated
   // homes, at most 10 % over, everything else as planned.
-  const cutPct = market.ok && market.medianCut != null ? market.medianCut : 5;
+  const soldCut = market.ok && market.sold?.medianDiscount != null && market.sold.medianDiscount > 0 ? market.sold.medianDiscount : null;
+  const cutPct = soldCut ?? (market.ok && market.medianCut != null ? market.medianCut : 5);
   const upPct = market.ok && market.q3Renovated && market.medianRenovated ? Math.min(10, Math.max(0, (market.q3Renovated / market.medianRenovated - 1) * 100)) : 5;
   const over = lines.map((l) => ({ ...l, unitPrice: l.unitPrice * 1.2, hours: l.hours * 1.2 }));
   const slowMonths = Math.max(answers.months, realisticMonths) + 3;
@@ -338,7 +340,7 @@ export function FlipReport() {
   const fmtPct = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 1 })} %`;
   const scenarios: Scenario[] = [
     { key: "low", title: "Forsigtig", arv: lowArv, renovation: low.costs.renovation, months: slowMonths, profit: low.profit, margin: low.margin, roi: low.roi,
-      assumptions: [market.ok && market.medianCut != null ? `Salgspris −${fmtPct(cutPct)}: ${Math.round(market.shareCut * 100)} % af boligerne i ${market.zip} er sat ned, i midten med ${fmtPct(cutPct)}` : "Salgspris −5 % (skøn, for få nedsatte boliger)", "Renovering +20 %", `${slowMonths} måneder`] },
+      assumptions: [soldCut != null && market.ok && market.sold ? `Salgspris −${fmtPct(cutPct)}: tinglyste handler i ${market.zip} er solgt ${fmtPct(cutPct)} under sidste udbudspris (${market.sold.n} handler)` : market.ok && market.medianCut != null ? `Salgspris −${fmtPct(cutPct)}: ${Math.round(market.shareCut * 100)} % af boligerne i ${market.zip} er sat ned, i midten med ${fmtPct(cutPct)}` : "Salgspris −5 % (skøn, for få nedsatte boliger)", "Renovering +20 %", `${slowMonths} måneder`] },
     { key: "base", title: "Forventet", arv: arv ?? 0, renovation: result.costs.renovation, months: answers.months, profit: result.profit, margin: result.margin, roi: result.roi,
       assumptions: ["Tallene i regnearket"] },
     { key: "high", title: "Optimistisk", arv: highArv, renovation: high.costs.renovation, months: answers.months, profit: high.profit, margin: high.margin, roi: high.roi,
@@ -481,6 +483,13 @@ export function FlipReport() {
 
       {/* ARV */}
       <Band id="vaerdi" muted title="Hvad er den værd efter renoveringen?" answer={market.ok && market.medianRenovated ? `Renoverede boliger i ${market.zip} er sat til salg til ${kr(market.medianRenovated)} pr. m²` : "For få renoverede boliger i postnummeret til en sikker værdi"} tone={market.ok && market.medianRenovated ? "good" : "warn"}>
+        <div className="mb-6"><Valuation bfe={listing.bfe} price={listing.price ?? property.price} /></div>
+        {market.ok && market.sold && (
+          <p className="mb-6 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[14px] leading-relaxed text-emerald-900">
+            <Check size={16} className="mt-0.5 shrink-0" />
+            <span>Tinglyste handler: {market.sold.n} boliger af samme type i {market.zip} er solgt for i midten {kr(market.sold.medianM2)} pr. m² de sidste to år{market.sold.medianDiscount != null ? `, ${market.sold.medianDiscount.toLocaleString("da-DK")} % under sidste udbudspris` : ""}. Kilde: Ejerfortegnelsen.</span>
+          </p>
+        )}
         {market.ok && market.medianCut != null && (
           <p className="mb-6 flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[14px] leading-relaxed text-amber-900">
             <Info size={16} className="mt-0.5 shrink-0" />

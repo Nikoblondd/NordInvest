@@ -17,6 +17,8 @@ type Fields = {
   yieldPct?: number; // afkast %
   address?: string;
   propertyType?: string;
+  bfe?: number; // Bestemt Fast Ejendom, from Boligsiden; keys VUR and EJF
+  lotArea?: number; // grundareal, m²
 };
 
 export async function GET(req: NextRequest) {
@@ -323,6 +325,8 @@ async function fromBoligsiden(url: string): Promise<BsResult | null> {
   if (c.energyLabel && /^[A-G]\d?$/i.test(c.energyLabel)) f.energyLabel = c.energyLabel.toUpperCase();
   if (typeof c.monthlyExpense === "number" && c.monthlyExpense > 0) f.monthlyExpenses = c.monthlyExpense;
   if (c.addressType) f.propertyType = c.addressType;
+  if (Array.isArray(c.address?.bfeNumbers) && c.address!.bfeNumbers!.length === 1) f.bfe = Number(c.address!.bfeNumbers![0]);
+  if (typeof c.lotArea === "number" && c.lotArea > 0) f.lotArea = c.lotArea;
   const parts = [
     a.roadName,
     [a.houseNumber, a.letter].filter(Boolean).join(""),
@@ -431,6 +435,7 @@ type BsCase = {
   energyLabel?: string;
   monthlyExpense?: number;
   addressType?: string;
+  lotArea?: number;
   caseUrl?: string;
   defaultImage?: BsImageObj;
   images?: BsImageObj[];
@@ -442,6 +447,7 @@ type BsCase = {
     door?: string;
     zipCode?: string | number;
     cityName?: string;
+    bfeNumbers?: number[];
   };
 };
 

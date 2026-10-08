@@ -39,6 +39,7 @@ import { effectiveRentArea, estimateMonthlyRent } from "@/lib/rent-estimate";
 import { purchaseCostPct } from "@/lib/dk-fees";
 import { RentalSheet } from "@/components/analyzer/RentalSheet";
 import { parentsView } from "@/lib/parents";
+import { Valuation } from "@/components/property/Valuation";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { SignupGate } from "@/components/analyzer/SignupGate";
@@ -281,6 +282,7 @@ export function AnalyzerApp() {
   const [propMeta, setPropMeta] = useState<{ area: number | null; rooms: number | null }>({ area: null, rooms: null });
   const [priceBench, setPriceBench] = useState<PriceBenchmark | null>(null);
   const [listingType, setListingType] = useState<string | null>(null);
+  const [bfe, setBfe] = useState<number | null>(null);
   const [rentBench, setRentBench] = useState<RentBench | null>(null);
   const [gated, setGated] = useState(false);
   const [freeMax, setFreeMax] = useState(3);
@@ -408,6 +410,7 @@ export function AnalyzerApp() {
 
       if (Array.isArray(d.images)) setImages(d.images as string[]);
       if (d?.fields?.propertyType) setListingType(String(d.fields.propertyType));
+      if (Number(d?.fields?.bfe) > 0) setBfe(Number(d.fields.bfe));
       // Seeded from a deal: keep the aggregator's reliable core numbers, but pull
       // the listing's own ejerudgift (and stated rent, if any) from the mægler
       // page so those figures become DOCUMENTED instead of estimated. The deal
@@ -1275,6 +1278,7 @@ export function AnalyzerApp() {
 
           {showPriceChapter && (
             <Chapter id="pris" question="Er prisen fair?" answer={priceAnswer} tint={tint()}>
+              <Valuation bfe={bfe} price={inputs.price} />
               {(priceBench || rentBench) && (
                 <div className="grid gap-5 md:grid-cols-2">
                   {priceBench && propertyPriceM2 && (
