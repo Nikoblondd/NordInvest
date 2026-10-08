@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, AlertTriangle } from "lucide-react";
-import { rentPerM2 } from "@/lib/rent-estimate";
+import { estimateMonthlyRent } from "@/lib/rent-estimate";
 import { rentRegulationRule } from "@/lib/provenance";
 import { captureEvent } from "@/lib/analytics-events";
 import { clsx } from "@/lib/clsx";
@@ -24,8 +24,9 @@ export function RentCalculator() {
 
   const res = useMemo(() => {
     if (!valid) return null;
-    const rate = rentPerM2(z);
-    const mid = r100(a * rate);
+    // Same estimate as the analysis: large homes count lower per m².
+    const mid = estimateMonthlyRent(z, a);
+    const rate = Math.round(mid / a);
     return { rate, mid, low: r100(mid * 0.9), high: r100(mid * 1.1), year: r100(mid * 12) };
   }, [valid, z, a]);
   const rule = rentRegulationRule(year.length === 4 && y > 1600 && y <= 2030 ? y : null);

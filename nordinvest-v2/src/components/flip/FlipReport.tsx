@@ -126,11 +126,20 @@ export function FlipReport() {
     if (!ceiling) return null;
     const own = property.price / property.area;
     const base = answers.level === "total" ? market.medianNeedsWork : market.medianStandard;
-    const uplift = base ? Math.max(0, ceiling - base) : own * 0.2;
+    // When the postnummer's listings show no premium for renovated homes
+    // (too few, or mixed wording), assume a modest 10 % and say so.
+    const weak = !base || ceiling <= base;
+    const uplift = weak ? own * 0.1 : ceiling - base;
     const anchored = own + uplift;
-    return anchored < ceiling ? { perM2: anchored, anchored: true } : { perM2: ceiling, anchored: false };
+    return anchored < ceiling || weak ? { perM2: anchored, anchored: true, weak } : { perM2: ceiling, anchored: false, weak };
   }, [market, property, answers.level]);
-  const suggestedArv = arvBasis ? Math.round((arvBasis.perM2 * property!.area) / 5000) * 5000 : null;
+  // Too few homes for sale in the postnummer (or the lookup failed): start at
+  // 20 % over the asking price, say so, and let the user set it.
+  const suggestedArv = arvBasis
+    ? Math.round((arvBasis.perM2 * property!.area) / 5000) * 5000
+    : property && market
+    ? Math.round((property.price * 1.2) / 5000) * 5000
+    : null;
   useEffect(() => { if (!arvTouched && suggestedArv) setArv(suggestedArv); }, [suggestedArv, arvTouched]);
 
   const result = useMemo(() => (property && arv && lines ? flip(property, arv, answers, lines) : null), [property, arv, answers, lines]);
@@ -355,9 +364,13 @@ export function FlipReport() {
                 {arvTouched && suggestedArv && <button type="button" onClick={() => { setArv(suggestedArv); setArvTouched(false); }} className="no-print shrink-0 text-sm text-blue-700 underline underline-offset-2">Nulstil</button>}
               </div>
               <span className="mt-1.5 block text-[13px] text-slate-500">{suggestedArv && arvBasis
-                  ? arvBasis.anchored
+                  ? arvBasis.weak
+                    ? `Vores bud: ${kr(suggestedArv)} Annoncerne i postnummeret viser ingen klar merpris for renoverede boliger, så vi regner med 10 % over boligens egen pris pr. m². Kender du området bedre, så ret den.`
+                    : arvBasis.anchored
                     ? `Vores bud: ${kr(suggestedArv)} Boligen er sat til ${kr(property.price / property.area)} pr. m², under postnummerets niveau, så vi lægger renoveringens løft i området oven i dens egen pris i stedet for at bruge medianen. Kender du området bedre, så ret den.`
                     : `Vores bud: ${kr(suggestedArv)} (${property.area} m² × median for renoverede). Kender du området bedre, så ret den.`
+                  : suggestedArv
+                  ? `Vi fandt for få boliger til salg i postnummeret til en sikker værdi, så vi har sat den til 20 % over udbudsprisen. Ret den til det, du tror, den kan sælges for.`
                   : "Indtast din egen salgspris."}</span>
             </label>
           </div>

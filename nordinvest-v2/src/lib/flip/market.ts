@@ -12,7 +12,8 @@
 
 const BS = "https://api.boligsiden.dk/search/cases";
 
-const TYPE: Record<string, string> = { villa: "villa", condo: "condo", terraced: "terraced" };
+// Boligsiden's own addressType names; "terraced" alone makes the API fail.
+const TYPE: Record<string, string> = { villa: "villa", condo: "condo", terraced: "terraced house", "terraced house": "terraced house" };
 
 const STRONG = /nyrenover|totalrenover|gennemrenover|renoveret i (?:19|20)\d\d|nyt køkken|nyere køkken|nyt bad|nye? badeværelse|nyistandsat|istandsat i (?:19|20)\d\d/gi;
 const WEAK = /indflytningsklar|moderniseret|istandsat|renoveret/gi;
@@ -78,15 +79,22 @@ export async function getFlipMarket(zip: string, type: string, area: number, sub
   const bsType = TYPE[type] ?? "villa";
   const lo = Math.floor(area * 0.65);
   const hi = Math.ceil(area * 1.4);
-  let cases: Record<string, unknown>[] = [];
-  try {
-    const res = await fetch(`${BS}?zipCodes=${zip}&addressTypes=${bsType}&housingArea=${lo}-${hi}&per_page=100`, {
+  const load = async (types: string) => {
+    const res = await fetch(`${BS}?zipCodes=${zip}&addressTypes=${encodeURIComponent(types)}&housingArea=${lo}-${hi}&per_page=100`, {
       headers: { "user-agent": "nordinvest/1.0 (+https://nordinvest.io)" },
       next: { revalidate: 21_600 },
+      signal: AbortSignal.timeout(12_000),
     });
-    if (!res.ok) return { ok: false, reason: "fetch_failed" };
+    if (!res.ok) throw new Error(`boligsiden ${res.status}`);
     const j = (await res.json()) as { cases?: Record<string, unknown>[] };
-    cases = Array.isArray(j.cases) ? j.cases : [];
+    return Array.isArray(j.cases) ? j.cases : [];
+  };
+  let cases: Record<string, unknown>[] = [];
+  try {
+    cases = await load(bsType);
+    // Few rækkehuse for sale in a postnummer is normal; villas of the same
+    // size are the nearest market, so they join the comparison.
+    if (cases.length < 12 && bsType === "terraced house") cases = await load("terraced house,villa");
   } catch {
     return { ok: false, reason: "fetch_failed" };
   }

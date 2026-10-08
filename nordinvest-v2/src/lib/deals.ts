@@ -10,7 +10,7 @@
 //    photo-grounded analysis happens when the user clicks through.
 
 import { analyze, type Strategy } from "@/lib/analysis";
-import { rentPerM2 } from "@/lib/rent-estimate";
+import { estimateMonthlyRent } from "@/lib/rent-estimate";
 import type { InvestmentListing } from "@/lib/portals/ejendomstorvet";
 
 export type DealListing = {
@@ -49,9 +49,6 @@ export type AnalyzedDeal = DealListing & {
   suspect?: boolean;
 };
 
-// Round a rent to the nearest 100 kr, keep it sane.
-const round100 = (n: number) => Math.max(0, Math.round(n / 100) * 100);
-
 export type DealAssumptions = {
   downPaymentPct: number;
   interestRate: number;
@@ -61,7 +58,9 @@ export type DealAssumptions = {
 
 export function analyzeDeal(l: DealListing, a: DealAssumptions): AnalyzedDeal | null {
   if (!l.price || !l.area || l.area < 10) return null;
-  const estRent = round100(l.area * rentPerM2(l.zip) * (a.rentFactor || 1));
+  // Same size-tapered estimate as the analysis, so a deal card and its full
+  // analysis show the same rent.
+  const estRent = estimateMonthlyRent(l.zip, l.area, a.rentFactor || 1);
   const monthlyOpex = l.monthlyExpense ?? Math.round((l.area * 35) / 50) * 50;
   const r = analyze({
     price: l.price,
