@@ -18,7 +18,9 @@ async function gql<T>(query: string): Promise<T | null> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query }),
-      next: { revalidate: 86_400 },
+      // Not cached here: a rejected key must never stick. The route caches
+      // successful answers at the edge instead.
+      cache: "no-store",
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) return null;
