@@ -74,6 +74,13 @@ export async function GET(req: Request) {
   ]);
   const n = (v: number | null) => (v == null ? "–" : v.toLocaleString("da-DK"));
 
+  // Flip feedback from the report's "Ramte vi rigtigt?" box, last 24 hours.
+  const flipFeedback: any[] = URL_BASE && KEY
+    ? await fetch(`${URL_BASE}/rest/v1/analysis_feedback?select=comment,region,created_at&property_type=eq.flip&created_at=gte.${since}&order=created_at.desc`, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` }, cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : []))
+        .catch(() => [])
+    : [];
+
   const text = [
     `Dagsrapport ${new Intl.DateTimeFormat("da-DK", { timeZone: "Europe/Copenhagen", weekday: "long", day: "numeric", month: "long" }).format(now)}`,
     "",
@@ -82,6 +89,9 @@ export async function GET(req: Request) {
     `Analyser:             ${n(analyses24)}  (i alt ${n(analysesAll)})`,
     `Nye by-abonnenter:    ${n(subs24)}  (aktive i alt ${n(subsAll)})`,
     `Betalende kunder:     ${n(paying)}`,
+    "",
+    `FLIP-FEEDBACK (${flipFeedback.length})`,
+    flipFeedback.length ? flipFeedback.map((f) => `${f.region ?? "–"}  ${f.comment}`).join("\n") : "Ingen i går.",
     "",
     `PRESSEMAILS I DAG (${today.length})`,
     today.length ? today.join("\n") : "Ingen i dag.",

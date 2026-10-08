@@ -45,6 +45,7 @@ type Body = {
   taxCase: "live_in" | "private" | "business";
   target: number;
   maxBid: number;
+  scenarios?: { title: string; arv: number; renovation: number; months: number; profit: number; margin: number; roi: number; assumptions: string }[];
   lines: ExportLine[];
 };
 
@@ -188,6 +189,32 @@ export async function POST(req: NextRequest) {
   rs.getCell(`G${totRow}`).value = { formula: `SUM(G4:G${last})` };
   for (const c of ["B", "E", "G"]) rs.getCell(`${c}${totRow}`).font = { bold: true };
   for (const c of ["E", "G"]) rs.getCell(`${c}${totRow}`).numFmt = KR;
+
+  // ── Scenarier: forsigtig, forventet, optimistisk as NordInvest computed them ─
+  if (b.scenarios?.length) {
+    const ss = wb.addWorksheet("Scenarier", { views: [{ showGridLines: false }] });
+    ss.columns = [{ width: 30 }, ...b.scenarios.map(() => ({ width: 24 }))];
+    ss.getCell("A1").value = "Tre scenarier";
+    ss.getCell("A1").font = { bold: true, size: 14, color: { argb: NAVY } };
+    ss.getRow(3).values = ["", ...b.scenarios.map((x) => x.title)];
+    ss.getRow(3).font = { bold: true, color: { argb: "FFFFFFFF" } };
+    ss.getRow(3).eachCell((c) => { c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: NAVY } }; });
+    const sc = b.scenarios;
+    const put = (row: number, label: string, get: (x: (typeof sc)[number]) => number | string, fmt?: string, bold = false) => {
+      ss.getRow(row).values = [label, ...sc.map(get)];
+      if (fmt) for (let i = 2; i <= sc.length + 1; i++) ss.getRow(row).getCell(i).numFmt = fmt;
+      if (bold) ss.getRow(row).font = { bold: true };
+    };
+    put(4, "Salgspris", (x) => Math.round(x.arv), KR);
+    put(5, "Renovering", (x) => Math.round(x.renovation), KR);
+    put(6, "Måneder fra køb til salg", (x) => x.months, "0");
+    put(7, "Fortjeneste efter skat", (x) => Math.round(x.profit), KR, true);
+    put(8, "Af salgsprisen", (x) => x.margin, PCT_R);
+    put(9, "Afkast på egen kapital", (x) => x.roi, PCT_R);
+    put(11, "Antagelser", (x) => x.assumptions);
+    ss.getRow(11).alignment = { wrapText: true, vertical: "top" };
+    ss.getRow(11).height = 75;
+  }
 
   const buf = await wb.xlsx.writeBuffer();
   const name = `NordInvest-flip-${b.address.replace(/[^A-Za-z0-9æøåÆØÅ]+/g, "-").replace(/^-|-$/g, "").slice(0, 60)}.xlsx`;

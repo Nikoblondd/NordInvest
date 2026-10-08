@@ -30,6 +30,7 @@ export type FlipComp = {
   yearBuilt: number | null;
   energy: string | null;
   days: number | null;
+  cut: number; // price change since listing, % (negative = cut)
   condition: Condition;
   evidence: string | null; // the phrase in the listing that decided it
   url: string;
@@ -48,6 +49,10 @@ export type FlipMarket = {
   q3Renovated: number | null;
   spread: number | null; // renovated minus needs-work, kr. per m²
   medianDays: number | null;
+  // How far asking prices actually fall here: the share of listings that have
+  // been cut, and the median cut among them (%, positive number).
+  shareCut: number;
+  medianCut: number | null;
   comps: FlipComp[];
 } | { ok: false; reason: string };
 
@@ -121,6 +126,7 @@ export async function getFlipMarket(zip: string, type: string, area: number, sub
       yearBuilt,
       energy: typeof c.energyLabel === "string" ? c.energyLabel.toUpperCase().replace(/^A(20)?(15|10|20)$/, "A") : null,
       days: Number.isFinite(Number(c.daysOnMarket)) ? Number(c.daysOnMarket) : null,
+      cut: Number.isFinite(Number(c.priceChangePercentage)) ? Number(c.priceChangePercentage) : 0,
       condition,
       evidence,
       url: typeof c.slugAddress === "string" ? `https://www.boligsiden.dk/adresse/${c.slugAddress}` : `https://www.boligsiden.dk/postnummer/${zip}`,
@@ -146,6 +152,8 @@ export async function getFlipMarket(zip: string, type: string, area: number, sub
     q3Renovated: ren.length >= 3 ? quant(ren, 0.75) : null,
     spread: medR != null && medN != null ? Math.round(medR - medN) : null,
     medianDays: median(comps.map((c) => c.days).filter((d): d is number => d != null)),
+    shareCut: comps.filter((c) => c.cut < -0.5).length / comps.length,
+    medianCut: (() => { const cuts = comps.filter((c) => c.cut < -0.5).map((c) => -c.cut); return cuts.length >= 3 ? Math.round((median(cuts) ?? 0) * 10) / 10 : null; })(),
     comps: comps.sort((a, b) => b.perM2 - a.perM2),
   };
 }

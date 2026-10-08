@@ -38,7 +38,8 @@ export async function GET(req: Request) {
 
   const [all, feedback] = await Promise.all([
     rest("analysis_outcomes?select=predicted,actual_monthly_rent,actual_sale_price,months_held,region"),
-    rest("analysis_feedback?select=rating"),
+    // Flip feedback rates a different model; keep it out of the rental precision.
+    rest("analysis_feedback?select=rating&or=(property_type.is.null,property_type.not.like.flip*)"),
   ]);
 
   const allRows = (Array.isArray(all) ? all : []) as (OutcomeRow & { region: string | null })[];

@@ -8,6 +8,8 @@ import { ArrowUpRight, Check, ChevronDown, Copy, ExternalLink, FileDown, Info, L
 import { clsx } from "@/lib/clsx";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { FlipSheet } from "@/components/flip/FlipSheet";
+import { FlipScenarios, type Scenario } from "@/components/flip/FlipScenarios";
+import { FlipFeedback } from "@/components/flip/FlipFeedback";
 import { UpgradeDialog } from "@/components/upgrade/UpgradeDialog";
 import { SignupGate } from "@/components/analyzer/SignupGate";
 import { PaywallGate } from "@/components/analyzer/PaywallGate";
@@ -274,6 +276,7 @@ export function FlipReport() {
           taxCase: result.taxCase,
           target: answers.target,
           maxBid: result.maxBid,
+          scenarios: scenarios.map((x) => ({ title: x.title, arv: x.arv, renovation: x.renovation, months: x.months, profit: x.profit, margin: x.margin, roi: x.roi, assumptions: x.assumptions.join(". ") })),
           lines: lineCosts(lines, property, answers).map((c) => ({
             element: ELEMENT_LABEL[c.line.element],
             label: c.line.label,
@@ -317,6 +320,28 @@ export function FlipReport() {
 
   const saleDays = market.ok ? market.medianDays : null;
   const realisticMonths = Math.ceil((weeks.weeks + 2) / 4.3 + (saleDays ?? 90) / 30);
+  // Three scenarios. Cautious: the sale price falls by the median cut among
+  // listings in the postnummer that have been cut (5 % if too few), the
+  // renovation runs 20 % over and the sale takes the realistic time plus 3
+  // months. Optimistic: the price lands at the upper quartile of renovated
+  // homes, at most 10 % over, everything else as planned.
+  const cutPct = market.ok && market.medianCut != null ? market.medianCut : 5;
+  const upPct = market.ok && market.q3Renovated && market.medianRenovated ? Math.min(10, Math.max(0, (market.q3Renovated / market.medianRenovated - 1) * 100)) : 5;
+  const over = lines.map((l) => ({ ...l, unitPrice: l.unitPrice * 1.2, hours: l.hours * 1.2 }));
+  const slowMonths = Math.max(answers.months, realisticMonths) + 3;
+  const lowArv = Math.round(((arv ?? 0) * (1 - cutPct / 100)) / 5000) * 5000;
+  const highArv = Math.round(((arv ?? 0) * (1 + upPct / 100)) / 5000) * 5000;
+  const low = flip(property, lowArv, { ...answers, months: slowMonths }, over);
+  const high = flip(property, highArv, answers, lines);
+  const fmtPct = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 1 })} %`;
+  const scenarios: Scenario[] = [
+    { key: "low", title: "Forsigtig", arv: lowArv, renovation: low.costs.renovation, months: slowMonths, profit: low.profit, margin: low.margin, roi: low.roi,
+      assumptions: [market.ok && market.medianCut != null ? `Salgspris −${fmtPct(cutPct)}: ${Math.round(market.shareCut * 100)} % af boligerne i ${market.zip} er sat ned, i midten med ${fmtPct(cutPct)}` : "Salgspris −5 % (skøn, for få nedsatte boliger)", "Renovering +20 %", `${slowMonths} måneder`] },
+    { key: "base", title: "Forventet", arv: arv ?? 0, renovation: result.costs.renovation, months: answers.months, profit: result.profit, margin: result.margin, roi: result.roi,
+      assumptions: ["Tallene i regnearket"] },
+    { key: "high", title: "Optimistisk", arv: highArv, renovation: high.costs.renovation, months: answers.months, profit: high.profit, margin: high.margin, roi: high.roi,
+      assumptions: [market.ok && market.q3Renovated ? `Salgspris +${fmtPct(Math.round(upPct * 10) / 10)}: øverste fjerdedel af renoverede boliger, højst +10 %` : "Salgspris +5 % (skøn)", "Renovering og tid som planlagt"] },
+  ];
   const setPlanEl = (e: Element, a: Action) => { setPlan((p) => ({ ...p, [e]: a })); captureEvent("flip_plan_edit", { element: e, action: a }); };
   const share = async () => {
     try { await navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* ignore */ }
@@ -400,6 +425,7 @@ export function FlipReport() {
               onExport={exportExcel}
               exporting={exporting}
             />
+            <FlipScenarios rows={scenarios} target={answers.target} />
           </div>
         </div>
       </section>
@@ -453,9 +479,15 @@ export function FlipReport() {
 
       {/* ARV */}
       <Band id="vaerdi" muted title="Hvad er den værd efter renoveringen?" answer={market.ok && market.medianRenovated ? `Renoverede boliger i ${market.zip} er sat til salg til ${kr(market.medianRenovated)} pr. m²` : "For få renoverede boliger i postnummeret til en sikker værdi"} tone={market.ok && market.medianRenovated ? "good" : "warn"}>
+        {market.ok && market.medianCut != null && (
+          <p className="mb-6 flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[14px] leading-relaxed text-amber-900">
+            <Info size={16} className="mt-0.5 shrink-0" />
+            <span>Det her er udbudspriser, ikke salgspriser. {Math.round(market.shareCut * 100)} % af boligerne til salg i {market.zip} er allerede sat ned, i midten med {market.medianCut.toLocaleString("da-DK")} %. Det forsigtige scenarie regner med det samme afslag.</span>
+          </p>
+        )}
         <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
           <div>
-            <PerM2Bars market={market} asking={property.price / property.area} />
+            <PerM2Bars market={market} asking={(listing?.price ?? property.price) / property.area} />
             <label className="mt-6 block">
               <span className="text-sm font-medium text-slate-700">Salgspris efter renovering</span>
               <div className="mt-1.5 flex items-center gap-3">
@@ -565,13 +597,19 @@ export function FlipReport() {
       {/* Checklist */}
       <Band id="tjekliste" title="Før du byder" answer="Det, flippere oftest bliver ramt af" tone="neutral">
         <Checklist answers={answers} year={property.yearBuilt} />
-        <div className="no-print mt-8 flex flex-wrap gap-3">
-          <Link href={`/analyseren?url=${encodeURIComponent(url)}`} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:border-slate-300">
-            Se den som udlejning i stedet <ArrowUpRight size={15} />
-          </Link>
-          <Link href="/analyseren/start" className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-btn hover:bg-blue-700">Analysér en ny bolig</Link>
-        </div>
       </Band>
+
+      <section className="border-t border-slate-200/70 bg-[#f4f6f9] px-4 py-10 sm:px-6 sm:py-14">
+        <div className="mx-auto max-w-[1080px]">
+          <FlipFeedback zip={property.zip} address={listing.address} profit={result.profit} />
+          <div className="no-print mt-8 flex flex-wrap gap-3">
+            <Link href={`/analyseren?url=${encodeURIComponent(url)}`} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:border-slate-300">
+              Se den som udlejning i stedet <ArrowUpRight size={15} />
+            </Link>
+            <Link href="/analyseren/start" className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-btn hover:bg-blue-700">Analysér en ny bolig</Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
