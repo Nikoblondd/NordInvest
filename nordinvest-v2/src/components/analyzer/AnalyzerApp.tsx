@@ -800,7 +800,14 @@ export function AnalyzerApp() {
     text: `${docCount} af ${provenanceRows.length} nøgletal er dokumenteret`,
   };
 
-  const navItems: NavItem[] = [
+  const navItems: NavItem[] = isInvestment ? [
+    { id: "overblik", label: "Dommen", tone: heroTone },
+    { id: "oekonomi", label: "Pengene", tone: r.cashFlow >= 0 ? "good" : "bad" },
+    { id: "risici", label: "Renten", tone: riskAnswer.tone },
+    { id: "fremtid", label: "Om 10 år", tone: r.totalProfit >= 0 ? "good" : "bad" },
+    { id: "tjek", label: "Tjekliste", tone: "neutral" },
+    { id: "data", label: "Tallene", tone: "neutral" },
+  ] : [
     { id: "overblik", label: "Dommen", tone: heroTone },
     ...(isInvestment ? [] : [{ id: "kalkule", label: "Regnestykket", tone: (r.cashFlow >= 0 ? "good" : "bad") as Tone }]),
     { id: "oekonomi", label: "Økonomi", tone: cashAnswer.tone },
@@ -1159,7 +1166,20 @@ export function AnalyzerApp() {
           />
 
           {isInvestment ? (
-            <CommercialStory r={r} rate={inputs.interestRate} termYears={inputs.termYears ?? 30} subcategory={subcatParam} onAdjust={() => setSheetOpen(true)} />
+            <>
+            <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} />
+            <CommercialStory
+              r={r}
+              price={inputs.price}
+              rate={inputs.interestRate}
+              termYears={inputs.termYears ?? 30}
+              subcategory={subcatParam}
+              appreciationPct={inputs.appreciationPct ?? 2}
+              address={address}
+              onAdjust={() => setSheetOpen(true)}
+              trust={<DataProvenance rows={provenanceRows} rentRule={rentRule} showRentCaveat={false} />}
+            />
+            </>
           ) : (
             <>
           <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} />

@@ -79,8 +79,10 @@ export function buildProvenance(s: ProvInput): ProvRow[] {
     rows.push({ key: "rent", label: "Månedlig leje", tier: "input", source: "Indtastet af dig" });
   }
 
-  // Faste udgifter
-  if (has(s.found, "monthlyExpenses")) {
+  // Faste udgifter. An investeringsejendom's yield is already net of them.
+  if (s.isInvestment) {
+    rows.push({ key: "opex", label: "Driftsudgifter", tier: "doc", source: "Trukket fra i sælgers afkast" });
+  } else if (has(s.found, "monthlyExpenses")) {
     rows.push({ key: "opex", label: "Faste udgifter", tier: "doc", source: "Ejerudgift fra annoncen" });
   } else if (s.opexEstimated) {
     rows.push({ key: "opex", label: "Faste udgifter", tier: "est", source: "Estimeret ud fra areal — ret gerne" });
