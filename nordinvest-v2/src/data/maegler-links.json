@@ -1,0 +1,142 @@
+{
+ "helligkorsgade-17-kolding": {
+  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/kolding/boligudlejning/e1deab9e-c1b7-4318-ade6-6715ade3e793",
+  "price": 3000000,
+  "rent": 13850,
+  "subcat": "Boligudlejning",
+  "addr": "Helligkorsgade 17, 6000 Kolding"
+ },
+ "fussingsvej-41-horsens": {
+  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/a0fecc9a-1d1e-46a3-87c9-baff5a81ceb8",
+  "price": 1395000,
+  "rent": 11462,
+  "subcat": "Boligudlejning",
+  "addr": "Fussingsvej 41, 8700 Horsens"
+ },
+ "teglvaenget-65-herning": {
+  "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/andre-typer/3ffb45e6-09af-438c-ba32-66c0ff85c9a2",
+  "price": 1725000,
+  "rent": 10796,
+  "subcat": "Andre typer",
+  "addr": "Teglvænget 65, 7400 Herning"
+ },
+ "noerre-alle-66-aarhus-c": {
+  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/aarhus/detailhandel-butik/f1e36560-4b1e-488e-890f-9e89f188e28b",
+  "price": 3500000,
+  "rent": 16362,
+  "subcat": "Detailhandel & butik",
+  "addr": "Nørre Allé 66, st., 8000 Aarhus C"
+ },
+ "klokagervej-69-hjoerring": {
+  "url": "https://www.ejendomstorvet.dk/investering/nordjylland/hjoerring/boligudlejning/17e79a10-11e9-495c-b6b9-cd7822d28f2a",
+  "price": 2875000,
+  "rent": 16867,
+  "subcat": "Boligudlejning",
+  "addr": "Klokagervej 69, 9800 Hjørring"
+ },
+ "vestergade-13-grindsted": {
+  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/billund/detailhandel-butik/b28ff791-b76c-4806-9b57-f327fcfbb718",
+  "price": 3995000,
+  "rent": 21240,
+  "subcat": "Detailhandel & butik",
+  "addr": "Vestergade 13, 7200 Grindsted"
+ },
+ "hospitalsgade-6-8-horsens": {
+  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/35d45719-f2b2-4275-bd06-8ae67876c0a6",
+  "price": 16095000,
+  "rent": 87181,
+  "subcat": "Boligudlejning",
+  "addr": "Hospitalsgade 6-8, 8700 Horsens"
+ },
+ "ahlgade-59-holbaek": {
+  "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/holbaek/andre-typer/9f10aea7-bbd4-4745-b239-5b34b8a438e0",
+  "price": 8950000,
+  "rent": 51313,
+  "subcat": "Andre typer",
+  "addr": "Ahlgade 59, 4300 Holbæk"
+ },
+ "foldagervej-16-lille-skensved": {
+  "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/koege/kontor/8f015b68-36ba-413a-80fb-07ba8187000c",
+  "price": 9500000,
+  "rent": 47817,
+  "subcat": "Kontor",
+  "addr": "Foldagervej 16, 4623 Lille Skensved"
+ },
+ "helligkorsvej-12-roskilde": {
+  "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/detailhandel-butik/858e3f61-35d5-40b9-8a40-f6f30ed15038",
+  "price": 9495000,
+  "rent": 52064,
+  "subcat": "Detailhandel & butik",
+  "addr": "Helligkorsvej 12, 4000 Roskilde"
+ },
+ "storegade-3-grenaa": {
+  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/norddjurs/andre-typer/24c0f874-5862-49c6-96a6-c3613152caf4",
+  "price": 2850000,
+  "rent": 19095,
+  "subcat": "Andre typer",
+  "addr": "Storegade 3, 8500 Grenaa"
+ },
+ "strandlodsvej-15a-d-koebenhavn-s": {
+  "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/koebenhavn/hotel-restaurant/8cdf7f68-c79c-4597-93be-1b0c1231bdc7",
+  "price": 10695000,
+  "rent": 56149,
+  "subcat": "Hotel & restaurant",
+  "addr": "Strandlodsvej 15A-D, 2300 København S"
+ },
+ "moellevej-13-dragoer": {
+  "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/dragoer/boligudlejning/21c6e43f-109b-4d40-8ee6-e04603e9290e",
+  "price": 34500000,
+  "rent": 106662,
+  "subcat": "Boligudlejning",
+  "addr": "Møllevej 13, 2791 Dragør"
+ },
+ "sallvej-22-hammel": {
+  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/boligudlejning/90575260-b8a7-426b-ad7a-88b8a8e28ed0",
+  "price": 1495000,
+  "rent": 8659,
+  "subcat": "Boligudlejning",
+  "addr": "Sallvej 22, 8450 Hammel"
+ },
+ "haarup-oestervej-6-silkeborg": {
+  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/silkeborg/kontor/0b033a49-3c2d-4092-98e3-53083fd38246",
+  "price": 9995000,
+  "rent": 62136,
+  "subcat": "Kontor",
+  "addr": "Hårup Østervej 6, 8600 Silkeborg"
+ },
+ "falstersgade-3-fredericia": {
+  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/fredericia/boligudlejning/e374a301-6069-4086-8199-51ede790a1cc",
+  "price": 3700000,
+  "rent": 17729,
+  "subcat": "Boligudlejning",
+  "addr": "Falstersgade 3, 7000 Fredericia"
+ },
+ "n-toerrings-vej-10-odense-soe": {
+  "url": "https://www.ejendomstorvet.dk/investering/fyn/odense/boligudlejning/fb67ddc5-7c2a-4ab5-aa73-d287db38b171",
+  "price": 3800000,
+  "rent": 30653,
+  "subcat": "Boligudlejning",
+  "addr": "N. Tørrings Vej 10, 5220 Odense SØ"
+ },
+ "byleddet-6-roskilde": {
+  "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/boligudlejning/973bf4cb-1187-4d84-b03e-73c80095e9a7",
+  "price": 9500000,
+  "rent": 51538,
+  "subcat": "Boligudlejning",
+  "addr": "Byleddet 6, 4000 Roskilde"
+ },
+ "hoejvang-5-frederikssund": {
+  "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/frederikssund/detailhandel-butik/2d9ab104-275c-46ab-b86a-f432c75eaa02",
+  "price": 6000000,
+  "rent": 35400,
+  "subcat": "Detailhandel & butik",
+  "addr": "Højvang 5, 3600 Frederikssund"
+ },
+ "askov-kirkevej-17-vejen": {
+  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejen/boligudlejning/e1474d73-570c-4658-8234-71eb2caa51f9",
+  "price": 22850000,
+  "rent": 110061,
+  "subcat": "Boligudlejning",
+  "addr": "Askov Kirkevej 17, 6600 Vejen"
+ }
+}
