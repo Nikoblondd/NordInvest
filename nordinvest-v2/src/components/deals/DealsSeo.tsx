@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SafeThumb } from "@/components/deals/SafeThumb";
 import type { DealSnapshot, SnapshotDeal, SnapshotInvestment } from "@/lib/deals-snapshot";
 import { DEAL_CITIES } from "@/lib/deal-cities";
 import { MORE_DEAL_CITIES } from "@/lib/deal-kommuner";
@@ -41,8 +42,7 @@ function Thumb({ src, alt }: { src: string | null; alt: string }) {
   // image optimisation: they change daily across 84 kommune pages, and every
   // new source image is billed, for a 96 px thumbnail.
   return src ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} width={96} height={72} loading="lazy" decoding="async" className={cls} />
+    <SafeThumb src={src} alt={alt} className={cls} />
   ) : (
     <span aria-hidden className="h-[54px] w-[72px] shrink-0 rounded-lg bg-slate-100 ring-1 ring-slate-200 sm:h-[72px] sm:w-[96px]" />
   );

@@ -2,7 +2,7 @@
 
 import { zipFromAddress } from "@/lib/zip";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Check, ChevronDown, Copy, ExternalLink, FileDown, Info, Loader2, ScanSearch, ShieldAlert, ShoppingCart } from "lucide-react";
@@ -42,6 +42,7 @@ const TAX_LABEL: Record<TaxCase, { title: string; body: string }> = {
 
 export function FlipReport() {
   const sp = useSearchParams();
+  const router = useRouter();
   const url = sp.get("url") ?? "";
   const seed = useMemo(() => {
     try { return JSON.parse(atob(sp.get("a") ?? "")) as FlipAnswers & { type?: Property["type"] }; } catch { return null; }
@@ -69,6 +70,8 @@ export function FlipReport() {
     let stored: { listing?: Listing } | null = null;
     try { stored = JSON.parse(sessionStorage.getItem("ni_journey") ?? "null"); } catch { /* none */ }
     if (stored?.listing && stored.listing.url === url && stored.listing.price) { setListing(stored.listing); return; }
+    // Opened without a listing (a bookmark, a bare link): start the journey instead.
+    if (!url) { router.replace("/analyseren/start"); return; }
     fetch(`/api/extract?url=${encodeURIComponent(url)}`)
       .then((r) => r.json())
       .then((d) => {
@@ -77,7 +80,7 @@ export function FlipReport() {
         setListing({ url, address, zip: zipFromAddress(address), price: Number(f.price) || null, area: Number(f.area) || null, rooms: Number(f.rooms) || null, yearBuilt: Number(f.yearBuilt) || null, monthlyExpenses: Number(f.monthlyExpenses) || null, images: Array.isArray(d?.images) ? d.images.slice(0, 12) : [], bfe: Number(f.bfe) || null, lotArea: Number(f.lotArea) || null });
       })
       .catch(() => setFailed(true));
-  }, [url]);
+  }, [url, router]);
 
   // Without a postnummer and area there is nothing to compare; say so instead
   // of waiting. The market call also gets a time limit.
@@ -233,7 +236,8 @@ export function FlipReport() {
 
   const good = result.profit > 0 && result.margin >= answers.target / 100;
   const ok = result.profit > 0;
-  const verdict = good ? "Det kan blive en god flip." : ok ? "Der er penge i den, men for lidt." : "Den regner ikke som flip til den pris.";
+  const kind = answers.strategy === "live_flip" ? "bo og flip" : "flip";
+  const verdict = good ? `Det kan blive en god ${kind}.` : ok ? "Der er penge i den, men for lidt." : `Den regner ikke som ${kind} til den pris.`;
   const rating = good ? "God flip" : ok ? "Tynd margin" : "Taber penge";
   const set = (patch: Partial<FlipAnswers>) => setAnswers((a) => ({ ...a, ...patch }));
   const comps = market.ok ? market.comps : [];

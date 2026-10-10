@@ -18,7 +18,7 @@ export default function KvitteringPage() {
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500 text-white shadow-xl shadow-emerald-500/30">
           <CheckCircle2 size={44} />
         </div>
-        <h1 className="mt-8 text-3xl font-bold tracking-tight sm:text-4xl">Tak for dit køb! 🎉</h1>
+        <h1 className="mt-8 text-3xl font-bold tracking-tight sm:text-4xl">Tak for dit køb!</h1>
         <p className="mt-4 text-lg leading-relaxed text-slate-600">
           Din betaling er gennemført, og dit abonnement bliver aktiveret på din konto med det samme.
           Du kan nu analysere og gemme flere ejendomme.

@@ -136,10 +136,80 @@ export async function GET(req: NextRequest) {
 
   const images = collectImages(html, url);
 
+  // Broker pages often leave gaps (no area, a brand name in the title, a
+  // headline instead of an address). Look the same case up on Boligsiden by
+  // its address, or by the address in the link itself, and fill the gaps.
+  if (typeof f.address === "string") f.address = cleanAddress(f.address);
+  if (!f.price) delete f.price; // "0" from a label is not a price
+  const looksLikeAddress = typeof f.address === "string" && /\d/.test(f.address) && /\b\d{4}\b/.test(f.address);
+  if (!f.price || !f.area || !f.bfe || !looksLikeAddress) {
+    const slug = (looksLikeAddress ? addressSlug(String(f.address)) : null) ?? slugFromUrl(url);
+    if (slug) {
+      const bs = await fromBoligsiden(`https://www.boligsiden.dk/adresse/${slug}`).catch(() => null);
+      if (bs?.ok && bs.fields) {
+        const b = bs.fields;
+        // Boligsiden's register-backed facts win; the broker's price and costs stay.
+        const trust = new Set(["area", "address", "bfe", "lotArea", "yearBuilt", "rooms"]);
+        for (const [k, v] of Object.entries(b)) {
+          const cur = (f as Record<string, unknown>)[k];
+          if (v != null && v !== "" && (trust.has(k) || cur == null || cur === "" || cur === 0)) (f as Record<string, unknown>)[k] = v;
+        }
+      }
+    }
+  }
+  const foundAll = Object.entries(f).filter(([, v]) => v !== undefined && v !== null && v !== "" && v !== 0).map(([k]) => k);
+
   if (!f.price && !f.monthlyRent && !f.area) {
     return NextResponse.json({ ok: false, error: "nothing_found", images });
   }
-  return NextResponse.json({ ok: true, fields: f, found, images });
+  void found;
+  return NextResponse.json({ ok: true, fields: f, found: foundAll, images });
+}
+
+/** Strip a brand suffix ("… | LILIENHOFF", "… - Investering") and empty parts. */
+function cleanAddress(a: string): string {
+  return a
+    .split(/\s+[|–]\s+/)[0]
+    .replace(/\s+-\s+[^,\d]*$/, "")
+    .replace(/(,\s*)+,/g, ",")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+/** "Farvervej 2, 1. th, 8800 Viborg" → "farvervej-2-1-th-8800-viborg" (the Boligsiden slug shape). */
+function addressSlug(a: string): string | null {
+  const m = a.match(/^\s*([^,\d]+?)\s+(\d+\s?[A-Za-z]?)\b(.*?)\b(\d{4})\b\s*([^,|]*)/);
+  if (!m) return null;
+  const [, street, num, middle, zip, city] = m;
+  const floor = floorPart(middle.replace(/[,.]/g, " "));
+  const parts = [slugifyRoadName(street), slugifyRoadName(num.replace(/\s/g, "")), floor && slugifyRoadName(floor), zip, slugifyRoadName(city.trim())].filter(Boolean);
+  return parts.join("-").replace(/-+/g, "-");
+}
+
+/** The floor and side of an address ("1. th", "st tv"), as Boligsiden slug tokens. */
+function floorPart(s: string): string {
+  const t = s.trim().split(/\s+/).filter(Boolean);
+  const floor = t.find((x) => /^(st|kl|\d{1,2})$/i.test(x));
+  const side = t.find((x) => /^(th|tv|mf)$/i.test(x));
+  return [floor, side].filter(Boolean).join("-").toLowerCase();
+}
+
+/** A broker link that carries the address itself, e.g. /sag/123/abkaervej-36-over-jerstal-6500-vojens/. */
+function slugFromUrl(url: string): string | null {
+  try {
+    const seg = new URL(url).pathname.split("/").filter(Boolean).find((x) => /^[a-z0-9æøå-]+-\d+[a-z]?(-[a-z0-9æøå]+)*-\d{4}-[a-z]/i.test(x));
+    if (!seg) return null;
+    // Keep street, number, floor/side and zip + city; drop a village name
+    // written between the number and the zip ("abkaervej-36-over-jerstal-6500-vojens").
+    const t = slugifyRoadName(decodeURIComponent(seg)).split("-");
+    const zi = t.findIndex((x, i) => /^\d{4}$/.test(x) && t.slice(i + 1).every((y) => !/^\d+$/.test(y)));
+    const ni = t.findIndex((x) => /^\d+[a-z]?$/.test(x));
+    if (zi < 0 || ni < 1 || ni > zi) return null;
+    const mid = floorPart(t.slice(ni + 1, zi).join(" "));
+    return [...t.slice(0, ni + 1), ...(mid ? [mid] : []), ...t.slice(zi)].join("-");
+  } catch {
+    return null;
+  }
 }
 
 /* ---------------- Boligsiden public API ---------------- */

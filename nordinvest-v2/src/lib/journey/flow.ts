@@ -60,7 +60,8 @@ export function questionsFor(a: Answers, ctx: Ctx): Question[] {
     { value: "cash", label: "Kontant", sub: "Ingen renter, men mere kapital bundet" } ] });
 
   if (rental) {
-    if (a.finance && a.finance !== "cash") q.push({ key: "rate", kind: "choice", title: "Hvilken rente skal vi regne med?", hint: "Hele lånet, realkredit og bank samlet.", options: [
+    // Counted before finance is answered, so the "x af y" counter does not grow mid-way.
+    if (a.finance !== "cash") q.push({ key: "rate", kind: "choice", title: "Hvilken rente skal vi regne med?", hint: "Hele lånet, realkredit og bank samlet.", options: [
       { value: "4", label: "4 %" }, { value: "5", label: "5 %", sub: "Vores standard" }, { value: "6", label: "6 %", sub: "Forsigtigt, med buffer til rentestigning" } ] });
     if (a.goal === "cashflow") q.push({ key: "mgmt", kind: "choice", title: "Hvem står for udlejningen?", options: [
       { value: "self", label: "Mig selv", sub: "Annoncering, kontrakt, depositum og vedligehold" },
