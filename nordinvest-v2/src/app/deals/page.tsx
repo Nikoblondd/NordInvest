@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { DealFinder } from "@/components/deals/DealFinder";
+import { Fold } from "@/components/ui/Fold";
 import { getDealSnapshot } from "@/lib/deals-snapshot";
 import {
   Assumptions,
@@ -148,6 +149,8 @@ export default async function DealsPage() {
               </Link>{" "}
               hvert nøgletal med et regneeksempel.
             </p>
+            <Fold label="Se de fire trin og scoren" labelOpen="Skjul">
+            <div className="fold-body">
             <div className="mt-6">
               <HowItWorks />
             </div>
@@ -167,6 +170,8 @@ export default async function DealsPage() {
             <div className="mt-6">
               <ScoreBands />
             </div>
+            </div>
+            </Fold>
           </div>
         </section>
 

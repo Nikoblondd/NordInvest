@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, ArrowRight } from "lucide-react";
+import { ArrowRight, Building2, Check, Database, Mail, Phone, ShieldCheck } from "lucide-react";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { PricingCards } from "@/components/PricingCards";
@@ -87,30 +87,48 @@ export default function PriserPage({ searchParams }: { searchParams?: { fra?: st
       <section className="px-6 pb-24">
         <div className="mx-auto flex max-w-7xl flex-col items-center">
           <PricingCards />
-          <p className="mt-8 text-center text-sm text-slate-500">
-            Månedlig uden binding · Opsig med ét klik · Sikker betaling via Stripe · {site.business.legalName}, CVR {site.business.cvr}
-          </p>
 
           {/* Who is behind it: visitors went from here to "Om os" before deciding. */}
-          <div className="mt-12 w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-5 shadow-card sm:p-6">
-            <div className="flex items-center gap-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={site.founder.photo} alt={site.founder.name} width={64} height={64} className="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-slate-200" />
-              <div className="min-w-0">
-                <p className="text-[17px] font-semibold text-slate-900">Hvem står bag?</p>
-                <p className="text-[15px] text-slate-600">{site.founder.name} har bygget NordInvest i Danmark. Du kan altid ringe eller skrive direkte til mig.</p>
+          <div className="mt-12 grid w-full max-w-5xl gap-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-card sm:p-8 md:grid-cols-[1.15fr_1fr] md:items-center md:gap-10">
+            <div className="min-w-0">
+              <div className="flex items-center gap-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={site.founder.photo} alt={site.founder.name} width={80} height={80} className="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-slate-200 sm:h-20 sm:w-20" />
+                <div className="min-w-0">
+                  <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-blue-700">Hvem står bag?</p>
+                  <p className="mt-0.5 text-[22px] font-semibold tracking-[-0.01em] text-slate-900">{site.founder.name}</p>
+                </div>
+              </div>
+              <p className="mt-4 max-w-md text-[16px] leading-relaxed text-slate-600">
+                Jeg har bygget NordInvest i Danmark. Har du spørgsmål, før du vælger en plan, så ring eller skriv direkte til mig.
+              </p>
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+                <a href={site.phoneHref} className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-[15px] font-semibold text-white hover:bg-slate-800">
+                  <Phone size={16} strokeWidth={1.8} /> <span className="sm:hidden">Ring</span><span className="hidden sm:inline">{site.phone}</span>
+                </a>
+                <a href={`mailto:${site.email}`} className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-slate-300 px-4 text-[15px] font-semibold text-slate-900 hover:border-slate-400">
+                  <Mail size={16} strokeWidth={1.8} /> Skriv til mig
+                </a>
               </div>
             </div>
-            <ul className="mt-5 grid gap-3 text-[15px] text-slate-700 sm:grid-cols-3">
-              <li><span className="block font-semibold text-slate-900">Dansk virksomhed</span>{site.business.legalName}, CVR {site.business.cvr}</li>
-              <li><span className="block font-semibold text-slate-900">Offentlige data</span>BBR og ejendomsvurderinger fra Datafordeler, Danmarks Statistik og Boligsiden</li>
-              <li><span className="block font-semibold text-slate-900">Ingen binding</span>Opsig med ét klik. Sikker betaling via Stripe</li>
-            </ul>
-            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[15px]">
-              <a href={site.phoneHref} className="font-semibold text-blue-700">{site.phone}</a>
-              <a href={`mailto:${site.email}`} className="font-semibold text-blue-700">{site.email}</a>
-              <Link href="/om" className="font-semibold text-slate-700 underline underline-offset-2">Læs mere om os</Link>
-            </div>
+            <dl className="divide-y divide-slate-100 rounded-xl bg-slate-50 px-5 md:border-l-0">
+              {[
+                { Icon: Building2, k: "Dansk virksomhed", v: `${site.business.legalName}, CVR\u00a0${site.business.cvr}` },
+                { Icon: Database, k: "Offentlige data", v: "BBR og vurderinger fra Datafordeler, Danmarks Statistik og Boligsiden" },
+                { Icon: ShieldCheck, k: "Ingen binding", v: "Opsig med ét klik. Sikker betaling via Stripe" },
+              ].map(({ Icon, k, v }) => (
+                <div key={k} className="flex gap-3 py-3.5">
+                  <Icon size={18} strokeWidth={1.8} className="mt-0.5 shrink-0 text-slate-500" />
+                  <div className="min-w-0">
+                    <dt className="text-[15px] font-semibold text-slate-900">{k}</dt>
+                    <dd className="text-[14px] leading-snug text-slate-600">{v}</dd>
+                  </div>
+                </div>
+              ))}
+              <div className="py-3.5 pl-[30px]">
+                <Link href="/om" className="text-[15px] font-semibold text-blue-700 underline-offset-2 hover:underline">Læs mere om os</Link>
+              </div>
+            </dl>
           </div>
 
           <div className="mt-16 w-full">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SafeThumb } from "@/components/deals/SafeThumb";
+import { Fold } from "@/components/ui/Fold";
 import type { DealSnapshot, SnapshotDeal, SnapshotInvestment } from "@/lib/deals-snapshot";
 import { DEAL_CITIES } from "@/lib/deal-cities";
 import { MORE_DEAL_CITIES } from "@/lib/deal-kommuner";
@@ -50,11 +51,12 @@ function Thumb({ src, alt }: { src: string | null; alt: string }) {
 
 export function DealRanking({ deals }: { deals: SnapshotDeal[] }) {
   return (
+    <Fold label={`Vis alle ${deals.length}`}>
     <ol className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
       {deals.map((d, i) => {
         const type = TYPE_LABEL[d.type] ?? "Bolig";
         return (
-          <li key={d.href}>
+          <li key={d.href} className={i >= 5 ? "more-row" : undefined}>
             <Link
               href={d.href}
               className="grid grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-x-3 p-3 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none sm:grid-cols-[2rem_auto_minmax(0,1fr)_8rem_9rem_3.5rem] sm:gap-x-5 sm:p-4"
@@ -89,14 +91,16 @@ export function DealRanking({ deals }: { deals: SnapshotDeal[] }) {
         );
       })}
     </ol>
+    </Fold>
   );
 }
 
 export function InvestmentRanking({ deals }: { deals: SnapshotInvestment[] }) {
   return (
+    <Fold label={`Vis alle ${deals.length}`}>
     <ol className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
       {deals.map((d, i) => (
-        <li key={d.href}>
+        <li key={d.href} className={i >= 3 ? "more-row" : undefined}>
           <Link
             href={d.href}
             className="grid grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-x-3 p-3 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none sm:grid-cols-[2rem_auto_minmax(0,1fr)_8rem_9rem_3.5rem] sm:gap-x-5 sm:p-4"
@@ -130,6 +134,7 @@ export function InvestmentRanking({ deals }: { deals: SnapshotInvestment[] }) {
         </li>
       ))}
     </ol>
+    </Fold>
   );
 }
 
@@ -241,19 +246,23 @@ export function CityLinks({ current }: { current?: string }) {
   const rest = MORE_DEAL_CITIES.filter((c) => c.slug !== current).sort((a, b) => a.name.localeCompare(b.name, "da"));
   return (
     <div>
-      <ul className="flex flex-wrap gap-2">
+      <ul className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
         {DEAL_CITIES.filter((c) => c.slug !== current).map((c) => (
           <li key={c.slug}>
             <Link
               href={`/deals/${c.slug}`}
-              className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:text-slate-900"
+              className="flex min-h-[44px] items-center rounded-xl border border-slate-200 bg-white px-3.5 text-[15px] font-medium text-slate-700 transition-colors hover:border-slate-300 hover:text-slate-900 sm:inline-flex sm:min-h-0 sm:rounded-full sm:py-2 sm:text-sm"
             >
-              Bedste handler {c.in}
+              <span className="sr-only sm:not-sr-only">Bedste handler </span>
+              <span className="sm:hidden">{c.name}</span>
+              <span className="hidden sm:inline">{c.in}</span>
             </Link>
           </li>
         ))}
       </ul>
       {/* Every other kommune with its own page: plain links, so search engines reach them all. */}
+      <Fold label={`Alle ${rest.length} kommuner`} labelOpen="Skjul kommunerne">
+      <div className="fold-body">
       <p className="mt-8 text-sm font-semibold text-slate-900">Alle kommuner</p>
       <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm sm:grid-cols-3 lg:grid-cols-4">
         {rest.map((c) => (
@@ -264,6 +273,8 @@ export function CityLinks({ current }: { current?: string }) {
           </li>
         ))}
       </ul>
+      </div>
+      </Fold>
     </div>
   );
 }

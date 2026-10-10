@@ -340,3 +340,9 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
 .ni-range:active::-webkit-slider-thumb { transform: scale(1.12); }
 .ni-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.35); }
 .ni-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.35); }
+
+/* Fold (components/ui/Fold.tsx): long sections shortened on phones only. */
+@media (max-width: 639px) {
+  .fold:not(.open) .more-row,
+  .fold:not(.open) .fold-body { display: none; }
+}

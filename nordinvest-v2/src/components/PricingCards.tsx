@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { annualReady, krFmt, offeredTiers, yearly as yearlyOf, type Period } from "@/lib/pricing";
@@ -13,7 +13,16 @@ import { BuyButton } from "@/components/BuyButton";
 // with a subtle grid pattern and a proper accent ribbon), and check-marks are
 // small custom marks — not the default lucide `CheckCircle2` icon that ships
 // on every SaaS landing page.
-export function PricingCards() {
+export function PricingCards({ swipe = false }: { swipe?: boolean } = {}) {
+  // On the home page the three plans become a swipe row on phones, opened on
+  // the recommended plan, instead of three full-height cards stacked.
+  const row = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = row.current;
+    if (!swipe || !el || el.scrollWidth <= el.clientWidth) return;
+    const featured = el.querySelector<HTMLElement>("[data-featured]");
+    if (featured) el.scrollLeft = featured.offsetLeft - (el.clientWidth - featured.offsetWidth) / 2;
+  }, [swipe]);
   // Yearly first (the switch starts on), unless the visitor came back from
   // signup having picked monthly (?periode=maaned).
   const [period, setPeriod] = useState<Period>("year");
@@ -28,7 +37,7 @@ export function PricingCards() {
           <BillingSwitch period={period} onChange={setPeriod} />
         </div>
       )}
-    <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-5 md:grid-cols-3">
+    <div ref={row} className={clsx("mx-auto w-full max-w-5xl md:grid md:grid-cols-3 md:gap-5", swipe ? "-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 pt-4 [scrollbar-width:none] md:mx-auto md:overflow-visible md:p-0" : "grid grid-cols-1 gap-5")}>
       {offeredTiers.map((t) => {
         const featured = t.featured;
         const y = yearlyOf(t);
@@ -36,8 +45,10 @@ export function PricingCards() {
         return (
           <div
             key={t.id}
+            data-featured={featured ? "" : undefined}
             className={clsx(
               "relative flex flex-col overflow-hidden rounded-2xl border p-6 transition-all duration-300 lg:p-7",
+              swipe && "w-[84%] shrink-0 snap-center md:w-auto",
               featured
                 ? "border-slate-800 bg-slate-900 text-white shadow-[0_20px_50px_-20px_rgba(15,23,42,0.4)] md:-translate-y-3"
                 : "border-slate-200/80 bg-white shadow-card hover:-translate-y-[1px] hover:shadow-card-lift",

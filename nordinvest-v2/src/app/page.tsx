@@ -157,7 +157,8 @@ export default function Home() {
           >
             Start gratis.
           </SectionHead>
-          <PricingCards />
+          <PricingCards swipe />
+          <p className="mt-3 text-[13px] text-slate-500 md:hidden">Swipe for at se alle tre planer</p>
         </div>
       </section>
 

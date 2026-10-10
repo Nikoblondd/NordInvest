@@ -3,6 +3,7 @@ import { Logo } from "./Logo";
 import { CookieSettingsButton } from "./analytics/CookieSettingsButton";
 import { CITIES } from "@/lib/cities";
 import { site } from "@/lib/site";
+import { Fold } from "./ui/Fold";
 
 const columns = [
   {
@@ -51,6 +52,15 @@ const columns = [
   },
 ];
 
+const QUICK = [
+  { href: "/analyseren/start", label: "Analysér en bolig" },
+  { href: "/deals", label: "Deal-motor" },
+  { href: "/priser", label: "Priser" },
+  { href: "/blog", label: "Blog & guides" },
+  { href: "/om", label: "Om os" },
+  { href: "/kontakt", label: "Kontakt" },
+];
+
 const b = site.business;
 const businessLine = [
   b.legalName,
@@ -61,7 +71,7 @@ const businessLine = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white px-6 py-14">
+    <footer className="border-t border-slate-200 bg-white px-6 py-10 sm:py-14">
       <div className="mx-auto max-w-6xl">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
           <div className="col-span-2 md:col-span-1">
@@ -71,6 +81,16 @@ export function Footer() {
               60 sekunder.
             </p>
           </div>
+          {/* Phones: the six links people actually use, the rest one tap away. */}
+          <ul className="col-span-2 grid grid-cols-2 gap-x-4 gap-y-1 sm:hidden">
+            {QUICK.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className="flex min-h-[44px] items-center text-[15px] font-medium text-slate-700 hover:text-blue-600">{l.label}</Link>
+              </li>
+            ))}
+          </ul>
+          <Fold label="Alle links" labelOpen="Skjul links" className="col-span-2 md:col-span-4">
+          <div className="fold-body grid grid-cols-2 gap-8 md:grid-cols-4">
           {columns.map((col) => (
             <div key={col.title}>
               <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -92,8 +112,10 @@ export function Footer() {
               </ul>
             </div>
           ))}
+          </div>
+          </Fold>
         </div>
-        <div className="mt-12 border-t border-slate-100 pt-6 text-sm text-slate-500">
+        <div className="mt-10 border-t sm:mt-12 border-slate-100 pt-6 text-sm text-slate-500">
           <div>{businessLine}</div>
           <div className="mt-1 text-slate-400">
             © {new Date().getFullYear()} {site.name}. Alle rettigheder forbeholdes.

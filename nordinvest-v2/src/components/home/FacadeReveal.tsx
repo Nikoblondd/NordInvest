@@ -116,7 +116,7 @@ export function FacadeReveal() {
       id="hvordan"
       ref={sectionRef}
       aria-label="Sådan regner NordInvest en bolig igennem"
-      className="drafting-paper relative h-[460vh] lg:h-[420vh]"
+      className="drafting-paper relative h-[300vh] lg:h-[420vh]"
     >
       <div className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden">
         <div className="mx-auto grid h-full max-w-7xl grid-cols-1 grid-rows-[auto_minmax(0,1fr)] gap-y-5 px-4 py-4 sm:px-6 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:grid-rows-1 lg:items-center lg:gap-x-14 lg:px-8 lg:pb-16 lg:pt-4">
