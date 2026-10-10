@@ -8,31 +8,34 @@ import { krFmt, maxYearlySaving, type Period } from "@/lib/pricing";
  * "on" for yearly, with the saving next to it so the choice explains itself.
  */
 export function BillingSwitch({ period, onChange, dark }: { period: Period; onChange: (p: Period) => void; dark?: boolean }) {
-  const on = period === "year";
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm font-semibold">
-      <button type="button" onClick={() => onChange("month")} className={clsx(on ? (dark ? "text-white/50" : "text-slate-400") : dark ? "text-white" : "text-slate-900")}>
-        Månedlig
-      </button>
+  // Two big buttons rather than a toggle switch: easier to hit on a phone and
+  // impossible to misread.
+  const opt = (p: Period, label: string) => {
+    const on = period === p;
+    return (
       <button
         type="button"
-        role="switch"
+        role="radio"
         aria-checked={on}
-        aria-label="Vis årspriser"
-        onClick={() => onChange(on ? "month" : "year")}
+        onClick={() => onChange(p)}
         className={clsx(
-          "relative h-7 w-12 shrink-0 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
-          on ? "bg-blue-600" : dark ? "bg-white/25" : "bg-slate-300",
+          "min-h-[44px] flex-1 rounded-lg px-4 text-[15px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+          on ? (dark ? "bg-white text-slate-900" : "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.12)]") : dark ? "text-white/70" : "text-slate-500",
         )}
       >
-        <span className={clsx("absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow transition-transform", on && "translate-x-5")} />
+        {label}
       </button>
-      <button type="button" onClick={() => onChange("year")} className={clsx(on ? (dark ? "text-white" : "text-slate-900") : dark ? "text-white/50" : "text-slate-400")}>
-        Årlig
-      </button>
+    );
+  };
+  return (
+    <div className="flex flex-col items-center gap-2.5">
+      <div role="radiogroup" aria-label="Betaling" className={clsx("flex w-full max-w-[320px] gap-1 rounded-xl p-1", dark ? "bg-white/10" : "bg-slate-100")}>
+        {opt("month", "Månedlig")}
+        {opt("year", "Årlig")}
+      </div>
       {maxYearlySaving > 0 && (
-        <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[12px] font-semibold text-emerald-800">
-          2 måneder gratis · spar op til {krFmt(maxYearlySaving)} kr.
+        <span className="rounded-full bg-emerald-100 px-3 py-1 text-[13px] font-semibold text-emerald-800">
+          Årlig: 2 måneder gratis, spar op til {krFmt(maxYearlySaving)} kr.
         </span>
       )}
     </div>

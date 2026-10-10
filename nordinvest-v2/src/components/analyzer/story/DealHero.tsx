@@ -12,6 +12,8 @@ export type HeroMetric = {
   value: string;
   unit?: string;
   tone: Tone;
+  /** One plain line under the number, so nobody has to open a tooltip to read it. */
+  note?: string;
 };
 
 const toneWord: Record<Tone, string> = { good: "godt", warn: "middel", bad: "svagt", neutral: "" };
@@ -159,6 +161,7 @@ export function DealHero({
                 {m.unit && <span className="text-[15px] font-medium text-white/45">{m.unit}</span>}
                 {toneWord[m.tone] && <span className="sr-only">({toneWord[m.tone]})</span>}
               </dd>
+              {m.note && <dd className="mt-1 text-[13px] leading-snug text-white/55">{m.note}</dd>}
             </div>
           ))}
         </dl>
@@ -209,7 +212,7 @@ function ScoreRing({ score, rating, tone, large }: { score: number; rating: stri
             <span className="whitespace-nowrap text-[13px] font-medium leading-tight text-white/50">ud af 100</span>
           </>
         ) : (
-          <span className="mt-1 whitespace-nowrap text-[11px] font-medium leading-none text-white/55 sm:text-xs">af 100</span>
+          <span className="mt-1 whitespace-nowrap text-[12px] font-medium leading-none text-white/60">af 100</span>
         )}
       </div>
     </div>

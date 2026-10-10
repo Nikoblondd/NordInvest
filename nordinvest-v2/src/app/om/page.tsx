@@ -14,7 +14,7 @@ export const maxDuration = 60;
 export const metadata: Metadata = {
   title: { absolute: "Om NordInvest · hvem bygger boliganalysen, og hvorfor" },
   description:
-    "NordInvest bygges af én person, i offentligt lys — for at gøre ejendomsdata tilgængeligt for alle danske investorer, ikke kun dem der har råd til en rådgiver.",
+    "NordInvest bygges af én person, i offentligt lys, for at gøre ejendomsdata tilgængeligt for alle danske investorer, ikke kun dem der har råd til en rådgiver.",
 };
 
 const aboutJsonLd = {
@@ -49,21 +49,20 @@ export default async function OmPage() {
             Bygget af én person. For en hel branche.
           </h1>
 
-          <p className="mt-6 text-xl font-medium leading-relaxed text-stone-800">
-            NordInvest er en dansk platform til analyse af ejendomsinvestering, gratis at komme i gang med.
-            Du indsætter et link fra en boligside eller taster tallene, og får cashflow,
-            afkast, gældsdækning og en objektiv investerings-score på under 60 sekunder —
-            for både boliger og erhvervsejendomme.
+          <p className="mt-6 text-[18px] font-medium leading-relaxed text-stone-800 sm:text-xl">
+            NordInvest regner en bolig eller en erhvervsejendom igennem på under et minut. Du indsætter
+            linket fra boligsiden og ser, hvad den tjener hver måned, hvad renten kan tåle, og hvad den kan
+            blive til. Det er gratis at komme i gang.
           </p>
 
-          <div className="mt-10 space-y-6 text-lg leading-relaxed text-stone-700">
+          <div className="mt-10 space-y-5 text-[17px] leading-relaxed text-stone-700 sm:space-y-6 sm:text-lg">
             <p>
               NordInvest startede med ét spørgsmål: Hvorfor tager det så lang tid
               at finde ud af, om en ejendom er en god investering?
             </p>
             <p>
               Jeg hedder Nikolaj. Jeg bygger NordInvest, fordi jeg mener, at data
-              burde være tilgængeligt for alle — ikke kun dem, der kan betale
+              burde være tilgængeligt for alle, ikke kun for dem, der kan betale
               15.000 kr for en analyserapport.
             </p>
             <p>
@@ -74,7 +73,7 @@ export default async function OmPage() {
             </p>
             <p>
               Målet er en dansk ejendomsplatform, der udligner spillefeltet. Ikke
-              bare et værktøj — men et startpunkt for en generation, der investerer
+              bare et værktøj, men et startpunkt for en generation, der investerer
               smartere end den forrige.
             </p>
           </div>

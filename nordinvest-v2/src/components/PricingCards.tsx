@@ -69,7 +69,7 @@ export function PricingCards() {
                   className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-blue-500/30 blur-3xl"
                 />
                 {/* recommended ribbon */}
-                <div className="relative z-10 mb-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white ring-1 ring-inset ring-white/20 backdrop-blur">
+                <div className="relative z-10 mb-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-white ring-1 ring-inset ring-white/20 backdrop-blur">
                   <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.9)]" />
                   Anbefalet
                 </div>

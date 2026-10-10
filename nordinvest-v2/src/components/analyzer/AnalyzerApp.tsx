@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing } from "lucide-react";
-import { analyze, kr, krMd, pct, num, type Strategy } from "@/lib/analysis";
+import { analyze, kr, krMd, pct, num, type Strategy, type AnalysisResult } from "@/lib/analysis";
 import { runUncertainty } from "@/lib/uncertainty";
 import { assessInvestment } from "@/lib/deals";
 import { ConfidenceBands } from "@/components/analyzer/ConfidenceBands";
@@ -119,7 +119,7 @@ function pickInputs(src: Record<string, unknown> | null | undefined): Partial<In
 const strategies: { id: Strategy; label: string }[] = [
   { id: "cashflow", label: "Cashflow" },
   { id: "appreciation", label: "Værdistigning" },
-  { id: "value_add", label: "Value-add" },
+  { id: "value_add", label: "Renovering" },
 ];
 
 const FIELD_LABELS: Record<string, string> = {
@@ -244,6 +244,7 @@ export function AnalyzerApp() {
   const [ran, setRan] = useState(false);
   const [advanced, setAdvanced] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [fullSheet, setFullSheet] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [save, setSave] = useState<{ status: "idle" | "saving" | "saved" | "limit" | "error"; msg?: string }>({ status: "idle" });
   const [watch, setWatch] = useState<{ status: "idle" | "saving" | "saved" | "error"; msg?: string }>({ status: "idle" });
@@ -717,23 +718,26 @@ export function AnalyzerApp() {
     ...(inv?.note ? [inv.note.replace(" — ", ". ")] : []),
     ...(!isInvestment && rentEstimated ? ["Bygger på en estimeret leje. Bekræft den, før du handler."] : []),
   ];
+  // Plain names and a one-line note under each number: people kept opening
+  // the info icons to learn what "kontantafkast" or "gældsdækning" meant.
   const heroMetrics: HeroMetric[] = [
     {
-      label: "Cash flow pr. md.",
+      label: r.cashFlow >= 0 ? "Overskud pr. md." : "Underskud pr. md.",
       value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`,
       unit: "kr",
       tone: r.cashFlow >= 500 ? "good" : r.cashFlow >= 0 ? "warn" : "bad",
+      note: "Efter lånet og alle udgifter",
     },
-    { label: "Nettoafkast", value: num(r.capRate), unit: "%", tone: r.capRate >= 5 ? "good" : r.capRate >= 3.5 ? "warn" : "bad" },
-    { label: "Kontantafkast", value: num(r.cashOnCash), unit: "%", tone: r.cashOnCash >= 8 ? "good" : r.cashOnCash >= 0 ? "warn" : "bad" },
-    { label: "Gældsdækning", value: num(r.dscr), tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
+    { label: "Afkast af prisen", value: num(r.capRate), unit: "%", tone: r.capRate >= 5 ? "good" : r.capRate >= 3.5 ? "warn" : "bad", note: "Om året, før lånet" },
+    { label: "Afkast af dine penge", value: num(r.cashOnCash), unit: "%", tone: r.cashOnCash >= 8 ? "good" : r.cashOnCash >= 0 ? "warn" : "bad", note: `Af de ${dk(r.cashInvested)} kr., du lægger` },
+    { label: "Lejen dækker lånet", value: num(r.dscr), unit: "gange", tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad", note: r.dscr >= 1.25 ? "Over 1,25 er trygt" : r.dscr >= 1 ? "Lige akkurat. 1,25 er trygt" : "Lejen betaler ikke hele lånet" },
   ];
 
   // An investeringsejendom gets the same four numbers in plain words.
   const investMetrics: HeroMetric[] = [
     { label: r.cashFlow >= 0 ? "Overskud pr. md." : "Underskud pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "bad" },
     { label: "Afkast om året", value: num(r.capRate), unit: "%", tone: inv && inv.score >= 62 ? "good" : inv && inv.score >= 45 ? "warn" : "bad" },
-    { label: "Du lægger selv", value: dk(r.cashInvested), unit: "kr", tone: "neutral" },
+    { label: "Du lægger selv", value: dk(r.cashInvested), unit: "kr", tone: "neutral", note: "Udbetaling og købsomkostninger" },
     { label: "Lejen dækker lånet", value: num(r.dscr), unit: "gange", tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
   ];
   const heroMetricsShown: HeroMetric[] = isInvestment ? investMetrics : pv
@@ -1191,9 +1195,17 @@ export function AnalyzerApp() {
                 <p className="mt-2 max-w-2xl text-[16px] text-slate-600">
                   {goal === "parents"
                     ? "Jeres forældrekøb fra købspris til det, der står tilbage, når barnet flytter. Ret et blåt felt, og resten regner med."
-                    : "Ret et blåt felt, og resten regner med. Klik på en række for at se, hvordan tallet er regnet. Kapitlerne under er dokumentationen."}
+                    : <>Sådan hænger måneden sammen.<span className="hidden sm:inline"> Ret et blåt felt, og resten regner med. Klik på en række for at se, hvordan tallet er regnet.</span></>}
                 </p>
-                <div className="mt-6">
+                {/* Phones: the month as a short receipt; the 29-line sheet is one tap away. */}
+                <div className="mt-6 sm:hidden">
+                  <MonthReceipt r={r} rent={inputs.monthlyRent} fixed={inputs.monthlyOpex} child={goal === "parents"} />
+                  <button type="button" onClick={() => setFullSheet((v) => !v)} aria-expanded={fullSheet}
+                    className="mt-4 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white text-[16px] font-semibold text-slate-900 active:translate-y-px">
+                    {fullSheet ? "Skjul hele regnearket" : "Vis hele regnearket"} <ChevronDown aria-hidden size={18} className={fullSheet ? "rotate-180" : ""} />
+                  </button>
+                </div>
+                <div className={fullSheet ? "mt-6" : "mt-6 hidden sm:block"}>
                   <RentalSheet
                     inputs={inputs}
                     r={r}
@@ -1626,5 +1638,44 @@ function PaidTag() {
     <span className="ml-0.5 rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-white/70 ring-1 ring-inset ring-white/15">
       Starter
     </span>
+  );
+}
+
+
+/** The month in five lines, for phones: rent in, costs and loan out, what is left. */
+function MonthReceipt({ r, rent, fixed, child }: { r: AnalysisResult; rent: number; fixed: number; child: boolean }) {
+  const k = (n: number) => `${Math.round(Math.abs(n)).toLocaleString("da-DK")} kr.`;
+  const upkeep = (r.opex.vacancy + r.opex.maintenance) / 12;
+  const rows: [string, number][] = [
+    [child ? "Barnets husleje" : "Lejen ind", rent],
+    ["Renter og afdrag", -r.monthlyMortgage],
+    ["Ejerudgift og faste udgifter", -fixed],
+    ["Vedligehold og tomme måneder", -upkeep],
+  ];
+  return (
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
+      <dl className="px-5 pt-4 text-[16px]">
+        {rows.filter(([, v]) => Math.round(v) !== 0).map(([label, v]) => (
+          <div key={label} className="flex items-baseline justify-between gap-4 py-2">
+            <dt className="text-slate-700">{label}</dt>
+            <dd className={`shrink-0 font-semibold tabular-nums ${v > 0 ? "text-emerald-700" : "text-slate-500"}`}>{v > 0 ? "+" : "−"}{k(v)}</dd>
+          </div>
+        ))}
+        <div className="mt-1.5 flex items-baseline justify-between gap-4 border-t-2 border-slate-900 py-3">
+          <dt className="text-[17px] font-semibold text-slate-900">{r.cashFlow >= 0 ? "Tilbage til dig hver måned" : "Du lægger til hver måned"}</dt>
+          <dd className={`shrink-0 text-[19px] font-bold tabular-nums ${r.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{r.cashFlow >= 0 ? "+" : "−"}{k(r.cashFlow)}</dd>
+        </div>
+      </dl>
+      <dl className="grid grid-cols-2 divide-x divide-slate-200 border-t border-slate-200 bg-slate-50/70">
+        <div className="min-w-0 px-5 py-3.5">
+          <dt className="text-[13px] text-slate-500">Du lægger selv</dt>
+          <dd className="mt-0.5 text-[16px] font-semibold tabular-nums text-slate-900">{k(r.cashInvested)}</dd>
+        </div>
+        <div className="min-w-0 px-5 py-3.5">
+          <dt className="text-[13px] text-slate-500">Gevinst om {r.holdYears} år</dt>
+          <dd className={`mt-0.5 text-[16px] font-semibold tabular-nums ${r.totalProfit >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{r.totalProfit >= 0 ? "+" : "−"}{k(r.totalProfit)}</dd>
+        </div>
+      </dl>
+    </div>
   );
 }

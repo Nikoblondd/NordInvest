@@ -324,16 +324,17 @@ function scoreAndVerdict(a: {
   else if (score >= 45) rating = "Middel";
   else rating = "Svag";
 
+  // Plain words: what the rent does with the loan, and what to do about it.
   let verdict: string;
   if (score >= 65) {
     verdict =
       a.dscr >= 1.2
-        ? "Solid handel. Positivt cash flow og komfortabel gældsdækning (DSCR " + a.dscr.toFixed(2).replace(".", ",") + ")."
-        : "God på afkast, men gældsdækningen er stram — forhandl pris eller udbetaling.";
+        ? "Solid handel. Lejen betaler lånet og alle udgifter, og der er luft, hvis renten stiger."
+        : "Godt afkast, men lejen dækker kun lige lånet. Forhandl prisen eller læg mere ud.";
   } else if (score >= 45) {
-    verdict = "Grænsehandel. Tallene hænger, men marginen er tynd — kør følsomhedsscenarierne.";
+    verdict = "Grænsehandel. Tallene hænger sammen, men der er ikke meget at give af. Se, hvad en højere rente gør.";
   } else {
-    verdict = "Spring over eller genforhandl. Afkast og gældsdækning bærer ikke handlen.";
+    verdict = "Spring over eller forhandl prisen ned. Lejen kan ikke bære handlen, som den ser ud nu.";
   }
   return { score, rating, verdict };
 }

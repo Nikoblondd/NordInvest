@@ -79,7 +79,7 @@ export function Sheet({
               return (
                 <tr key={`h-${r.label}`} className="bg-slate-50">
                   <td className="border-y border-slate-200 py-1.5" />
-                  <td colSpan={3} className="border-y border-slate-200 py-1.5 pl-3 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-slate-500">{r.label}</td>
+                  <td colSpan={3} className="border-y border-slate-200 py-1.5 pl-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-slate-500">{r.label}</td>
                 </tr>
               );
             }
@@ -92,7 +92,7 @@ export function Sheet({
                 onClick={() => setSel(r.key)}
                 className={clsx("cursor-default border-b border-slate-100", active ? "bg-blue-50/60" : "hover:bg-slate-50/70", r.total && "border-t-2 border-t-slate-300")}
               >
-                <td className={clsx("py-2 text-center text-[11px] tabular-nums", active ? "font-semibold text-blue-700" : "text-slate-400")}>{n}</td>
+                <td className={clsx("py-2 text-center text-[12px] tabular-nums", active ? "font-semibold text-blue-700" : "text-slate-400")}>{n}</td>
                 <td className={clsx("py-2 pl-2 pr-2 leading-snug sm:pl-3", r.strong ? "font-semibold text-slate-900" : "text-slate-700")}>{r.label}</td>
                 <td className="py-1 pr-2 text-right sm:pr-3">
                   {r.input ? (

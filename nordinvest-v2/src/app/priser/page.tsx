@@ -91,6 +91,28 @@ export default function PriserPage({ searchParams }: { searchParams?: { fra?: st
             Månedlig uden binding · Opsig med ét klik · Sikker betaling via Stripe · {site.business.legalName}, CVR {site.business.cvr}
           </p>
 
+          {/* Who is behind it: visitors went from here to "Om os" before deciding. */}
+          <div className="mt-12 w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-5 shadow-card sm:p-6">
+            <div className="flex items-center gap-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={site.founder.photo} alt={site.founder.name} width={64} height={64} className="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-slate-200" />
+              <div className="min-w-0">
+                <p className="text-[17px] font-semibold text-slate-900">Hvem står bag?</p>
+                <p className="text-[15px] text-slate-600">{site.founder.name} har bygget NordInvest i Danmark. Du kan altid ringe eller skrive direkte til mig.</p>
+              </div>
+            </div>
+            <ul className="mt-5 grid gap-3 text-[15px] text-slate-700 sm:grid-cols-3">
+              <li><span className="block font-semibold text-slate-900">Dansk virksomhed</span>{site.business.legalName}, CVR {site.business.cvr}</li>
+              <li><span className="block font-semibold text-slate-900">Offentlige data</span>BBR og ejendomsvurderinger fra Datafordeler, Danmarks Statistik og Boligsiden</li>
+              <li><span className="block font-semibold text-slate-900">Ingen binding</span>Opsig med ét klik. Sikker betaling via Stripe</li>
+            </ul>
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[15px]">
+              <a href={site.phoneHref} className="font-semibold text-blue-700">{site.phone}</a>
+              <a href={`mailto:${site.email}`} className="font-semibold text-blue-700">{site.email}</a>
+              <Link href="/om" className="font-semibold text-slate-700 underline underline-offset-2">Læs mere om os</Link>
+            </div>
+          </div>
+
           <div className="mt-16 w-full">
             <h2 className="text-center text-2xl font-bold tracking-tight md:text-3xl">Hvilken plan passer til dig?</h2>
             <div className="mt-8 grid gap-4 md:grid-cols-3">

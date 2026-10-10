@@ -35,8 +35,11 @@ export function Sheet({
   useEffect(() => {
     if (!open) return;
     returnTo.current = document.activeElement as HTMLElement | null;
+    // No autofocus on touch screens: it pops the keyboard over half the sheet.
+    const touch = window.matchMedia("(pointer: coarse)").matches;
     const t = window.setTimeout(() => {
-      panelRef.current?.querySelector<HTMLElement>("input, button, select")?.focus({ preventScroll: true });
+      const first = panelRef.current?.querySelector<HTMLElement>(touch ? "button" : "input, button, select");
+      first?.focus({ preventScroll: true });
     }, 60);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -65,7 +68,7 @@ export function Sheet({
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-[60]">
+        <div className="fixed inset-0 z-[70]">
           <motion.div
             className="absolute inset-0 bg-slate-950/25"
             onClick={onClose}
