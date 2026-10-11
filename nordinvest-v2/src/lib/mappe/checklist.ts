@@ -86,12 +86,46 @@ export type DocReview = {
   questions: string[];
 };
 
+export type TaskKind = "fremvisning" | "maegler" | "bank" | "bud" | "raadgiver" | "andet";
+export const TASK_KINDS: { id: TaskKind; label: string }[] = [
+  { id: "fremvisning", label: "Fremvisning" },
+  { id: "maegler", label: "Kontakt mægleren" },
+  { id: "bank", label: "Bankmøde" },
+  { id: "bud", label: "Afgiv bud" },
+  { id: "raadgiver", label: "Købers rådgiver" },
+  { id: "andet", label: "Andet" },
+];
+/** A to-do on a property, e.g. a viewing on Tuesday at 16:00. `due` is local "YYYY-MM-DDTHH:mm" or a date. */
+export type Task = { id: string; kind: TaskKind; title: string; due: string | null; done: boolean };
+export type Offer = { amount: number; date: string; status: "afgivet" | "modbud" | "accepteret" | "afslaaet"; note?: string };
+export const OFFER_STATUS: Record<Offer["status"], string> = { afgivet: "Afgivet", modbud: "Modbud", accepteret: "Accepteret", afslaaet: "Afslået" };
+
 export type Mappe = {
   stage: Stage | "droppet";
   checks: Record<string, boolean>;
   notes: string;
   docs: DocReview[];
+  tasks?: Task[];
+  offer?: Offer | null;
   updatedAt?: string;
 };
 
-export const EMPTY_MAPPE: Mappe = { stage: "screening", checks: {}, notes: "", docs: [] };
+export const EMPTY_MAPPE: Mappe = { stage: "screening", checks: {}, notes: "", docs: [], tasks: [], offer: null };
+
+export const STAGE_LABEL: Record<Stage | "droppet", string> = {
+  screening: "Screening", fremvisning: "Fremvisning", dokumenter: "Dokumenter", bank: "Bank", bud: "Bud", koebt: "Købt", droppet: "Droppet",
+};
+
+/** "tir. 14. okt. kl. 16.00", or just the date when no time was set. */
+export function fmtDue(due: string): string {
+  const d = new Date(due.length <= 10 ? `${due}T12:00` : due);
+  const date = d.toLocaleDateString("da-DK", { weekday: "short", day: "numeric", month: "short" });
+  return due.length > 10 ? `${date} kl. ${d.toLocaleTimeString("da-DK", { hour: "2-digit", minute: "2-digit" })}` : date;
+}
+/** Days from today (local) to the task's day: negative when overdue. */
+export function daysUntil(due: string, now = new Date()): number {
+  const d = new Date(due.length <= 10 ? `${due}T12:00` : due);
+  const a = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const b = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  return Math.round((b - a) / 86400000);
+}

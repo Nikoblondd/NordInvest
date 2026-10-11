@@ -78,6 +78,11 @@ export function Nav() {
 
         <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
           <LangToggle />
+          {authed && (
+            <Link href="/dashboard" className="hidden items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-colors hover:border-slate-300 sm:inline-flex">
+              <LayoutDashboard size={15} className="text-blue-600" /> Mine ejendomme
+            </Link>
+          )}
           {authed ? (
             <div ref={menuRef} className="relative">
               <button
@@ -103,7 +108,7 @@ export function Nav() {
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50"
                   >
-                    <LayoutDashboard size={16} className="text-slate-400" /> Dashboard
+                    <LayoutDashboard size={16} className="text-slate-400" /> Mine ejendomme
                   </Link>
                   <form action="/auth/signout" method="post">
                     <button
@@ -157,7 +162,7 @@ export function Nav() {
               className="text-base font-medium text-slate-700"
               onClick={() => setOpen(false)}
             >
-              {authed ? "Dashboard" : "Log ind"}
+              {authed ? "Mine ejendomme" : "Log ind"}
             </Link>
           </div>
         </div>

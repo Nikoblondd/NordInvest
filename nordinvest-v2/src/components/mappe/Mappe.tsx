@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, Check, ChevronDown, Copy, ExternalLink, FileText, Loader2, Lock, Upload, X } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CalendarClock, Check, ChevronDown, Copy, ExternalLink, FileText, Gavel, Loader2, Lock, Plus, Trash2, Upload, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { createClient } from "@/lib/supabase/client";
-import { CHECKLIST, EMPTY_MAPPE, STAGES, itemsFor, type DocReview, type Kind, type Mappe as MappeData, type Stage } from "@/lib/mappe/checklist";
+import { CHECKLIST, EMPTY_MAPPE, OFFER_STATUS, STAGES, TASK_KINDS, daysUntil, fmtDue, itemsFor, type DocReview, type Kind, type Mappe as MappeData, type Offer, type Stage, type Task, type TaskKind } from "@/lib/mappe/checklist";
 import { pdfPages } from "@/lib/mappe/pdf";
 
 /*
@@ -188,6 +188,9 @@ export function Mappe({ row }: { row: MappeRow }) {
                 {row.investment_score != null && <Row k="Score" v={`${row.investment_score} af 100`} />}
               </dl>
             </div>
+
+            <Tasks tasks={m.tasks ?? []} onChange={(tasks) => persist({ ...m, tasks })} />
+            <OfferBox offer={m.offer ?? null} price={price} onChange={(offer) => persist({ ...m, offer, stage: offer && (m.stage === "screening" || m.stage === "fremvisning" || m.stage === "dokumenter" || m.stage === "bank") ? "bud" : m.stage })} />
 
             {(highRisks.length > 0 || rentalNo) && (
               <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5">
@@ -376,5 +379,111 @@ function DocCard({ d, onRemove }: { d: DocReview; onRemove: () => void }) {
         </div>
       )}
     </article>
+  );
+}
+
+
+/* ---------------- Tasks ---------------- */
+
+function Tasks({ tasks, onChange }: { tasks: Task[]; onChange: (t: Task[]) => void }) {
+  const [adding, setAdding] = useState(false);
+  const [kind, setKind] = useState<TaskKind>("fremvisning");
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const open = tasks.filter((t) => !t.done).sort((a, b) => (a.due ?? "9999").localeCompare(b.due ?? "9999"));
+  const done = tasks.filter((t) => t.done);
+  const add = () => {
+    const label = title.trim() || TASK_KINDS.find((k) => k.id === kind)!.label;
+    const due = date ? (time ? `${date}T${time}` : date) : null;
+    onChange([...tasks, { id: `t${Date.now()}`, kind, title: label, due, done: false }]);
+    setTitle(""); setDate(""); setTime(""); setAdding(false);
+  };
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+      <div className="flex items-center justify-between">
+        <h2 className="flex items-center gap-2 text-[17px] font-semibold text-slate-900"><CalendarClock size={18} strokeWidth={1.8} className="text-slate-500" /> Opgaver</h2>
+        {!adding && <button type="button" onClick={() => setAdding(true)} className="inline-flex min-h-[40px] items-center gap-1 rounded-lg px-2 text-[14px] font-semibold text-blue-700 hover:bg-blue-50"><Plus size={15} /> Tilføj</button>}
+      </div>
+      {adding && (
+        <div className="mt-3 space-y-2.5 rounded-xl bg-slate-50 p-3">
+          <select value={kind} onChange={(e) => setKind(e.target.value as TaskKind)} aria-label="Type" className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-[16px]">
+            {TASK_KINDS.map((k) => <option key={k.id} value={k.id}>{k.label}</option>)}
+          </select>
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Beskrivelse (valgfri)" className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-[16px]" />
+          <div className="grid grid-cols-[1.4fr_1fr] gap-2">
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} aria-label="Dato" className="h-11 w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 text-[16px]" />
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} aria-label="Tidspunkt" className="h-11 w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 text-[16px]" />
+          </div>
+          <div className="flex gap-2">
+            <button type="button" onClick={add} className="min-h-[44px] flex-1 rounded-lg bg-slate-900 text-[15px] font-semibold text-white">Gem opgave</button>
+            <button type="button" onClick={() => setAdding(false)} className="min-h-[44px] rounded-lg px-3 text-[15px] font-medium text-slate-600">Annullér</button>
+          </div>
+        </div>
+      )}
+      {open.length === 0 && !adding && <p className="mt-2 text-[15px] text-slate-500">Ingen opgaver. Tilføj fx en fremvisning eller et opkald til mægleren.</p>}
+      <ul className="mt-2 divide-y divide-slate-100">
+        {open.map((t) => {
+          const dd = t.due ? daysUntil(t.due) : null;
+          return (
+            <li key={t.id} className="flex items-start gap-3 py-2.5">
+              <button type="button" role="checkbox" aria-checked={false} aria-label={`Marker ${t.title} som klaret`} onClick={() => onChange(tasks.map((x) => (x.id === t.id ? { ...x, done: true } : x)))}
+                className="mt-0.5 h-6 w-6 shrink-0 rounded-full border-2 border-slate-300 hover:border-emerald-500" />
+              <div className="min-w-0 flex-1">
+                <p className="text-[15px] font-semibold text-slate-900">{t.title}</p>
+                {t.due && <p className={clsx("text-[13px]", dd! < 0 ? "font-semibold text-rose-600" : dd === 0 ? "font-semibold text-blue-700" : "text-slate-500")}>{dd! < 0 ? "Overskredet · " : dd === 0 ? "I dag · " : dd === 1 ? "I morgen · " : ""}{fmtDue(t.due)}</p>}
+              </div>
+              <button type="button" aria-label="Slet opgave" onClick={() => onChange(tasks.filter((x) => x.id !== t.id))} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-rose-600"><Trash2 size={14} /></button>
+            </li>
+          );
+        })}
+      </ul>
+      {done.length > 0 && <p className="mt-1 text-[13px] text-slate-500">{done.length} klaret</p>}
+    </div>
+  );
+}
+
+/* ---------------- Offer ---------------- */
+
+function OfferBox({ offer, price, onChange }: { offer: Offer | null; price: number; onChange: (o: Offer | null) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [amount, setAmount] = useState(offer?.amount ? String(offer.amount) : "");
+  const save = () => {
+    const n = Number(amount.replace(/[^0-9]/g, ""));
+    if (!n) return;
+    onChange({ amount: n, date: new Date().toISOString().slice(0, 10), status: offer?.status ?? "afgivet" });
+    setEditing(false);
+  };
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+      <h2 className="flex items-center gap-2 text-[17px] font-semibold text-slate-900"><Gavel size={18} strokeWidth={1.8} className="text-slate-500" /> Dit bud</h2>
+      {offer && !editing ? (
+        <div className="mt-2">
+          <p className="text-[24px] font-semibold tabular-nums text-slate-900">{kr(offer.amount)}</p>
+          {price > 0 && <p className="text-[14px] text-slate-500">{Math.round(((price - offer.amount) / price) * 1000) / 10} % under udbudsprisen · afgivet {new Date(offer.date).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</p>}
+          <div className="mt-3 grid grid-cols-2 gap-1.5">
+            {(Object.keys(OFFER_STATUS) as Offer["status"][]).map((st) => (
+              <button key={st} type="button" onClick={() => onChange({ ...offer, status: st })}
+                className={clsx("min-h-[40px] rounded-lg border text-[14px] font-semibold", offer.status === st ? (st === "accepteret" ? "border-emerald-500 bg-emerald-50 text-emerald-800" : st === "afslaaet" ? "border-rose-300 bg-rose-50 text-rose-700" : "border-slate-900 bg-slate-900 text-white") : "border-slate-200 text-slate-600")}>
+                {OFFER_STATUS[st]}
+              </button>
+            ))}
+          </div>
+          <div className="mt-2 flex gap-3 text-[14px]">
+            <button type="button" onClick={() => setEditing(true)} className="font-semibold text-blue-700">Ret beløb</button>
+            <button type="button" onClick={() => onChange(null)} className="font-medium text-slate-500 hover:text-rose-600">Fjern</button>
+          </div>
+        </div>
+      ) : editing || !offer ? (
+        editing ? (
+          <div className="mt-2 flex gap-2">
+            <input inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={price ? String(Math.round(price * 0.95 / 5000) * 5000) : "Beløb i kr."} className="h-11 min-w-0 flex-1 rounded-lg border border-slate-200 px-3 text-[16px] tabular-nums" />
+            <button type="button" onClick={save} className="min-h-[44px] rounded-lg bg-slate-900 px-4 text-[15px] font-semibold text-white">Gem</button>
+          </div>
+        ) : (
+          <button type="button" onClick={() => setEditing(true)} className="mt-2 inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-300 px-3.5 text-[15px] font-semibold text-slate-900 hover:border-slate-400"><Plus size={15} /> Registrér et bud</button>
+        )
+      ) : null}
+    </div>
   );
 }
