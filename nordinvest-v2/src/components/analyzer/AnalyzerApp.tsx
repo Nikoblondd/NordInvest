@@ -385,6 +385,10 @@ export function AnalyzerApp() {
       const pd = (data.property_data ?? {}) as Record<string, unknown>;
       setInputs((prev) => ({ ...prev, ...pickInputs(pd) }));
       if (typeof pd.address === "string") setAddress(pd.address);
+      // Reopened from the ejendomsmappe: it is already saved, and saving again
+      // must update this row, not create a second one.
+      usageRowIdRef.current = savedParam;
+      setSave({ status: "saved", id: savedParam });
       setRan(true);
       setEx({ status: "idle" });
     })();
@@ -940,9 +944,12 @@ export function AnalyzerApp() {
     let id: string | undefined;
     if (usageRowIdRef.current) {
       // Keep an existing ejendomsmappe (property_data.mappe) when saving again.
+      // Keep what the row already knows (the mappe, the listing link, the type)
+      // when this session doesn't have it.
       const prev = await supabase.from("analyses").select("property_data").eq("id", usageRowIdRef.current).single();
-      const mappe = (prev.data?.property_data as Record<string, unknown> | null)?.mappe;
-      if (mappe) payload.property_data = { ...payload.property_data, mappe };
+      const old = (prev.data?.property_data ?? {}) as Record<string, unknown>;
+      const fresh = Object.fromEntries(Object.entries(payload.property_data).filter(([, v]) => v != null && v !== ""));
+      payload.property_data = { ...old, ...fresh };
       const res = await supabase.from("analyses").update(payload).eq("id", usageRowIdRef.current).eq("user_id", user.id);
       error = res.error;
       if (!error) id = usageRowIdRef.current;

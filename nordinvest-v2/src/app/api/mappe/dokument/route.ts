@@ -77,7 +77,7 @@ export async function POST(req: Request) {
   try {
     const res = await new Anthropic().messages.create({
       model: MODEL,
-      max_tokens: 4000,
+      max_tokens: 8000,
       system: SYSTEM,
       messages: [{ role: "user", content: `${ctx}\n\n${text}\n\nGennemgå dokumentet. Svar kun med JSON-objektet.` }],
     });

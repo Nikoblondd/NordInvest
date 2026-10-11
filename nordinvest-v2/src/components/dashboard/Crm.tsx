@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, CalendarClock, FileText, Gavel, GripVertical, Plus } from "lucide-react";
 import { clsx } from "@/lib/clsx";
@@ -37,14 +37,18 @@ export function Crm({ initial }: { initial: CrmRow[] }) {
   const [overCol, setOverCol] = useState<Col | null>(null);
 
   const mappeOf = (r: CrmRow): Mappe => ({ ...EMPTY_MAPPE, ...(r.property_data?.mappe ?? {}) });
+  // Update one card and save it. Built from the latest rows (a ref), and the
+  // save happens outside the state updater so it runs exactly once.
+  const rowsRef = useRef(rows);
+  rowsRef.current = rows;
   const update = (id: string, fn: (m: Mappe) => Mappe) => {
-    setRows((rs) => rs.map((r) => {
-      if (r.id !== id) return r;
-      const next = fn(mappeOf(r));
-      const pd = { ...(r.property_data ?? {}), mappe: next };
-      void saveMappe(r.id, r.property_data ?? {}, next);
-      return { ...r, property_data: pd };
-    }));
+    const r = rowsRef.current.find((x) => x.id === id);
+    if (!r) return;
+    const next = fn(mappeOf(r));
+    const updated = { ...r, property_data: { ...(r.property_data ?? {}), mappe: next } };
+    rowsRef.current = rowsRef.current.map((x) => (x.id === id ? updated : x));
+    setRows(rowsRef.current);
+    void saveMappe(r.id, r.property_data ?? {}, next);
   };
   const move = (id: string, stage: Col) => update(id, (m) => ({ ...m, stage }));
 
@@ -165,11 +169,14 @@ function TaskRow({ t, r, onDone }: { t: Task; r: CrmRow; onDone: () => void }) {
   const addr = r.property_data?.address || r.property_url || "Ejendom";
   return (
     <li className="flex items-center gap-3 py-3">
-      <button type="button" role="checkbox" aria-checked={false} aria-label={`Marker ${t.title} som klaret`} onClick={onDone} className="h-6 w-6 shrink-0 rounded-full border-2 border-slate-300 hover:border-emerald-500" />
+      <button type="button" role="checkbox" aria-checked={false} aria-label={`Marker ${t.title} som klaret`} onClick={onDone} className="group -m-2 flex h-10 w-10 shrink-0 items-center justify-center"><span className="h-6 w-6 rounded-full border-2 border-slate-300 group-hover:border-emerald-500" /></button>
       <Link href={`/mappe/${r.id}`} className="min-w-0 flex-1">
-        <p className="truncate text-[15px] font-semibold text-slate-900">{t.title} <span className="font-normal text-slate-500">· {short(addr)}</span></p>
-        <p className={clsx("text-[13px]", dd != null && dd < 0 ? "font-semibold text-rose-600" : dd === 0 ? "font-semibold text-blue-700" : "text-slate-500")}>
-          {t.due ? `${dd! < 0 ? "Overskredet · " : dd === 0 ? "I dag · " : dd === 1 ? "I morgen · " : ""}${fmtDue(t.due)}` : "Ingen dato"}
+        <p className="truncate text-[15px] font-semibold text-slate-900">{t.title}</p>
+        <p className="truncate text-[13px] text-slate-500">
+          <span className={clsx(dd != null && dd < 0 ? "font-semibold text-rose-600" : dd === 0 ? "font-semibold text-blue-700" : "")}>
+            {t.due ? `${dd! < 0 ? "Overskredet · " : dd === 0 ? "I dag · " : dd === 1 ? "I morgen · " : ""}${fmtDue(t.due)}` : "Ingen dato"}
+          </span>
+          {" · "}{short(addr)}
         </p>
       </Link>
     </li>

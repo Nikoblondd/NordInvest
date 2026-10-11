@@ -79,7 +79,7 @@ export function Nav() {
         <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
           <LangToggle />
           {authed && (
-            <Link href="/dashboard" className="hidden items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-colors hover:border-slate-300 sm:inline-flex">
+            <Link href="/dashboard" className="hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-colors hover:border-slate-300 lg:inline-flex">
               <LayoutDashboard size={15} className="text-blue-600" /> Mine ejendomme
             </Link>
           )}
@@ -152,18 +152,21 @@ export function Nav() {
       {open && (
         <div className="border-t border-slate-200 bg-slate-50 px-4 py-5 sm:px-6 md:hidden">
           <div className="flex flex-col gap-4">
+            {authed && (
+              <Link href="/dashboard" className="flex items-center gap-2 text-base font-semibold text-slate-900" onClick={() => setOpen(false)}>
+                <LayoutDashboard size={18} className="text-blue-600" /> Mine ejendomme
+              </Link>
+            )}
             {links.map((l) => (
               <Link key={l.href} href={l.href} className="text-base font-medium text-slate-700" onClick={() => setOpen(false)}>
                 {l.label}
               </Link>
             ))}
-            <Link
-              href={authed ? "/dashboard" : "/auth/login"}
-              className="text-base font-medium text-slate-700"
-              onClick={() => setOpen(false)}
-            >
-              {authed ? "Mine ejendomme" : "Log ind"}
-            </Link>
+            {!authed && (
+              <Link href="/auth/login" className="text-base font-medium text-slate-700" onClick={() => setOpen(false)}>
+                Log ind
+              </Link>
+            )}
           </div>
         </div>
       )}

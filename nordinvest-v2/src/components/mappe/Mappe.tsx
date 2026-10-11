@@ -51,6 +51,13 @@ export function Mappe({ row }: { row: MappeRow }) {
   const [saving, setSaving] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [view, setView] = useState<Stage>(m.stage === "droppet" ? "screening" : m.stage);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Keep the viewed stage visible in the scrolling stage bar on phones.
+  const stageBar = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const bar = stageBar.current;
+    const btn = bar?.querySelector<HTMLElement>("[aria-current=step]");
+    if (bar && btn && bar.scrollWidth > bar.clientWidth) bar.scrollLeft = btn.offsetLeft - (bar.clientWidth - btn.offsetWidth) / 2;
+  }, [view]);
 
   const address = pd.address || row.property_url || "Ejendom";
   const price = Number(pd.price) || 0;
@@ -58,7 +65,12 @@ export function Mappe({ row }: { row: MappeRow }) {
   const ar = row.analysis_result ?? {};
 
   // Debounced save into property_data.mappe, keeping everything else on the row.
-  const persist = (next: MappeData) => {
+  // Always build on the latest mappe: a document review can finish a minute
+  // after it started, and must not undo notes or ticks made in the meantime.
+  const mRef = useRef(m);
+  const persist = (upd: MappeData | ((cur: MappeData) => MappeData)) => {
+    const next = typeof upd === "function" ? upd(mRef.current) : upd;
+    mRef.current = next;
     setM(next);
     if (timer.current) clearTimeout(timer.current);
     setSaving("saving");
@@ -69,8 +81,8 @@ export function Mappe({ row }: { row: MappeRow }) {
       setSaving(error ? "error" : "saved");
     }, 600);
   };
-  const toggle = (id: string) => persist({ ...m, checks: { ...m.checks, [id]: !m.checks[id] } });
-  const setStage = (s: Stage | "droppet") => { persist({ ...m, stage: s }); if (s !== "droppet") setView(s); };
+  const toggle = (id: string) => persist((c) => ({ ...c, checks: { ...c.checks, [id]: !c.checks[id] } }));
+  const setStage = (s: Stage | "droppet") => { persist((c) => ({ ...c, stage: s })); if (s !== "droppet") setView(s); };
 
   const done = (id: string, auto?: string) => !!m.checks[id] || (auto === "analysis");
   const stageItems = itemsFor(view, kind);
@@ -104,7 +116,7 @@ export function Mappe({ row }: { row: MappeRow }) {
         </div>
 
         {/* Stages */}
-        <nav aria-label="Faser" className="-mx-4 mt-6 overflow-x-auto px-4 [scrollbar-width:none]">
+        <nav ref={stageBar} aria-label="Faser" className="-mx-4 mt-6 overflow-x-auto px-4 [scrollbar-width:none]">
           <ol className="flex min-w-max gap-2">
             {STAGES.map((s, i) => {
               const items = itemsFor(s.id, kind);
@@ -150,18 +162,19 @@ export function Mappe({ row }: { row: MappeRow }) {
                 return (
                   <li key={c.id} className="flex gap-3.5 px-5 py-4 sm:px-6">
                     <button type="button" role="checkbox" aria-checked={ok} disabled={!!c.auto} onClick={() => toggle(c.id)} aria-label={c.title}
-                      className={clsx("mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 transition-colors",
-                        ok ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-white hover:border-slate-400")}>
-                      {ok && <Check size={16} strokeWidth={3} />}
+                      className="-m-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
+                      <span className={clsx("flex h-7 w-7 items-center justify-center rounded-lg border-2 transition-colors", ok ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 bg-white hover:border-slate-400")}>
+                        {ok && <Check size={16} strokeWidth={3} />}
+                      </span>
                     </button>
                     <div className="min-w-0">
                       <p className={clsx("text-[16px] font-semibold", ok ? "text-slate-500" : "text-slate-900")}>{c.title}</p>
                       <p className="mt-0.5 text-[15px] leading-relaxed text-slate-600">{c.why}</p>
                       {c.where && (
                         c.where.href
-                          ? <a href={c.where.href} target="_blank" rel="noopener noreferrer" className="mt-1.5 inline-flex items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">{c.where.label} <ExternalLink size={13} /></a>
+                          ? <a href={c.where.href} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-[40px] items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">{c.where.label} <ExternalLink size={13} /></a>
                           : c.where.label === "Analysen" || c.where.label.startsWith("Analysen") || c.where.label.startsWith("Juster") || c.where.label.startsWith("Bankrapport")
-                            ? <Link href={`/analyseren?saved=${row.id}`} className="mt-1.5 inline-flex items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">{c.where.label} →</Link>
+                            ? <Link href={`/analyseren?saved=${row.id}`} className="mt-1 inline-flex min-h-[40px] items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">{c.where.label} →</Link>
                             : <p className="mt-1.5 text-[14px] text-slate-500">Hvor: {c.where.label}</p>
                       )}
                       {c.stage === "dokumenter" && c.id !== "energi" && !ok && (
@@ -179,7 +192,7 @@ export function Mappe({ row }: { row: MappeRow }) {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
               <div className="flex items-center justify-between">
                 <h2 className="text-[17px] font-semibold text-slate-900">Tallene</h2>
-                <Link href={`/analyseren?saved=${row.id}`} className="text-[14px] font-semibold text-blue-700 hover:underline">Åbn analysen →</Link>
+                <Link href={`/analyseren?saved=${row.id}`} className="-my-2 inline-flex min-h-[40px] items-center text-[14px] font-semibold text-blue-700 hover:underline">Åbn analysen →</Link>
               </div>
               <dl className="mt-3 divide-y divide-slate-100 text-[15px]">
                 {ar.cashFlow != null && <Row k="Overskud pr. md." v={`${ar.cashFlow >= 0 ? "+" : "−"}${kr(Math.abs(ar.cashFlow))}`} tone={ar.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"} />}
@@ -189,8 +202,8 @@ export function Mappe({ row }: { row: MappeRow }) {
               </dl>
             </div>
 
-            <Tasks tasks={m.tasks ?? []} onChange={(tasks) => persist({ ...m, tasks })} />
-            <OfferBox offer={m.offer ?? null} price={price} onChange={(offer) => persist({ ...m, offer, stage: offer && (m.stage === "screening" || m.stage === "fremvisning" || m.stage === "dokumenter" || m.stage === "bank") ? "bud" : m.stage })} />
+            <Tasks tasks={m.tasks ?? []} onChange={(tasks) => persist((c) => ({ ...c, tasks }))} />
+            <OfferBox offer={m.offer ?? null} price={price} onChange={(offer) => persist((c) => ({ ...c, offer, stage: offer && ["screening", "fremvisning", "dokumenter", "bank"].includes(c.stage) ? "bud" : c.stage }))} />
 
             {(highRisks.length > 0 || rentalNo) && (
               <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5">
@@ -204,7 +217,7 @@ export function Mappe({ row }: { row: MappeRow }) {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
               <label htmlFor="noter" className="text-[17px] font-semibold text-slate-900">Noter</label>
-              <textarea id="noter" value={m.notes} onChange={(e) => persist({ ...m, notes: e.target.value })} rows={5}
+              <textarea id="noter" value={m.notes} onChange={(e) => { const notes = e.target.value; persist((c) => ({ ...c, notes })); }} rows={5}
                 placeholder="Fx svar fra mægleren, indtryk fra fremvisningen, bankens tilbud…"
                 className="mt-2 w-full resize-y rounded-xl border border-slate-200 bg-slate-50 p-3 text-[16px] leading-relaxed text-slate-900 outline-none focus:border-blue-500 focus:bg-white" />
             </div>
@@ -221,9 +234,9 @@ export function Mappe({ row }: { row: MappeRow }) {
         <Documents address={address} price={price} docs={m.docs}
           onAdd={(d) => {
             const check = DOC_CHECK[d.type];
-            persist({ ...m, docs: [d, ...m.docs], checks: check ? { ...m.checks, [check]: true } : m.checks });
+            persist((c) => ({ ...c, docs: [d, ...c.docs], checks: check ? { ...c.checks, [check]: true } : c.checks }));
           }}
-          onRemove={(id) => persist({ ...m, docs: m.docs.filter((d) => d.id !== id) })} />
+          onRemove={(id) => persist((c) => ({ ...c, docs: c.docs.filter((d) => d.id !== id) }))} />
       </div>
     </div>
   );
@@ -428,12 +441,12 @@ function Tasks({ tasks, onChange }: { tasks: Task[]; onChange: (t: Task[]) => vo
           return (
             <li key={t.id} className="flex items-start gap-3 py-2.5">
               <button type="button" role="checkbox" aria-checked={false} aria-label={`Marker ${t.title} som klaret`} onClick={() => onChange(tasks.map((x) => (x.id === t.id ? { ...x, done: true } : x)))}
-                className="mt-0.5 h-6 w-6 shrink-0 rounded-full border-2 border-slate-300 hover:border-emerald-500" />
+                className="group -m-2 flex h-10 w-10 shrink-0 items-center justify-center"><span className="h-6 w-6 rounded-full border-2 border-slate-300 group-hover:border-emerald-500" /></button>
               <div className="min-w-0 flex-1">
                 <p className="text-[15px] font-semibold text-slate-900">{t.title}</p>
                 {t.due && <p className={clsx("text-[13px]", dd! < 0 ? "font-semibold text-rose-600" : dd === 0 ? "font-semibold text-blue-700" : "text-slate-500")}>{dd! < 0 ? "Overskredet · " : dd === 0 ? "I dag · " : dd === 1 ? "I morgen · " : ""}{fmtDue(t.due)}</p>}
               </div>
-              <button type="button" aria-label="Slet opgave" onClick={() => onChange(tasks.filter((x) => x.id !== t.id))} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-rose-600"><Trash2 size={14} /></button>
+              <button type="button" aria-label="Slet opgave" onClick={() => onChange(tasks.filter((x) => x.id !== t.id))} className="-my-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-rose-600"><Trash2 size={14} /></button>
             </li>
           );
         })}
@@ -460,7 +473,7 @@ function OfferBox({ offer, price, onChange }: { offer: Offer | null; price: numb
       {offer && !editing ? (
         <div className="mt-2">
           <p className="text-[24px] font-semibold tabular-nums text-slate-900">{kr(offer.amount)}</p>
-          {price > 0 && <p className="text-[14px] text-slate-500">{Math.round(((price - offer.amount) / price) * 1000) / 10} % under udbudsprisen · afgivet {new Date(offer.date).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</p>}
+          {price > 0 && <p className="text-[14px] text-slate-500">{(Math.round(((price - offer.amount) / price) * 1000) / 10).toLocaleString("da-DK")} % {offer.amount <= price ? "under" : "over"} udbudsprisen · afgivet {new Date(offer.date).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</p>}
           <div className="mt-3 grid grid-cols-2 gap-1.5">
             {(Object.keys(OFFER_STATUS) as Offer["status"][]).map((st) => (
               <button key={st} type="button" onClick={() => onChange({ ...offer, status: st })}
@@ -470,8 +483,8 @@ function OfferBox({ offer, price, onChange }: { offer: Offer | null; price: numb
             ))}
           </div>
           <div className="mt-2 flex gap-3 text-[14px]">
-            <button type="button" onClick={() => setEditing(true)} className="font-semibold text-blue-700">Ret beløb</button>
-            <button type="button" onClick={() => onChange(null)} className="font-medium text-slate-500 hover:text-rose-600">Fjern</button>
+            <button type="button" onClick={() => setEditing(true)} className="min-h-[40px] font-semibold text-blue-700">Ret beløb</button>
+            <button type="button" onClick={() => onChange(null)} className="min-h-[40px] font-medium text-slate-500 hover:text-rose-600">Fjern</button>
           </div>
         </div>
       ) : editing || !offer ? (
