@@ -33,8 +33,8 @@ export default async function AbonnementPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <Nav />
       <main className="mx-auto max-w-5xl px-6 py-12">
-        <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900">
-          <ArrowLeft size={16} /> Tilbage til dashboard
+        <Link href="/konto" className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900">
+          <ArrowLeft size={16} /> Tilbage til konto
         </Link>
 
         <div className="mt-6">

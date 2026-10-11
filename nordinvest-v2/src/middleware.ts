@@ -11,6 +11,7 @@ const AUTH_PREFIXES = [
   "/analyseren", // shows plan + usage server-side
   "/priser", // shows current-plan chip when logged in
   "/abonnement",
+  "/konto",
   "/kvittering",
   "/rapport",
   "/velkommen",

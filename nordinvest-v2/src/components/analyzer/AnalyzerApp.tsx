@@ -923,7 +923,7 @@ export function AnalyzerApp() {
     const payload = {
       user_id: user.id,
       property_url: address ?? null,
-      property_data: { ...inputs, address, listingUrl, propType, zip, area, goal } as Record<string, unknown>,
+      property_data: { ...inputs, address, listingUrl, propType, zip, area, goal, image: images[0] } as Record<string, unknown>,
       strategy: inputs.strategy,
       analysis_result: {
         capRate: r.capRate,

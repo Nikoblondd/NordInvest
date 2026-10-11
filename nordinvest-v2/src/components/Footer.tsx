@@ -16,7 +16,7 @@ const columns = [
       { href: "/udlejning-af-lejlighed", label: "Regler og skat ved udlejning" },
       { href: "/priser", label: "Priser" },
       { href: "/#hvordan", label: "Sådan virker det" },
-      { href: "/dashboard", label: "Dashboard" },
+      { href: "/dashboard", label: "Mine ejendomme" },
     ],
   },
   {

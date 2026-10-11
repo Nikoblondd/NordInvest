@@ -11,7 +11,7 @@ const AI_BOTS = [
   "Applebot-Extended", "Amazonbot", "Bytespider", "CCBot", "cohere-ai", // others
 ];
 
-const DISALLOW = ["/dashboard", "/velkommen", "/auth/", "/api/"];
+const DISALLOW = ["/dashboard", "/konto", "/velkommen", "/auth/", "/api/"];
 
 export default function robots(): MetadataRoute.Robots {
   return {

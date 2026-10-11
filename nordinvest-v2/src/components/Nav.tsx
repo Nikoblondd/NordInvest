@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Menu, X, LayoutDashboard, ChevronDown, LogOut, User } from "lucide-react";
+import { ArrowRight, Menu, X, Settings, ChevronDown, LogOut, User } from "lucide-react";
 import { Logo } from "./Logo";
 import { hasAuthCookie, loadSupabase } from "@/lib/supabase/lazy";
 import { LangToggle } from "./i18n/LangToggle";
@@ -68,9 +68,14 @@ export function Nav() {
           <Logo />
         </div>
 
-        <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
+        <div className="hidden items-center gap-4 text-sm font-medium text-slate-600 md:flex lg:gap-8">
+          {authed && (
+            <Link href="/dashboard" className="whitespace-nowrap font-semibold text-slate-900 transition-colors hover:text-blue-600">
+              Mine ejendomme
+            </Link>
+          )}
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className="transition-colors hover:text-blue-600">
+            <Link key={l.href} href={l.href} className={authed && (l.href === "/spil" || l.href === "/blog") ? "hidden whitespace-nowrap transition-colors hover:text-blue-600 lg:inline" : "whitespace-nowrap transition-colors hover:text-blue-600"}>
               {l.label}
             </Link>
           ))}
@@ -78,11 +83,6 @@ export function Nav() {
 
         <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
           <LangToggle />
-          {authed && (
-            <Link href="/dashboard" className="hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.05)] transition-colors hover:border-slate-300 lg:inline-flex">
-              <LayoutDashboard size={15} className="text-blue-600" /> Mine ejendomme
-            </Link>
-          )}
           {authed ? (
             <div ref={menuRef} className="relative">
               <button
@@ -92,7 +92,7 @@ export function Nav() {
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-xs font-bold uppercase">
                   {firstName ? firstName[0] : <User size={14} />}
                 </span>
-                <span className="hidden max-w-[8rem] truncate sm:inline">{firstName ?? "Min konto"}</span>
+                <span className="hidden max-w-[8rem] truncate sm:inline md:hidden xl:inline">{firstName ?? "Min konto"}</span>
                 <ChevronDown size={15} className={menuOpen ? "rotate-180 transition-transform" : "transition-transform"} />
               </button>
               {menuOpen && (
@@ -104,11 +104,11 @@ export function Nav() {
                     </div>
                   )}
                   <Link
-                    href="/dashboard"
+                    href="/konto"
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50"
                   >
-                    <LayoutDashboard size={16} className="text-slate-400" /> Mine ejendomme
+                    <Settings size={16} className="text-slate-400" /> Konto og abonnement
                   </Link>
                   <form action="/auth/signout" method="post">
                     <button
@@ -153,8 +153,8 @@ export function Nav() {
         <div className="border-t border-slate-200 bg-slate-50 px-4 py-5 sm:px-6 md:hidden">
           <div className="flex flex-col gap-4">
             {authed && (
-              <Link href="/dashboard" className="flex items-center gap-2 text-base font-semibold text-slate-900" onClick={() => setOpen(false)}>
-                <LayoutDashboard size={18} className="text-blue-600" /> Mine ejendomme
+              <Link href="/dashboard" className="text-base font-semibold text-slate-900" onClick={() => setOpen(false)}>
+                Mine ejendomme
               </Link>
             )}
             {links.map((l) => (
