@@ -7,6 +7,7 @@ import { Trash2, Loader2, ArrowUpRight, MapPin } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { pct, krMd, num } from "@/lib/analysis";
 import { clsx } from "@/lib/clsx";
+import { STAGES } from "@/lib/mappe/checklist";
 
 type Row = {
   id: string;
@@ -14,7 +15,7 @@ type Row = {
   verdict: string | null;
   property_url: string | null;
   created_at: string;
-  property_data: { address?: string } | null;
+  property_data: { address?: string; mappe?: { stage?: string; docs?: unknown[] } } | null;
   analysis_result: { capRate?: number; cashFlow?: number; dscr?: number; irr?: number } | null;
 };
 
@@ -37,6 +38,8 @@ export function PortfolioCard({ row }: { row: Row }) {
   }[tone];
 
   const ar = row.analysis_result ?? {};
+  const stage = row.property_data?.mappe?.stage ?? "screening";
+  const docCount = row.property_data?.mappe?.docs?.length ?? 0;
   const title = row.property_data?.address || row.property_url || "Ejendom";
   const date = new Date(row.created_at).toLocaleDateString("da-DK", { day: "numeric", month: "short", year: "numeric" });
 
@@ -58,7 +61,7 @@ export function PortfolioCard({ row }: { row: Row }) {
 
   return (
     <Link
-      href={`/analyseren?saved=${row.id}`}
+      href={`/mappe/${row.id}`}
       className="group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 transition-all duration-300 hover:-translate-y-[1px] hover:border-slate-300 hover:shadow-card-lift sm:p-5"
       style={{
         boxShadow:
@@ -135,20 +138,23 @@ export function PortfolioCard({ row }: { row: Row }) {
           labels + tabular numbers, so the row reads like a real financial
           summary and not four generic stat cards. */}
       <div className="relative mt-4 grid grid-cols-2 divide-x divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-100 bg-slate-50/40">
-        <Stat label="Cap rate" value={ar.capRate != null ? pct(ar.capRate) : "–"} />
+        <Stat label="Afkast af prisen" value={ar.capRate != null ? pct(ar.capRate) : "–"} />
         <Stat
-          label="Cash flow"
+          label="Overskud pr. md."
           value={ar.cashFlow != null ? krMd(ar.cashFlow) : "–"}
           tone={ar.cashFlow != null && ar.cashFlow < 0 ? "bad" : "default"}
         />
-        <Stat label="DSCR" value={ar.dscr != null ? num(ar.dscr) : "–"} />
-        <Stat label="IRR" value={ar.irr != null ? pct(ar.irr) : "–"} />
+        <Stat label="Lejen dækker lånet" value={ar.dscr != null ? `${num(ar.dscr)} gange` : "–"} />
+        <Stat label="Afkast om året, 10 år" value={ar.irr != null ? pct(ar.irr) : "–"} />
       </div>
 
       <div className="relative mt-3 flex items-center justify-between">
-        <span className="text-xs text-slate-500">Gemt til portefølje</span>
-        <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-slate-500 transition-colors group-hover:text-blue-600">
-          Åbn analyse
+        <span className={clsx("rounded-full px-2.5 py-1 text-[12px] font-semibold", stage === "droppet" ? "bg-slate-100 text-slate-500" : "bg-blue-50 text-blue-800")}>
+          {stage === "droppet" ? "Droppet" : `Fase: ${STAGES.find((s) => s.id === stage)?.label ?? "Screening"}`}
+          {docCount > 0 ? ` · ${docCount} dok.` : ""}
+        </span>
+        <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-600 transition-colors group-hover:text-blue-600">
+          Åbn mappen
           <ArrowUpRight
             size={12}
             className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"

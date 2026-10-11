@@ -246,7 +246,7 @@ export function AnalyzerApp() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [fullSheet, setFullSheet] = useState(false);
   const [exporting, setExporting] = useState(false);
-  const [save, setSave] = useState<{ status: "idle" | "saving" | "saved" | "limit" | "error"; msg?: string }>({ status: "idle" });
+  const [save, setSave] = useState<{ status: "idle" | "saving" | "saved" | "limit" | "error"; msg?: string; id?: string }>({ status: "idle" });
   const [watch, setWatch] = useState<{ status: "idle" | "saving" | "saved" | "error"; msg?: string }>({ status: "idle" });
   const [listingUrl, setListingUrl] = useState<string | null>(null);
   const [ex, setEx] = useState<Extract>({ status: "idle" });
@@ -919,7 +919,7 @@ export function AnalyzerApp() {
     const payload = {
       user_id: user.id,
       property_url: address ?? null,
-      property_data: { ...inputs, address },
+      property_data: { ...inputs, address, listingUrl, propType, zip, area, goal } as Record<string, unknown>,
       strategy: inputs.strategy,
       analysis_result: {
         capRate: r.capRate,
@@ -937,16 +937,23 @@ export function AnalyzerApp() {
     // Flip the row this analysis already logged to "saved" (no double-count);
     // if it's missing for any reason, insert a fresh saved row instead.
     let error = null;
+    let id: string | undefined;
     if (usageRowIdRef.current) {
+      // Keep an existing ejendomsmappe (property_data.mappe) when saving again.
+      const prev = await supabase.from("analyses").select("property_data").eq("id", usageRowIdRef.current).single();
+      const mappe = (prev.data?.property_data as Record<string, unknown> | null)?.mappe;
+      if (mappe) payload.property_data = { ...payload.property_data, mappe };
       const res = await supabase.from("analyses").update(payload).eq("id", usageRowIdRef.current).eq("user_id", user.id);
       error = res.error;
+      if (!error) id = usageRowIdRef.current;
     }
     if (!usageRowIdRef.current || error) {
-      const res = await supabase.from("analyses").insert(payload);
+      const res = await supabase.from("analyses").insert(payload).select("id").single();
       error = res.error;
+      id = res.data?.id;
     }
     if (error) setSave({ status: "error", msg: error.message });
-    else setSave({ status: "saved" });
+    else setSave({ status: "saved", id });
   };
 
   // Time-savings survey → stored on the analysis row's property_data (jsonb), so
@@ -1435,14 +1442,14 @@ export function AnalyzerApp() {
               {usage && <UsageNudge {...usage} />}
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 {save.status === "saved" ? (
-                  <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
-                    <Check aria-hidden size={17} /> Gemt. Se porteføljen
+                  <a href={save.id ? `/mappe/${save.id}` : "/dashboard"} className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+                    <Check aria-hidden size={17} /> Gemt. Åbn ejendomsmappen
                   </a>
                 ) : (
                   <button type="button" onClick={saveToPortfolio} disabled={save.status === "saving"}
                     className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-[15px] font-semibold text-white transition-[background-color,transform] hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6aa8ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0e16] active:scale-[0.97] disabled:opacity-60">
                     {save.status === "saving" ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <Bookmark aria-hidden size={17} />}
-                    {save.status === "saving" ? "Gemmer…" : "Gem til portefølje"}
+                    {save.status === "saving" ? "Gemmer…" : "Gem og opret ejendomsmappe"}
                   </button>
                 )}
                 <button type="button" onClick={() => requirePaid("report", openBankReport)} className={darkPill}>

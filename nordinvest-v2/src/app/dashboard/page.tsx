@@ -248,7 +248,7 @@ export default async function DashboardPage() {
 
         {/* portfolio */}
         <div className="mt-10 flex items-center justify-between">
-          <h2 className="text-xl font-bold">Din portefølje</h2>
+          <div><h2 className="text-xl font-bold">Mine ejendomme</h2><p className="mt-0.5 text-sm text-slate-500">Hver gemt bolig har sin egen mappe: tjekliste, dokumenter og noter fra screening til køb.</p></div>
           <form action="/auth/signout" method="post">
             <button className="-my-2 py-2 text-sm font-medium text-slate-500 hover:text-slate-900">Log ud</button>
           </form>
@@ -257,8 +257,9 @@ export default async function DashboardPage() {
         {list.length === 0 ? (
           <div className="mt-4 flex flex-col items-start gap-5 rounded-xl border border-slate-200 bg-white p-8 sm:p-10">
             <p className="max-w-md text-slate-600">
-              Ingen gemte boliger endnu. Kør en analyse og gem den, så samler
-              dashboardet den her.
+              Ingen gemte boliger endnu. Analysér en bolig og tryk &quot;Gem og opret
+              ejendomsmappe&quot;. Så får du en mappe med tjekliste, dokumentgennemgang
+              og noter, der følger dig fra første fremvisning til købet.
             </p>
             <Link
               href="/analyseren"
