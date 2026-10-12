@@ -11,9 +11,9 @@ import { toolUser } from "@/lib/gate";
 import { LockedTool } from "@/components/gate/LockedTool";
 
 const baseMeta: Metadata = {
-  title: "Analysér en ejendomsinvestering gratis",
+  title: "Analysér en ejendomsinvestering: overskud, afkast og renterisiko",
   description:
-    "Gratis analyse af ejendomsinvestering i Danmark: indsæt et boliglink og få bruttoafkast, cash flow, rentestress-test og 5-årig prisprognose på sekunder.",
+    "Analyse af ejendomsinvestering i Danmark: bruttoafkast, cash flow, rentestress-test og 10 år frem, med data fra BBR og Danmarks Statistik. En del af NordInvest, med adgang efter en kort samtale.",
   alternates: { canonical: "/analyseren" },
 };
 

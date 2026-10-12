@@ -62,6 +62,7 @@ const nextConfig = {
       { source: "/analyzer", destination: "/analyseren", permanent: true },
       { source: "/mine-ejendomme", destination: "/adgang", permanent: false },
       { source: "/signup", destination: "/adgang", permanent: false },
+      { source: "/auth/signup", destination: "/adgang", permanent: false },
       { source: "/opret", destination: "/adgang", permanent: false },
 
       // --- Deliberately removed sections → closest equivalent ---
