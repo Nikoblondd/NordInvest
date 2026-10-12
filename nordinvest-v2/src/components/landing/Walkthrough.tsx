@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import { AnalysisScreen, DealScreen, DocsScreen, Notice, OfferScreen } from "./screens";
 
@@ -78,7 +79,7 @@ export function Walkthrough() {
             ) : (
               <button type="button" onClick={() => setI(0)} className="inline-flex min-h-[46px] items-center rounded-lg border border-slate-300 bg-white px-4 text-[15px] font-semibold text-slate-900 hover:border-slate-400">Se forløbet igen</button>
             )}
-            <a href="#adgang" className="inline-flex min-h-[46px] items-center rounded-lg bg-blue-600 px-4 text-[15px] font-semibold text-white hover:bg-blue-500">Anmod om adgang</a>
+            <Link href="/adgang" className="inline-flex min-h-[46px] items-center rounded-lg bg-blue-600 px-4 text-[15px] font-semibold text-white hover:bg-blue-500">Anmod om adgang</Link>
           </div>
         </div>
         <div key={`${s.k}-s`} className="relative animate-[fadeUp_.5s_ease-out] pb-10 sm:pb-0">

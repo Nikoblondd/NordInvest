@@ -41,7 +41,7 @@ export function QuickTest() {
   const good = r && r.cashFlow >= 0;
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_24px_60px_-30px_rgba(11,27,51,0.35)] sm:p-6">
-      <p className="text-[18px] font-semibold tracking-[-0.01em] text-slate-900">Hvad giver boligen om måneden?</p>
+      <p className="pr-12 text-[18px] font-semibold tracking-[-0.01em] text-slate-900">Hvad giver boligen om måneden?</p>
       <p className="mt-0.5 text-[14px] text-slate-500">Med 20 % udbetaling og 4,5 % rente.</p>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <Field id="qt-price" label="Udbudspris" value={price} onChange={setPrice} suffix="kr." />
@@ -96,7 +96,7 @@ export function QuickTest() {
           ))}
         </ul>
       </div>
-      <Link href="#adgang" className="mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-[#0b1b33] px-4 text-[15px] font-semibold text-white hover:bg-[#13284a]">
+      <Link href="/adgang" className="mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-[#0b1b33] px-4 text-[15px] font-semibold text-white hover:bg-[#13284a]">
         Anmod om adgang
       </Link>
     </div>

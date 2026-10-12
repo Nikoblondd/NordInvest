@@ -15,7 +15,8 @@ const columns = [
       { href: "/beregn-afkast", label: "Beregn afkast" },
       { href: "/udlejning-af-lejlighed", label: "Regler og skat ved udlejning" },
       { href: "/priser", label: "Priser" },
-      { href: "/#hvordan", label: "Sådan virker det" },
+      { href: "/adgang", label: "Anmod om adgang" },
+      { href: "/spil", label: "Ejendomsspillet" },
       { href: "/dashboard", label: "Mine ejendomme" },
     ],
   },
@@ -53,9 +54,9 @@ const columns = [
 ];
 
 const QUICK = [
-  { href: "/analyseren/start", label: "Analysér en bolig" },
-  { href: "/deals", label: "Deal-motor" },
-  { href: "/priser", label: "Priser" },
+  { href: "/adgang", label: "Anmod om adgang" },
+  { href: "/spil", label: "Ejendomsspillet" },
+  { href: "/deals", label: "Bedste boliger lige nu" },
   { href: "/blog", label: "Blog & guides" },
   { href: "/om", label: "Om os" },
   { href: "/kontakt", label: "Kontakt" },
@@ -77,8 +78,8 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <Logo size={24} />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-500">
-              Data-drevne beslutninger for danske ejendomsinvestorer. Analysér enhver bolig på under
-              60 sekunder.
+              Ét system for danske ejendomsinvestorer: find, regn, gennemgå og byd. Adgang efter en
+              personlig samtale.
             </p>
           </div>
           {/* Phones: the six links people actually use, the rest one tap away. */}

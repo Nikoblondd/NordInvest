@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/analyse-af-ejendomsinvestering", priority: 0.95, freq: "monthly" },
     { path: "/deals", priority: 0.9, freq: "daily" },
     { path: "/udlejerindeks", priority: 0.8, freq: "daily" },
+    { path: "/adgang", priority: 0.9, freq: "monthly" },
     { path: "/priser", priority: 0.8, freq: "monthly" },
     { path: "/methodology", priority: 0.7, freq: "monthly" },
     { path: "/investment-models", priority: 0.7, freq: "monthly" },
