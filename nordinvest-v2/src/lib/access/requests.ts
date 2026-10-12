@@ -33,7 +33,6 @@ export function notifyEmail(r: AccessRequest): { subject: string; html: string }
     ["E-mail", `<a href="mailto:${esc(r.email)}">${esc(r.email)}</a>`],
     ["Ejer i dag", r.portfolio],
     ["Leder efter", r.goals.join(", ") || "Ikke oplyst"],
-    ["Bolig til samtalen", r.propertyLink ? `<a href="${esc(r.propertyLink)}">${esc(r.propertyLink)}</a>` : "Ingen"],
     ["Besked", r.message ? esc(r.message).replace(/\n/g, "<br>") : "Ingen"],
   ];
   return {
@@ -52,7 +51,7 @@ export function confirmationEmail(r: AccessRequest): { subject: string; html: st
     subject: "Tak for din anmodning til NordInvest",
     html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
 <p>Hej ${first},</p>
-<p>Tak for din anmodning om adgang til NordInvest. Jeg ringer dig op på ${esc(r.phone)} inden for en arbejdsdag, så vi kan tage en kort snak om dine boliger${r.propertyLink ? " og kigge på den bolig, du sendte med" : ""}.</p>
+<p>Tak for din anmodning om adgang til NordInvest. Jeg ringer dig op på ${esc(r.phone)} inden for en arbejdsdag, så vi kan tage en kort snak om, hvordan du investerer, og hvad du har brug for.</p>
 <p>Passer det dårligt, så svar bare på denne mail med et tidspunkt, der passer dig bedre.</p>
 <p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · +45 20 99 37 97</p>
 <p style="font-size:12px;color:#94a3b8">Du får denne mail, fordi du har anmodet om adgang på nordinvest.io. Vi bruger kun dine oplysninger til at kontakte dig om adgang.</p></div>`,

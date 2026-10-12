@@ -90,7 +90,7 @@ export function OverviewScreen() {
       </div>
       <div className="mt-2 rounded-lg border border-slate-200/80 p-2.5">
         <div className="flex items-center justify-between text-[10px]"><span className="font-semibold text-slate-700">Pipeline</span><span className="text-slate-400">8 boliger</span></div>
-        <div className="mt-2 flex h-2 gap-0.5 overflow-hidden rounded-full">{stages.map(([l, n, c]) => <span key={l} className={c} style={{ flex: n }} />)}</div>
+        <div className="grow-x mt-2 flex h-2 gap-0.5 overflow-hidden rounded-full [--d:1000ms]">{stages.map(([l, n, c]) => <span key={l} className={c} style={{ flex: n }} />)}</div>
         <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-slate-500">{stages.map(([l, n, c]) => <span key={l} className="flex items-center gap-1"><span className={cx("h-1.5 w-1.5 rounded-full", c)} />{l} {n}</span>)}</div>
       </div>
       <div className="mt-2 grid gap-2 lg:grid-cols-[1.15fr_1fr]">

@@ -29,10 +29,10 @@ Vi lover kvalitet og personlig kontakt. Vi lover ikke et fællesskab, medlemstal
 
 ## 3. Adgangsforløbet
 
-1. **Anmodning:** personen udfylder formularen (navn, e-mail, telefon, antal ejendomme, hvad de leder efter, eventuelt et boliglink og en besked). Den gemmes, og du får straks en mail.
-2. **Samtale:** du ringer inden for en arbejdsdag. Er der et boliglink, har du det klar på forhånd. Det er demoen: vi regner deres egen bolig igennem på 20 minutter.
+1. **Anmodning:** personen udfylder formularen (navn, e-mail, telefon, antal ejendomme, hvad de leder efter og en valgfri besked). Den gemmes, og du får straks en mail.
+2. **Samtale:** du ringer inden for en arbejdsdag og afdækker på 20 minutter, hvordan personen investerer, og hvad de har brug for. Passer NordInvest ikke, siger du det.
 3. **Aftale:** I aftaler pris. Du skriver prisen og en note på personen i adminsiden.
-4. **Invitation:** du trykker "Godkend og invitér". Personen får en personlig mail med et link. Boligen fra samtalen ligger allerede i deres arbejdsområde.
+4. **Invitation:** du trykker "Godkend og invitér". Personen får en personlig mail med et link til sit eget arbejdsområde.
 5. **Første login:** de sætter deres adgangskode og lander i Overblik.
 
 **Din administration:** en side under `/dashboard/adgang`, som kun du kan se. Den har tre faner:
@@ -116,10 +116,9 @@ Hver fase lukkes først, når kriterierne er opfyldt og vist for dig.
 **Fase 4: Opfølgning**
 - Påmindelsesmails.
 - Mæglerkontakt.
-- Demoboligen lægges automatisk ind ved invitation.
 - En lille personlig velkomst fra dig ved første login.
 
-*Færdig når:* en ny inviteret bruger lander med sin bolig klar, og en opgave med dato giver en mail dagen før.
+*Færdig når:* en ny inviteret bruger lander i et arbejdsområde, der er sat op efter samtalen, og en opgave med dato giver en mail dagen før.
 
 ## 6. Beslutninger, der kræver dig
 

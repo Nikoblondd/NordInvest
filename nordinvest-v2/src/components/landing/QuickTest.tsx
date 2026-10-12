@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Lock } from "lucide-react";
 import { analyze } from "@/lib/analysis";
+import { useTween } from "./motion";
 
 /*
  * The free test on the public page: three numbers in, the core result out,
@@ -39,6 +40,7 @@ export function QuickTest() {
   }, [price, rent_, opex]);
 
   const good = r && r.cashFlow >= 0;
+  const cf = useTween(r?.cashFlow ?? 0);
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_24px_60px_-30px_rgba(11,27,51,0.35)] sm:p-6">
       <p className="pr-12 text-[18px] font-semibold tracking-[-0.01em] text-slate-900">Hvad giver boligen om måneden?</p>
@@ -54,7 +56,7 @@ export function QuickTest() {
           <>
             <p className="text-[13px] text-slate-500">Overskud efter lån og udgifter</p>
             <p className={`text-[36px] font-semibold leading-tight tabular-nums tracking-[-0.03em] ${good ? "text-emerald-700" : "text-rose-600"}`}>
-              {r.cashFlow >= 0 ? "+" : "-"}{fmt(Math.abs(r.cashFlow))} kr./md.
+              {cf >= 0 ? "+" : "-"}{fmt(Math.abs(cf))} kr./md.
             </p>
             {(() => {
               const rent = parse(rent_);
@@ -70,7 +72,7 @@ export function QuickTest() {
                 <div className="mt-3">
                   <p className="text-[12px] text-slate-500">Sådan bliver huslejen på {fmt(rent)} kr. brugt</p>
                   <div className="mt-1.5 flex h-3 overflow-hidden rounded-full bg-slate-100">
-                    {parts.map((p) => p.v > 0 && <span key={p.l} className={p.c} style={{ width: `${(p.v / total) * 100}%` }} />)}
+                    {parts.map((p) => p.v > 0 && <span key={p.l} className={`${p.c} transition-[width] duration-500 ease-out`} style={{ width: `${(p.v / total) * 100}%` }} />)}
                   </div>
                   <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-slate-600">
                     {parts.map((p) => <span key={p.l} className="flex items-center gap-1.5"><span className={`h-2 w-2 rounded-sm ${p.c}`} />{p.l} {fmt(p.v)} kr.</span>)}

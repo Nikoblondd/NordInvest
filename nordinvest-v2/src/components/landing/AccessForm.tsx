@@ -12,7 +12,7 @@ import { captureEvent } from "@/lib/analytics-events";
  * /api/adgang. Submitting never grants access.
  */
 
-export function AccessForm({ source = "adgang", initialLink = "" }: { source?: string; initialLink?: string }) {
+export function AccessForm({ source = "adgang" }: { source?: string }) {
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [portfolio, setPortfolio] = useState("");
@@ -28,7 +28,7 @@ export function AccessForm({ source = "adgang", initialLink = "" }: { source?: s
     const f = new FormData(e.currentTarget);
     const body = {
       name: f.get("name"), email: f.get("email"), phone: f.get("phone"), portfolio, goals,
-      propertyLink: f.get("propertyLink"), message: f.get("message"), website: f.get("website"),
+      message: f.get("message"), website: f.get("website"),
       source, t: started.current,
     };
     // Check in the browser first, so the visitor gets instant, precise feedback.
@@ -45,7 +45,7 @@ export function AccessForm({ source = "adgang", initialLink = "" }: { source?: s
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
         setState("sent");
-        captureEvent("access_requested", { portfolio, goals: goals.join(","), has_link: !!body.propertyLink, source });
+        captureEvent("access_requested", { portfolio, goals: goals.join(","), source });
         return;
       }
       if (data.errors) {
@@ -119,11 +119,6 @@ export function AccessForm({ source = "adgang", initialLink = "" }: { source?: s
         </div>
       </fieldset>
 
-      <div className="mt-5">
-        <label htmlFor="af-link" className={label}>En bolig, vi skal kigge på sammen <span className="font-normal text-slate-400">(valgfrit)</span></label>
-        <input id="af-link" name="propertyLink" type="url" inputMode="url" data-field="propertyLink" defaultValue={initialLink} placeholder="https://www.boligsiden.dk/..." aria-invalid={!!errors.propertyLink} className={`mt-1.5 ${input(errors.propertyLink)}`} />
-        <Err k="propertyLink" />
-      </div>
       <div className="mt-5">
         <label htmlFor="af-msg" className={label}>Hvad skal NordInvest hjælpe dig med? <span className="font-normal text-slate-400">(valgfrit)</span></label>
         <textarea id="af-msg" name="message" rows={3} className={`mt-1.5 ${input()} h-auto py-2.5`} />

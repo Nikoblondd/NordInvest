@@ -9,12 +9,11 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Anmod om adgang",
-  description: "Anmod om adgang til NordInvest. Vi tager en samtale på 20 minutter med udgangspunkt i en bolig, du selv overvejer, og aftaler derefter pris og adgang.",
+  description: "Anmod om adgang til NordInvest. Vi tager en samtale på 20 minutter om, hvordan du investerer, og hvad du har brug for, og aftaler derefter pris og adgang.",
   alternates: { canonical: "/adgang" },
 };
 
-export default function AdgangPage({ searchParams }: { searchParams: { bolig?: string; kilde?: string } }) {
-  const link = typeof searchParams.bolig === "string" && /^https?:\/\//.test(searchParams.bolig) ? searchParams.bolig.slice(0, 500) : "";
+export default function AdgangPage({ searchParams }: { searchParams: { kilde?: string } }) {
   return (
     <div className={`${geist.variable} min-h-screen bg-white font-[family-name:var(--font-geist)] text-slate-900 antialiased`}>
       <LandingNav />
@@ -22,11 +21,11 @@ export default function AdgangPage({ searchParams }: { searchParams: { bolig?: s
         <div className="mx-auto grid max-w-[1320px] gap-12 px-4 py-12 text-white sm:px-8 sm:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div className="lg:pt-6">
             <h1 className="text-[36px] font-semibold leading-[1.05] tracking-[-0.035em] [text-wrap:balance] sm:text-[52px]">
-              Se NordInvest <span className="text-blue-400">med din egen bolig.</span>
+              Fortæl mig, <span className="text-blue-400">hvad du har brug for.</span>
             </h1>
-            <p className="mt-5 max-w-[32rem] text-[18px] leading-relaxed text-white/65">Fortæl kort, hvad du ejer, og hvad du leder efter. Så ringer jeg dig op, og vi regner en bolig igennem sammen.</p>
+            <p className="mt-5 max-w-[32rem] text-[18px] leading-relaxed text-white/65">Svar på et par korte spørgsmål. Så ringer jeg dig op, og vi finder ud af, om NordInvest kan hjælpe dig.</p>
             <ol className="mt-10 space-y-6">
-              {[["Du sender anmodningen", "Det tager 2 minutter."], ["Vi tager en samtale på 20 minutter", "Jeg ringer inden for en arbejdsdag. Vi kigger på din egen bolig og finder ud af, om NordInvest passer til dig."], ["Du får en personlig invitation", "Vi aftaler pris, og du får adgang til dit eget arbejdsområde med boligen lagt ind."]].map(([t, d], i) => (
+              {[["Du sender anmodningen", "Det tager 2 minutter."], ["Vi tager en samtale på 20 minutter", "Jeg ringer inden for en arbejdsdag. Vi taler om, hvordan du investerer i dag, og hvad du har brug for."], ["Du får et ærligt svar", "Passer NordInvest til dig, aftaler vi pris, og du får en personlig invitation. Ellers siger jeg det."]].map(([t, d], i) => (
                 <li key={t} className="flex gap-4">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500 text-[14px] font-semibold">{i + 1}</span>
                   <span><span className="block text-[17px] font-semibold">{t}</span><span className="mt-0.5 block max-w-md text-[15px] leading-relaxed text-white/60">{d}</span></span>
@@ -44,7 +43,7 @@ export default function AdgangPage({ searchParams }: { searchParams: { bolig?: s
               </div>
             </div>
           </div>
-          <div><AccessForm source={searchParams.kilde ? String(searchParams.kilde).slice(0, 40) : "adgang"} initialLink={link} /></div>
+          <div><AccessForm source={searchParams.kilde ? String(searchParams.kilde).slice(0, 40) : "adgang"} /></div>
         </div>
       </main>
       <Footer />

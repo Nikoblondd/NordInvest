@@ -1,7 +1,7 @@
 /** Form options for "Anmod om adgang", shared by the form and the API. */
 export const PORTFOLIO = ["Ingen endnu", "1-2", "3-10", "Over 10"] as const;
 export const GOALS = ["Udlejningsbolig", "Renovering og salg", "Erhverv", "Andet"] as const;
-export type FieldErrors = Partial<Record<"name" | "email" | "phone" | "portfolio" | "propertyLink" | "message", string>>;
+export type FieldErrors = Partial<Record<"name" | "email" | "phone" | "portfolio" | "message", string>>;
 
 export type AccessRequest = {
   id: string;
@@ -11,7 +11,6 @@ export type AccessRequest = {
   phone: string;
   portfolio: string;
   goals: string[];
-  propertyLink: string;
   message: string;
   source: string;
   status: "ny";
@@ -37,7 +36,6 @@ export function validate(body: Record<string, unknown>): { data?: Omit<AccessReq
   const phoneRaw = str(body.phone, 40);
   const portfolio = str(body.portfolio, 40);
   const goals = Array.isArray(body.goals) ? body.goals.map((g) => str(g, 40)).filter((g) => (GOALS as readonly string[]).includes(g)) : [];
-  const propertyLink = str(body.propertyLink, 500);
   const message = typeof body.message === "string" ? body.message.trim().slice(0, 2000) : "";
   const source = str(body.source, 80) || "adgang";
 
@@ -46,9 +44,8 @@ export function validate(body: Record<string, unknown>): { data?: Omit<AccessReq
   const phone = normalisePhone(phoneRaw);
   if (!phone) errors.phone = "Skriv et telefonnummer med 8 cifre.";
   if (!(PORTFOLIO as readonly string[]).includes(portfolio)) errors.portfolio = "Vælg et svar.";
-  if (propertyLink && !/^https?:\/\/\S+\.\S+/.test(propertyLink)) errors.propertyLink = "Indsæt hele linket, der starter med https://";
 
   if (Object.keys(errors).length) return { errors };
-  return { data: { name, email, phone: phone!, portfolio, goals, propertyLink, message, source } };
+  return { data: { name, email, phone: phone!, portfolio, goals, message, source } };
 }
 
