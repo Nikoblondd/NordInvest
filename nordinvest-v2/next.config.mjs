@@ -63,13 +63,17 @@ const nextConfig = {
       { source: "/mine-ejendomme", destination: "/adgang", permanent: false },
       { source: "/signup", destination: "/adgang", permanent: false },
       { source: "/auth/signup", destination: "/adgang", permanent: false },
+      // Mine ejendomme moved into the app.
+      { source: "/dashboard", destination: "/app", permanent: false },
+      { source: "/mappe/:id", destination: "/app/ejendomme/:id", permanent: false },
+      { source: "/velkommen", destination: "/app/velkommen", permanent: false },
       { source: "/opret", destination: "/adgang", permanent: false },
 
       // --- Deliberately removed sections → closest equivalent ---
       { source: "/vaerktoejer", destination: "/analyseren", permanent: true },
       { source: "/vaerktoejer/:tool*", destination: "/analyseren", permanent: true },
-      { source: "/portfolio", destination: "/dashboard", permanent: true },
-      { source: "/portfolio.html", destination: "/dashboard", permanent: true },
+      { source: "/portfolio", destination: "/app", permanent: true },
+      { source: "/portfolio.html", destination: "/app", permanent: true },
       { source: "/brand", destination: "/om", permanent: true },
       { source: "/brand.html", destination: "/om", permanent: true },
       { source: "/boligsiden-investering-guide", destination: "/analyseren", permanent: true },
