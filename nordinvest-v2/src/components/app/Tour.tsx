@@ -22,7 +22,7 @@ const STEPS: Step[] = [
   { target: "quickfind", title: "Ét felt til det hele", text: "Indsæt et link fra Boligsiden, Home eller EDC, så regner vi boligen igennem. Skriv en adresse, så finder du en af dine egne. På computer åbner ⌘K feltet." },
   { target: "kpis", title: "Status på et øjeblik", text: "Hvor mange boliger du har i gang, dine fremvisninger, bud ude og nye muligheder fra markedet." },
   { target: "pipeline", title: "Din pipeline", text: "Hver farve er en fase i købet: screening, fremvisning, papirer, bank og bud. Tryk for at se boligerne i den fase." },
-  { target: "next-steps", title: "Næste skridt", text: "Dine opgaver på tværs af alle boliger, sorteret efter dato. Sæt flueben, når du er færdig, så forsvinder den." },
+  { target: "next-steps", title: "Næste skridt", text: "Dine opgaver på tværs af alle boliger, sorteret efter dato. Du får en mail dagen før, og sætter flueben, når du er færdig." },
   { target: "opportunities", title: "Nye muligheder", text: "Deal-motoren regner hele markedet igennem hver dag. Her er de boliger, der giver mest overskud lige nu. Tryk Analysér for at regne på én." },
   { target: "nav-ejendomme", title: "Ejendomme", text: "Din pipeline som tavle eller liste. Hver bolig er en sag med analyse, papirer, opgaver, mæglerens kontakt og dit bud." },
   { target: "nav-find", title: "Find boliger", text: "Deal-motoren med dine egne filtre og hele markedet på et kort. Gem en søgning, så får du besked, når en ny bolig passer." },
