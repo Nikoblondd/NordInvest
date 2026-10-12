@@ -100,7 +100,7 @@ function Card({ w, onRemove }: { w: Watch; onRemove: (id: string) => void }) {
       {/* Action row — wraps naturally on phone. Stop is an icon-only ghost
           button aligned to the right, so it never crowds the primary CTA. */}
       <div className="mt-4 flex flex-wrap items-center gap-1.5 border-t border-slate-100 pt-3">
-        <Link href={`/analyseren?url=${encodeURIComponent(w.listing_url)}`}
+        <Link href={`/app/analyser?url=${encodeURIComponent(w.listing_url)}`}
           className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-colors hover:bg-slate-800 sm:text-xs">
           Analysér igen
         </Link>

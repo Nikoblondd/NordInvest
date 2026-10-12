@@ -44,7 +44,7 @@ const street = (a: string) => a.split(",")[0];
 const city = (a: string) => a.split(",").slice(1).join(",").trim();
 const addrOf = (r: CrmRow) => r.property_data?.address || r.property_url || "Bolig";
 
-export function Crm({ initial, firstName }: { initial: CrmRow[]; firstName: string }) {
+export function Crm({ initial }: { initial: CrmRow[]; firstName?: string }) {
   const [rows, setRows] = useState(initial);
   const [tab, setTab] = useState<"pipeline" | "opgaver">("pipeline");
   const [view, setView] = useState<"tavle" | "liste">("tavle");
@@ -97,12 +97,12 @@ export function Crm({ initial, firstName }: { initial: CrmRow[]; firstName: stri
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-[28px] font-semibold leading-tight tracking-[-0.02em] text-slate-900 sm:text-[32px]">Mine ejendomme</h1>
+          <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.025em] text-slate-900 sm:text-[30px]">Ejendomme</h1>
           <p className="mt-1 text-[15px] text-slate-500">
-            Hej {firstName}. {rows.length === 0 ? "Her samler du de boliger, du overvejer at købe." : `${active} i gang, ${offers} med bud og ${thisWeek} ${thisWeek === 1 ? "opgave" : "opgaver"} de næste 7 dage.`}
+            {rows.length === 0 ? "Her samler du de boliger, du overvejer at købe." : `${active} i gang, ${offers} med bud og ${thisWeek} ${thisWeek === 1 ? "opgave" : "opgaver"} de næste 7 dage.`}
           </p>
         </div>
-        <Link href="/analyseren/start" className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-blue-600 px-4 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-blue-500 active:translate-y-px">
+        <Link href="/app/analyser" className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg bg-blue-600 px-4 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-blue-500 active:translate-y-px">
           <Plus size={17} /> Tilføj bolig
         </Link>
       </div>
@@ -247,7 +247,7 @@ function Board({ cols, byStage, mappeOf, onMove }: ViewProps) {
               const price = Number(r.property_data?.price) || 0;
               const nt = nextTask(m);
               return (
-                <Link key={r.id} href={`/mappe/${r.id}`} draggable
+                <Link key={r.id} href={`/app/ejendomme/${r.id}`} draggable
                   onDragStart={() => setDragId(r.id)} onDragEnd={() => { setDragId(null); setOver(null); }}
                   className={clsx("block cursor-grab rounded-lg border border-slate-200/80 bg-white p-3 shadow-[0_1px_2px_rgba(15,23,42,0.06)] transition-shadow hover:border-slate-300 hover:shadow-md active:cursor-grabbing", dragId === r.id && "opacity-40")}>
                   <div className="flex items-start gap-2.5">
@@ -302,7 +302,7 @@ function ListView({ cols, byStage, mappeOf, onMove }: ViewProps) {
                 const nt = nextTask(m);
                 return (
                   <li key={r.id} className="flex items-center gap-3 px-3 py-3 lg:grid lg:grid-cols-[minmax(0,2.2fr)_150px_130px_130px_minmax(0,1.6fr)] lg:gap-4 lg:px-4">
-                    <Link href={`/mappe/${r.id}`} className="flex min-w-0 flex-1 items-center gap-3">
+                    <Link href={`/app/ejendomme/${r.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                       <Thumb r={r} stage={c} />
                       <span className="min-w-0">
                         <span className="block truncate text-[15px] font-semibold text-slate-900 hover:text-blue-700">{street(addr)}</span>
@@ -328,7 +328,7 @@ function ListView({ cols, byStage, mappeOf, onMove }: ViewProps) {
 
 /* ---------- Tasks ---------- */
 
-function Tasks({ rows, tasks, update }: { rows: CrmRow[]; tasks: { t: Task; r: CrmRow }[]; update: (id: string, fn: (m: Mappe) => Mappe) => void }) {
+export function Tasks({ rows, tasks, update }: { rows: CrmRow[]; tasks: { t: Task; r: CrmRow }[]; update: (id: string, fn: (m: Mappe) => Mappe) => void }) {
   const [title, setTitle] = useState("");
   const [rowId, setRowId] = useState(rows[0]?.id ?? "");
   const [due, setDue] = useState("");
@@ -383,7 +383,7 @@ function Tasks({ rows, tasks, update }: { rows: CrmRow[]; tasks: { t: Task; r: C
                     </button>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-[15px] font-medium text-slate-900">{t.title}</p>
-                      <Link href={`/mappe/${r.id}`} className="block truncate text-[13px] text-slate-500 hover:text-blue-700">{street(addrOf(r))}{t.due && <span className="sm:hidden">, {fmtDue(t.due)}</span>}</Link>
+                      <Link href={`/app/ejendomme/${r.id}`} className="block truncate text-[13px] text-slate-500 hover:text-blue-700">{street(addrOf(r))}{t.due && <span className="sm:hidden">, {fmtDue(t.due)}</span>}</Link>
                     </div>
                     {t.due && <span className="hidden shrink-0 pr-1 text-right text-[13px] tabular-nums text-slate-600 sm:block">{fmtDue(t.due)}</span>}
                   </li>
@@ -418,7 +418,7 @@ function EmptyBoard() {
       <div className="border-t border-slate-100 px-5 py-8 text-center sm:py-10">
         <h2 className="text-[20px] font-semibold text-slate-900">Ingen boliger endnu</h2>
         <p className="mx-auto mt-1.5 max-w-md text-[15px] text-slate-600">Analysér en bolig og tryk &quot;Gem&quot;. Så lander den her, og du kan følge den fra første kig til køb.</p>
-        <Link href="/analyseren/start" className="mt-5 inline-flex min-h-[48px] items-center gap-1.5 rounded-lg bg-blue-600 px-5 text-[16px] font-semibold text-white shadow-sm hover:bg-blue-500">
+        <Link href="/app/analyser" className="mt-5 inline-flex min-h-[48px] items-center gap-1.5 rounded-lg bg-blue-600 px-5 text-[16px] font-semibold text-white shadow-sm hover:bg-blue-500">
           <Plus size={17} /> Tilføj din første bolig
         </Link>
       </div>

@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { toolUser } from "@/lib/gate";
-import { VelkommenClient } from "@/components/account/VelkommenClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function VelkommenPage() {
-  if (!(await toolUser())) redirect("/adgang?kilde=konto");
-  return <VelkommenClient />;
+  // The welcome step lives in the app now; its gate handles everyone else.
+  if (await toolUser()) redirect("/app/velkommen");
+  redirect("/adgang?kilde=konto");
 }

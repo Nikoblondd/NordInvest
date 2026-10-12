@@ -27,7 +27,7 @@ export function AuthCodeHandler() {
         window.location.replace("/auth/login?error=auth");
         return;
       }
-      let dest = "/velkommen";
+      let dest = "/app";
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -37,7 +37,7 @@ export function AuthCodeHandler() {
           .select("phone")
           .eq("id", user.id)
           .single();
-        if (profile?.phone || user.user_metadata?.onboarded) dest = "/dashboard?welcome=1";
+        if (profile?.phone || user.user_metadata?.onboarded) dest = "/app";
       }
       window.location.replace(pendingDest() ?? dest);
     })();

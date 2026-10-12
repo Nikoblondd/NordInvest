@@ -24,6 +24,22 @@ export function isAdmin(user?: { email?: string | null; created_at?: string | nu
   return Number.isFinite(created) && created < ADMIN_ACCOUNTS_BEFORE;
 }
 
+/*
+ * Member access is set by an admin on the account's app_metadata (which only
+ * the service role can write, never the user): { nordinvest_access: "member" }.
+ * "revoked" closes it again.
+ */
+type AccessUser = { email?: string | null; created_at?: string | null; app_metadata?: Record<string, unknown> | null } | null | undefined;
+
+export function isMember(user: AccessUser): boolean {
+  return user?.app_metadata?.nordinvest_access === "member";
+}
+
+/** Can this account use the platform (analyser, Deal-motor, ejendomme)? */
+export function hasToolAccess(user: AccessUser): boolean {
+  return isAdmin(user) || isMember(user);
+}
+
 export const UNLIMITED = 999999;
 
 // The monthly analysis limit that actually applies to a user: their plan's
@@ -31,8 +47,11 @@ export const UNLIMITED = 999999;
 export function effectiveLimit(
   tier: Tier["id"] | string | null | undefined,
   email?: string | null,
+  user?: AccessUser,
 ): number {
   if (isAdminEmail(email)) return UNLIMITED;
+  // Members have an agreed price, not a plan: no monthly cap.
+  if (user && hasToolAccess(user)) return UNLIMITED;
   const t = (tier ?? "free") as Tier["id"];
   return limits[t] ?? 3;
 }

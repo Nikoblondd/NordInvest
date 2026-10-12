@@ -28,7 +28,7 @@ function href(s: SavedSearch): string {
   if (s.price_max) q.set("priceMax", String(s.price_max));
   if (s.sort) q.set("sort", s.sort);
   q.set("run", "1");
-  return `/deals?${q.toString()}`;
+  return `/app/find?${q.toString()}`;
 }
 
 function Card({ s, onRemove }: { s: SavedSearch; onRemove: (id: string) => void }) {
@@ -116,7 +116,7 @@ export function SavedSearches({ initial }: { initial: SavedSearch[] }) {
             </span>
           )}
         </h2>
-        <Link href="/deals" className="shrink-0 text-xs font-medium text-slate-500 hover:text-slate-900 sm:text-sm">
+        <Link href="/app/find" className="shrink-0 text-xs font-medium text-slate-500 hover:text-slate-900 sm:text-sm">
           Ny søgning
         </Link>
       </div>

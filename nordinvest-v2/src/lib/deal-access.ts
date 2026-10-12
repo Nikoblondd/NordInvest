@@ -18,5 +18,5 @@ export async function dealAccess(req: Request): Promise<DealAccess> {
   } = await supabase.auth.getUser();
   if (!user) return "anon";
   const { data: profile } = await supabase.from("profiles").select("subscription_tier").eq("id", user.id).single();
-  return effectiveLimit(profile?.subscription_tier, user.email) > limits.free ? "paid" : "free";
+  return effectiveLimit(profile?.subscription_tier, user.email, user) > limits.free ? "paid" : "free";
 }

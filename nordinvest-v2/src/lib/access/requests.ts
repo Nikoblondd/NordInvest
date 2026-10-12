@@ -5,7 +5,7 @@
  * Nikolaj, so nothing depends on one channel.
  */
 
-export { GOALS, PORTFOLIO, validate, type FieldErrors } from "./fields";
+export { GOALS, PORTFOLIO, REQUEST_STATUS, validate, type FieldErrors, type RequestStatus } from "./fields";
 import type { AccessRequest } from "./fields";
 export type { AccessRequest };
 
@@ -14,9 +14,44 @@ export type { AccessRequest };
 const bucketUrl = () => `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/access-requests`;
 const headers = () => ({ Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`, apikey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "" });
 
+const objectPath = (r: Pick<AccessRequest, "createdAt" | "id">) => `${r.createdAt.slice(0, 10)}/${r.id}.json`;
+
+/** All requests, newest first. Folders are dates (YYYY-MM-DD). */
+export async function listRequests(): Promise<AccessRequest[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return [];
+  const list = async (prefix: string) => {
+    const r = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/list/access-requests`, {
+      method: "POST", headers: { ...headers(), "Content-Type": "application/json" },
+      body: JSON.stringify({ prefix, limit: 1000, sortBy: { column: "name", order: "desc" } }), cache: "no-store",
+    }).catch(() => null);
+    return r?.ok ? ((await r.json()) as { name: string; id: string | null }[]) : [];
+  };
+  const days = (await list("")).filter((o) => /^\d{4}-\d{2}-\d{2}$/.test(o.name)).map((o) => o.name).slice(0, 120);
+  const files = (await Promise.all(days.map(async (d) => (await list(`${d}/`)).filter((o) => o.name.endsWith(".json")).map((o) => `${d}/${o.name}`)))).flat();
+  const rows = await Promise.all(files.map(async (f) => {
+    const r = await fetch(`${bucketUrl()}/${f}`, { headers: headers(), cache: "no-store" }).catch(() => null);
+    return r?.ok ? ((await r.json().catch(() => null)) as AccessRequest | null) : null;
+  }));
+  return rows.filter((x): x is AccessRequest => !!x && !!x.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function getRequest(id: string, createdAt: string): Promise<AccessRequest | null> {
+  const r = await fetch(`${bucketUrl()}/${objectPath({ id, createdAt })}`, { headers: headers(), cache: "no-store" }).catch(() => null);
+  return r?.ok ? ((await r.json().catch(() => null)) as AccessRequest | null) : null;
+}
+
+export async function updateRequest(r: AccessRequest): Promise<boolean> {
+  const res = await fetch(`${bucketUrl()}/${objectPath(r)}`, {
+    method: "PUT",
+    headers: { ...headers(), "Content-Type": "application/json", "x-upsert": "true" },
+    body: JSON.stringify({ ...r, updatedAt: new Date().toISOString() }),
+  }).catch(() => null);
+  return !!res?.ok;
+}
+
 export async function storeRequest(r: AccessRequest): Promise<boolean> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return false;
-  const res = await fetch(`${bucketUrl()}/${r.createdAt.slice(0, 10)}/${r.id}.json`, {
+  const res = await fetch(`${bucketUrl()}/${objectPath(r)}`, {
     method: "POST",
     headers: { ...headers(), "Content-Type": "application/json", "x-upsert": "false" },
     body: JSON.stringify(r),
@@ -55,5 +90,19 @@ export function confirmationEmail(r: AccessRequest): { subject: string; html: st
 <p>Passer det dårligt, så svar bare på denne mail med et tidspunkt, der passer dig bedre.</p>
 <p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · +45 20 99 37 97</p>
 <p style="font-size:12px;color:#94a3b8">Du får denne mail, fordi du har anmodet om adgang på nordinvest.io. Vi bruger kun dine oplysninger til at kontakte dig om adgang.</p></div>`,
+  };
+}
+
+export function invitationEmail(name: string, link: string): { subject: string; html: string } {
+  const first = esc(name.split(" ")[0] || "der");
+  return {
+    subject: "Din adgang til NordInvest er klar",
+    html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
+<p>Hej ${first},</p>
+<p>Tak for snakken. Din adgang til NordInvest er klar. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode, og bagefter viser en kort guide dig rundt.</p>
+<p style="margin:28px 0"><a href="${link}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Åbn NordInvest</a></p>
+<p style="font-size:13px;color:#64748b">Linket virker én gang og kun i en begrænset periode. Er det udløbet, så svar bare på denne mail, så sender jeg et nyt.</p>
+<p>Har du spørgsmål undervejs, så ring direkte til mig.</p>
+<p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · +45 20 99 37 97</p></div>`,
   };
 }

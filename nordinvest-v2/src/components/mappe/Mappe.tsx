@@ -35,7 +35,7 @@ const DOC_LABEL: Record<string, string> = {
   ejerlejlighedsskema: "Ejerlejlighedsskema", energimaerke: "Energimærke", lejekontrakt: "Lejekontrakt", andet: "Dokument",
 };
 // A reviewed document ticks its checklist item.
-const DOC_CHECK: Record<string, string> = {
+export const DOC_CHECK: Record<string, string> = {
   salgsopstilling: "salgsopstilling", tilstandsrapport: "tilstand", elinstallationsrapport: "tilstand", vedtaegter: "vedtaegter",
   regnskab: "regnskab", budget: "regnskab", referat: "referater", vedligeholdelsesplan: "vedligehold", energimaerke: "energi",
 };
@@ -97,7 +97,7 @@ export function Mappe({ row }: { row: MappeRow }) {
   return (
     <div className="px-4 pb-16 pt-6 sm:px-6 sm:pt-10">
       <div className="mx-auto max-w-[1080px]">
-        <Link href="/dashboard" className="inline-flex min-h-[40px] items-center gap-1.5 text-[15px] font-medium text-slate-600 hover:text-slate-900"><ArrowLeft size={16} /> Mine ejendomme</Link>
+        <Link href="/app/ejendomme" className="inline-flex min-h-[40px] items-center gap-1.5 text-[15px] font-medium text-slate-600 hover:text-slate-900"><ArrowLeft size={16} /> Mine ejendomme</Link>
 
         {/* Header */}
         <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
@@ -174,7 +174,7 @@ export function Mappe({ row }: { row: MappeRow }) {
                         c.where.href
                           ? <a href={c.where.href} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-[40px] items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">{c.where.label} <ExternalLink size={13} /></a>
                           : c.where.label === "Analysen" || c.where.label.startsWith("Analysen") || c.where.label.startsWith("Juster") || c.where.label.startsWith("Bankrapport")
-                            ? <Link href={`/analyseren?saved=${row.id}`} className="mt-1 inline-flex min-h-[40px] items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">{c.where.label} →</Link>
+                            ? <Link href={`/app/analyser?saved=${row.id}`} className="mt-1 inline-flex min-h-[40px] items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">{c.where.label} →</Link>
                             : <p className="mt-1.5 text-[14px] text-slate-500">Hvor: {c.where.label}</p>
                       )}
                       {c.stage === "dokumenter" && c.id !== "energi" && !ok && (
@@ -192,7 +192,7 @@ export function Mappe({ row }: { row: MappeRow }) {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
               <div className="flex items-center justify-between">
                 <h2 className="text-[17px] font-semibold text-slate-900">Tallene</h2>
-                <Link href={`/analyseren?saved=${row.id}`} className="-my-2 inline-flex min-h-[40px] items-center text-[14px] font-semibold text-blue-700 hover:underline">Åbn analysen →</Link>
+                <Link href={`/app/analyser?saved=${row.id}`} className="-my-2 inline-flex min-h-[40px] items-center text-[14px] font-semibold text-blue-700 hover:underline">Åbn analysen →</Link>
               </div>
               <dl className="mt-3 divide-y divide-slate-100 text-[15px]">
                 {ar.cashFlow != null && <Row k="Overskud pr. md." v={`${ar.cashFlow >= 0 ? "+" : "−"}${kr(Math.abs(ar.cashFlow))}`} tone={ar.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"} />}
@@ -202,7 +202,7 @@ export function Mappe({ row }: { row: MappeRow }) {
               </dl>
             </div>
 
-            <Tasks tasks={m.tasks ?? []} onChange={(tasks) => persist((c) => ({ ...c, tasks }))} />
+            <MappeTasks tasks={m.tasks ?? []} onChange={(tasks) => persist((c) => ({ ...c, tasks }))} />
             <OfferBox offer={m.offer ?? null} price={price} onChange={(offer) => persist((c) => ({ ...c, offer, stage: offer && ["screening", "fremvisning", "dokumenter", "bank"].includes(c.stage) ? "bud" : c.stage }))} />
 
             {(highRisks.length > 0 || rentalNo) && (
@@ -242,7 +242,7 @@ export function Mappe({ row }: { row: MappeRow }) {
   );
 }
 
-function Row({ k, v, tone }: { k: string; v: string; tone?: string }) {
+export function Row({ k, v, tone }: { k: string; v: string; tone?: string }) {
   return (
     <div className="flex items-baseline justify-between gap-3 py-2">
       <dt className="text-slate-600">{k}</dt>
@@ -253,7 +253,7 @@ function Row({ k, v, tone }: { k: string; v: string; tone?: string }) {
 
 /* ---------------- Documents ---------------- */
 
-function Documents({ address, price, docs, onAdd, onRemove }: { address: string; price: number; docs: DocReview[]; onAdd: (d: DocReview) => void; onRemove: (id: string) => void }) {
+export function Documents({ address, price, docs, onAdd, onRemove }: { address: string; price: number; docs: DocReview[]; onAdd: (d: DocReview) => void; onRemove: (id: string) => void }) {
   const [state, setState] = useState<{ step: "idle" | "reading" | "review" | "error"; msg?: string }>({ step: "idle" });
   const input = useRef<HTMLInputElement>(null);
 
@@ -398,7 +398,7 @@ function DocCard({ d, onRemove }: { d: DocReview; onRemove: () => void }) {
 
 /* ---------------- Tasks ---------------- */
 
-function Tasks({ tasks, onChange }: { tasks: Task[]; onChange: (t: Task[]) => void }) {
+export function MappeTasks({ tasks, onChange }: { tasks: Task[]; onChange: (t: Task[]) => void }) {
   const [adding, setAdding] = useState(false);
   const [kind, setKind] = useState<TaskKind>("fremvisning");
   const [title, setTitle] = useState("");
@@ -458,7 +458,7 @@ function Tasks({ tasks, onChange }: { tasks: Task[]; onChange: (t: Task[]) => vo
 
 /* ---------------- Offer ---------------- */
 
-function OfferBox({ offer, price, onChange }: { offer: Offer | null; price: number; onChange: (o: Offer | null) => void }) {
+export function OfferBox({ offer, price, onChange }: { offer: Offer | null; price: number; onChange: (o: Offer | null) => void }) {
   const [editing, setEditing] = useState(false);
   const [amount, setAmount] = useState(offer?.amount ? String(offer.amount) : "");
   const save = () => {

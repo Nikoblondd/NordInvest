@@ -53,7 +53,7 @@ async function paid(): Promise<boolean> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return false;
   const { data: profile } = await supabase.from("profiles").select("subscription_tier").eq("id", user.id).single();
-  return effectiveLimit(profile?.subscription_tier, user.email) > limits.free;
+  return effectiveLimit(profile?.subscription_tier, user.email, user) > limits.free;
 }
 
 export async function POST(req: NextRequest) {

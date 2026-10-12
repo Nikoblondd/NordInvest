@@ -71,7 +71,7 @@ export function FlipReport() {
     try { stored = JSON.parse(sessionStorage.getItem("ni_journey") ?? "null"); } catch { /* none */ }
     if (stored?.listing && stored.listing.url === url && stored.listing.price) { setListing(stored.listing); return; }
     // Opened without a listing (a bookmark, a bare link): start the journey instead.
-    if (!url) { router.replace("/analyseren/start"); return; }
+    if (!url) { router.replace("/app/analyser"); return; }
     fetch(`/api/extract?url=${encodeURIComponent(url)}`)
       .then((r) => r.json())
       .then((d) => {
@@ -182,13 +182,13 @@ export function FlipReport() {
       .catch(() => {});
   }, [result, property, listing, url]);
 
-  if (failed) return <p className="mt-20 text-center text-slate-600">Vi kunne ikke hente boligen. <Link className="text-blue-700 underline" href="/analyseren/start">Prøv igen</Link></p>;
+  if (failed) return <p className="mt-20 text-center text-slate-600">Vi kunne ikke hente boligen. <Link className="text-blue-700 underline" href="/app/analyser">Prøv igen</Link></p>;
   if (listing && missing.length) {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center px-4 py-16">
         <p className="text-[22px] font-semibold tracking-[-0.02em] text-slate-900">Vi mangler {missing.join(" og ")}</p>
         <p className="mt-2 text-[15px] leading-relaxed text-slate-600">Mæglerens side viste ikke alle tal{listing.address ? ` for ${listing.address}` : ""}. Find boligen på Boligsiden og indsæt det link i stedet, så har vi alt.</p>
-        <Link href="/analyseren/start" className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl bg-blue-600 px-6 text-[15px] font-semibold text-white hover:bg-blue-700">Prøv et andet link</Link>
+        <Link href="/app/analyser" className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl bg-blue-600 px-6 text-[15px] font-semibold text-white hover:bg-blue-700">Prøv et andet link</Link>
       </div>
     );
   }
@@ -622,10 +622,10 @@ export function FlipReport() {
         <div className="mx-auto max-w-[1080px]">
           <FlipFeedback zip={property.zip} address={listing.address} profit={result.profit} />
           <div className="no-print mt-8 flex flex-wrap gap-3">
-            <Link href={`/analyseren?url=${encodeURIComponent(url)}`} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:border-slate-300">
+            <Link href={`/app/analyser?url=${encodeURIComponent(url)}`} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:border-slate-300">
               Se den som udlejning i stedet <ArrowUpRight size={15} />
             </Link>
-            <Link href="/analyseren/start" className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-btn hover:bg-blue-700">Analysér en ny bolig</Link>
+            <Link href="/app/analyser" className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-btn hover:bg-blue-700">Analysér en ny bolig</Link>
           </div>
         </div>
       </section>

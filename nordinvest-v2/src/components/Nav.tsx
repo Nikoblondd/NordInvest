@@ -99,6 +99,13 @@ export function Nav() {
                     </div>
                   )}
                   <Link
+                    href="/app"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                  >
+                    <ArrowRight size={16} className="text-blue-600" /> Åbn NordInvest
+                  </Link>
+                  <Link
                     href="/konto"
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50"

@@ -41,14 +41,15 @@ export async function GET(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let dest = "/velkommen";
+  // Into the app; its gate sends non-members to /adgang and new members to the welcome step.
+  let dest = "/app";
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("phone")
       .eq("id", user.id)
       .single();
-    if (profile?.phone || user.user_metadata?.onboarded) dest = "/dashboard?welcome=1";
+    if (profile?.phone || user.user_metadata?.onboarded) dest = "/app";
   }
 
   // Came here from a "Køb <plan>" button: finish the purchase first.

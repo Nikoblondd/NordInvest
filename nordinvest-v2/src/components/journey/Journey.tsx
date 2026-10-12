@@ -118,7 +118,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
     const u = l?.url ?? url;
     if (goal === "flip" || goal === "live_flip") {
       const p = new URLSearchParams({ url: u, a: b64(flipAnswers({ ...(l?.type ? { type: l.type } : {}), ...(l?.lotArea && !a.lot ? { lot: l.lotArea > 1400 ? "big" : "small" } : {}), ...a })) });
-      setTimeout(() => router.push(`/analyseren/flip?${p.toString()}`), 900);
+      setTimeout(() => router.push(`/app/analyser/flip?${p.toString()}`), 900);
       return;
     }
     const { down, j } = rentalParams(a);
@@ -134,7 +134,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
     p.set("downPaymentPct", String(down));
     p.set("interestRate", String(j.interestRate));
     p.set("j", b64(j));
-    setTimeout(() => router.push(`/analyseren?${p.toString()}`), 900);
+    setTimeout(() => router.push(`/app/analyser?${p.toString()}`), 900);
   };
 
   // Answer the current question; answers that belonged to a branch no longer
@@ -223,7 +223,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
               Fortsæt <ArrowRight size={16} />
             </button>
           </div>
-          <p className="mt-4 text-sm text-slate-500">Intet link? <a href="/analyseren" className="font-medium text-slate-700 underline underline-offset-2 hover:text-slate-900">Indtast tallene selv</a></p>
+          <p className="mt-4 text-sm text-slate-500">Intet link? <a href="/app/analyser?manuel=1" className="font-medium text-slate-700 underline underline-offset-2 hover:text-slate-900">Indtast tallene selv</a></p>
         </motion.form>
       )}
 

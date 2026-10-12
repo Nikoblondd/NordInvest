@@ -4,10 +4,39 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { pendingDest } from "@/lib/checkout-intent";
 import { DEALS_OPTIN_TEXT, optInMetadata } from "@/lib/deals-optin";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { PhoneInput } from "@/components/ui/PhoneInput";
+
+/** ?next=/app/... from the app's gate: same-site paths only. */
+function safeNext(): string | null {
+  if (typeof window === "undefined") return null;
+  const n = new URLSearchParams(window.location.search).get("next");
+  return n && n.startsWith("/") && !n.startsWith("//") ? n : null;
+}
+
+/** "Glemt adgangskode?": a one-time sign-in link by e-mail (members only; never says if an address exists). */
+function LoginLink() {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
+  if (!open) return <button type="button" onClick={() => setOpen(true)} className="mt-4 w-full text-center text-sm font-medium text-slate-500 hover:text-slate-800">Glemt adgangskode? Få et login-link på mail</button>;
+  if (state === "sent") return <p role="status" className="mt-4 rounded-xl bg-emerald-50 px-3 py-2.5 text-center text-sm text-emerald-800">Har du en konto med adgang, får du et login-link om lidt. Tjek også spam.</p>;
+  return (
+    <form className="mt-4 space-y-2 rounded-xl bg-slate-50 p-3" onSubmit={async (e) => {
+      e.preventDefault();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) return;
+      setState("sending");
+      await fetch("/api/auth/link", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email.trim() }) }).catch(() => null);
+      setState("sent");
+    }}>
+      <label htmlFor="ll-mail" className="text-sm font-medium text-slate-700">Din e-mail</label>
+      <input id="ll-mail" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-[16px]" />
+      <button type="submit" disabled={state === "sending"} className="h-11 w-full rounded-lg bg-slate-900 text-sm font-semibold text-white disabled:opacity-60">{state === "sending" ? "Sender" : "Send login-link"}</button>
+    </form>
+  );
+}
 
 function LinkedInIcon() {
   return (
@@ -42,6 +71,8 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement> & { label: str
 
 export function AuthCard({ mode }: { mode: "login" | "signup" }) {
   const isSignup = mode === "signup";
+  const [linkExpired, setLinkExpired] = useState(false);
+  useEffect(() => { setLinkExpired(new URLSearchParams(window.location.search).get("fejl") === "link"); }, []);
   const router = useRouter();
   const supabase = createClient();
 
@@ -95,7 +126,7 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
         setError(error.message);
       } else if (data.session) {
         // Autoconfirm is on → the user is signed in immediately.
-        router.push(pendingDest() ?? "/velkommen");
+        router.push(pendingDest() ?? "/app");
       } else {
         setNotice("Tjek din mail for at bekræfte din konto, så er du klar.");
       }
@@ -105,7 +136,7 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
         setError("Forkert email eller adgangskode.");
         setHint("signup");
       } else {
-        router.push(pendingDest() ?? "/dashboard?welcome=1");
+        router.push(pendingDest() ?? safeNext() ?? "/app");
       }
     }
     setLoading(null);
@@ -128,6 +159,9 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
             {isSignup ? "3 gratis analyser om måneden — intet kreditkort." : "Velkommen tilbage."}
           </p>
 
+          {!isSignup && linkExpired && !error && (
+            <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-center text-sm text-amber-900">Linket er udløbet eller allerede brugt. Log ind herunder, eller få et nyt login-link.</div>
+          )}
           {error && (
             <div className="mt-5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-center text-sm text-rose-700">
               {error}
@@ -226,6 +260,7 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
           </p>
         </div>
 
+        {!isSignup && <LoginLink />}
         <p className="mt-6 text-center text-sm text-slate-500">
           {isSignup ? (
             <>Har du allerede en konto? <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-700">Log ind</Link></>

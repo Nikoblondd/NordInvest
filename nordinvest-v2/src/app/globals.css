@@ -393,3 +393,20 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
   .parallax { animation: parallaxY linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .parallax { animation: none !important; } }
+
+/* ---------- App guide (src/components/app/Tour.tsx) ---------- */
+.tour-spot {
+  box-shadow: 0 0 0 9999px rgba(11, 27, 51, 0.62), 0 0 0 2px rgba(96, 165, 250, 0.9), 0 0 0 7px rgba(59, 130, 246, 0.25);
+  transition: top 0.45s cubic-bezier(0.16, 1, 0.3, 1), left 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1), height 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: tourPulse 2.2s ease-in-out 0.5s infinite;
+}
+@keyframes tourPulse {
+  0%, 100% { box-shadow: 0 0 0 9999px rgba(11, 27, 51, 0.62), 0 0 0 2px rgba(96, 165, 250, 0.9), 0 0 0 7px rgba(59, 130, 246, 0.25); }
+  50% { box-shadow: 0 0 0 9999px rgba(11, 27, 51, 0.62), 0 0 0 2px rgba(96, 165, 250, 1), 0 0 0 12px rgba(59, 130, 246, 0.12); }
+}
+@keyframes tourPop { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+.tour-pop { animation: tourPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes tourBar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.tour-bar { transform-origin: bottom; animation: tourBar 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@media (prefers-reduced-motion: reduce) { .tour-spot, .tour-pop, .tour-bar { animation: none !important; transition: none !important; } }
+.tour-active [data-consent] { display: none !important; }

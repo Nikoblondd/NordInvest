@@ -7,6 +7,7 @@ import { persistCookie } from "@/lib/supabase/cookies";
 // every crawler/bot hit too, blowing up our request count). We only touch
 // auth on paths that actually read the session server-side.
 const AUTH_PREFIXES = [
+  "/app",
   "/dashboard",
   "/analyseren", // shows plan + usage server-side
   "/priser", // shows current-plan chip when logged in

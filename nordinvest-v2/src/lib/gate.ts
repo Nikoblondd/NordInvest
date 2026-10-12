@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { isAdmin } from "@/lib/access";
+import { hasToolAccess } from "@/lib/access";
 
 /*
  * The closed platform's gate. The tools (analyser, Deal-motor, ejendomsmappe,
- * CRM, bank report) and every API behind them open only for accounts on the
- * ADMIN_EMAILS allowlist, checked on the server for each request. Having an
- * account, a submitted access request or a direct link gives nothing.
+ * CRM, bank report) and every API behind them open only for members (set by an
+ * admin in app_metadata) and pre-existing admin accounts, checked on the
+ * server for each request. An account, an access request or a link gives nothing.
  * Scheduled jobs pass with the CRON_SECRET bearer that Vercel sends.
  */
 
@@ -14,7 +14,7 @@ export async function toolUser() {
   const supabase = createClient();
   if (!supabase) return null;
   const { data: { user } } = await supabase.auth.getUser();
-  return user && isAdmin(user) ? user : null;
+  return user && hasToolAccess(user) ? user : null;
 }
 
 export function cronAuthorized(req: Request): boolean {

@@ -7,7 +7,7 @@ import { DealsOptIn } from "@/components/account/DealsOptIn";
 import { VagtPanel } from "@/components/dashboard/VagtPanel";
 import { SavedSearches, type SavedSearch } from "@/components/dashboard/SavedSearches";
 import { limits } from "@/lib/pricing";
-import { effectiveLimit, isAdmin } from "@/lib/access";
+import { effectiveLimit, hasToolAccess } from "@/lib/access";
 import type { Watch } from "@/lib/vagt";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +35,9 @@ export default async function KontoPage() {
     supabase.from("saved_searches").select("*").eq("user_id", user.id).order("new_count", { ascending: false }).order("created_at", { ascending: false }),
   ]);
 
-  const admin = isAdmin(user);
+  const admin = hasToolAccess(user);
+  // Members have their account inside the app.
+  if (admin) redirect("/app/konto");
   const tier = (profile?.subscription_tier ?? "free") as keyof typeof limits;
   const tierLabel = tier === "free" ? "Gratis" : tier[0].toUpperCase() + tier.slice(1);
   const max = effectiveLimit(profile?.subscription_tier, user.email);
@@ -102,7 +104,7 @@ export default async function KontoPage() {
         )}
 
         <div className="mt-10 flex flex-wrap items-center gap-3 border-t border-slate-200 pt-6">
-          {isAdmin(user) && (
+          {hasToolAccess(user) && (
             <>
               <Link href="/dashboard/launch" className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-[14px] font-medium"><Rocket size={15} /> Launch</Link>
               <Link href="/dashboard/analytics" className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-[14px] font-medium"><BarChart3 size={15} /> Analytics</Link>

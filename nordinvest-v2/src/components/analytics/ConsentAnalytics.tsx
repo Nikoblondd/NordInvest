@@ -100,7 +100,10 @@ function useEngaged(active: boolean) {
 export function ConsentAnalytics() {
   // The news-site widget (/embed/…) runs inside other sites' pages: no banner,
   // no tracking there.
-  const embedded = usePathname()?.startsWith("/embed") ?? false;
+  const path = usePathname() ?? "";
+  const embedded = path.startsWith("/embed");
+  // Inside the app, sit above the phone tab bar.
+  const inApp = path === "/app" || path.startsWith("/app/");
   const [consent, setConsent] = useState<"accepted" | "declined" | "unset" | "loading">("loading");
   const engaged = useEngaged(consent === "unset");
   // "Cookie-indstillinger" in the footer reopens the banner straight away.
@@ -143,7 +146,8 @@ export function ConsentAnalytics() {
     <div
       role="region"
       aria-label="Cookies"
-      className="fixed inset-x-0 bottom-0 z-[60] px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] motion-safe:animate-[consent-in_220ms_ease-out] sm:inset-x-auto sm:bottom-4 sm:left-4 sm:px-0 sm:pb-0"
+      data-consent
+      className={`fixed inset-x-0 bottom-0 z-[60] px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] motion-safe:animate-[consent-in_220ms_ease-out] sm:inset-x-auto sm:bottom-4 sm:left-4 sm:px-0 sm:pb-0 ${inApp ? "max-lg:bottom-[62px]" : ""}`}
     >
       <div className="mx-auto flex items-center gap-2 rounded-2xl border border-slate-200 bg-white/95 py-2 pl-3.5 pr-2 shadow-[0_10px_30px_-12px_rgba(15,23,42,0.35)] backdrop-blur sm:w-[380px] sm:flex-col sm:items-stretch sm:gap-3 sm:p-4">
         <p className="min-w-0 flex-1 text-[13px] leading-snug text-slate-600 sm:text-sm">

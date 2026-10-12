@@ -27,7 +27,7 @@ async function usageContext() {
     .select("subscription_tier")
     .eq("id", user.id)
     .single();
-  const max = effectiveLimit(profile?.subscription_tier, user.email);
+  const max = effectiveLimit(profile?.subscription_tier, user.email, user);
   const { count } = await supabase
     .from("analyses")
     .select("id", { count: "exact", head: true })

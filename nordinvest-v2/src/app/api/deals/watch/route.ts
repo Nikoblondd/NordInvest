@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { sendEmail, savedSearchEmail } from "@/lib/email";
 import { effectiveLimit } from "@/lib/access";
+import { getAuthUser } from "@/lib/supabase/admin";
 import { limits } from "@/lib/pricing";
 
 export const runtime = "nodejs";
@@ -88,8 +89,9 @@ export async function GET(req: Request) {
       // Email the owner about the new matches.
       const prof = await fetch(`${base}/rest/v1/profiles?id=eq.${s.user_id}&select=email,full_name,subscription_tier`, { headers, cache: "no-store" })
         .then((r) => r.json()).catch(() => []);
-      // Deal-vagt is a paid feature: only paying customers (and admins) get the email.
-      const paid = Array.isArray(prof) && prof[0] && effectiveLimit(prof[0].subscription_tier, prof[0].email) > limits.free;
+      // Deal-vagt is a member feature: members, paying customers and admins get the email.
+      const authUser = await getAuthUser(s.user_id as string);
+      const paid = Array.isArray(prof) && prof[0] && effectiveLimit(prof[0].subscription_tier, prof[0].email, authUser) > limits.free;
       const email = paid && prof[0]?.email ? prof[0].email : null;
       if (email && s.label) {
         const { subject, html } = savedSearchEmail({

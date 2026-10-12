@@ -107,8 +107,12 @@ export type Mappe = {
   docs: DocReview[];
   tasks?: Task[];
   offer?: Offer | null;
+  /** The listing agent (or seller) for this property. */
+  contact?: Contact | null;
   updatedAt?: string;
 };
+
+export type Contact = { name?: string; company?: string; phone?: string; email?: string };
 
 export const EMPTY_MAPPE: Mappe = { stage: "screening", checks: {}, notes: "", docs: [], tasks: [], offer: null };
 

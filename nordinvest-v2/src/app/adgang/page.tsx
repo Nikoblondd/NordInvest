@@ -7,7 +7,7 @@ import { LandingNav } from "@/components/landing/LandingNav";
 import { AccessForm } from "@/components/landing/AccessForm";
 import { site } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
-import { isAdmin } from "@/lib/access";
+import { hasToolAccess } from "@/lib/access";
 
 export const metadata: Metadata = {
   title: "Anmod om adgang",
@@ -19,7 +19,7 @@ export default async function AdgangPage({ searchParams }: { searchParams: { kil
   // A logged-in account without tool access lands here: say so plainly.
   const supabase = createClient();
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
-  const waiting = !!user && !isAdmin(user);
+  const waiting = !!user && !hasToolAccess(user);
   return (
     <div className={`${geist.variable} min-h-screen bg-white font-[family-name:var(--font-geist)] text-slate-900 antialiased`}>
       <LandingNav />

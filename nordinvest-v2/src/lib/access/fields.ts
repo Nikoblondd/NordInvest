@@ -13,8 +13,15 @@ export type AccessRequest = {
   goals: string[];
   message: string;
   source: string;
-  status: "ny";
+  status: RequestStatus;
+  /** Admin's own notes: what was agreed, price, next step. */
+  adminNote?: string;
+  updatedAt?: string;
+  invitedUserId?: string;
 };
+
+export type RequestStatus = "ny" | "kontaktet" | "inviteret" | "afvist";
+export const REQUEST_STATUS: Record<RequestStatus, string> = { ny: "Ny", kontaktet: "Kontaktet", inviteret: "Inviteret", afvist: "Ikke et match" };
 
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, max) : "");
 

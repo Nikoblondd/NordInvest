@@ -881,9 +881,9 @@ export function AnalyzerApp() {
   const startWatch = async () => {
     if (!listingUrl) return;
     const supabase = await loadSupabase();
-    if (!supabase) { window.location.href = "/auth/signup"; return; }
+    if (!supabase) { window.location.href = "/auth/login?next=/app/analyser"; return; }
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { window.location.href = "/auth/signup?next=/analyseren"; return; }
+    if (!user) { window.location.href = "/auth/login?next=/app/analyser"; return; }
     setWatch({ status: "saving" });
     const todayStr = new Date().toISOString().slice(0, 10);
     const { error } = await supabase.from("watches").insert({
@@ -906,14 +906,14 @@ export function AnalyzerApp() {
   const saveToPortfolio = async () => {
     const supabase = await loadSupabase();
     if (!supabase) {
-      window.location.href = "/auth/signup";
+      window.location.href = "/auth/login?next=/app/analyser";
       return;
     }
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      window.location.href = "/auth/signup?next=/analyseren";
+      window.location.href = "/auth/login?next=/app/analyser";
       return;
     }
     setSave({ status: "saving" });
@@ -1384,7 +1384,7 @@ export function AnalyzerApp() {
             {rentReserve && <RentReserve reserve={rentReserve} />}
             {listingUrl && (
               <Link
-                href={`/analyseren/start?url=${encodeURIComponent(listingUrl)}`}
+                href={`/app/analyser?strategi=1&url=${encodeURIComponent(listingUrl)}`}
                 className="mb-5 flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-blue-300"
               >
                 <span className="min-w-0">
@@ -1449,7 +1449,7 @@ export function AnalyzerApp() {
               {usage && <UsageNudge {...usage} />}
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 {save.status === "saved" ? (
-                  <a href={save.id ? `/mappe/${save.id}` : "/dashboard"} className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+                  <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
                     <Check aria-hidden size={17} /> Gemt. Åbn ejendomsmappen
                   </a>
                 ) : (
@@ -1470,7 +1470,7 @@ export function AnalyzerApp() {
                 </button>
                 {listingUrl && (
                   watch.status === "saved" ? (
-                    <a href="/dashboard" className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+                    <a href="/app/ejendomme" className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
                       <BellRing aria-hidden size={17} /> Prisvagt aktiv
                     </a>
                   ) : (
@@ -1497,7 +1497,7 @@ export function AnalyzerApp() {
               <div aria-live="polite">
                 {save.status === "limit" && (
                   <p className="mt-4 text-[15px] text-amber-200">
-                    Du har brugt dine analyser for denne måned. <a href="/priser" className="font-semibold underline">Opgradér</a> for at gemme flere boliger.
+                    Du har nået grænsen for at gemme boliger. <a href="tel:+4520993797" className="font-semibold underline">Ring til Nikolaj</a>, så åbner han for flere.
                   </p>
                 )}
                 {save.status === "error" && <p className="mt-4 text-[15px] text-rose-300">Kunne ikke gemme: {save.msg}. Prøv igen om lidt.</p>}
