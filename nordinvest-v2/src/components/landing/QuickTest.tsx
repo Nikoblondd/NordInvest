@@ -28,24 +28,24 @@ function Field({ id, label, value, onChange, suffix }: { id: string; label: stri
 
 export function QuickTest() {
   const [price, setPrice] = useState("1.295.000");
-  const [rent, setRent] = useState("8.500");
+  const [rent_, setRent] = useState("8.500");
   const [opex, setOpex] = useState("1.900");
 
   const r = useMemo(() => {
     const p = parse(price);
-    const m = parse(rent);
+    const m = parse(rent_);
     if (p < 100000 || m < 500) return null;
     return analyze({ price: p, monthlyRent: m, monthlyOpex: parse(opex), downPaymentPct: 20, interestRate: 4.5 });
-  }, [price, rent, opex]);
+  }, [price, rent_, opex]);
 
   const good = r && r.cashFlow >= 0;
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_24px_60px_-30px_rgba(11,27,51,0.35)] sm:p-6">
-      <p className="text-[17px] font-semibold text-slate-900">Hvad giver boligen om måneden?</p>
+      <p className="text-[18px] font-semibold tracking-[-0.01em] text-slate-900">Hvad giver boligen om måneden?</p>
       <p className="mt-0.5 text-[14px] text-slate-500">Med 20 % udbetaling og 4,5 % rente.</p>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <Field id="qt-price" label="Udbudspris" value={price} onChange={setPrice} suffix="kr." />
-        <Field id="qt-rent" label="Husleje" value={rent} onChange={setRent} suffix="kr./md." />
+        <Field id="qt-rent" label="Husleje" value={rent_} onChange={setRent} suffix="kr./md." />
         <Field id="qt-opex" label="Ejerudgift" value={opex} onChange={setOpex} suffix="kr./md." />
       </div>
 
@@ -53,12 +53,34 @@ export function QuickTest() {
         {r ? (
           <>
             <p className="text-[13px] text-slate-500">Overskud efter lån og udgifter</p>
-            <p className={`text-[32px] font-semibold leading-tight tabular-nums tracking-[-0.02em] ${good ? "text-emerald-700" : "text-rose-600"}`}>
+            <p className={`text-[36px] font-semibold leading-tight tabular-nums tracking-[-0.03em] ${good ? "text-emerald-700" : "text-rose-600"}`}>
               {r.cashFlow >= 0 ? "+" : "-"}{fmt(Math.abs(r.cashFlow))} kr./md.
             </p>
-            <div className="mt-3 grid grid-cols-2 gap-3 text-[14px]">
-              <div><p className="text-slate-500">Afkast af prisen</p><p className="font-semibold tabular-nums text-slate-900">{r.capRate.toFixed(1).replace(".", ",")} %</p></div>
-              <div><p className="text-slate-500">Højeste rente, lejen kan bære</p><p className="font-semibold tabular-nums text-slate-900">{r.breakEvenRate > 0 ? `${r.breakEvenRate.toFixed(1).replace(".", ",")} %` : "Holder ikke i dag"}</p></div>
+            {(() => {
+              const rent = parse(rent_);
+              const loan = r.monthlyMortgage;
+              const costs = Math.max(0, rent - loan - r.cashFlow);
+              const total = Math.max(rent, loan + costs);
+              const parts = [
+                { l: "Lån", v: loan, c: "bg-slate-700" },
+                { l: "Udgifter", v: costs, c: "bg-slate-300" },
+                { l: "Overskud", v: Math.max(0, r.cashFlow), c: "bg-emerald-500" },
+              ];
+              return (
+                <div className="mt-3">
+                  <p className="text-[12px] text-slate-500">Sådan bliver huslejen på {fmt(rent)} kr. brugt</p>
+                  <div className="mt-1.5 flex h-3 overflow-hidden rounded-full bg-slate-100">
+                    {parts.map((p) => p.v > 0 && <span key={p.l} className={p.c} style={{ width: `${(p.v / total) * 100}%` }} />)}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-slate-600">
+                    {parts.map((p) => <span key={p.l} className="flex items-center gap-1.5"><span className={`h-2 w-2 rounded-sm ${p.c}`} />{p.l} {fmt(p.v)} kr.</span>)}
+                  </div>
+                </div>
+              );
+            })()}
+            <div className="mt-4 grid grid-cols-2 gap-3 text-[14px]">
+              <div className="rounded-lg bg-slate-50 p-3"><p className="text-slate-500">Afkast af prisen</p><p className="text-[18px] font-semibold tabular-nums text-slate-900">{r.capRate.toFixed(1).replace(".", ",")} %</p></div>
+              <div className="rounded-lg bg-slate-50 p-3"><p className="text-slate-500">Højeste rente, lejen kan bære</p><p className="text-[18px] font-semibold tabular-nums text-slate-900">{r.breakEvenRate > 0 ? `${r.breakEvenRate.toFixed(1).replace(".", ",")} %` : "Holder ikke"}</p></div>
             </div>
           </>
         ) : (

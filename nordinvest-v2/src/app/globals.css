@@ -346,3 +346,11 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
   .fold:not(.open) .more-row,
   .fold:not(.open) .fold-body { display: none; }
 }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-[fadeUp"] { animation: none !important; }
+}
