@@ -388,3 +388,8 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
   .reveal, .reveal .draw-x { opacity: 1 !important; transform: none !important; transition: none !important; }
   .hero-rise, .hero-screen, .hero-pop, .grow-x, .drift, .settle { animation: none !important; }
 }
+@supports (animation-timeline: view()) {
+  @keyframes parallaxY { from { translate: 0 var(--a, 24px); } to { translate: 0 calc(var(--a, 24px) * -1); } }
+  .parallax { animation: parallaxY linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .parallax { animation: none !important; } }

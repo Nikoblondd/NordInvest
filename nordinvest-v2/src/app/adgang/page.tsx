@@ -39,7 +39,7 @@ export default function AdgangPage({ searchParams }: { searchParams: { kilde?: s
               <Image src="/founder.jpg" alt="Nikolaj Blond" width={56} height={56} className="h-14 w-14 shrink-0 rounded-xl object-cover" priority />
               <div className="min-w-0">
                 <p className="text-[15px] font-semibold">Nikolaj Blond, stifter</p>
-                <a href={site.phoneHref} className="mt-0.5 inline-flex items-center gap-1.5 text-[15px] text-blue-300 hover:text-blue-200"><Phone size={14} /> {site.phone}</a>
+                <a href={site.phoneHref} className="inline-flex min-h-[40px] items-center gap-1.5 text-[15px] text-blue-300 hover:text-blue-200"><Phone size={14} /> {site.phone}</a>
               </div>
             </div>
           </div>

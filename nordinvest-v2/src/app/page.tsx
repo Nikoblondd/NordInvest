@@ -39,7 +39,7 @@ const Lead = ({ children, dark, className }: { children: ReactNode; dark?: boole
   <p className={`mt-5 max-w-[34rem] text-[18px] leading-relaxed ${dark ? "text-white/65" : "text-slate-600"} ${className ?? ""}`}>{children}</p>
 );
 const Cta = ({ dark, label = "Anmod om adgang" }: { dark?: boolean; label?: string }) => (
-  <Link href="/adgang" className={`inline-flex min-h-[48px] items-center gap-2 rounded-lg px-5 text-[16px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 active:translate-y-px ${dark ? "bg-white text-[#0b1b33] hover:bg-slate-100 focus-visible:ring-white/40" : "bg-blue-600 text-white hover:bg-blue-500 focus-visible:ring-blue-200"}`}>{label} <ArrowRight size={17} /></Link>
+  <Link href="/adgang" className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg px-5 max-sm:w-full text-[16px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 active:translate-y-px ${dark ? "bg-white text-[#0b1b33] hover:bg-slate-100 focus-visible:ring-white/40" : "bg-blue-600 text-white hover:bg-blue-500 focus-visible:ring-blue-200"}`}>{label} <ArrowRight size={17} /></Link>
 );
 
 const FLOW = [
@@ -79,11 +79,11 @@ export default async function Home() {
             <p style={{ ["--d" as string]: "180ms" }} className="hero-rise mt-5 max-w-[33rem] text-[18px] leading-relaxed text-slate-600 sm:text-[19px]">
               NordInvest finder boligerne, regner dem igennem, læser papirerne og holder styr på dine bud. Ét system, med adgang efter en personlig samtale.
             </p>
-            <div style={{ ["--d" as string]: "280ms" }} className="hero-rise mt-8 flex flex-wrap gap-3">
+            <div style={{ ["--d" as string]: "280ms" }} className="hero-rise mt-8 grid gap-3 sm:flex sm:flex-wrap">
               <Cta />
-              <TryButton className="inline-flex min-h-[48px] items-center rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-800 hover:border-slate-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100">Prøv en beregning</TryButton>
+              <TryButton className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-800 hover:border-slate-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100">Prøv en beregning</TryButton>
             </div>
-            <div style={{ ["--d" as string]: "380ms" }} className="hero-rise mt-8 flex flex-wrap gap-2">
+            <div style={{ ["--d" as string]: "380ms" }} className="hero-rise mt-8 hidden flex-wrap gap-2 sm:flex">
               {[[Search, "Deal-motor"], [LineChart, "Analyse"], [FileText, "Papirgennemgang"], [KanbanSquare, "Pipeline"]].map(([Icon, l]) => {
                 const I = Icon as typeof Search;
                 return <span key={l as string} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700"><I size={14} className="text-blue-600" />{l as string}</span>;
@@ -91,7 +91,7 @@ export default async function Home() {
             </div>
           </div>
           <div className="relative lg:pl-4">
-            <div className="hero-screen"><OverviewScreen /></div>
+            <div className="hero-screen relative max-sm:max-h-[430px] max-sm:overflow-hidden"><OverviewScreen /><div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white to-transparent sm:hidden" /></div>
             <Notice className="hero-pop absolute -top-6 right-2 hidden sm:block lg:-right-6" label="Lige nu" title="Ny bolig matcher dig" text="Algade 9, Holstebro. 1.150.000 kr. og +2.120 kr./md." action="Se boligen" />
             <Notice dark tone="green" className="hero-pop absolute -bottom-8 -left-6 hidden sm:block lg:-left-12 [--d:1200ms]" label="I går kl. 21.04" title="Referatet er læst" text="2 ting at spørge mægleren om, side 4 og 11." />
           </div>
@@ -100,7 +100,7 @@ export default async function Home() {
 
       {/* Flow band */}
       <section className="bg-[#0b1b33] text-white" style={{ background: "radial-gradient(1000px 420px at 50% 0%, #17305a 0%, #0b1b33 70%)" }}>
-        <div className="mx-auto max-w-[1320px] px-4 py-16 text-center sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-[1320px] px-4 py-14 text-center sm:px-8 sm:py-24">
           <Reveal>
             <H2 dark accent="i ét system." className="mx-auto max-w-3xl">Fra fundet bolig til købsaftale,</H2>
             <p className="mx-auto mt-5 max-w-xl text-[18px] leading-relaxed text-white/65">Hvad du finder, regner og læser, bliver på boligen. Du starter aldrig forfra i et nyt værktøj.</p>
@@ -111,7 +111,7 @@ export default async function Home() {
             {FLOW.map(({ Icon, t, d }, i) => (
               <li key={t} className="relative">
                 <Reveal delay={150 + i * 140} className="flex flex-col items-center">
-                <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#13284a] text-blue-300 ring-1 ring-white/10"><Icon size={24} /><span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[11px] font-semibold text-white">{i + 1}</span></span>
+                <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#13284a] text-blue-300 ring-1 ring-white/10"><Icon size={24} /><span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[12px] font-semibold text-white">{i + 1}</span></span>
                 <p className="mt-4 text-[17px] font-semibold">{t}</p>
                 <p className="mt-1 text-[14px] text-white/55">{d}</p>
                 </Reveal>
@@ -129,7 +129,7 @@ export default async function Home() {
             <H2 accent="hele vejen.">Følg én bolig,</H2>
             <p className="mx-auto mt-5 max-w-xl text-[18px] leading-relaxed text-slate-600">Tryk dig igennem, hvordan Algade 9 i Holstebro går fra fund til accepteret bud.</p>
           </Reveal>
-          <Reveal delay={120} className="mt-12"><Walkthrough /></Reveal>
+          <div className="mt-12 lg:mt-6"><Walkthrough /></div>
         </div>
       </section>
 
@@ -140,9 +140,9 @@ export default async function Home() {
             <p className="text-[14px] font-semibold text-blue-600">Gratis, uden login</p>
             <H2 className="mt-3" accent="du kigger på.">Prøv det på en bolig,</H2>
             <Lead>Tre tal er nok til at se, om boligen kan betale sig selv. Det er den samme beregning, som ligger under hele systemet.</Lead>
-            <div className="mt-8 grid max-w-md grid-cols-3 gap-3">
-              {[[PHOTO(2), "Rækkehus"], [PHOTO(1), "Lejlighed"], [PHOTO(5), "Villa"]].map(([src, l]) => (
-                <div key={l} className="overflow-hidden rounded-xl ring-1 ring-slate-200">
+            <div className="mt-8 hidden max-w-md grid-cols-3 gap-3 sm:grid">
+              {[[PHOTO(2), "Rækkehus"], [PHOTO(1), "Lejlighed"], [PHOTO(5), "Villa"]].map(([src, l], i) => (
+                <div key={l} className={`parallax overflow-hidden rounded-xl ring-1 ring-slate-200 ${["[--a:18px]", "[--a:-26px]", "[--a:34px]"][i]}`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={src} alt={`${l}, eksempel`} className="aspect-square w-full object-cover" />
                   <p className="bg-white px-2 py-1.5 text-center text-[13px] font-medium text-slate-700">{l}</p>
@@ -150,7 +150,7 @@ export default async function Home() {
               ))}
             </div>
           </Reveal>
-          <Reveal delay={140} className="mx-auto w-full max-w-[640px]"><QuickTest /></Reveal>
+          <Reveal delay={140} className="mx-auto w-full max-w-[640px]"><QuickTest autoplay /></Reveal>
         </div>
       </section>
 
@@ -238,9 +238,9 @@ export default async function Home() {
               <div className="min-w-0">
                 <p className="text-[17px] font-semibold">{site.founder.name}</p>
                 <p className="text-[14px] text-slate-500">Stifter. Tager selv telefonen.</p>
-                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[14px] font-medium">
-                  <a href={site.phoneHref} className="text-blue-700 hover:underline">{site.phone}</a>
-                  <a href={`mailto:${site.email}`} className="text-blue-700 hover:underline">{site.email}</a>
+                <div className="mt-1 flex flex-wrap gap-x-4 text-[14px] font-medium">
+                  <a href={site.phoneHref} className="inline-flex min-h-[40px] items-center text-blue-700 hover:underline">{site.phone}</a>
+                  <a href={`mailto:${site.email}`} className="inline-flex min-h-[40px] items-center text-blue-700 hover:underline">{site.email}</a>
                 </div>
               </div>
             </div>
@@ -303,7 +303,7 @@ export default async function Home() {
             </ol>
             <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
               <Cta dark />
-              <a href={site.phoneHref} className="inline-flex min-h-[48px] items-center gap-2 rounded-lg border border-white/25 px-5 text-[16px] font-semibold text-white hover:border-white/50"><Phone size={17} /> Ring {site.phone}</a>
+              <a href={site.phoneHref} className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-white/25 max-sm:w-full px-5 text-[16px] font-semibold text-white hover:border-white/50"><Phone size={17} /> Ring {site.phone}</a>
             </div>
           </Reveal>
           <Reveal delay={150} y={32} className="relative mx-auto hidden w-full max-w-md sm:block">

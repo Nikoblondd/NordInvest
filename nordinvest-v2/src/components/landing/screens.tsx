@@ -44,10 +44,10 @@ export function Notice({ tone = "blue", label, title, text, action, dark, classN
     <div className={cx("w-[248px] overflow-hidden rounded-xl shadow-[0_20px_50px_-15px_rgba(11,27,51,0.45)]", dark ? "bg-[#0b1b33] text-white ring-1 ring-white/10" : "bg-white text-slate-900 ring-1 ring-slate-200", className)}>
       <div className={cx("h-[3px]", bar)} />
       <div className="p-3.5">
-        <p className={cx("flex items-center gap-1.5 text-[11px] font-medium", dark ? "text-white/60" : "text-slate-500")}><span className={cx("h-1.5 w-1.5 rounded-full", dot)} />{label}</p>
+        <p className={cx("flex items-center gap-1.5 text-[12px] font-medium", dark ? "text-white/60" : "text-slate-500")}><span className={cx("h-1.5 w-1.5 rounded-full", dot)} />{label}</p>
         <p className="mt-1 text-[15px] font-semibold leading-snug">{title}</p>
         {text && <p className={cx("mt-0.5 text-[12px] leading-snug", dark ? "text-white/65" : "text-slate-500")}>{text}</p>}
-        {action && <span className="mt-2.5 inline-flex h-7 items-center rounded-md bg-blue-600 px-2.5 text-[11px] font-semibold text-white">{action}</span>}
+        {action && <span className="mt-2.5 inline-flex h-7 items-center rounded-md bg-blue-600 px-2.5 text-[12px] font-semibold text-white">{action}</span>}
       </div>
     </div>
   );
