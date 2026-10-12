@@ -10,6 +10,20 @@ export function isAdminEmail(email?: string | null): boolean {
   return list.includes(email.toLowerCase());
 }
 
+/*
+ * Tool and admin access. Email alone is not enough: sign-ups are open and
+ * e-mails are auto-confirmed in Supabase, so someone could register an
+ * allowlisted address that has no account yet. Only allowlisted accounts that
+ * existed before the platform closed count; a new account never qualifies.
+ */
+const ADMIN_ACCOUNTS_BEFORE = Date.parse("2026-10-12T00:00:00Z");
+
+export function isAdmin(user?: { email?: string | null; created_at?: string | null } | null): boolean {
+  if (!user || !isAdminEmail(user.email)) return false;
+  const created = Date.parse(user.created_at ?? "");
+  return Number.isFinite(created) && created < ADMIN_ACCOUNTS_BEFORE;
+}
+
 export const UNLIMITED = 999999;
 
 // The monthly analysis limit that actually applies to a user: their plan's

@@ -11,7 +11,6 @@ export const maxDuration = 300;
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordinvest.io";
 
 function authorized(req: Request): boolean {
-  if (req.headers.get("x-vercel-cron")) return true;
   const secret = process.env.CRON_SECRET;
   if (!secret) return false;
   const auth = req.headers.get("authorization");

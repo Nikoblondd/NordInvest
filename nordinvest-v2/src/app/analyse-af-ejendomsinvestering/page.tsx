@@ -184,7 +184,7 @@ export default function AnalyseGuidePage() {
             <HeroInput />
           </div>
           <p className="mt-3 text-sm text-slate-500">
-            Har du en bolig i tankerne? Sæt linket ind, så regner vi den igennem. 3 gratis analyser om måneden.
+            Har du en bolig i tankerne? Prøv en gratis beregning, eller anmod om adgang til hele analysen.
           </p>
         </div>
       </header>
@@ -318,8 +318,8 @@ export default function AnalyseGuidePage() {
           <section className="overflow-hidden rounded-3xl bg-[#0b1b33] p-6 text-white shadow-card-lift sm:p-8">
             <h2 className="font-thesis text-[2rem] font-normal leading-[1.05] sm:text-[2.4rem]">Lad NordInvest regne den igennem</h2>
             <p className="mt-3 max-w-xl leading-relaxed text-blue-100">
-              Indsæt et link fra en dansk boligside. Du får cashflow, afkast, rentestress, pris mod området og planer for
-              adressen på under et minut.
+              Cashflow, afkast, rentestress, pris mod området og planer for adressen på under et minut. Analysen er en
+              del af NordInvest, som du får adgang til efter en kort samtale.
             </p>
             <div className="mt-6 max-w-xl">
               <HeroInput />

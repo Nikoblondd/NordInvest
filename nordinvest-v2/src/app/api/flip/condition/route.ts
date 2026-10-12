@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { fetchImageB64, parseJson } from "@/lib/vision-images";
 import { ELEMENTS, type Action } from "@/lib/flip/plan";
+import { gateApi } from "@/lib/gate";
 
 /*
  * Flip condition check: the model looks at the listing photos and judges each
@@ -49,6 +50,8 @@ const clip = (s: string, n: number) => (s.length <= n ? s : `${s.slice(0, s.last
 const clampAction = (a: any): Action => (["keep", "refresh", "replace", "unseen"].includes(a) ? a : "unseen");
 
 export async function POST(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ ok: false, reason: "not_configured" });
   const body = await req.json().catch(() => ({}));
   const urls: string[] = Array.isArray(body?.images) ? body.images.filter((u: any) => typeof u === "string" && /^https?:\/\//.test(u)).slice(0, 12) : [];

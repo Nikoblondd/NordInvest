@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { residentialPriceBenchmark } from "@/lib/reference";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 
@@ -7,6 +8,8 @@ export const runtime = "nodejs";
 // analyzer can show a sourced market comparison. Cached at the edge for a day —
 // the benchmark moves slowly and is refreshed when reference.json is redeployed.
 export async function GET(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const p = new URL(req.url).searchParams;
   const zip = p.get("zip") ? Number(p.get("zip")) : null;
   const type = p.get("type");

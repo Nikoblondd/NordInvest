@@ -7,6 +7,7 @@ import {
   type OutcomeRow,
 } from "@/lib/calibration";
 import { getDstAppreciationPct } from "@/lib/dst";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,8 @@ export const dynamic = "force-dynamic";
 // anonymised — only factors returned), computes a global calibration and, when
 // a ?region= is given, a region-specific one blended toward global as a prior.
 export async function GET(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const region = new URL(req.url).searchParams.get("region");
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;

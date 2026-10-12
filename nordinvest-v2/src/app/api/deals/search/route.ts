@@ -7,6 +7,7 @@ import { analyzeDeal, isPlausible, sortDeals, analyzeInvestment, sortInvestments
 import type { Strategy } from "@/lib/analysis";
 import { dealAccess } from "@/lib/deal-access";
 import { DEAL_ROWS, MAP_LIMIT, type DealAccess } from "@/lib/deal-tiers";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -36,6 +37,8 @@ type Filters = {
 };
 
 export async function GET(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const p = new URL(req.url).searchParams;
   // `municipality` may be a comma-separated list of kommune slugs (multi-select).
   const municipalities = (p.get("municipality") || "").split(",").map((s) => s.trim()).filter(Boolean);

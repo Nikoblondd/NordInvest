@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Anthropic from "@anthropic-ai/sdk";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -165,6 +166,8 @@ function renovationBlock(rn: any): string | null {
 }
 
 export async function POST(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   if (!process.env.ANTHROPIC_API_KEY) {
     return new Response("Analytikeren er ikke tilgængelig lige nu.", {
       status: 200, headers: { "Content-Type": "text/plain; charset=utf-8" },

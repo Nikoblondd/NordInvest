@@ -7,14 +7,8 @@ import { Logo } from "./Logo";
 import { hasAuthCookie, loadSupabase } from "@/lib/supabase/lazy";
 import { LangToggle } from "./i18n/LangToggle";
 
-// Members get the tools; visitors get the public pages (the tools are reached after a conversation).
-const memberLinks = [
-  { href: "/analyseren", label: "Analyseren" },
-  { href: "/deals", label: "Deal-motor" },
-  { href: "/spil", label: "Spil" },
-  { href: "/blog", label: "Blog" },
-];
-const publicLinks = [
+// The public pages. The tools are reached after a conversation, never from here.
+const links = [
   { href: "/spil", label: "Ejendomsspillet" },
   { href: "/deals", label: "Bedste boliger" },
   { href: "/blog", label: "Viden" },
@@ -66,7 +60,6 @@ export function Nav() {
   }, []);
 
   const firstName = name?.split(" ")[0];
-  const links = authed ? memberLinks : publicLinks;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-slate-50/80 backdrop-blur-lg">
@@ -76,13 +69,8 @@ export function Nav() {
         </div>
 
         <div className="hidden items-center gap-4 text-sm font-medium text-slate-600 md:flex lg:gap-8">
-          {authed && (
-            <Link href="/dashboard" className="whitespace-nowrap font-semibold text-slate-900 transition-colors hover:text-blue-600">
-              Mine ejendomme
-            </Link>
-          )}
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className={authed && (l.href === "/spil" || l.href === "/blog") ? "hidden whitespace-nowrap transition-colors hover:text-blue-600 lg:inline" : "whitespace-nowrap transition-colors hover:text-blue-600"}>
+            <Link key={l.href} href={l.href} className="whitespace-nowrap transition-colors hover:text-blue-600">
               {l.label}
             </Link>
           ))}
@@ -158,11 +146,6 @@ export function Nav() {
       {open && (
         <div className="border-t border-slate-200 bg-slate-50 px-4 py-5 sm:px-6 md:hidden">
           <div className="flex flex-col gap-4">
-            {authed && (
-              <Link href="/dashboard" className="text-base font-semibold text-slate-900" onClick={() => setOpen(false)}>
-                Mine ejendomme
-              </Link>
-            )}
             {links.map((l) => (
               <Link key={l.href} href={l.href} className="text-base font-medium text-slate-700" onClick={() => setOpen(false)}>
                 {l.label}

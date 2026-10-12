@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { UpgradeOptions } from "@/components/subscription/UpgradeOptions";
 import { ManageSubscriptionButton } from "@/components/dashboard/ManageSubscriptionButton";
 import { limits } from "@/lib/pricing";
-import { effectiveLimit } from "@/lib/access";
+import { effectiveLimit, isAdmin } from "@/lib/access";
 
 export const dynamic = "force-dynamic";
 
@@ -42,13 +42,16 @@ export default async function AbonnementPage() {
           <p className="mt-2 text-slate-600">
             Du er på <b>{tierLabel}-planen</b>
             {max >= 999999 ? " med ubegrænsede analyser." : ` med ${max} analyser om måneden.`}{" "}
-            {max < 999999 && "Få mere ud af NordInvest med en større plan."}
+            {isAdmin(user) && max < 999999 && "Få mere ud af NordInvest med en større plan."}
           </p>
         </div>
 
-        <div className="mt-8">
-          <UpgradeOptions currentTier={tier} />
-        </div>
+        {/* No self-serve upgrades on the closed platform; price is agreed after a conversation. */}
+        {isAdmin(user) && (
+          <div className="mt-8">
+            <UpgradeOptions currentTier={tier} />
+          </div>
+        )}
 
         {/* Small, understated cancel/manage link at the very bottom */}
         {hasSub && (

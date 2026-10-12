@@ -9,15 +9,14 @@ const columns = [
   {
     title: "Produkt",
     links: [
-      { href: "/analyseren", label: "Analyseren" },
-      { href: "/deals", label: "Deal-motor" },
+      { href: "/analyseren", label: "Analyse af en bolig" },
+      { href: "/deals", label: "Bedste boliger lige nu" },
       { href: "/beregn-husleje", label: "Beregn husleje" },
       { href: "/beregn-afkast", label: "Beregn afkast" },
       { href: "/udlejning-af-lejlighed", label: "Regler og skat ved udlejning" },
       { href: "/priser", label: "Priser" },
       { href: "/adgang", label: "Anmod om adgang" },
       { href: "/spil", label: "Ejendomsspillet" },
-      { href: "/dashboard", label: "Mine ejendomme" },
     ],
   },
   {

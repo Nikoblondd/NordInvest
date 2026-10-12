@@ -6,6 +6,8 @@ import { geist } from "@/components/home/fonts";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { AccessForm } from "@/components/landing/AccessForm";
 import { site } from "@/lib/site";
+import { createClient } from "@/lib/supabase/server";
+import { isAdmin } from "@/lib/access";
 
 export const metadata: Metadata = {
   title: "Anmod om adgang",
@@ -13,13 +15,22 @@ export const metadata: Metadata = {
   alternates: { canonical: "/adgang" },
 };
 
-export default function AdgangPage({ searchParams }: { searchParams: { kilde?: string } }) {
+export default async function AdgangPage({ searchParams }: { searchParams: { kilde?: string } }) {
+  // A logged-in account without tool access lands here: say so plainly.
+  const supabase = createClient();
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+  const waiting = !!user && !isAdmin(user);
   return (
     <div className={`${geist.variable} min-h-screen bg-white font-[family-name:var(--font-geist)] text-slate-900 antialiased`}>
       <LandingNav />
       <main className="relative overflow-hidden" style={{ background: "radial-gradient(1100px 600px at 10% 0%, #1a3a6b 0%, #0b1b33 60%)" }}>
         <div className="mx-auto grid max-w-[1320px] gap-12 px-4 py-12 text-white sm:px-8 sm:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div className="lg:pt-6">
+            {waiting && (
+              <div role="status" className="mb-8 rounded-xl bg-white/[0.08] px-4 py-3 text-[15px] leading-relaxed text-white/85 ring-1 ring-white/15">
+                Du er logget ind som <b className="text-white">{user!.email}</b>, men din konto har ikke adgang til NordInvest endnu. Send en anmodning herunder, så kontakter jeg dig.
+              </div>
+            )}
             <h1 className="text-[36px] font-semibold leading-[1.05] tracking-[-0.035em] [text-wrap:balance] sm:text-[52px]">
               Fortæl mig, <span className="text-blue-400">hvad du har brug for.</span>
             </h1>

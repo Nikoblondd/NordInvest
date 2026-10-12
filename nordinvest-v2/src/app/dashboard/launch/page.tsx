@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { createClient } from "@/lib/supabase/server";
-import { isAdminEmail } from "@/lib/access";
+import { isAdmin } from "@/lib/access";
 import { getLaunchReadiness, isLaunchReady, type CheckStatus, type ReadinessCheck } from "@/lib/launch-readiness";
 import {
   Lock,
@@ -51,7 +51,7 @@ export default async function LaunchReadinessPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
 
-  if (!isAdminEmail(user.email)) {
+  if (!isAdmin(user)) {
     return (
       <div className="min-h-screen bg-slate-50">
         <Nav />

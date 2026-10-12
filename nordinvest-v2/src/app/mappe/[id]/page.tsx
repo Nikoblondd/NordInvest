@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { createClient } from "@/lib/supabase/server";
+import { toolUser } from "@/lib/gate";
 import { Mappe, type MappeRow } from "@/components/mappe/Mappe";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,7 @@ export default async function MappePage({ params }: { params: { id: string } }) 
   if (!supabase) notFound();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/auth/login?next=/mappe/${params.id}`);
+  if (!(await toolUser())) notFound();
   const { data: row } = await supabase
     .from("analyses")
     .select("id, created_at, property_url, property_data, analysis_result, investment_score, verdict")

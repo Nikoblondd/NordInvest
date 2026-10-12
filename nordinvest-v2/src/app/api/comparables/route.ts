@@ -5,10 +5,13 @@
 
 import { NextResponse } from "next/server";
 import { getComparables } from "@/lib/comparables";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const q = new URL(req.url).searchParams;
   const zip = q.get("zip") ?? "";
   const type = q.get("type") ?? "condo";

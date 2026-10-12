@@ -1,11 +1,6 @@
-import type { Metadata } from "next";
-import { AuthCard } from "@/components/auth/AuthCard";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Opret gratis konto",
-  description: "Opret en gratis NordInvest-konto med LinkedIn eller Google — 3 gratis analyser om måneden.",
-};
-
+/* Accounts are created by invitation only. Anyone who wants in asks for access. */
 export default function SignupPage() {
-  return <AuthCard mode="signup" />;
+  redirect("/adgang");
 }

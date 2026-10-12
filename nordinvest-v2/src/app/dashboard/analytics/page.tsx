@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { createClient } from "@/lib/supabase/server";
-import { isAdminEmail } from "@/lib/access";
+import { isAdmin } from "@/lib/access";
 import { getAnalytics } from "@/lib/analytics-data";
 import { getPosthogAnalytics } from "@/lib/posthog-data";
 import { AnalyticsCharts } from "@/components/dashboard/AnalyticsCharts";
@@ -23,7 +23,7 @@ export default async function AnalyticsPage() {
 
   // Only admins (ADMIN_EMAILS — server-only, cannot be self-granted) may view
   // this. Everyone else gets an explicit "no access" message, not a silent bounce.
-  if (!isAdminEmail(user.email)) {
+  if (!isAdmin(user)) {
     return (
       <div className="min-h-screen bg-slate-50">
         <Nav />

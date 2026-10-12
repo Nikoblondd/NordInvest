@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { isAdminEmail } from "@/lib/access";
+import { isAdmin } from "@/lib/access";
 import { getAnalytics } from "@/lib/analytics-data";
 
 export const runtime = "nodejs";
@@ -10,7 +10,7 @@ export async function GET(req: Request) {
   const supabase = createClient();
   if (!supabase) return new Response("unauthorized", { status: 401 });
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user || !isAdminEmail(user.email)) return new Response("Ingen adgang", { status: 403 });
+  if (!user || !isAdmin(user)) return new Response("Ingen adgang", { status: 403 });
 
   const period = new URL(req.url).searchParams.get("period") === "year" ? "aar" : "maaned";
   const a = await getAnalytics();

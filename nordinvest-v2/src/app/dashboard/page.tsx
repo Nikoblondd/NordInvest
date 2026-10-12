@@ -4,6 +4,7 @@ import { Nav } from "@/components/Nav";
 import { createClient } from "@/lib/supabase/server";
 import { Crm, type CrmRow } from "@/components/dashboard/Crm";
 import { WelcomeCelebration } from "@/components/dashboard/WelcomeCelebration";
+import { isAdmin } from "@/lib/access";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,8 @@ export default async function DashboardPage() {
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
+  // Closed platform: only accounts with tool access have a workspace.
+  if (!isAdmin(user)) redirect("/adgang?kilde=konto");
 
   const { data: profile } = await supabase.from("profiles").select("full_name, phone").eq("id", user.id).single();
   if (!profile?.phone) redirect("/velkommen");

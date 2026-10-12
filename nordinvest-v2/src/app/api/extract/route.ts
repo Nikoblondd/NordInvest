@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,6 +23,8 @@ type Fields = {
 };
 
 export async function GET(req: NextRequest) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   // Anonymous analyses are the entire free-tier promise ("3 gratis analyser
   // om måneden — kræver intet kreditkort"). Extract must therefore work
   // without a session. Rate-limit / usage-counting lives on /api/usage.

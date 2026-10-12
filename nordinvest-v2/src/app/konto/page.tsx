@@ -7,7 +7,7 @@ import { DealsOptIn } from "@/components/account/DealsOptIn";
 import { VagtPanel } from "@/components/dashboard/VagtPanel";
 import { SavedSearches, type SavedSearch } from "@/components/dashboard/SavedSearches";
 import { limits } from "@/lib/pricing";
-import { effectiveLimit, isAdminEmail } from "@/lib/access";
+import { effectiveLimit, isAdmin } from "@/lib/access";
 import type { Watch } from "@/lib/vagt";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +35,7 @@ export default async function KontoPage() {
     supabase.from("saved_searches").select("*").eq("user_id", user.id).order("new_count", { ascending: false }).order("created_at", { ascending: false }),
   ]);
 
+  const admin = isAdmin(user);
   const tier = (profile?.subscription_tier ?? "free") as keyof typeof limits;
   const tierLabel = tier === "free" ? "Gratis" : tier[0].toUpperCase() + tier.slice(1);
   const max = effectiveLimit(profile?.subscription_tier, user.email);
@@ -52,8 +53,8 @@ export default async function KontoPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <Nav />
       <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
-        <Link href="/dashboard" className="inline-flex min-h-[40px] items-center gap-1.5 text-[15px] font-medium text-slate-500 hover:text-slate-900">
-          <ArrowLeft size={16} /> Mine ejendomme
+        <Link href={admin ? "/dashboard" : "/"} className="inline-flex min-h-[40px] items-center gap-1.5 text-[15px] font-medium text-slate-500 hover:text-slate-900">
+          <ArrowLeft size={16} /> {admin ? "Mine ejendomme" : "Forsiden"}
         </Link>
         <h1 className="mt-2 text-[28px] font-semibold tracking-[-0.02em] sm:text-[32px]">Konto</h1>
         <p className="mt-1 text-[15px] text-slate-500">{profile?.full_name ?? user.email}</p>
@@ -67,9 +68,11 @@ export default async function KontoPage() {
                 <span className={`rounded px-1.5 py-0.5 text-[12px] font-semibold ${status === "past_due" ? "bg-rose-50 text-rose-700" : status === "canceled" || status === "canceling" ? "bg-amber-50 text-amber-800" : hasSub ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{statusLabel}</span>
               </p>
             </div>
-            <Link href="/abonnement" className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-slate-200 px-4 text-[15px] font-semibold hover:border-slate-300">
-              {hasSub ? "Administrér" : "Opgradér"} <ArrowUpRight size={15} />
-            </Link>
+            {(hasSub || admin) && (
+              <Link href="/abonnement" className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-slate-200 px-4 text-[15px] font-semibold hover:border-slate-300">
+                {hasSub ? "Administrér" : "Opgradér"} <ArrowUpRight size={15} />
+              </Link>
+            )}
           </div>
           <div className="p-4 sm:p-5">
             <div className="flex items-baseline justify-between">
@@ -84,12 +87,22 @@ export default async function KontoPage() {
           </div>
         </div>
 
-        <VagtPanel initial={(watchRows ?? []) as Watch[]} />
-        <SavedSearches initial={(searchRows ?? []) as SavedSearch[]} />
-        <div className="mt-6"><DealsOptIn /></div>
+        {admin ? (
+          <>
+            <VagtPanel initial={(watchRows ?? []) as Watch[]} />
+            <SavedSearches initial={(searchRows ?? []) as SavedSearch[]} />
+            <div className="mt-6"><DealsOptIn /></div>
+          </>
+        ) : (
+          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
+            <p className="text-[16px] font-semibold">NordInvest er nu et lukket system</p>
+            <p className="mt-1 text-[15px] leading-relaxed text-slate-600">Adgang til analyser, Deal-motoren og dine ejendomme sker efter en kort samtale. Din konto og dine gemte data er bevaret.</p>
+            <Link href="/adgang" className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-blue-600 px-4 text-[15px] font-semibold text-white hover:bg-blue-500">Anmod om adgang</Link>
+          </div>
+        )}
 
         <div className="mt-10 flex flex-wrap items-center gap-3 border-t border-slate-200 pt-6">
-          {isAdminEmail(user.email) && (
+          {isAdmin(user) && (
             <>
               <Link href="/dashboard/launch" className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-[14px] font-medium"><Rocket size={15} /> Launch</Link>
               <Link href="/dashboard/analytics" className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-[14px] font-medium"><BarChart3 size={15} /> Analytics</Link>

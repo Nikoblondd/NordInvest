@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { getFlipMarket } from "@/lib/flip/market";
 import { getSoldStats } from "@/lib/sold";
+import { gateApi } from "@/lib/gate";
 
 // What homes like this sell for before and after renovation in the same
 // postnummer. Cached 6 hours per query at the edge.
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const q = new URL(req.url).searchParams;
   const year = Number(q.get("year"));
   const zip = q.get("zip") ?? "";

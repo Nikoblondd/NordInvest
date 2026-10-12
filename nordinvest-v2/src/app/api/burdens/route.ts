@@ -5,10 +5,13 @@
 
 import { NextResponse } from "next/server";
 import { getFutureBurdens } from "@/lib/future-burdens";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const address = new URL(req.url).searchParams.get("address");
   if (!address || address.trim().length < 4) {
     return NextResponse.json({ ok: false, error: "missing_address" }, { status: 400 });

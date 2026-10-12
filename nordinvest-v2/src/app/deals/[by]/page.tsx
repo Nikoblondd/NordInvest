@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { DealFinder } from "@/components/deals/DealFinder";
+import { DealMotorPanel } from "@/components/gate/DealMotorPanel";
 import { CityDealsOptIn } from "@/components/deals/CityDealsOptIn";
 import { getDealSnapshot } from "@/lib/deals-snapshot";
 import { dealCity } from "@/lib/deal-cities";
@@ -128,12 +128,8 @@ export default async function CityDealsPage({ params }: { params: { by: string }
             </>
           )}
 
-          <h2 className="mt-12 text-xl font-semibold tracking-[-0.02em] sm:text-2xl">Søg selv {c.in}</h2>
-          <p className="mt-2 max-w-2xl text-slate-600">
-            Filtrér på boligtype, pris, afkast og cashflow, eller se hele markedet på et kort.
-          </p>
-          <div className="mt-5">
-            <DealFinder initialCity={c.slug} />
+          <div className="mt-12">
+            <DealMotorPanel where={c.in} />
           </div>
         </div>
 

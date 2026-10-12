@@ -7,6 +7,8 @@ import { AnalyzerApp } from "@/components/analyzer/AnalyzerApp";
 import { HeroInput } from "@/components/home/HeroInput";
 import Link from "next/link";
 import { geist } from "@/components/home/fonts";
+import { toolUser } from "@/lib/gate";
+import { LockedTool } from "@/components/gate/LockedTool";
 
 const baseMeta: Metadata = {
   title: "Analysér en ejendomsinvestering gratis",
@@ -43,11 +45,26 @@ const geistScope = {
   "--font-inter": "var(--font-geist)",
 } as CSSProperties;
 
-export default function AnalyserenPage({
+export const dynamic = "force-dynamic";
+
+export default async function AnalyserenPage({
   searchParams,
 }: {
   searchParams: Record<string, string | string[] | undefined>;
 }) {
+  // Closed platform: the analyser itself is only rendered for accounts with tool access.
+  if (!(await toolUser())) {
+    return (
+      <div className="min-h-[100dvh] overflow-x-clip bg-white text-slate-900">
+        <Nav />
+        <main className={`${geist.variable} font-geist antialiased`} style={geistScope}>
+          <LockedTool title="Analysér enhver dansk bolig." lead="Analyseren regner en bolig igennem på et minut: overskud, afkast, renterisiko og 10 år frem, med data fra BBR og Danmarks Statistik. Den er en del af NordInvest, som du får adgang til efter en kort samtale." />
+          <WhatYouGet />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
   // With a property loaded, the verdict is the first thing under the header.
   const analyzing = !!(searchParams.url || searchParams.price || searchParams.saved);
 
@@ -157,9 +174,9 @@ function WhatYouGet() {
               <Link href="/analyse-af-ejendomsinvestering" className="font-medium text-blue-700 underline-offset-2 hover:underline">
                 analyse af ejendomsinvestering
               </Link>{" "}
-              gennemgår hvert nøgletal med et regneeksempel. Leder du efter en bolig at regne på, så prøv{" "}
+              gennemgår hvert nøgletal med et regneeksempel. Leder du efter en bolig at regne på, så se{" "}
               <Link href="/deals" className="font-medium text-blue-700 underline-offset-2 hover:underline">
-                Deal-motoren
+                de bedste boliger lige nu
               </Link>
               .
             </p>

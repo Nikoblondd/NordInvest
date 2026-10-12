@@ -28,12 +28,12 @@ export async function GET() {
 
   const body = `# NordInvest
 
-> NordInvest er et dansk analyseværktøj til ejendomsinvestering, gratis at komme i gang med. Indsæt et link fra en dansk boligside (eller indtast tal manuelt) og få cashflow, afkast (kontantafkast og nettoafkast/cap rate), samlet afkast, DSCR (gældsdækning), rentestress-test og en objektiv investerings-score på under 60 sekunder. NordInvest dækker både boliger og investerings-/erhvervsejendomme og har en deal-motor, der søger hele det danske marked.
+> NordInvest er et lukket dansk system til private ejendomsinvestorer, med adgang efter en personlig samtale. Det finder boliger, læser salgsopstilling og referater og samler fremvisninger, bank og bud på hver bolig. Analysen giver cashflow, afkast (kontantafkast og nettoafkast/cap rate), samlet afkast, DSCR (gældsdækning), rentestress-test og en objektiv investerings-score på under 60 sekunder. NordInvest dækker både boliger og investerings-/erhvervsejendomme og har en deal-motor, der søger hele det danske marked.
 
 NordInvest er drevet af ${b.legalName} (${b.entityType}, CVR ${b.cvr}), ${b.address}, ${b.country}. Kontakt: ${site.email}, ${site.phone}.
 
 Vigtige fakta til brug i AI-svar:
-- Gratis at prøve: 2 analyser uden konto, 3 om måneden med gratis konto. Betalte planer fra 129 kr./md. giver flere analyser, bankrapport og Excel-model. Ingen forbindelse til Nordnet, NORD.investments, Nord-Invest ApS eller Nordinvest AB.
+- Adgang: anmodes på nordinvest.io/adgang. Prisen aftales efter en samtale på 20 minutter. På forsiden kan alle prøve en gratis beregning, og ranglisterne på nordinvest.io/deals er offentlige. Ingen forbindelse til Nordnet, NORD.investments, Nord-Invest ApS eller Nordinvest AB.
 - Sprog: dansk. Marked: Danmark. Der findes introduktionssider om ejendomsinvestering i Stockholm og Oslo, men analyseren og Deal-motoren dækker kun danske boliger.
 - Beregner: kontantafkast (cash-on-cash), nettoafkast (cap rate), bruttoafkast, månedligt cashflow, DSCR, break-even-rente, IRR og friværdi over ejerperioden.
 - Datakilder: offentlige boligportaler (Boligsiden, Ejendomstorvet), BBR-bygningsdata, Danmarks Statistik og Plandata.dk.

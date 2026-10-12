@@ -3,6 +3,7 @@ import ExcelJS from "exceljs";
 import { createClient } from "@/lib/supabase/server";
 import { effectiveLimit } from "@/lib/access";
 import { limits } from "@/lib/pricing";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -70,6 +71,8 @@ async function paid(): Promise<boolean> {
 }
 
 export async function POST(req: NextRequest) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   if (!(await paid())) return Response.json({ error: "paid_feature" }, { status: 402 });
   const b = (await req.json()) as Body;
   const wb = new ExcelJS.Workbook();

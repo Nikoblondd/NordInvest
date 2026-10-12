@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { effectiveLimit, UNLIMITED } from "@/lib/access";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -36,7 +37,9 @@ async function usageContext() {
 }
 
 // GET — current usage/limit for the signed-in user (drives the save gate).
-export async function GET() {
+export async function GET(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const ctx = await usageContext();
   if (!ctx) return NextResponse.json({ ok: false, authenticated: false });
   return NextResponse.json({
@@ -55,6 +58,8 @@ const STRATEGIES = new Set(["cashflow", "appreciation", "value_add"]);
 // flow can flip THIS row to saved_to_portfolio (no double-count).
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export async function POST(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const ctx = await usageContext();
   if (!ctx) return NextResponse.json({ ok: false, authenticated: false });
   let body: any = {};

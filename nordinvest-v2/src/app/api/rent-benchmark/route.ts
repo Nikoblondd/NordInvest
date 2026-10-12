@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getRentBenchmark } from "@/lib/rent";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 
@@ -7,6 +8,8 @@ export const runtime = "nodejs";
 // the citable source for the growth trajectory; user observations sharpen the
 // estimate as density crosses ≥5 / ≥15 per region+type.
 export async function GET(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const p = new URL(req.url).searchParams;
   const zip = p.get("zip") ? Number(p.get("zip")) : null;
   const type = p.get("type");

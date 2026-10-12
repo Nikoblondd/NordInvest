@@ -52,6 +52,18 @@ const nextConfig = {
       { source: "/vilkaar", destination: "/juridisk/vilkaar", permanent: true },
       { source: "/juridisk.html", destination: "/juridisk", permanent: true },
 
+      // --- Guessable tool URLs → the public pages (the tools themselves are closed) ---
+      { source: "/deal-motor", destination: "/deals", permanent: true },
+      { source: "/deal-motoren", destination: "/deals", permanent: true },
+      { source: "/dealmotor", destination: "/deals", permanent: true },
+      { source: "/dealmotoren", destination: "/deals", permanent: true },
+      { source: "/analyser", destination: "/analyseren", permanent: true },
+      { source: "/analyse", destination: "/analyseren", permanent: true },
+      { source: "/analyzer", destination: "/analyseren", permanent: true },
+      { source: "/mine-ejendomme", destination: "/adgang", permanent: false },
+      { source: "/signup", destination: "/adgang", permanent: false },
+      { source: "/opret", destination: "/adgang", permanent: false },
+
       // --- Deliberately removed sections → closest equivalent ---
       { source: "/vaerktoejer", destination: "/analyseren", permanent: true },
       { source: "/vaerktoejer/:tool*", destination: "/analyseren", permanent: true },

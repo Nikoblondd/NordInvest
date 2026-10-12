@@ -134,8 +134,8 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
               {hint === "signup" && (
                 <>
                   {" "}Ingen konto?{" "}
-                  <Link href="/auth/signup" className="font-semibold underline hover:text-rose-900">
-                    Opret dig gratis
+                  <Link href="/adgang" className="font-semibold underline hover:text-rose-900">
+                    Anmod om adgang
                   </Link>.
                 </>
               )}
@@ -230,7 +230,7 @@ export function AuthCard({ mode }: { mode: "login" | "signup" }) {
           {isSignup ? (
             <>Har du allerede en konto? <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-700">Log ind</Link></>
           ) : (
-            <>Ny hos NordInvest? <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-700">Opret gratis</Link></>
+            <>Ny hos NordInvest? <Link href="/adgang" className="font-medium text-blue-600 hover:text-blue-700">Anmod om adgang</Link></>
           )}
         </p>
       </div>

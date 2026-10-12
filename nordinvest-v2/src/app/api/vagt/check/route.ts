@@ -11,10 +11,10 @@ export const maxDuration = 300; // re-scraping many listings can take a while
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordinvest.io";
 const MOVE_THRESHOLD = 0.005; // 0,5 % — ignore rounding noise
 
-// Auth: a Vercel Cron request carries the `x-vercel-cron` header; a manual run
-// must present the CRON_SECRET. Without either, refuse.
+// Auth: Vercel Cron sends `Authorization: Bearer <CRON_SECRET>`; a manual run
+// presents the same secret. Headers like x-vercel-cron can be forged, so they
+// are not trusted.
 function authorized(req: Request): boolean {
-  if (req.headers.get("x-vercel-cron")) return true;
   const secret = process.env.CRON_SECRET;
   if (!secret) return false;
   const auth = req.headers.get("authorization");

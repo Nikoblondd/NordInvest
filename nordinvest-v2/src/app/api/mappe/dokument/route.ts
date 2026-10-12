@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { parseJson } from "@/lib/vision-images";
+import { gateApi } from "@/lib/gate";
 
 /*
  * Reads a property document for the ejendomsmappe: salgsopstilling,
@@ -54,6 +55,8 @@ const str = (v: any, n: number) => (typeof v === "string" ? v.trim().slice(0, n)
 const page = (v: any) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Math.round(Number(v)) : null);
 
 export async function POST(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ ok: false, reason: "not_configured" });
   // Logged-in users only: every review costs a model call.
   const supabase = createClient();

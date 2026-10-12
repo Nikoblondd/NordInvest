@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { DealFinder } from "@/components/deals/DealFinder";
+import { DealMotorPanel } from "@/components/gate/DealMotorPanel";
 import { Fold } from "@/components/ui/Fold";
 import { getDealSnapshot } from "@/lib/deals-snapshot";
 import {
@@ -61,7 +61,7 @@ export default async function DealsPage() {
     },
     {
       q: "Koster Deal-motoren noget?",
-      a: "Du kan prøve den gratis: uden konto ser du de 3 bedste handler i hver søgning, og med en gratis konto de 10 bedste. Med Starter (fra 129 kr./md.) ser du alle handler og får kortet, de avancerede filtre og Deal-vagt, der mailer dig, når en ny handel dukker op.",
+      a: "Ranglisterne her på siden er åbne for alle. Selve Deal-motoren, med egne filtre, kortet over hele markedet og Deal-vagt, der mailer dig, når en ny handel dukker op, er en del af NordInvest, som du får adgang til efter en kort samtale.",
     },
   ];
   const jsonLd = dealsJsonLd({
@@ -94,7 +94,7 @@ export default async function DealsPage() {
           </div>
 
           <div className="mt-5 sm:mt-8">
-            <DealFinder />
+            <DealMotorPanel />
           </div>
         </div>
 

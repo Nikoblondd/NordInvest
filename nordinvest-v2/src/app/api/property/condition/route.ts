@@ -2,6 +2,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { fetchImageB64, parseJson } from "@/lib/vision-images";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -94,6 +95,8 @@ function sanitize(raw: any) {
 }
 
 export async function POST(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ ok: false, reason: "not_configured" }, { status: 200 });
   }

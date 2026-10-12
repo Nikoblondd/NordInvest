@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { tiers, PRODUCT_IDS } from "@/lib/pricing";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,8 @@ const ORIGIN = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordinvest.io";
 //   flow. Returns { url }.
 // - No active subscription (free) → send them to the tier's Payment Link. { url }.
 export async function POST(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey) return NextResponse.json({ error: "not_configured" }, { status: 500 });
 

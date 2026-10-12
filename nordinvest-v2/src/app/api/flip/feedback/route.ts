@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { gateApi } from "@/lib/gate";
 
 /*
  * Feedback from people who ran a flip: did the numbers hit, what was off, and
@@ -15,6 +16,8 @@ const ROLES = new Set(["flipper", "considering", "tradesman", "advisor", "other"
 const clip = (v: unknown, n: number) => (typeof v === "string" ? v.trim().slice(0, n) : "");
 
 export async function POST(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return NextResponse.json({ ok: false }, { status: 503 });

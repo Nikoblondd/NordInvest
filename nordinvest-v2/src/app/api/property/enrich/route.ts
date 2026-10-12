@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { getAddressToBFE } from "@/lib/dar";
 import { getGrundByBFE, getBygningerByGrund, getEnhederByBygning, datafordelerConfigured } from "@/lib/datafordeler";
+import { gateApi } from "@/lib/gate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -104,11 +105,15 @@ async function cacheSet(bfe: string, data: unknown) {
 }
 
 export async function GET(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const sp = new URL(req.url).searchParams;
   return enrich(sp.get("adresse") || sp.get("address"), sp.get("bfe"));
 }
 
 export async function POST(req: Request) {
+  const denied = await gateApi(req);
+  if (denied) return denied;
   const body = await req.json().catch(() => ({}));
   return enrich(body.adresse || body.address, body.bfe);
 }

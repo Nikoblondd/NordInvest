@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { isAdminEmail } from "@/lib/access";
+import { isAdmin } from "@/lib/access";
 import { getAnalytics } from "@/lib/analytics-data";
 
 /*
@@ -18,7 +18,7 @@ async function allowed(req: Request): Promise<boolean> {
   const supabase = createClient();
   if (!supabase) return false;
   const { data: { user } } = await supabase.auth.getUser();
-  return !!user && isAdminEmail(user.email);
+  return !!user && isAdmin(user);
 }
 
 export async function GET(req: Request) {
