@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Sparkles, X } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 /*
@@ -18,18 +19,18 @@ type Step = { target: string | null; title: string; text: string };
 
 const STEPS: Step[] = [
   { target: null, title: "Velkommen indenfor", text: "På to minutter viser jeg dig, hvordan NordInvest hænger sammen: fra en bolig, du finder, til det bud, du afgiver." },
-  { target: "nav", title: "Hele systemet i én menu", text: "Fem steder, ét system. Alt, hvad du finder, regner og læser, bliver gemt på boligen, så du aldrig taster noget to gange." },
+  { target: "nav", title: "Hele systemet i én menu", text: "Fem steder, ét system. Alt, hvad du finder, regner, planlægger og læser, bliver gemt på boligen, så du aldrig taster noget to gange." },
   { target: "quickfind", title: "Ét felt til det hele", text: "Indsæt et link fra Boligsiden, Home eller EDC, så regner vi boligen igennem. Skriv en adresse, så finder du en af dine egne. På computer åbner ⌘K feltet." },
-  { target: "kpis", title: "Status på et øjeblik", text: "Hvor mange boliger du har i gang, dine fremvisninger, bud ude og nye muligheder fra markedet." },
-  { target: "pipeline", title: "Din pipeline", text: "Hver farve er en fase i købet: screening, fremvisning, papirer, bank og bud. Tryk for at se boligerne i den fase." },
-  { target: "next-steps", title: "Næste skridt", text: "Dine opgaver på tværs af alle boliger, sorteret efter dato. Du får en mail dagen før, og sætter flueben, når du er færdig." },
-  { target: "opportunities", title: "Nye muligheder", text: "Deal-motoren regner hele markedet igennem hver dag. Her er de boliger, der giver mest overskud lige nu. Tryk Analysér for at regne på én." },
-  { target: "nav-ejendomme", title: "Ejendomme", text: "Din pipeline som tavle eller liste. Hver bolig er en sag med analyse, papirer, opgaver, mæglerens kontakt og dit bud." },
-  { target: "nav-find", title: "Find boliger", text: "Deal-motoren med dine egne filtre og hele markedet på et kort. Gem en søgning, så får du besked, når en ny bolig passer." },
-  { target: "nav-analyser", title: "Analysér", text: "Overskud, afkast, renterisiko og 10 år frem på et minut. Gem boligen, så lander den i din pipeline med tallene." },
-  { target: "nav-opgaver", title: "Opgaver", text: "Fremvisninger, bankmøder og frister for alle dine boliger, samlet i én uge." },
+  { target: "kpis", title: "Status på et øjeblik", text: "Boliger i din pipeline, dagens aftaler, bud ude og nye boliger fra dine søgeagenter. Tryk på et tal for at gå derhen." },
+  { target: "next-steps", title: "Dagens plan", text: "Dine aftaler i dag og de næste 7 dage. Sæt flueben, når du er færdig. Du får en mail dagen før hver aftale." },
+  { target: "opportunities", title: "Nyt fra dine agenter", text: "Søgeagenterne kigger markedet igennem på dine tidspunkter. Nye boliger lander her, og du gemmer dem i pipelinen med ét tryk." },
+  { target: "pipeline", title: "Din pipeline", text: "Hver farve er en fase i købet: screening, fremvisning, papirer, bank og bud. Tryk for at se boligerne." },
+  { target: "nav-ejendomme", title: "Ejendomme", text: "Din pipeline som tavle eller liste. Hver bolig er en sag med aftaler, bud, papirer, tjekliste og mæglerens kontakt." },
+  { target: "nav-kalender", title: "Kalender", text: "Fremvisninger, bankmøder og svarfrister for alle dine boliger i én kalender, som måned, uge eller liste." },
+  { target: "nav-find", title: "Find boliger", text: "Søg i hele markedet med dine egne filtre, eller opret en søgeagent, der holder øje for dig og giver besked på mail." },
+  { target: "nav-analyser", title: "Analysér", text: "Overskud, afkast, renterisiko og 10 år frem på et minut. Tryk Gem i pipeline, så følger du boligen derfra." },
   { target: "help", title: "Hjælp er altid tæt på", text: "Her kan du starte guiden igen eller ringe direkte til mig. Jeg tager selv telefonen. Nikolaj" },
-  { target: "add", title: "Find din første bolig", text: "Tryk Tilføj bolig, eller indsæt et link i søgefeltet øverst. Så er du i gang." },
+  { target: "add", title: "Kom i gang", text: "Tryk Tilføj bolig, indsæt et link i søgefeltet øverst, eller opret din første søgeagent under Find boliger." },
 ];
 
 const EVENT = "ni:tour";
@@ -156,12 +157,10 @@ export function Tour({ name, initial }: { name: string; initial: string | null }
     return (
       <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-[#0b1b33]/55 p-3 backdrop-blur-[2px] sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="tour-welcome">
         <div ref={card} tabIndex={-1} className="tour-pop relative w-full max-w-[460px] overflow-hidden rounded-2xl bg-white shadow-2xl outline-none">
-          <div className="relative h-28 overflow-hidden bg-[#0b1b33]" aria-hidden>
-            <div className="absolute inset-0" style={{ background: "radial-gradient(420px 160px at 20% 0%, #2563eb 0%, transparent 70%), radial-gradient(300px 140px at 90% 100%, #0ea5e9 0%, transparent 70%)" }} />
-            <div className="absolute bottom-0 left-6 flex gap-1.5">
-              {["bg-slate-400", "bg-sky-500", "bg-amber-400", "bg-indigo-500", "bg-orange-500", "bg-emerald-500"].map((c, k) => <span key={c} className={`tour-bar w-6 rounded-t-md ${c}`} style={{ height: `${28 + k * 9}px`, animationDelay: `${k * 70}ms` }} />)}
-            </div>
-            <span className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white ring-1 ring-white/15"><Sparkles size={19} /></span>
+          <div className="relative h-40 overflow-hidden bg-[#0b1b33] sm:h-44">
+            <Image src="/app/nordhavn.jpg" alt="Nordhavn i København set fra luften" fill priority sizes="460px" className="tour-photo object-cover" />
+            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0b1b33]/55 via-transparent to-transparent" />
+            <span className="absolute bottom-3 left-4 rounded-md bg-black/30 px-2 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur-sm">Nordhavn, København</span>
           </div>
           <div className="p-6 sm:p-7">
             <h2 id="tour-welcome" className="text-[24px] font-semibold leading-tight tracking-[-0.02em] text-slate-900">Velkommen til NordInvest{name ? `, ${name}` : ""}.</h2>

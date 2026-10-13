@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Building2, Calculator, ChevronDown, CircleHelp, Home, KeyRound, LayoutGrid, ListChecks, LogOut, Phone, Plus, Rocket, Search, Settings, BarChart3, Users, X } from "lucide-react";
+import { Building2, CalendarDays, Calculator, ChevronDown, CircleHelp, Home, KeyRound, LayoutGrid, LogOut, Phone, Plus, Rocket, Search, Settings, BarChart3, Users, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { site } from "@/lib/site";
 import { Tour, startTour } from "./Tour";
@@ -20,9 +20,9 @@ export type ShellProperty = { id: string; address: string };
 export const NAV = [
   { href: "/app", label: "Overblik", Icon: LayoutGrid, tour: "nav-overblik", exact: true },
   { href: "/app/ejendomme", label: "Ejendomme", Icon: Building2, tour: "nav-ejendomme" },
+  { href: "/app/kalender", label: "Kalender", Icon: CalendarDays, tour: "nav-kalender" },
   { href: "/app/find", label: "Find boliger", short: "Find", Icon: Search, tour: "nav-find" },
   { href: "/app/analyser", label: "Analysér", Icon: Calculator, tour: "nav-analyser" },
-  { href: "/app/opgaver", label: "Opgaver", Icon: ListChecks, tour: "nav-opgaver" },
 ];
 
 const ADMIN = [
@@ -34,10 +34,10 @@ const ADMIN = [
 
 const initials = (n: string, e: string) => (n.trim() ? n.trim().split(/\s+/).map((p) => p[0]).slice(0, 2).join("") : e[0] ?? "N").toUpperCase();
 
-export function AppShell({ user, props, counts, children }: { user: ShellUser; props: ShellProperty[]; counts: { properties: number; tasks: number }; children: React.ReactNode }) {
+export function AppShell({ user, props, counts, children }: { user: ShellUser; props: ShellProperty[]; counts: { properties: number; today: number; fresh: number }; children: React.ReactNode }) {
   const path = usePathname();
   const active = (href: string, exact?: boolean) => (exact ? path === href : path === href || path.startsWith(`${href}/`));
-  const count = (href: string) => (href === "/app/ejendomme" ? counts.properties : href === "/app/opgaver" ? counts.tasks : 0);
+  const count = (href: string) => (href === "/app/ejendomme" ? counts.properties : href === "/app/kalender" ? counts.today : href === "/app/find" ? counts.fresh : 0);
 
   return (
     <div className="flex min-h-[100dvh]">
@@ -59,7 +59,7 @@ export function AppShell({ user, props, counts, children }: { user: ShellUser; p
                 className={clsx("flex h-10 items-center gap-3 rounded-lg px-3 text-[14px] font-medium transition-colors", on ? "bg-white/[0.12] text-white" : "text-white/65 hover:bg-white/[0.06] hover:text-white")}>
                 <Icon size={17} className={on ? "text-blue-300" : ""} />
                 <span className="flex-1">{label}</span>
-                {n > 0 && <span className="rounded-full bg-white/10 px-1.5 text-[12px] font-semibold tabular-nums text-white/70">{n}</span>}
+                {n > 0 && <span className={clsx("rounded-full px-1.5 text-[12px] font-semibold tabular-nums", href === "/app/find" ? "bg-blue-500 text-white" : "bg-white/10 text-white/70")}>{n}</span>}
               </Link>
             );
           })}
@@ -93,7 +93,7 @@ export function AppShell({ user, props, counts, children }: { user: ShellUser; p
           return (
             <Link key={href} href={href} data-tour={tour} aria-current={on ? "page" : undefined}
               className={clsx("flex min-h-[58px] flex-col items-center justify-center gap-0.5 text-[11px] font-semibold", on ? "text-blue-700" : "text-slate-500")}>
-              <Icon size={21} strokeWidth={on ? 2.2 : 1.8} />{short ?? label}
+              <span className="relative"><Icon size={21} strokeWidth={on ? 2.2 : 1.8} />{href === "/app/find" && counts.fresh > 0 && <span className="absolute -right-1.5 -top-1 h-2.5 w-2.5 rounded-full bg-blue-600 ring-2 ring-white" aria-label={`${counts.fresh} nye boliger`} />}</span>{short ?? label}
             </Link>
           );
         })}

@@ -1,82 +1,87 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Check, Home } from "lucide-react";
+import { ArrowRight, CalendarDays, Check, Gavel, Home, Plus, Radar, Search } from "lucide-react";
 import { clsx } from "@/lib/clsx";
-import { EMPTY_MAPPE, STAGES, STAGE_LABEL, daysUntil, fmtDue, type Mappe, type Stage, type Task } from "@/lib/mappe/checklist";
-import { saveMappe } from "@/lib/mappe/save";
+import { OFFER_STATUS, STAGES, STAGE_LABEL, type Stage } from "@/lib/mappe/checklist";
+import { KIND, addDays, clock, dayOf, mappeOf, street, timeOf, ymd } from "@/lib/app/calendar";
+import type { CalEvent } from "@/lib/app/events";
+import type { Agent, Hit } from "@/lib/app/agents";
 import type { CrmRow } from "@/components/dashboard/Crm";
+import { EventDialog, type DialogState } from "./EventDialog";
+import { HitCard } from "./agents/HitCard";
+import { useHitActions } from "./agents/Agents";
+import { ItemRow } from "./Calendar";
+import { Toast, btn } from "./ui";
+import { useCalendar } from "./useCalendar";
 
 /*
- * Overblik: the member's day in one screen. Status, the pipeline, what needs
- * doing next across every property, today's best opportunities from the
- * Deal-motor and the most recent properties. New members get a short
- * "Kom i gang" list that ticks itself off as they use the product.
+ * Overblik: the member's day, the way an operations tool opens. Today's plan
+ * with times, the next seven days at a glance, what the search agents found
+ * since last time, where the pipeline and the bids stand, and the properties
+ * worked on most recently. New members also get "Kom i gang", which ticks
+ * itself off as they use the product.
  */
 
 export type Opportunity = { address: string; zip: number; city: string; price: number; cashFlow: number; capRate: number; image: string | null; href: string };
 
-const BAR: Record<Stage, string> = { screening: "bg-slate-400", fremvisning: "bg-sky-500", dokumenter: "bg-amber-400", bank: "bg-indigo-500", bud: "bg-orange-500", koebt: "bg-emerald-500" };
-const PILL: Record<Stage | "droppet", string> = { screening: "bg-slate-100 text-slate-700", fremvisning: "bg-sky-50 text-sky-800", dokumenter: "bg-amber-50 text-amber-900", bank: "bg-indigo-50 text-indigo-800", bud: "bg-orange-50 text-orange-800", koebt: "bg-emerald-50 text-emerald-800", droppet: "bg-slate-100 text-slate-500" };
+const BAR: Record<Stage, string> = { screening: "bg-slate-500", fremvisning: "bg-sky-500", dokumenter: "bg-amber-400", bank: "bg-indigo-500", bud: "bg-orange-500", koebt: "bg-emerald-500" };
 const mio = (n: number) => (n >= 1e6 ? `${(n / 1e6).toLocaleString("da-DK", { maximumFractionDigits: 1 })} mio. kr.` : `${Math.round(n).toLocaleString("da-DK")} kr.`);
 const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
-const street = (a: string) => a.split(",")[0];
 const addrOf = (r: CrmRow) => r.property_data?.address || r.property_url || "Bolig";
+const WD = ["søn", "man", "tir", "ons", "tor", "fre", "lør"];
 
 function greeting(d = new Date()) {
   const h = d.getHours();
   return h < 10 ? "Godmorgen" : h < 17 ? "God dag" : "God aften";
 }
 
-export function Overview({ firstName, initial, deals, positive }: { firstName: string; initial: CrmRow[]; deals: Opportunity[]; positive: number | null }) {
-  const [rows, setRows] = useState(initial);
-  const rowsRef = useRef(rows);
-  rowsRef.current = rows;
-  const mappeOf = (r: CrmRow): Mappe => ({ ...EMPTY_MAPPE, ...(r.property_data?.mappe ?? {}) });
-
-  const doneTask = (rowId: string, taskId: string) => {
-    const r = rowsRef.current.find((x) => x.id === rowId);
-    if (!r) return;
-    const m = mappeOf(r);
-    const next = { ...m, tasks: (m.tasks ?? []).map((t) => (t.id === taskId ? { ...t, done: true } : t)) };
-    const updated = { ...r, property_data: { ...(r.property_data ?? {}), mappe: next } };
-    rowsRef.current = rowsRef.current.map((x) => (x.id === rowId ? updated : x));
-    setRows(rowsRef.current);
-    void saveMappe(r.id, r.property_data ?? {}, next);
-  };
+export function Overview({ firstName, initial, events, agents: initialAgents, deals }: { firstName: string; initial: CrmRow[]; events: CalEvent[]; agents: Agent[]; deals: Opportunity[] }) {
+  const cal = useCalendar(initial, events);
+  const [dialog, setDialog] = useState<DialogState>(null);
+  const [agents, setAgents] = useState(initialAgents);
+  const hitActions = useHitActions((h) => agents.find((a) => a.hits.some((x) => x.id === h.id)), (a) => setAgents((all) => all.map((x) => (x.id === a.id ? a : x))));
+  const rows = cal.rows;
+  const today = ymd(new Date());
 
   const live = rows.filter((r) => mappeOf(r).stage !== "droppet");
   const inPlay = live.filter((r) => mappeOf(r).stage !== "koebt");
   const value = inPlay.reduce((s, r) => s + (Number(r.property_data?.price) || 0), 0);
-  const tasks = useMemo(() => live.flatMap((r) => (mappeOf(r).tasks ?? []).filter((t) => !t.done).map((t) => ({ t, r })))
-    .sort((a, b) => (a.t.due ?? "9999").localeCompare(b.t.due ?? "9999")),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [rows]);
-  const urgent = tasks.filter(({ t }) => t.due && daysUntil(t.due) <= 0).length;
-  const viewings = tasks.filter(({ t }) => t.kind === "fremvisning" && t.due && daysUntil(t.due) >= 0 && daysUntil(t.due) <= 7).length;
-  const offers = live.filter((r) => mappeOf(r).stage === "bud");
+  const items = cal.items.filter((i) => i.due);
+  const todays = items.filter((i) => dayOf(i.due!) === today).sort((a, b) => (timeOf(a.due) ?? "00:00").localeCompare(timeOf(b.due) ?? "00:00"));
+  const late = items.filter((i) => !i.done && dayOf(i.due!) < today);
+  const week = Array.from({ length: 7 }, (_, n) => {
+    const d = addDays(new Date(), n + 1);
+    const k = ymd(d);
+    return { k, d, list: items.filter((i) => dayOf(i.due!) === k && !i.done) };
+  });
+  const bids = live.map((r) => ({ r, o: mappeOf(r).offer })).filter((x): x is { r: CrmRow; o: NonNullable<typeof x.o> } => !!x.o && (x.o.status === "afgivet" || x.o.status === "modbud"));
+  const fresh: { a: Agent; h: Hit }[] = useMemo(() => agents.flatMap((a) => a.hits.filter((h) => h.status === "ny").map((h) => ({ a, h }))).sort((x, y) => y.h.foundAt.localeCompare(x.h.foundAt)), [agents]);
   const byStage = STAGES.filter((s) => s.id !== "koebt").map((s) => ({ ...s, n: live.filter((r) => mappeOf(r).stage === s.id).length }));
   const totalStage = byStage.reduce((a, b) => a + b.n, 0);
   const recent = [...live].sort((a, b) => (mappeOf(b).updatedAt ?? b.created_at).localeCompare(mappeOf(a).updatedAt ?? a.created_at)).slice(0, 4);
+  const homes = live.map((r) => ({ id: r.id, address: addrOf(r) }));
 
   const start = [
-    { done: rows.length > 0, t: "Find eller indsæt en bolig", d: "Brug Find boliger, eller indsæt et link i søgefeltet øverst.", href: "/app/find" },
-    { done: rows.length > 0, t: "Analysér og gem den", d: "Gemte boliger lander i din pipeline med tallene.", href: "/app/analyser" },
-    { done: rows.some((r) => (mappeOf(r).docs ?? []).length > 0), t: "Upload et dokument", d: "Salgsopstilling eller referat, så læser vi det for dig.", href: rows[0] ? `/app/ejendomme/${rows[0].id}?fane=papirer` : "/app/analyser" },
-    { done: rows.some((r) => (mappeOf(r).tasks ?? []).length > 0), t: "Planlæg en fremvisning", d: "Opgaver med dato samles under Næste skridt.", href: rows[0] ? `/app/ejendomme/${rows[0].id}?fane=opgaver` : "/app/opgaver" },
+    { done: agents.length > 0, t: "Opret en søgeagent", d: "Den holder øje med markedet og giver besked om nye boliger.", href: "/app/find/agenter" },
+    { done: rows.length > 0, t: "Gem en bolig i pipelinen", d: "Fra Find boliger, en agent eller en analyse.", href: "/app/find" },
+    { done: rows.some((r) => (mappeOf(r).tasks ?? []).length > 0) || events.length > 0, t: "Planlæg en fremvisning", d: "Aftaler samles i kalenderen. Du får en mail dagen før.", href: "/app/kalender" },
+    { done: rows.some((r) => (mappeOf(r).docs ?? []).length > 0), t: "Få papirerne læst", d: "Upload salgsopstilling eller referat på en bolig.", href: rows[0] ? `/app/ejendomme/${rows[0].id}?fane=papirer` : "/app/find" },
   ];
   const startDone = start.filter((s) => s.done).length;
+  const dateStr = new Date().toLocaleDateString("da-DK", { weekday: "long", day: "numeric", month: "long" }).replace(/^./, (c) => c.toUpperCase());
 
   return (
     <div className="mx-auto max-w-[1240px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.025em] sm:text-[30px]">{greeting()}{firstName ? `, ${firstName}` : ""}</h1>
-          <p className="mt-1 text-[15px] text-slate-500">
-            {new Date().toLocaleDateString("da-DK", { weekday: "long", day: "numeric", month: "long" }).replace(/^./, (c) => c.toUpperCase())}
-            {urgent > 0 ? ` · ${urgent} ${urgent === 1 ? "ting kræver" : "ting kræver"} dig i dag` : tasks.length ? " · intet haster i dag" : ""}
-          </p>
+          <p className="text-[14px] font-medium text-slate-500">{dateStr}</p>
+          <h1 className="mt-0.5 text-[26px] font-semibold leading-tight tracking-[-0.025em] sm:text-[30px]">{greeting()}{firstName ? `, ${firstName}` : ""}</h1>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={() => setDialog({ day: today })} className={btn.secondary}><CalendarDays size={16} /> Ny aftale</button>
+          <Link href="/app/find" className={btn.primary}><Search size={16} /> Find boliger</Link>
         </div>
       </div>
 
@@ -102,65 +107,116 @@ export function Overview({ firstName, initial, deals, positive }: { firstName: s
 
       {/* Figures */}
       <div data-tour="kpis" className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label="I gang" value={inPlay.length} sub={value ? `${mio(value)} i alt` : "boliger i din pipeline"} href="/app/ejendomme" />
-        <Kpi label="Fremvisninger" value={viewings} sub="de næste 7 dage" href="/app/opgaver" />
-        <Kpi label="Bud ude" value={offers.length} sub={offers[0] ? street(addrOf(offers[0])) : "ingen lige nu"} href="/app/ejendomme" />
-        <Kpi label="Nye muligheder" value={positive ?? deals.length} sub="betaler sig selv i dag" href="/app/find" />
+        <Kpi label="I pipelinen" value={inPlay.length} sub={value ? `${mio(value)} i alt` : "boliger, du arbejder på"} href="/app/ejendomme" />
+        <Kpi label="Aftaler i dag" value={todays.filter((i) => !i.done).length} sub={late.length ? `${late.length} overskredet` : "intet overskredet"} href={`/app/kalender?dag=${today}`} tone={late.length ? "bad" : undefined} />
+        <Kpi label="Bud ude" value={bids.length} sub={bids[0] ? `${street(addrOf(bids[0].r))}, ${OFFER_STATUS[bids[0].o.status].toLowerCase()}` : "ingen lige nu"} href="/app/ejendomme" />
+        <Kpi label="Nye fra agenter" value={fresh.length} sub={agents.length ? `${agents.filter((a) => a.active).length} ${agents.filter((a) => a.active).length === 1 ? "agent kører" : "agenter kører"}` : "ingen agenter endnu"} href="/app/find/agenter" tone={fresh.length ? "new" : undefined} />
       </div>
 
-      {/* Pipeline */}
-      <Link href="/app/ejendomme" data-tour="pipeline" className="mt-3 block rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-slate-300 sm:p-5">
-        <div className="flex items-center justify-between text-[14px]"><span className="font-semibold">Pipeline</span><span className="text-slate-500">{totalStage} {totalStage === 1 ? "bolig" : "boliger"}</span></div>
-        <div className="mt-3 flex h-2.5 gap-0.5 overflow-hidden rounded-full bg-slate-100">
-          {totalStage > 0 && byStage.filter((s) => s.n > 0).map((s) => <span key={s.id} className={clsx("transition-all duration-700", BAR[s.id])} style={{ flex: s.n }} />)}
-        </div>
-        <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-slate-600">
-          {byStage.map((s) => <span key={s.id} className="flex items-center gap-1.5"><span className={clsx("h-2 w-2 rounded-full", BAR[s.id])} />{s.label} <b className="font-semibold tabular-nums text-slate-900">{s.n}</b></span>)}
-        </div>
-      </Link>
-
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-        {/* Next steps */}
-        <section data-tour="next-steps" aria-labelledby="next-h" className="rounded-2xl border border-slate-200 bg-white">
+      <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+        {/* Today */}
+        <section data-tour="next-steps" aria-labelledby="today-h" className="rounded-2xl border border-slate-200 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5">
-            <h2 id="next-h" className="text-[16px] font-semibold">Næste skridt</h2>
-            <Link href="/app/opgaver" className="text-[14px] font-medium text-blue-700 hover:underline">Alle opgaver</Link>
+            <h2 id="today-h" className="text-[16px] font-semibold">Dagens plan</h2>
+            <Link href="/app/kalender" className="text-[14px] font-medium text-blue-700 hover:underline">Kalender</Link>
           </div>
-          {tasks.length === 0 ? (
+          {late.length + todays.length === 0 ? (
             <div className="px-5 py-8 text-center">
               <CalendarDays className="mx-auto text-slate-300" size={28} />
-              <p className="mt-2 text-[15px] font-medium text-slate-700">Ingen opgaver lige nu</p>
-              <p className="mt-1 text-[14px] text-slate-500">Planlæg en fremvisning eller et bankmøde på en af dine boliger.</p>
+              <p className="mt-2 text-[15px] font-medium text-slate-700">Intet i kalenderen i dag</p>
+              <p className="mt-1 text-[14px] text-slate-500">Planlæg en fremvisning eller et bankmøde.</p>
+              <button type="button" onClick={() => setDialog({ day: today })} className={clsx(btn.secondary, "mt-4")}><Plus size={15} /> Ny aftale</button>
             </div>
           ) : (
             <ul className="divide-y divide-slate-100">
-              {tasks.slice(0, 6).map(({ t, r }) => <TaskLine key={`${r.id}-${t.id}`} t={t} r={r} onDone={() => doneTask(r.id, t.id)} />)}
+              {late.slice(0, 3).map((i) => <ItemRow key={i.key} i={i} showDay onOpen={() => setDialog({ item: i })} onToggle={() => cal.toggle(i)} />)}
+              {todays.map((i) => <ItemRow key={i.key} i={i} onOpen={() => setDialog({ item: i })} onToggle={() => cal.toggle(i)} />)}
             </ul>
           )}
+          {/* The next seven days */}
+          <div className="border-t border-slate-100 px-3 pb-3 pt-3 sm:px-4">
+            <p className="px-1 pb-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">De næste 7 dage</p>
+            <div className="grid grid-cols-7 gap-1.5">
+              {week.map(({ k, d, list }) => (
+                <Link key={k} href={`/app/kalender?dag=${k}`} aria-label={`${d.toLocaleDateString("da-DK", { weekday: "long", day: "numeric", month: "long" })}: ${list.length} aftaler`}
+                  className={clsx("flex min-h-[78px] flex-col rounded-xl border px-1.5 py-2 text-center transition-colors hover:border-slate-300", list.length ? "border-slate-200 bg-white" : "border-transparent bg-slate-50")}>
+                  <span className="text-[12px] font-semibold uppercase text-slate-500">{WD[d.getDay()]}</span>
+                  <span className="text-[17px] font-semibold tabular-nums text-slate-900">{d.getDate()}</span>
+                  <span className="mt-auto flex justify-center gap-0.5">{list.slice(0, 4).map((i) => <span key={i.key} className={clsx("h-1.5 w-1.5 rounded-full", KIND[i.kind].dot)} />)}</span>
+                  {list.length > 0 && <span className="mt-1 text-[12px] font-medium tabular-nums text-slate-600">{list.length === 1 ? (timeOf(list[0].due) ? clock(timeOf(list[0].due)!) : "1") : list.length}</span>}
+                </Link>
+              ))}
+            </div>
+          </div>
         </section>
 
-        {/* Opportunities */}
-        <section data-tour="opportunities" aria-labelledby="opp-h" className="rounded-2xl border border-slate-200 bg-white">
+        {/* Agents */}
+        <section data-tour="opportunities" aria-labelledby="agents-h" className="rounded-2xl border border-slate-200 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5">
-            <h2 id="opp-h" className="text-[16px] font-semibold">Nye muligheder</h2>
-            <Link href="/app/find" className="text-[14px] font-medium text-blue-700 hover:underline">Deal-motoren</Link>
+            <h2 id="agents-h" className="flex items-center gap-2 text-[16px] font-semibold">Nyt fra dine agenter {fresh.length > 0 && <span className="rounded-full bg-blue-600 px-1.5 text-[12px] font-bold text-white">{fresh.length}</span>}</h2>
+            <Link href="/app/find/agenter" className="text-[14px] font-medium text-blue-700 hover:underline">Søgeagenter</Link>
           </div>
-          {deals.length === 0 ? (
-            <p className="px-5 py-8 text-center text-[14px] text-slate-500">Deal-motoren opdaterer. Kig igen om lidt.</p>
+          {fresh.length > 0 ? (
+            <div className="space-y-2 p-3">
+              {fresh.slice(0, 3).map(({ a, h }) => <HitCard key={`${a.id}:${h.id}`} h={h} compact busy={hitActions.busy === h.id} onSave={() => hitActions.save(h)} onDismiss={() => hitActions.mark(a, h, "afvist")} />)}
+              {fresh.length > 3 && <Link href="/app/find/agenter" className="flex min-h-[40px] items-center justify-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">Se alle {fresh.length} <ArrowRight size={14} /></Link>}
+            </div>
+          ) : agents.length === 0 ? (
+            <div className="px-5 py-7">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-700"><Radar size={20} /></span>
+              <p className="mt-3 text-[15px] font-semibold text-slate-900">Lad markedet komme til dig</p>
+              <p className="mt-1 text-[14px] text-slate-500">En søgeagent kigger markedet igennem hver morgen med dine krav og giver besked om nye boliger.</p>
+              <Link href="/app/find/agenter" className={clsx(btn.primary, "mt-4")}><Plus size={15} /> Opret en søgeagent</Link>
+            </div>
+          ) : (
+            <div>
+              <p className="px-5 pt-4 text-[14px] text-slate-500">Intet nyt siden sidst. Imens er dette de bedste på markedet i dag:</p>
+              <ul className="divide-y divide-slate-100">
+                {deals.slice(0, 3).map((d) => (
+                  <li key={d.href} className="flex items-center gap-3 px-4 py-3 sm:px-5">
+                    {d.image
+                      // eslint-disable-next-line @next/next/no-img-element
+                      ? <img src={d.image} alt="" loading="lazy" className="h-11 w-11 shrink-0 rounded-lg bg-slate-100 object-cover" />
+                      : <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400"><Home size={18} /></span>}
+                    <span className="min-w-0 flex-1"><span className="block truncate text-[15px] font-semibold">{street(d.address)}</span><span className="block truncate text-[13px] text-slate-500">{d.zip} {d.city} · {kr(d.price)}</span></span>
+                    <Link href={d.href} className="inline-flex h-9 shrink-0 items-center rounded-lg border border-slate-200 px-3 text-[13px] font-semibold text-slate-800 hover:border-slate-300">Analysér</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* Pipeline and bids */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+        <Link href="/app/ejendomme" data-tour="pipeline" className="block rounded-2xl border border-slate-200 bg-white p-5 transition-colors hover:border-slate-300">
+          <div className="flex items-center justify-between text-[14px]"><span className="text-[16px] font-semibold">Pipeline</span><span className="text-slate-500">{totalStage} {totalStage === 1 ? "bolig" : "boliger"} i gang</span></div>
+          <div className="mt-4 flex h-3 gap-0.5 overflow-hidden rounded-full bg-slate-100">
+            {totalStage > 0 && byStage.filter((s) => s.n > 0).map((s) => <span key={s.id} className={clsx("transition-all duration-700", BAR[s.id])} style={{ flex: s.n }} />)}
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
+            {byStage.map((s) => (
+              <div key={s.id} className="rounded-lg bg-slate-50 px-2.5 py-2">
+                <p className="flex items-center gap-1.5 truncate text-[12px] font-medium text-slate-500"><span className={clsx("h-2 w-2 rounded-full", BAR[s.id])} />{s.label}</p>
+                <p className="mt-0.5 text-[18px] font-semibold tabular-nums text-slate-900">{s.n}</p>
+              </div>
+            ))}
+          </div>
+        </Link>
+        <section className="rounded-2xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5"><h2 className="text-[16px] font-semibold">Bud</h2></div>
+          {bids.length === 0 ? (
+            <p className="px-5 py-6 text-[14px] text-slate-500">Ingen bud ude lige nu. Registrér et bud på en bolig, så følger du modbud og svarfrister her.</p>
           ) : (
             <ul className="divide-y divide-slate-100">
-              {deals.map((d) => (
-                <li key={d.href} className="flex items-center gap-3 px-4 py-3 sm:px-5">
-                  {d.image
-                    // eslint-disable-next-line @next/next/no-img-element
-                    ? <img src={d.image} alt="" loading="lazy" className="h-11 w-11 shrink-0 rounded-lg bg-slate-100 object-cover" />
-                    : <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400"><Home size={18} /></span>}
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[15px] font-semibold">{street(d.address)}</span>
-                    <span className="block truncate text-[13px] text-slate-500">{d.zip} {d.city} · {kr(d.price)}</span>
-                  </span>
-                  <span className="hidden shrink-0 rounded bg-emerald-50 px-1.5 py-0.5 text-[12px] font-semibold tabular-nums text-emerald-700 sm:block">+{Math.round(d.cashFlow).toLocaleString("da-DK")} kr./md.</span>
-                  <Link href={d.href} className="inline-flex h-9 shrink-0 items-center rounded-lg border border-slate-200 px-3 text-[13px] font-semibold text-slate-800 hover:border-slate-300">Analysér</Link>
+              {bids.map(({ r, o }) => (
+                <li key={r.id}>
+                  <Link href={`/app/ejendomme/${r.id}?fane=bud`} className="flex items-center gap-3 px-5 py-3 hover:bg-slate-50">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-orange-600"><Gavel size={16} /></span>
+                    <span className="min-w-0 flex-1"><span className="block truncate text-[15px] font-semibold">{street(addrOf(r))}</span><span className="block truncate text-[13px] text-slate-500">{kr(o.amount)}{o.status === "modbud" && o.counter ? ` · modbud ${kr(o.counter)}` : ""}</span></span>
+                    <span className={clsx("shrink-0 rounded-md px-1.5 py-0.5 text-[12px] font-semibold", o.status === "modbud" ? "bg-amber-50 text-amber-900" : "bg-blue-50 text-blue-800")}>{OFFER_STATUS[o.status]}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -168,7 +224,6 @@ export function Overview({ firstName, initial, deals, positive }: { firstName: s
         </section>
       </div>
 
-      {/* Recent properties */}
       {recent.length > 0 && (
         <section aria-labelledby="recent-h" className="mt-6">
           <div className="flex items-center justify-between">
@@ -187,7 +242,7 @@ export function Overview({ firstName, initial, deals, positive }: { firstName: s
                       // eslint-disable-next-line @next/next/no-img-element
                       ? <img src={img} alt="" loading="lazy" className="h-full w-full object-cover" />
                       : <span className="flex h-full items-center justify-center text-slate-300"><Home size={28} /></span>}
-                    <span className={clsx("absolute left-2.5 top-2.5 rounded-md px-2 py-0.5 text-[12px] font-semibold", PILL[m.stage])}>{STAGE_LABEL[m.stage]}</span>
+                    <span className="absolute left-2.5 top-2.5 rounded-md bg-white/95 px-2 py-0.5 text-[12px] font-semibold text-slate-800 shadow-sm">{STAGE_LABEL[m.stage]}</span>
                   </div>
                   <div className="p-3.5">
                     <p className="truncate text-[15px] font-semibold group-hover:text-blue-700">{street(addrOf(r))}</p>
@@ -202,34 +257,21 @@ export function Overview({ firstName, initial, deals, positive }: { firstName: s
           </div>
         </section>
       )}
+
+      <EventDialog state={dialog} onClose={() => setDialog(null)} homes={homes} onSave={cal.save} onDelete={cal.remove} />
+      {cal.error && <Toast text={cal.error} tone="bad" onClose={cal.clearError} />}
+      {hitActions.toast && <Toast text={hitActions.toast.text} tone={hitActions.toast.tone} onClose={() => hitActions.setToast(null)} action={hitActions.toast.href ? <Link href={hitActions.toast.href} className="shrink-0 font-semibold text-blue-300 hover:underline">Åbn</Link> : undefined} />}
     </div>
   );
 }
 
-function Kpi({ label, value, sub, href }: { label: string; value: number; sub: string; href: string }) {
+function Kpi({ label, value, sub, href, tone }: { label: string; value: number; sub: string; href: string; tone?: "bad" | "new" }) {
   return (
     <Link href={href} className="rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-slate-300 sm:p-5">
       <p className="text-[13px] font-medium text-slate-500">{label}</p>
-      <p className="mt-1 text-[30px] font-semibold leading-none tabular-nums tracking-[-0.03em]">{value.toLocaleString("da-DK")}</p>
-      <p className="mt-1.5 truncate text-[13px] text-slate-500">{sub}</p>
+      <p className={clsx("mt-1 text-[30px] font-semibold leading-none tabular-nums tracking-[-0.03em]", tone === "new" && value > 0 && "text-blue-700")}>{value.toLocaleString("da-DK")}</p>
+      <p className={clsx("mt-1.5 truncate text-[13px]", tone === "bad" ? "font-medium text-rose-600" : "text-slate-500")}>{sub}</p>
     </Link>
   );
 }
 
-function TaskLine({ t, r, onDone }: { t: Task; r: CrmRow; onDone: () => void }) {
-  const d = t.due ? daysUntil(t.due) : null;
-  return (
-    <li className="flex items-center gap-2 px-3 py-1.5 sm:px-4">
-      <button type="button" role="checkbox" aria-checked={false} aria-label={`Marker ${t.title} som klaret`} onClick={onDone} className="group flex h-11 w-11 shrink-0 items-center justify-center">
-        <span className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-slate-300 transition-colors group-hover:border-emerald-500 group-hover:bg-emerald-50"><Check size={11} strokeWidth={3} className="text-emerald-600 opacity-0 group-hover:opacity-100" /></span>
-      </button>
-      <Link href={`/app/ejendomme/${r.id}?fane=opgaver`} className="min-w-0 flex-1 py-1.5">
-        <span className="block truncate text-[15px] font-medium">{t.title}</span>
-        <span className="block truncate text-[13px] text-slate-500">{street(addrOf(r))}</span>
-      </Link>
-      <span className={clsx("shrink-0 pr-1 text-right text-[13px] tabular-nums", d != null && d < 0 ? "font-semibold text-rose-600" : d === 0 ? "font-semibold text-blue-700" : "text-slate-500")}>
-        {t.due ? (d! < 0 ? "Overskredet" : d === 0 ? `I dag${t.due.length > 10 ? ` ${t.due.slice(11, 16).replace(":", ".")}` : ""}` : d === 1 ? "I morgen" : fmtDue(t.due).split(" kl.")[0]) : "Ingen dato"}
-      </span>
-    </li>
-  );
-}

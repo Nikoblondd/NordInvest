@@ -194,7 +194,7 @@ export function RentalSheet({
 
   return (
     <>
-      <Sheet title={parents ? "Forældrekøb-kalkule" : "Udlejnings-kalkule"} rows={rows} initial="cf" onExport={onExport} exporting={exporting} />
+      <Sheet title={parents ? "Forældrekøbskalkule" : "Udlejningskalkule"} rows={rows} initial="cf" onExport={onExport} exporting={exporting} />
       <Scenarios
         columns={columns}
         summary={scenarioSummary(columns, "Boligen giver overskud hver måned", "Boligen giver underskud hver måned")}

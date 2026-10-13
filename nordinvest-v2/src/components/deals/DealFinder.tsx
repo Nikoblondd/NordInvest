@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Loader2, Search, TrendingUp, MapPin, Sparkles, ArrowUpRight, Info, Home, Building2, Bell, Check, SlidersHorizontal, ChevronDown, X, Map as MapIcon, LayoutGrid, Lock } from "lucide-react";
+import { Loader2, Search, TrendingUp, MapPin, Sparkles, ArrowUpRight, Info, Home, Building2, Bell, Bookmark, Check, SlidersHorizontal, ChevronDown, X, Map as MapIcon, LayoutGrid, Lock } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { num, kr } from "@/lib/analysis";
 import type { AnalyzedDeal, InvestmentDeal } from "@/lib/deals";
@@ -16,6 +16,8 @@ import { LockedDeals } from "./LockedDeals";
 import { UpgradeDialog, type UpgradeReason } from "@/components/upgrade/UpgradeDialog";
 import { usePlan } from "@/lib/plan";
 import type { DealAccess, LockedSummary } from "@/lib/deal-tiers";
+import { saveHitToPipeline } from "@/lib/app/pipeline";
+import type { Hit } from "@/lib/app/agents";
 
 // Leaflet touches `window`, so the map is client-only (no SSR).
 const DealMap = dynamic(() => import("./DealMap"), {
@@ -32,7 +34,7 @@ const DealMap = dynamic(() => import("./DealMap"), {
 // Popular municipalities for one-tap selection (the big cities most people want).
 const POPULAR = ["koebenhavn", "aarhus", "odense", "aalborg", "esbjerg", "vejle", "randers", "kolding", "horsens", "roskilde"];
 
-function CityPicker({ values, onChange }: { values: string[]; onChange: (slugs: string[]) => void }) {
+export function CityPicker({ values, onChange }: { values: string[]; onChange: (slugs: string[]) => void }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const ql = q.trim().toLowerCase();
@@ -216,127 +218,112 @@ function Metric({ v, k, tone }: { v: string; k: string; tone?: string }) {
   );
 }
 
-function DealCard({ d, dp, ir }: { d: AnalyzedDeal; dp: string; ir: string }) {
+function DealCard({ d, dp, ir, saved, onSave }: { d: AnalyzedDeal; dp: string; ir: string; saved?: SaveState; onSave?: () => void }) {
   const cfTone = d.cashFlow >= 0 ? "text-emerald-600" : "text-rose-500";
-  // Whole card is a link — click/tap anywhere (image, text, the "Fuld analyse"
-  // pill) opens the analysis. The inner CTA is now a styled <span> that only
-  // exists to signal the primary action; the real navigation belongs to the
-  // outer Link so screen readers get a single, meaningful target.
+  const href = inApp(dealHref(d, dp, ir));
   return (
-    <Link
-      href={dealHref(d, dp, ir)}
-      aria-label={`Åbn analyse: ${d.road || d.address}, ${d.zip} ${d.city}`}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_10px_28px_-16px_rgba(15,23,42,0.22)] transition-[box-shadow,transform] hover:-translate-y-px hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_16px_36px_-16px_rgba(15,23,42,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-    >
-      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
-        {d.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={d.image} alt={d.address} loading="lazy" draggable={false} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-slate-300"><MapPin size={28} /></div>
-        )}
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur">
-          {d.source}
-        </span>
-        {d.priceChangePct != null && d.priceChangePct < 0 && (
-          <span className="absolute right-3 top-3 rounded-full bg-emerald-500 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
-            {num(d.priceChangePct, 0)} %
-          </span>
-        )}
-      </div>
-
-      <div className="flex flex-1 flex-col px-2.5 pb-2.5 pt-3.5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="truncate text-[15px] font-semibold text-slate-900">{d.road}</div>
-            <div className="truncate text-[13px] text-slate-500">{d.zip} {d.city}</div>
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_10px_28px_-16px_rgba(15,23,42,0.22)] transition-[box-shadow,transform] hover:-translate-y-px hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_16px_36px_-16px_rgba(15,23,42,0.3)]">
+      <Link href={href} aria-label={`Åbn analyse: ${d.road || d.address}, ${d.zip} ${d.city}`} className="flex flex-1 flex-col rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+        <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
+          {d.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={d.image} alt={d.address} loading="lazy" draggable={false} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+          ) : (
+            <div className="flex h-full items-center justify-center text-slate-300"><MapPin size={28} /></div>
+          )}
+          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur">{d.source}</span>
+          {d.priceChangePct != null && d.priceChangePct < 0 && (
+            <span className="absolute right-3 top-3 rounded-full bg-emerald-500 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">{num(d.priceChangePct, 0)} %</span>
+          )}
+        </div>
+        <div className="flex flex-1 flex-col px-2.5 pb-1 pt-3.5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate text-[15px] font-semibold text-slate-900">{d.road}</div>
+              <div className="truncate text-[13px] text-slate-500">{d.zip} {d.city}</div>
+            </div>
+            <ScorePill score={d.score} />
           </div>
-          <ScorePill score={d.score} />
-        </div>
-
-        <div className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.01em] text-slate-900 tnum">{kr(d.price)}</div>
-        <div className="mt-0.5 flex flex-wrap gap-x-1.5 gap-y-0.5 text-[13px] text-slate-500">
-          {d.area && <span>{d.area} m²</span>}
-          {d.rooms && <span>· {d.rooms} vær.</span>}
-          {d.yearBuilt && <span>· {d.yearBuilt}</span>}
-          {d.energyLabel && <span>· {d.energyLabel}</span>}
-        </div>
-        {d.suspect && (
-          <div className="mt-2 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[12px] font-medium text-amber-800">
-            Usikre data – tjek annoncen
+          <div className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.01em] text-slate-900 tnum">{kr(d.price)}</div>
+          <div className="mt-0.5 flex flex-wrap gap-x-1.5 gap-y-0.5 text-[13px] text-slate-500">
+            {d.area && <span>{d.area} m²</span>}
+            {d.rooms && <span>· {d.rooms} vær.</span>}
+            {d.yearBuilt && <span>· {d.yearBuilt}</span>}
+            {d.energyLabel && <span>· {d.energyLabel}</span>}
           </div>
-        )}
-
-        <div className="mt-3.5 grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 pt-3">
-          <Metric v={`${d.cashFlow > 0 ? "+" : ""}${dk(d.cashFlow)} kr.`} k="Cash flow pr. md." tone={cfTone} />
-          <Metric v={`${num(d.capRate)} %`} k="Afkast" />
-          <Metric v={`${dk(d.estRent)} kr.`} k="Anslået leje" />
+          {d.suspect && <div className="mt-2 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[12px] font-medium text-amber-800">Usikre data, tjek annoncen</div>}
+          <div className="mt-3.5 grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 pt-3">
+            <Metric v={`${d.cashFlow > 0 ? "+" : ""}${dk(d.cashFlow)} kr.`} k="Cash flow pr. md." tone={cfTone} />
+            <Metric v={`${num(d.capRate)} %`} k="Afkast" />
+            <Metric v={`${dk(d.estRent)} kr.`} k="Anslået leje" />
+          </div>
         </div>
+      </Link>
+      <CardActions href={href} saved={saved} onSave={onSave} />
+    </article>
+  );
+}
 
-        <span aria-hidden className="mt-auto flex items-center gap-1 pt-4 text-[14px] font-semibold text-blue-700">
-          Se hele analysen <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </span>
-      </div>
-    </Link>
+type SaveState = { status: "saving" | "saved" | "error"; id?: string };
+const inApp = (href: string) => href.replace(/^\/analyseren/, "/app/analyser");
+
+function CardActions({ href, saved, onSave }: { href: string; saved?: SaveState; onSave?: () => void }) {
+  return (
+    <div className="mt-1 flex items-center gap-2 border-t border-slate-100 px-2.5 pb-1.5 pt-2.5">
+      <Link href={href} className="inline-flex min-h-[40px] flex-1 items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">
+        Se analysen <ArrowUpRight size={15} />
+      </Link>
+      {onSave && (saved?.status === "saved" ? (
+        <Link href={saved.id ? `/app/ejendomme/${saved.id}` : "/app/ejendomme"} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg bg-emerald-50 px-3 text-[13px] font-semibold text-emerald-700 hover:bg-emerald-100"><Check size={14} /> I pipeline</Link>
+      ) : (
+        <button type="button" onClick={onSave} disabled={saved?.status === "saving"} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 px-3 text-[13px] font-semibold text-slate-800 hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60">
+          {saved?.status === "saving" ? <Loader2 size={14} className="animate-spin" /> : <Bookmark size={14} />} {saved?.status === "error" ? "Prøv igen" : "Gem i pipeline"}
+        </button>
+      ))}
+    </div>
   );
 }
 
 
-function InvestmentCard({ d, dp, ir }: { d: InvestmentDeal; dp: string; ir: string }) {
+function InvestmentCard({ d, dp, ir, saved, onSave }: { d: InvestmentDeal; dp: string; ir: string; saved?: SaveState; onSave?: () => void }) {
   const cfTone = d.cashFlow >= 0 ? "text-emerald-600" : "text-rose-500";
-  // Whole card is a link — click/tap anywhere opens the analysis on both
-  // phones and desktop. Same accessibility contract as the residential card.
+  const href = inApp(investHref(d, dp, ir));
   return (
-    <Link
-      href={investHref(d, dp, ir)}
-      aria-label={`Åbn analyse: ${d.road || d.title}, ${d.zip} ${d.city}`}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_10px_28px_-16px_rgba(15,23,42,0.22)] transition-[box-shadow,transform] hover:-translate-y-px hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_16px_36px_-16px_rgba(15,23,42,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-    >
-      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
-        {d.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={d.image} alt={d.address} loading="lazy" draggable={false} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-slate-300"><Building2 size={28} /></div>
-        )}
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur">
-          {d.source}
-        </span>
-        {d.subcategory && (
-          <span className="absolute right-3 top-3 rounded-full bg-slate-900/85 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
-            {d.subcategory}
-          </span>
-        )}
-      </div>
-
-      <div className="flex flex-1 flex-col px-2.5 pb-2.5 pt-3.5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="truncate text-[15px] font-semibold text-slate-900">{d.road || d.title}</div>
-            <div className="truncate text-[13px] text-slate-500">{d.zip} {d.city}</div>
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_10px_28px_-16px_rgba(15,23,42,0.22)] transition-[box-shadow,transform] hover:-translate-y-px hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_16px_36px_-16px_rgba(15,23,42,0.3)]">
+      <Link href={href} aria-label={`Åbn analyse: ${d.road || d.title}, ${d.zip} ${d.city}`} className="flex flex-1 flex-col rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+        <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
+          {d.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={d.image} alt={d.address} loading="lazy" draggable={false} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+          ) : (
+            <div className="flex h-full items-center justify-center text-slate-300"><Building2 size={28} /></div>
+          )}
+          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur">{d.source}</span>
+          {d.subcategory && <span className="absolute right-3 top-3 rounded-full bg-slate-900/85 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">{d.subcategory}</span>}
+        </div>
+        <div className="flex flex-1 flex-col px-2.5 pb-1 pt-3.5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate text-[15px] font-semibold text-slate-900">{d.road || d.title}</div>
+              <div className="truncate text-[13px] text-slate-500">{d.zip} {d.city}</div>
+            </div>
+            <ScorePill score={d.score} />
           </div>
-          <ScorePill score={d.score} />
+          <div className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.01em] text-slate-900 tnum">{kr(d.price)}</div>
+          <div className="mt-0.5 flex flex-wrap gap-x-1.5 text-[13px] text-slate-500">
+            {d.area && <span>{d.area} m²</span>}
+            {d.energyLabel && <span>· {d.energyLabel}</span>}
+          </div>
+          <div className="mt-3.5 grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 pt-3">
+            <Metric v={`${d.cashFlow > 0 ? "+" : ""}${dk(d.cashFlow)} kr.`} k="Cash flow pr. md." tone={cfTone} />
+            <Metric v={`${num(d.capRate)} %`} k="Afkast" />
+            <Metric v={`${dk(Math.round(d.noi / 12))} kr.`} k="Driftsresultat pr. md." />
+          </div>
+          {d.note && <p className="mt-3 text-[12px] leading-snug text-slate-500">{d.note}</p>}
         </div>
-
-        <div className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.01em] text-slate-900 tnum">{kr(d.price)}</div>
-        <div className="mt-0.5 flex flex-wrap gap-x-1.5 text-[13px] text-slate-500">
-          {d.area && <span>{d.area} m²</span>}
-          {d.energyLabel && <span>· {d.energyLabel}</span>}
-        </div>
-
-        <div className="mt-3.5 grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 pt-3">
-          <Metric v={`${d.cashFlow > 0 ? "+" : ""}${dk(d.cashFlow)} kr.`} k="Cash flow pr. md." tone={cfTone} />
-          <Metric v={`${num(d.capRate)} %`} k="Afkast" />
-          <Metric v={`${dk(Math.round(d.noi / 12))} kr.`} k="Driftsresultat pr. md." />
-        </div>
-
-        {d.note && <p className="mt-3 text-[12px] leading-snug text-slate-500">{d.note}</p>}
-
-        <span aria-hidden className="mt-auto flex items-center gap-1 pt-4 text-[14px] font-semibold text-blue-700">
-          Se hele analysen <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </span>
-      </div>
-    </Link>
+      </Link>
+      <CardActions href={href} saved={saved} onSave={onSave} />
+    </article>
   );
 }
 
@@ -351,7 +338,6 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   const [deals, setDeals] = useState<(AnalyzedDeal | InvestmentDeal)[] | null>(null);
   const [meta, setMeta] = useState<{ scanned: number; rentFactor: number } | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [saved, setSaved] = useState<"idle" | "saving" | "done" | "error">("idle");
   const [resultView, setResultView] = useState<"liste" | "kort">("liste");
   const [mapState, setMapState] = useState<{ status: "idle" | "loading" | "done" | "error"; points: MapPoint[] }>({ status: "idle", points: [] });
   type Criteria = { market: string; cities: string[]; type: string; sort: string; priceMax: number | "" };
@@ -369,37 +355,32 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   const setA = (k: string, v: string) => setAdv((p) => ({ ...p, [k]: v }));
   const advCount = Object.values(adv).filter((v) => v !== "").length;
 
-  // Save the current criteria as a standing search — the "Vagt på søgning" cron
-  // then emails the user when a NEW listing matches.
-  const saveSearch = async () => {
-    if (!paid) { setUpgrade("alerts"); return; }
-    const { loadSupabase } = await import("@/lib/supabase/lazy");
-    const supabase = await loadSupabase();
-    const toSignup = async () => {
-      // Back to this page after signup (a city page keeps its kommune in the URL).
-      const { setReturnPath } = await import("@/lib/checkout-intent");
-      setReturnPath(window.location.pathname + window.location.search);
-      captureEvent("alert_signup_prompt", { from: "dealfinder" });
-      window.location.href = "/auth/signup";
+  // Keep what the member saved from this search, so the card can link to the case.
+  const [savedDeals, setSavedDeals] = useState<Record<string, SaveState>>({});
+  const saveDeal = async (d: AnalyzedDeal | InvestmentDeal) => {
+    const key = String(d.id);
+    setSavedDeals((m) => ({ ...m, [key]: { status: "saving" } }));
+    const inv = market === "investering";
+    const hit: Hit = {
+      id: key, foundAt: new Date().toISOString(), fresh: false, status: "gemt",
+      address: d.address, road: d.road || ("title" in d ? d.title : "") || d.address, zip: d.zip, city: d.city, price: d.price,
+      area: d.area ?? null, rooms: "rooms" in d ? d.rooms ?? null : null, score: d.score, cashFlow: d.cashFlow, capRate: d.capRate,
+      rent: inv ? Math.round((d as InvestmentDeal).noi / 12) : (d as AnalyzedDeal).estRent, image: d.image ?? null, url: d.url, source: d.source, href: "", priceChangePct: null,
     };
-    if (!supabase) return toSignup();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return toSignup();
-    setSaved("saving");
-    const names = cities.map((s) => MUNICIPALITIES.find((c) => c.slug === s)?.name ?? s);
-    const cityLabel = names.length === 0 ? "Hele Danmark" : names.length <= 2 ? names.join(" + ") : `${names[0]} +${names.length - 1}`;
-    const typeLabel = market === "investering" ? "Erhverv" : (TYPES.find((t) => t.id === type)?.label ?? "");
-    const priceLabel = priceMax ? ` ≤ ${(Number(priceMax) / 1_000_000).toLocaleString("da-DK", { maximumFractionDigits: 1 })} mio.` : "";
-    const label = `${cityLabel} · ${typeLabel}${priceLabel}`;
-    // Baseline: everything currently matching is "already seen", so the user is
-    // only alerted about listings that appear AFTER they save — never spammed
-    // with the results they're looking at right now.
-    const seen = (deals ?? []).map((d) => String(d.id)).slice(0, 300);
-    const { error } = await supabase.from("saved_searches").insert({
-      user_id: user.id, label, market, municipality: cities.join(","), type,
-      price_max: priceMax || null, min_score: 60, sort, seen_ids: seen,
-    });
-    setSaved(error ? "error" : "done");
+    const id = await saveHitToPipeline(hit);
+    setSavedDeals((m) => ({ ...m, [key]: id ? { status: "saved", id } : { status: "error" } }));
+    if (id) captureEvent("pipeline_saved", { from: "dealmotor" });
+  };
+
+  // The current filters as a search agent: opens the agent form, filled in.
+  const agentHref = () => {
+    const n = (v: string) => (v.trim() === "" ? null : Number(v));
+    const c = {
+      market, municipalities: cities, type, priceMin: n(adv.priceMin), priceMax: priceMax === "" ? null : Number(priceMax),
+      areaMin: n(adv.areaMin), roomsMin: n(adv.roomsMin), minScore: n(adv.minScore), minYield: n(adv.minYield), minCashflow: n(adv.minCashflow),
+      subcat: adv.subcat || null,
+    };
+    return `/app/find/agenter?ny=${encodeURIComponent(JSON.stringify(c))}`;
   };
 
   const switchMarket = (m: "bolig" | "investering") => {
@@ -439,7 +420,6 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   const doSearch = async (c: Criteria) => {
     setLoading(true);
     setErr(null);
-    setSaved("idle");
     setCriteria(c);
     setResultView("liste");
     setMapState({ status: "idle", points: [] }); // a new search invalidates the old map
@@ -726,24 +706,16 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
                     <Sparkles size={12} /> Kalibreret leje ×{num(meta.rentFactor, 2)}
                   </span>
                 )}
-                {saved === "done" ? (
-                  <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                    <Check size={14} /> Du får en mail om nye boliger
-                  </span>
-                ) : (
-                  <button onClick={saveSearch} disabled={saved === "saving"}
-                    className="flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-60">
-                    {saved === "saving" ? <Loader2 size={13} className="animate-spin" /> : <Bell size={13} />}
-                    Få mail om nye boliger
-                  </button>
-                )}
+                <Link href={agentHref()} className="flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50">
+                  <Bell size={13} /> Gem som søgeagent
+                </Link>
               </div>
             </div>
             {resultView === "liste" ? (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {market === "investering"
-                  ? (deals as InvestmentDeal[]).map((d) => <InvestmentCard key={d.id} d={d} dp={effDp} ir={effIr} />)
-                  : (deals as AnalyzedDeal[]).map((d) => <DealCard key={d.id} d={d} dp={effDp} ir={effIr} />)}
+                  ? (deals as InvestmentDeal[]).map((d) => <InvestmentCard key={d.id} d={d} dp={effDp} ir={effIr} saved={savedDeals[String(d.id)]} onSave={() => saveDeal(d)} />)
+                  : (deals as AnalyzedDeal[]).map((d) => <DealCard key={d.id} d={d} dp={effDp} ir={effIr} saved={savedDeals[String(d.id)]} onSave={() => saveDeal(d)} />)}
                 {locked && access && access !== "paid" && <LockedDeals locked={locked} access={access} onUpgrade={() => setUpgrade("deals")} />}
               </div>
             ) : mapState.status === "loading" ? (

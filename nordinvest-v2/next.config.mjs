@@ -65,6 +65,7 @@ const nextConfig = {
       { source: "/auth/signup", destination: "/adgang", permanent: false },
       // Mine ejendomme moved into the app.
       { source: "/dashboard", destination: "/app", permanent: false },
+      { source: "/app/opgaver", destination: "/app/kalender?visning=liste", permanent: false },
       { source: "/mappe/:id", destination: "/app/ejendomme/:id", permanent: false },
       { source: "/velkommen", destination: "/app/velkommen", permanent: false },
       { source: "/opret", destination: "/adgang", permanent: false },

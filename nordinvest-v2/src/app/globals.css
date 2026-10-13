@@ -408,5 +408,7 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
 .tour-pop { animation: tourPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
 @keyframes tourBar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 .tour-bar { transform-origin: bottom; animation: tourBar 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
-@media (prefers-reduced-motion: reduce) { .tour-spot, .tour-pop, .tour-bar { animation: none !important; transition: none !important; } }
+.tour-photo { animation: tourPhoto 2.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes tourPhoto { from { transform: scale(1.08); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .tour-spot, .tour-pop, .tour-bar, .tour-photo { animation: none !important; transition: none !important; } }
 .tour-active [data-consent] { display: none !important; }

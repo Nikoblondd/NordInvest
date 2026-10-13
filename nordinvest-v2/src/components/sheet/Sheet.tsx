@@ -49,7 +49,8 @@ export function Sheet({
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/80 px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-600 text-[11px] font-bold text-white">X</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/app/kalkule.svg" alt="" width={28} height={28} className="h-7 w-7 shrink-0 rounded-md" />
           <span className="text-[15px] font-semibold text-slate-900">{title}</span>
           <span className="hidden text-[13px] text-slate-500 sm:inline">· blå felter kan rettes</span>
         </div>

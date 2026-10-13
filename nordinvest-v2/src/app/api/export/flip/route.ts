@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
   // ── Flip: the deal sheet ─────────────────────────────────────────────────────
   const ws = wb.addWorksheet("Flip", { views: [{ showGridLines: false }] });
   ws.columns = [{ width: 38 }, { width: 18 }, { width: 62 }];
-  ws.getCell("A1").value = `Flip-kalkule · ${b.address}`;
+  ws.getCell("A1").value = `Flipkalkule · ${b.address}`;
   ws.getCell("A1").font = { bold: true, size: 16, color: { argb: NAVY } };
   ws.getCell("A2").value = `Gule felter kan rettes, resten er formler. Lavet af NordInvest ${new Date().toLocaleDateString("da-DK")}.`;
   ws.getCell("A2").font = { italic: true, color: { argb: "FF64748B" } };

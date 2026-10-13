@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { hasToolAccess } from "@/lib/access";
+import { isInternal } from "@/lib/internal";
 
 /*
  * The closed platform's gate. The tools (analyser, Deal-motor, ejendomsmappe,
@@ -24,7 +25,7 @@ export function cronAuthorized(req: Request): boolean {
 
 /** For API routes: returns a 403 response to send back, or null when the caller may proceed. */
 export async function gateApi(req: Request): Promise<NextResponse | null> {
-  if (cronAuthorized(req)) return null;
+  if (cronAuthorized(req) || isInternal(req)) return null;
   if (await toolUser()) return null;
   return NextResponse.json({ ok: false, reason: "no_access" }, { status: 403, headers: { "Cache-Control": "no-store" } });
 }

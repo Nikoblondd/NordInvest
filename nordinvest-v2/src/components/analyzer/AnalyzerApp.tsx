@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, ArrowRight } from "lucide-react";
+import { EMPTY_MAPPE, STAGES, STAGE_LABEL, type Mappe, type Stage } from "@/lib/mappe/checklist";
 import { analyze, kr, krMd, pct, num, type Strategy, type AnalysisResult } from "@/lib/analysis";
 import { runUncertainty } from "@/lib/uncertainty";
 import { assessInvestment } from "@/lib/deals";
@@ -247,6 +248,7 @@ export function AnalyzerApp() {
   const [fullSheet, setFullSheet] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [save, setSave] = useState<{ status: "idle" | "saving" | "saved" | "limit" | "error"; msg?: string; id?: string }>({ status: "idle" });
+  const [saveStage, setSaveStage] = useState<Stage>("screening");
   const [watch, setWatch] = useState<{ status: "idle" | "saving" | "saved" | "error"; msg?: string }>({ status: "idle" });
   const [listingUrl, setListingUrl] = useState<string | null>(null);
   const [ex, setEx] = useState<Extract>({ status: "idle" });
@@ -942,6 +944,9 @@ export function AnalyzerApp() {
     // if it's missing for any reason, insert a fresh saved row instead.
     let error = null;
     let id: string | undefined;
+    // A property saved for the first time starts its case in the chosen stage.
+    const newCase: Mappe = { ...EMPTY_MAPPE, stage: saveStage, log: [{ at: new Date().toISOString(), text: "Gemt fra analysen", kind: "oprettet" }] };
+    payload.property_data.mappe = newCase;
     if (usageRowIdRef.current) {
       // Keep an existing ejendomsmappe (property_data.mappe) when saving again.
       // Keep what the row already knows (the mappe, the listing link, the type)
@@ -949,7 +954,7 @@ export function AnalyzerApp() {
       const prev = await supabase.from("analyses").select("property_data").eq("id", usageRowIdRef.current).single();
       const old = (prev.data?.property_data ?? {}) as Record<string, unknown>;
       const fresh = Object.fromEntries(Object.entries(payload.property_data).filter(([, v]) => v != null && v !== ""));
-      payload.property_data = { ...old, ...fresh };
+      payload.property_data = { ...old, ...fresh, mappe: (old.mappe as Mappe | undefined) ?? newCase };
       const res = await supabase.from("analyses").update(payload).eq("id", usageRowIdRef.current).eq("user_id", user.id);
       error = res.error;
       if (!error) id = usageRowIdRef.current;
@@ -1114,6 +1119,47 @@ export function AnalyzerApp() {
   let band = 0;
   const tint = (): "white" | "tint" => (band++ % 2 === 0 ? "white" : "tint");
   const navTitle = address ? address.split(",")[0] : "Din analyse";
+  // Inside the app every analysis can go straight into the pipeline.
+  const pipelineAction = save.status === "saved" ? (
+    <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-50 px-3.5 py-1.5 text-[13px] font-semibold text-emerald-700 ring-1 ring-emerald-200 hover:bg-emerald-100">
+      <Check aria-hidden size={14} /> <span className="hidden sm:inline">I pipeline</span><span className="sm:hidden">Gemt</span>
+    </a>
+  ) : (
+    <button type="button" onClick={saveToPortfolio} disabled={save.status === "saving"} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-blue-600 px-3.5 py-1.5 text-[13px] font-semibold text-white hover:bg-blue-700 active:scale-[0.96] disabled:opacity-60">
+      {save.status === "saving" ? <Loader2 aria-hidden size={14} className="animate-spin" /> : <Bookmark aria-hidden size={14} />} <span className="hidden sm:inline">Gem i pipeline</span><span className="sm:hidden">Gem</span>
+    </button>
+  );
+  const pipelineBand = (
+    <section aria-label="Pipeline" className="border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
+      <div className="mx-auto flex max-w-[1080px] flex-wrap items-center gap-3">
+        {save.status === "saved" ? (
+          <>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><Check aria-hidden size={18} strokeWidth={2.5} /></span>
+            <p className="min-w-0 flex-1 text-[15px] text-slate-700"><b className="font-semibold text-slate-900">Boligen ligger i din pipeline.</b> Planlæg fremvisningen, upload papirerne eller registrér et bud på sagen.</p>
+            <div className="flex flex-wrap gap-2">
+              <a href={`/app/ejendomme/${save.id ?? ""}?fane=aftaler`} className="inline-flex min-h-[40px] items-center rounded-lg border border-slate-200 px-3 text-[14px] font-semibold text-slate-800 hover:border-slate-300">Planlæg fremvisning</a>
+              <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="inline-flex min-h-[40px] items-center gap-1 rounded-lg bg-slate-900 px-3.5 text-[14px] font-semibold text-white hover:bg-slate-800">Åbn sagen <ArrowRight aria-hidden size={14} /></a>
+            </div>
+          </>
+        ) : (
+          <>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600"><Bookmark aria-hidden size={17} /></span>
+            <p className="min-w-0 flex-1 text-[15px] text-slate-700"><b className="font-semibold text-slate-900">Vil du følge boligen?</b> Gem den i din pipeline med tallene, så kan du planlægge fremvisning, gemme papirer og byde derfra.</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="sr-only" htmlFor="save-stage">Fase</label>
+              <select id="save-stage" value={saveStage} onChange={(e) => setSaveStage(e.target.value as Stage)} className="h-10 rounded-lg border border-slate-200 bg-white px-2.5 text-[14px] font-medium text-slate-800">
+                {STAGES.filter((x) => x.id !== "koebt").map((x) => <option key={x.id} value={x.id}>{STAGE_LABEL[x.id]}</option>)}
+              </select>
+              <button type="button" onClick={saveToPortfolio} disabled={save.status === "saving"} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg bg-blue-600 px-4 text-[14px] font-semibold text-white hover:bg-blue-500 disabled:opacity-60">
+                {save.status === "saving" ? <Loader2 aria-hidden size={15} className="animate-spin" /> : <Bookmark aria-hidden size={15} />} Gem i pipeline
+              </button>
+            </div>
+            {save.status === "error" && <p role="alert" className="w-full text-[14px] font-medium text-rose-600">Boligen kunne ikke gemmes. Prøv igen.</p>}
+          </>
+        )}
+      </div>
+    </section>
+  );
 
   return (
     <div className="min-w-0">
@@ -1182,10 +1228,11 @@ export function AnalyzerApp() {
             sourceLabel={sourceName(listingUrl)}
             kindLabel={isInvestment ? `Investeringsejendom${subcatParam ? `, ${subcatParam}` : ""}` : goal === "parents" ? "Forældrekøb" : `Strategi: ${strategies.find((s) => s.id === inputs.strategy)?.label ?? ""}`}
           />
+          {pipelineBand}
 
           {isInvestment ? (
             <>
-            <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} />
+            <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} action={pipelineAction} />
             <CommercialStory
               r={r}
               price={inputs.price}
@@ -1200,7 +1247,7 @@ export function AnalyzerApp() {
             </>
           ) : (
             <>
-          <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} />
+          <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} action={pipelineAction} />
 
           {!isInvestment && (
             <section id="kalkule" className="scroll-mt-32 bg-[#f4f6f9] px-4 py-10 sm:px-6 sm:py-14">
@@ -1450,13 +1497,13 @@ export function AnalyzerApp() {
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 {save.status === "saved" ? (
                   <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
-                    <Check aria-hidden size={17} /> Gemt. Åbn ejendomsmappen
+                    <Check aria-hidden size={17} /> Gemt. Åbn sagen
                   </a>
                 ) : (
                   <button type="button" onClick={saveToPortfolio} disabled={save.status === "saving"}
                     className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-[15px] font-semibold text-white transition-[background-color,transform] hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6aa8ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0e16] active:scale-[0.97] disabled:opacity-60">
                     {save.status === "saving" ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <Bookmark aria-hidden size={17} />}
-                    {save.status === "saving" ? "Gemmer…" : "Gem og opret ejendomsmappe"}
+                    {save.status === "saving" ? "Gemmer…" : "Gem i pipeline"}
                   </button>
                 )}
                 <button type="button" onClick={() => requirePaid("report", openBankReport)} className={darkPill}>

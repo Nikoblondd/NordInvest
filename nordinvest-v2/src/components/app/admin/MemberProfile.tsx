@@ -75,7 +75,7 @@ export function MemberProfile({ m, self }: { m: MemberDetail; self: boolean }) {
 
       {msg && <p role="status" className={clsx("mt-4 flex items-center gap-2 rounded-xl border px-4 py-3 text-[15px]", msg.bad ? "border-rose-200 bg-rose-50 text-rose-800" : "border-emerald-200 bg-emerald-50 text-emerald-900")}>{!msg.bad && <Check size={16} />}{msg.text}</p>}
 
-      <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_320px]">
+      <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-[1fr_320px]">
         <div className="min-w-0 space-y-5">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {tiles.map(([label, n, sub, Icon]) => (

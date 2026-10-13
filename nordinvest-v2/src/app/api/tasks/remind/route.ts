@@ -4,6 +4,8 @@ import { hasToolAccess } from "@/lib/access";
 import { getAuthUser } from "@/lib/supabase/admin";
 import { fmtDue, type Mappe, type Task } from "@/lib/mappe/checklist";
 import { PITCH_FROM } from "@/lib/outreach/schedule";
+import { readStore, storeOwners } from "@/lib/app/store";
+import type { CalEvent } from "@/lib/app/events";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,7 +13,7 @@ export const maxDuration = 120;
 
 /*
  * Daily at 07.00 (Danish time): every member gets one e-mail with the tasks
- * due tomorrow across their properties ("Besked dagen før"). Members only,
+ * due tomorrow across their properties and their own calendar ("Besked dagen før"). Members only,
  * one mail per person, nothing sent when there is nothing due.
  */
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordinvest.io";
@@ -48,18 +50,28 @@ export async function GET(req: Request) {
     }
   }
 
+  // The member's own appointments (not on a property) count too.
+  for (const userId of await storeOwners("events")) {
+    for (const e of await readStore<CalEvent>("events", userId)) {
+      if (e.done || e.due.slice(0, 10) !== day) continue;
+      const list = byUser.get(userId) ?? [];
+      list.push({ t: { id: e.id, kind: e.kind, title: e.title, due: e.due, done: false, end: e.end, place: e.place }, id: "", address: e.place || "Din kalender" });
+      byUser.set(userId, list);
+    }
+  }
+
   let sent = 0;
   for (const [userId, items] of Array.from(byUser.entries())) {
     const user = await getAuthUser(userId);
     if (!user?.email || !hasToolAccess(user)) continue;
     const first = String(user.user_metadata?.full_name ?? "").split(" ")[0];
     items.sort((a, b) => (a.t.due ?? "").localeCompare(b.t.due ?? ""));
-    const list = items.map(({ t, id, address }) => `<tr><td style="padding:10px 0;border-top:1px solid #eef2f7"><div style="font-weight:600;color:#0f172a">${esc(t.title)}</div><div style="color:#64748b;font-size:13px">${esc(address)} · ${esc(fmtDue(t.due!))}</div></td><td style="padding:10px 0;border-top:1px solid #eef2f7;text-align:right"><a href="${SITE}/app/ejendomme/${id}?fane=opgaver" style="color:#2563eb;font-weight:600;font-size:13px;text-decoration:none">Åbn</a></td></tr>`).join("");
-    const html = `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6"><p>Hej${first ? ` ${esc(first)}` : ""},</p><p>I morgen har du ${items.length === 1 ? "én opgave" : `${items.length} opgaver`} i NordInvest:</p><table style="width:100%;border-collapse:collapse">${list}</table><p style="margin-top:20px"><a href="${SITE}/app/opgaver" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:11px 18px;border-radius:8px">Se alle opgaver</a></p><p style="font-size:12px;color:#94a3b8">Du får denne påmindelse, fordi du har opgaver med dato i NordInvest.</p></div>`;
+    const list = items.map(({ t, id, address }) => `<tr><td style="padding:10px 0;border-top:1px solid #eef2f7"><div style="font-weight:600;color:#0f172a">${esc(t.title)}</div><div style="color:#64748b;font-size:13px">${esc(address)} · ${esc(fmtDue(t.due!))}${t.end ? `–${esc(t.end.replace(":", "."))}` : ""}</div></td><td style="padding:10px 0;border-top:1px solid #eef2f7;text-align:right"><a href="${id ? `${SITE}/app/ejendomme/${id}?fane=aftaler` : `${SITE}/app/kalender?dag=${day}`}" style="color:#2563eb;font-weight:600;font-size:13px;text-decoration:none">Åbn</a></td></tr>`).join("");
+    const html = `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6"><p>Hej${first ? ` ${esc(first)}` : ""},</p><p>I morgen har du ${items.length === 1 ? "én aftale" : `${items.length} aftaler`} i NordInvest:</p><table style="width:100%;border-collapse:collapse">${list}</table><p style="margin-top:20px"><a href="${SITE}/app/kalender?dag=${day}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:11px 18px;border-radius:8px">Åbn kalenderen</a></p><p style="font-size:12px;color:#94a3b8">Du får denne påmindelse, fordi du har aftaler med dato i NordInvest.</p></div>`;
     const ok = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${resend}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: PITCH_FROM, to: [user.email], reply_to: "contact@nordinvest.io", subject: items.length === 1 ? `I morgen: ${items[0].t.title}` : `I morgen: ${items.length} opgaver`, html }),
+      body: JSON.stringify({ from: PITCH_FROM, to: [user.email], reply_to: "contact@nordinvest.io", subject: items.length === 1 ? `I morgen: ${items[0].t.title}` : `I morgen: ${items.length} aftaler`, html }),
     }).then((r) => r.ok).catch(() => false);
     if (ok) sent++;
   }

@@ -96,8 +96,23 @@ export const TASK_KINDS: { id: TaskKind; label: string }[] = [
   { id: "andet", label: "Andet" },
 ];
 /** A to-do on a property, e.g. a viewing on Tuesday at 16:00. `due` is local "YYYY-MM-DDTHH:mm" or a date. */
-export type Task = { id: string; kind: TaskKind; title: string; due: string | null; done: boolean };
-export type Offer = { amount: number; date: string; status: "afgivet" | "modbud" | "accepteret" | "afslaaet"; note?: string };
+export type Task = {
+  id: string; kind: TaskKind; title: string; due: string | null; done: boolean;
+  /** End time "HH:mm" on the same day, for appointments. */
+  end?: string | null;
+  place?: string;
+  note?: string;
+};
+export type Offer = {
+  amount: number; date: string; status: "afgivet" | "modbud" | "accepteret" | "afslaaet"; note?: string;
+  id?: string;
+  /** The seller's counter-offer, when status is "modbud". */
+  counter?: number | null;
+  /** Answer deadline "YYYY-MM-DDTHH:mm". */
+  deadline?: string | null;
+};
+/** One line in the case's activity log. */
+export type LogEntry = { at: string; text: string; kind: "fase" | "bud" | "aftale" | "dokument" | "note" | "oprettet" };
 export const OFFER_STATUS: Record<Offer["status"], string> = { afgivet: "Afgivet", modbud: "Modbud", accepteret: "Accepteret", afslaaet: "Afslået" };
 
 export type Mappe = {
@@ -107,6 +122,11 @@ export type Mappe = {
   docs: DocReview[];
   tasks?: Task[];
   offer?: Offer | null;
+  /** Every offer made on the property, newest first. `offer` is the current one. */
+  offers?: Offer[];
+  log?: LogEntry[];
+  /** The member's own highest price for this property. */
+  maxBid?: number | null;
   /** The listing agent (or seller) for this property. */
   contact?: Contact | null;
   updatedAt?: string;

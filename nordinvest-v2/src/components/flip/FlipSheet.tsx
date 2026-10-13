@@ -77,5 +77,5 @@ export function FlipSheet({
     { kind: "row", key: "target", label: "Krævet fortjeneste", value: answers.target, formula: "Dit krav, i procent af salgsprisen. Det styrer dit maksimale bud.", input: { value: answers.target, set: (n) => set({ target: Math.max(0, Math.min(50, n)) }), suffix: "%" } },
     { kind: "row", key: "maxbid", label: "Dit maksimale bud", value: result.maxBid, formula: `Den højeste købspris, der stadig giver ${answers.target} % efter skat med alt det andet uændret`, strong: true },
   ];
-  return <Sheet title="Flip-kalkule" rows={rows} initial="profit" onExport={onExport} exporting={exporting} />;
+  return <Sheet title="Flipkalkule" rows={rows} initial="profit" onExport={onExport} exporting={exporting} />;
 }

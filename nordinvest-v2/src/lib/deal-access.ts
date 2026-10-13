@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { effectiveLimit } from "@/lib/access";
 import { limits } from "@/lib/pricing";
 import type { DealAccess } from "@/lib/deal-tiers";
+import { isInternal } from "@/lib/internal";
 
 /*
  * Server side: which Deal-motor tier this request gets. Our own crons (Deal-
@@ -11,6 +12,7 @@ import type { DealAccess } from "@/lib/deal-tiers";
 export async function dealAccess(req: Request): Promise<DealAccess> {
   const secret = process.env.CRON_SECRET;
   if (secret && req.headers.get("authorization") === `Bearer ${secret}`) return "paid";
+  if (isInternal(req)) return "paid";
   const supabase = createClient();
   if (!supabase) return "anon";
   const {

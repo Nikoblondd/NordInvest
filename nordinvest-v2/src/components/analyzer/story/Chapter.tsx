@@ -108,10 +108,13 @@ export function ChapterNav({
   items,
   title,
   onAdjust,
+  action,
 }: {
   items: NavItem[];
   title: string;
   onAdjust: () => void;
+  /** An extra button on the right, e.g. "Gem i pipeline" inside the app. */
+  action?: ReactNode;
 }) {
   const [active, setActive] = useState(items[0]?.id);
 
@@ -176,12 +179,16 @@ export function ChapterNav({
         <button
           type="button"
           onClick={onAdjust}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-blue-600 px-3.5 py-1.5 text-[13px] font-semibold text-white transition-[background-color,transform] hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-[0.96]"
+          className={clsx(
+            "inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-[background-color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-[0.96]",
+            action ? "bg-white text-slate-800 ring-1 ring-slate-200 hover:bg-slate-50" : "bg-blue-600 text-white hover:bg-blue-700",
+          )}
         >
           <SlidersHorizontal aria-hidden size={14} strokeWidth={2} />
           <span className="hidden sm:inline">Justér tallene</span>
           <span className="sm:hidden">Justér</span>
         </button>
+        {action}
       </div>
     </div>
   );

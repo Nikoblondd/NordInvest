@@ -25,7 +25,7 @@ const COPY: Record<UpgradeReason, { icon: typeof FileText; title: string; body: 
   },
   flip_excel: {
     icon: FileSpreadsheet,
-    title: "Flip-kalkulen i Excel er med i Starter",
+    title: "Flipkalkulen i Excel er med i Starter",
     body: "Få hele flippen som regneark med levende formler og hele renoveringsbudgettet med produktlinks. Send det til banken eller din makker, og regn videre selv.",
   },
   deals: {
