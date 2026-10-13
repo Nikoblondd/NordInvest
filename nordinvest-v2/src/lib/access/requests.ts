@@ -59,6 +59,10 @@ export async function storeRequest(r: AccessRequest): Promise<boolean> {
   return !!res?.ok;
 }
 
+/** Where new access requests land. */
+export const ACCESS_INBOX = "contact@nordinvest.io";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordinvest.io";
+
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
 export function notifyEmail(r: AccessRequest): { subject: string; html: string } {
@@ -76,6 +80,11 @@ export function notifyEmail(r: AccessRequest): { subject: string; html: string }
 <h2 style="margin:0 0 4px;font-size:20px">Ny anmodning om adgang</h2>
 <p style="margin:0 0 16px;color:#64748b;font-size:14px">${new Date(r.createdAt).toLocaleString("da-DK", { timeZone: "Europe/Copenhagen" })}. Svar på denne mail for at skrive direkte til ${esc(r.name.split(" ")[0])}.</p>
 <table style="width:100%;border-collapse:collapse;font-size:15px">${rows.map(([k, v]) => `<tr><td style="padding:8px 12px 8px 0;color:#64748b;vertical-align:top;white-space:nowrap;border-top:1px solid #eef2f7">${k}</td><td style="padding:8px 0;border-top:1px solid #eef2f7">${k === "Navn" || k === "Ejer i dag" || k === "Leder efter" ? esc(v) : v}</td></tr>`).join("")}</table>
+<table role="presentation" style="margin:24px 0 8px;border-collapse:collapse"><tr>
+<td style="padding-right:10px"><a href="${SITE}/app/admin/adgang?anmodning=${r.id}&handling=godkend" style="display:inline-block;background:#059669;color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 22px;border-radius:8px">Godkend</a></td>
+<td><a href="${SITE}/app/admin/adgang?anmodning=${r.id}&handling=afvis" style="display:inline-block;background:#fff;color:#0f172a;text-decoration:none;font-weight:600;font-size:15px;padding:11px 22px;border-radius:8px;border:1px solid #cbd5e1">Afvis</a></td>
+</tr></table>
+<p style="margin:0;font-size:13px;color:#64748b">Knapperne åbner anmodningen i NordInvest, hvor du bekræfter med ét tryk. Godkender du, får ${esc(r.name.split(" ")[0])} straks en mail med sit login.</p>
 <p style="margin:16px 0 0;font-size:12px;color:#94a3b8">Id ${r.id}</p></div>`,
   };
 }
@@ -96,10 +105,10 @@ export function confirmationEmail(r: AccessRequest): { subject: string; html: st
 export function invitationEmail(name: string, link: string): { subject: string; html: string } {
   const first = esc(name.split(" ")[0] || "der");
   return {
-    subject: "Din adgang til NordInvest er klar",
+    subject: "Du er godkendt til NordInvest",
     html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
 <p>Hej ${first},</p>
-<p>Tak for snakken. Din adgang til NordInvest er klar. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode, og bagefter viser en kort guide dig rundt.</p>
+<p>Din anmodning om adgang til NordInvest er godkendt, og din konto er klar. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode, og bagefter viser en kort guide dig rundt.</p>
 <p style="margin:28px 0"><a href="${link}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Åbn NordInvest</a></p>
 <p style="font-size:13px;color:#64748b">Linket virker én gang og kun i en begrænset periode. Er det udløbet, så svar bare på denne mail, så sender jeg et nyt.</p>
 <p>Har du spørgsmål undervejs, så ring direkte til mig.</p>

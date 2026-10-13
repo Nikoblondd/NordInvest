@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Building2, Calculator, ChevronDown, CircleHelp, Home, KeyRound, LayoutGrid, ListChecks, LogOut, Phone, Plus, Rocket, Search, Settings, BarChart3, X } from "lucide-react";
+import { Building2, Calculator, ChevronDown, CircleHelp, Home, KeyRound, LayoutGrid, ListChecks, LogOut, Phone, Plus, Rocket, Search, Settings, BarChart3, Users, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { site } from "@/lib/site";
 import { Tour, startTour } from "./Tour";
@@ -26,7 +26,8 @@ export const NAV = [
 ];
 
 const ADMIN = [
-  { href: "/app/admin/adgang", label: "Adgang", Icon: KeyRound },
+  { href: "/app/admin/medlemmer", label: "Medlemmer", Icon: Users },
+  { href: "/app/admin/adgang", label: "Anmodninger", Icon: KeyRound },
   { href: "/dashboard/launch", label: "Launch", Icon: Rocket },
   { href: "/dashboard/analytics", label: "Analytics", Icon: BarChart3 },
 ];
@@ -212,7 +213,8 @@ function UserMenu({ user }: { user: ShellUser }) {
           <Link href="/app/konto" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50"><Settings size={16} className="text-slate-400" /> Konto og indstillinger</Link>
           <button type="button" onClick={() => { setOpen(false); startTour(); }} className="flex min-h-[44px] w-full items-center gap-2.5 px-4 text-left text-[14px] text-slate-700 hover:bg-slate-50"><CircleHelp size={16} className="text-slate-400" /> Vis guiden igen</button>
           <a href={site.phoneHref} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50"><Phone size={16} className="text-slate-400" /> Ring til Nikolaj</a>
-          {user.admin && <Link href="/app/admin/adgang" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50 lg:hidden"><KeyRound size={16} className="text-slate-400" /> Adgang (admin)</Link>}
+          {user.admin && <Link href="/app/admin/medlemmer" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50 lg:hidden"><Users size={16} className="text-slate-400" /> Medlemmer (admin)</Link>}
+          {user.admin && <Link href="/app/admin/adgang" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50 lg:hidden"><KeyRound size={16} className="text-slate-400" /> Anmodninger (admin)</Link>}
           <form action="/auth/signout" method="post" className="border-t border-slate-100">
             <button type="submit" className="flex min-h-[44px] w-full items-center gap-2.5 px-4 text-left text-[14px] text-rose-600 hover:bg-rose-50"><LogOut size={16} /> Log ud</button>
           </form>

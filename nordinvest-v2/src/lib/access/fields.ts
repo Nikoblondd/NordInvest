@@ -21,7 +21,7 @@ export type AccessRequest = {
 };
 
 export type RequestStatus = "ny" | "kontaktet" | "inviteret" | "afvist";
-export const REQUEST_STATUS: Record<RequestStatus, string> = { ny: "Ny", kontaktet: "Kontaktet", inviteret: "Inviteret", afvist: "Ikke et match" };
+export const REQUEST_STATUS: Record<RequestStatus, string> = { ny: "Afventer", kontaktet: "Kontaktet", inviteret: "Godkendt", afvist: "Afvist" };
 
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, max) : "");
 

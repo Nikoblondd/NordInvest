@@ -1,51 +1,82 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Copy, Loader2, Mail, Phone, Send, UserMinus, UserPlus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowRight, Check, Copy, Loader2, Mail, Phone, RotateCcw, Send, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { REQUEST_STATUS, type AccessRequest, type RequestStatus } from "@/lib/access/fields";
 
 /*
- * Admin: who is in. Requests from /adgang with status and notes, members with
- * their last sign-in, and a direct invite. Approving sends the personal
- * invitation (or shows the link if e-mail could not be sent).
+ * Admin: access requests from /adgang. One press approves (the person gets
+ * the approval e-mail with their login) or rejects. The links in the request
+ * e-mail open this page with that request and the chosen action ready to
+ * confirm, so nothing happens just because a mail client follows a link.
  */
 
-export type MemberRow = { id: string; email: string; name: string; createdAt: string; lastSignIn: string | null; access: "member" | "revoked"; note?: string };
+const TONE: Record<RequestStatus, string> = { ny: "bg-amber-50 text-amber-900 ring-amber-200", kontaktet: "bg-sky-50 text-sky-900 ring-sky-200", inviteret: "bg-emerald-50 text-emerald-800 ring-emerald-200", afvist: "bg-slate-100 text-slate-600 ring-slate-200" };
+type Focus = { id: string; action: "godkend" | "afvis" } | null;
+type Result = { ok: boolean; reason?: string; link?: string; sent?: boolean; userId?: string };
+type Filter = "afventer" | "godkendt" | "afvist" | "alle";
 
-const date = (s: string | null) => (s ? new Date(s).toLocaleDateString("da-DK", { day: "numeric", month: "short", year: "numeric" }) : "Aldrig");
-const TONE: Record<RequestStatus, string> = { ny: "bg-blue-50 text-blue-800", kontaktet: "bg-amber-50 text-amber-900", inviteret: "bg-emerald-50 text-emerald-800", afvist: "bg-slate-100 text-slate-600" };
-
-async function call(body: Record<string, unknown>) {
+async function call(body: Record<string, unknown>): Promise<Result> {
   const r = await fetch("/api/admin/access", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  return (await r.json().catch(() => ({ ok: false, reason: "network" }))) as { ok: boolean; reason?: string; link?: string; sent?: boolean };
+  return (await r.json().catch(() => ({ ok: false, reason: "network" }))) as Result;
 }
 
-export function AccessAdmin({ requests: initialReq, members: initialMembers }: { requests: AccessRequest[]; members: MemberRow[] }) {
-  const [tab, setTab] = useState<"anmodninger" | "medlemmer" | "inviter">("anmodninger");
-  const [requests, setRequests] = useState(initialReq);
-  const [members, setMembers] = useState(initialMembers);
-  const [filter, setFilter] = useState<RequestStatus | "alle">("ny");
-  const [toast, setToast] = useState<{ text: string; link?: string } | null>(null);
-  const shown = requests.filter((r) => filter === "alle" || r.status === filter);
-  const counts = (s: RequestStatus) => requests.filter((r) => r.status === s).length;
+const isOpen = (s: RequestStatus) => s === "ny" || s === "kontaktet";
+const inFilter = (r: AccessRequest, f: Filter) =>
+  f === "alle" || (f === "afventer" ? isOpen(r.status) : f === "godkendt" ? r.status === "inviteret" : r.status === "afvist");
 
-  const say = (text: string, link?: string) => { setToast({ text, link }); if (!link) setTimeout(() => setToast(null), 4000); };
+export function AccessAdmin({ requests: initial, focus }: { requests: AccessRequest[]; focus: Focus }) {
+  const [tab, setTab] = useState<"anmodninger" | "inviter">("anmodninger");
+  const [requests, setRequests] = useState(initial);
+  const focused = focus ? initial.find((r) => r.id === focus.id) : undefined;
+  const [filter, setFilter] = useState<Filter>(focused && !isOpen(focused.status) ? "alle" : "afventer");
+  const [confirm, setConfirm] = useState<{ r: AccessRequest; action: "godkend" | "afvis" } | null>(focused && focus && isOpen(focused.status) ? { r: focused, action: focus.action } : null);
+  const [toast, setToast] = useState<{ text: string; link?: string; tone?: "ok" | "info" } | null>(null);
+
+  const shown = requests.filter((r) => inFilter(r, filter));
+  const count = (f: Filter) => requests.filter((r) => inFilter(r, f)).length;
+  const replace = (next: AccessRequest) => setRequests((all) => all.map((x) => (x.id === next.id ? next : x)));
+  const say = (text: string, link?: string, tone: "ok" | "info" = "ok") => { setToast({ text, link, tone }); if (!link) setTimeout(() => setToast(null), 5000); };
+
+  // A request opened from the e-mail that was already handled: say so.
+  useEffect(() => {
+    if (focus && !focused) say("Anmodningen fra mailen findes ikke længere.", undefined, "info");
+    else if (focused && !isOpen(focused.status)) say(`${focused.name} er allerede ${REQUEST_STATUS[focused.status].toLowerCase()}.`, undefined, "info");
+    if (focus) window.history.replaceState(null, "", "/app/admin/adgang");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const approve = async (r: AccessRequest): Promise<boolean> => {
+    const res = await call({ action: "invite", email: r.email, name: r.name, requestId: r.id, requestCreatedAt: r.createdAt });
+    if (!res.ok) { say(res.reason === "email" ? "E-mailen i anmodningen er ugyldig." : "Godkendelsen mislykkedes. Prøv igen.", undefined, "info"); return false; }
+    replace({ ...r, status: "inviteret", invitedUserId: res.userId });
+    say(res.link ? `${r.name} er godkendt, men mailen kunne ikke sendes. Send linket selv:` : `${r.name} er godkendt og har fået en mail med sit login.`, res.link);
+    return true;
+  };
+  const setStatus = async (r: AccessRequest, status: RequestStatus): Promise<boolean> => {
+    const res = await call({ action: "status", requestId: r.id, requestCreatedAt: r.createdAt, status });
+    if (!res.ok) { say("Kunne ikke gemme. Prøv igen.", undefined, "info"); return false; }
+    replace({ ...r, status });
+    if (status === "afvist") say(`${r.name} er afvist. Der er ikke sendt nogen mail.`);
+    return true;
+  };
 
   return (
     <div>
       <div role="tablist" className="mt-6 flex gap-1 border-b border-slate-200">
-        {([["anmodninger", `Anmodninger`, counts("ny")], ["medlemmer", "Medlemmer", members.filter((m) => m.access === "member").length], ["inviter", "Invitér direkte", 0]] as const).map(([id, label, n]) => (
+        {([["anmodninger", "Anmodninger", count("afventer")], ["inviter", "Invitér direkte", 0]] as const).map(([id, label, n]) => (
           <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)}
             className={clsx("-mb-px flex min-h-[46px] items-center gap-1.5 border-b-2 px-3 text-[14px] font-semibold", tab === id ? "border-slate-900 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-800")}>
-            {label}{n > 0 && <span className="rounded-full bg-slate-100 px-1.5 text-[12px] tabular-nums text-slate-600">{n}</span>}
+            {label}{n > 0 && <span className="rounded-full bg-amber-100 px-1.5 text-[12px] tabular-nums text-amber-900">{n}</span>}
           </button>
         ))}
       </div>
 
       {toast && (
-        <div role="status" className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[15px] text-emerald-900">
-          <Check size={17} /> <span className="flex-1">{toast.text}</span>
+        <div role="status" className={clsx("mt-4 flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 text-[15px]", toast.tone === "info" ? "border-slate-200 bg-white text-slate-700" : "border-emerald-200 bg-emerald-50 text-emerald-900")}>
+          {toast.tone !== "info" && <Check size={17} />} <span className="flex-1">{toast.text}</span>
           {toast.link && <CopyLink link={toast.link} />}
           <button type="button" onClick={() => setToast(null)} className="text-[14px] font-medium underline">Luk</button>
         </div>
@@ -54,114 +85,123 @@ export function AccessAdmin({ requests: initialReq, members: initialMembers }: {
       {tab === "anmodninger" && (
         <>
           <div className="mt-5 flex flex-wrap gap-1.5">
-            {(["ny", "kontaktet", "inviteret", "afvist", "alle"] as const).map((s) => (
-              <button key={s} type="button" onClick={() => setFilter(s)} className={clsx("min-h-[36px] rounded-full px-3 text-[13px] font-semibold", filter === s ? "bg-slate-900 text-white" : "bg-white text-slate-600 ring-1 ring-slate-200")}>
-                {s === "alle" ? "Alle" : REQUEST_STATUS[s]} {s !== "alle" && <span className="opacity-60">{counts(s)}</span>}
+            {([["afventer", "Afventer"], ["godkendt", "Godkendt"], ["afvist", "Afvist"], ["alle", "Alle"]] as const).map(([id, label]) => (
+              <button key={id} type="button" onClick={() => setFilter(id)} className={clsx("min-h-[36px] rounded-full px-3.5 text-[13px] font-semibold", filter === id ? "bg-slate-900 text-white" : "bg-white text-slate-600 ring-1 ring-slate-200 hover:ring-slate-300")}>
+                {label} <span className="ml-0.5 tabular-nums opacity-60">{count(id)}</span>
               </button>
             ))}
           </div>
           {shown.length === 0 ? (
-            <p className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center text-[15px] text-slate-500">Ingen anmodninger her.</p>
+            <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
+              <p className="text-[16px] font-semibold text-slate-800">{filter === "afventer" ? "Ingen anmodninger venter" : "Intet her"}</p>
+              <p className="mt-1 text-[14px] text-slate-500">Nye anmodninger fra nordinvest.io/adgang lander her og på contact@nordinvest.io.</p>
+            </div>
           ) : (
             <ul className="mt-4 space-y-3">
               {shown.map((r) => (
-                <RequestCard key={r.id} r={r}
-                  onChange={(next) => setRequests((all) => all.map((x) => (x.id === next.id ? next : x)))}
-                  onInvited={(link) => say(link ? "Adgangen er givet, men mailen kunne ikke sendes. Send linket selv:" : `Invitation sendt til ${r.email}.`, link)} />
+                <RequestCard key={r.id} r={r} highlight={focus?.id === r.id}
+                  onApprove={() => approve(r)} onReject={() => setStatus(r, "afvist")} onReopen={() => setStatus(r, "ny")} />
               ))}
             </ul>
           )}
         </>
       )}
 
-      {tab === "medlemmer" && (
-        <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white">
-          {members.length === 0 ? <p className="px-6 py-10 text-center text-[15px] text-slate-500">Ingen medlemmer endnu.</p> : (
-            <ul className="divide-y divide-slate-100">
-              {members.map((m) => (
-                <li key={m.id} className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5">
-                  <span className={clsx("flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold", m.access === "member" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-500")}>{(m.name || m.email).slice(0, 2).toUpperCase()}</span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[15px] font-semibold">{m.name || m.email}</p>
-                    <p className="truncate text-[13px] text-slate-500">{m.email} · senest logget ind {date(m.lastSignIn)}{m.note ? ` · ${m.note}` : ""}</p>
-                  </div>
-                  <MemberToggle m={m} onDone={(access) => { setMembers((all) => all.map((x) => (x.id === m.id ? { ...x, access } : x))); say(access === "member" ? `${m.email} har adgang igen.` : `Adgangen for ${m.email} er fjernet.`); }} />
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-
       {tab === "inviter" && <InviteForm onInvited={(email, link) => say(link ? "Adgangen er givet, men mailen kunne ikke sendes. Send linket selv:" : `Invitation sendt til ${email}.`, link)} />}
+
+      {confirm && (
+        <ConfirmDialog r={confirm.r} action={confirm.action} onClose={() => setConfirm(null)}
+          onConfirm={async () => { const ok = confirm.action === "godkend" ? await approve(confirm.r) : await setStatus(confirm.r, "afvist"); if (ok) setConfirm(null); }} />
+      )}
     </div>
   );
 }
 
-function RequestCard({ r, onChange, onInvited }: { r: AccessRequest; onChange: (r: AccessRequest) => void; onInvited: (link?: string) => void }) {
-  const [note, setNote] = useState(r.adminNote ?? "");
-  const [busy, setBusy] = useState<string | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-  const setStatus = async (status: RequestStatus) => {
-    setBusy(status); setErr(null);
-    const res = await call({ action: "status", requestId: r.id, requestCreatedAt: r.createdAt, status, note });
-    setBusy(null);
-    if (res.ok) onChange({ ...r, status, adminNote: note }); else setErr("Kunne ikke gemme. Prøv igen.");
-  };
-  const invite = async () => {
-    setBusy("invite"); setErr(null);
-    const res = await call({ action: "invite", email: r.email, name: r.name, requestId: r.id, requestCreatedAt: r.createdAt, note });
-    setBusy(null);
-    if (res.ok) { onChange({ ...r, status: "inviteret", adminNote: note }); onInvited(res.link); }
-    else setErr(res.reason === "email" ? "E-mailen er ugyldig." : "Invitationen mislykkedes. Prøv igen.");
-  };
+function RequestCard({ r, highlight, onApprove, onReject, onReopen }: { r: AccessRequest; highlight: boolean; onApprove: () => Promise<boolean>; onReject: () => Promise<boolean>; onReopen: () => Promise<boolean> }) {
+  const [busy, setBusy] = useState<"godkend" | "afvis" | "genaabn" | null>(null);
+  const ref = useRef<HTMLLIElement>(null);
+  useEffect(() => { if (highlight) ref.current?.scrollIntoView({ block: "center" }); }, [highlight]);
+  const run = async (k: NonNullable<typeof busy>, fn: () => Promise<boolean>) => { setBusy(k); await fn(); setBusy(null); };
+  const initials = r.name.trim().split(/\s+/).map((p) => p[0]).slice(0, 2).join("").toUpperCase();
   return (
-    <li className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="flex flex-wrap items-center gap-2 text-[16px] font-semibold">{r.name} <span className={clsx("rounded-md px-1.5 py-0.5 text-[12px] font-semibold", TONE[r.status])}>{REQUEST_STATUS[r.status]}</span></p>
-          <p className="mt-0.5 text-[13px] text-slate-500">{new Date(r.createdAt).toLocaleString("da-DK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} · ejer {r.portfolio} · {r.goals.join(", ") || "intet valgt"}</p>
+    <li ref={ref} className={clsx("rounded-2xl border bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:p-5", highlight ? "border-blue-300 ring-4 ring-blue-50" : "border-slate-200")}>
+      <div className="flex flex-wrap items-start gap-3.5">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0b1b33] text-[14px] font-semibold text-white">{initials}</span>
+        <div className="min-w-0 flex-1">
+          <p className="flex flex-wrap items-center gap-2 text-[16px] font-semibold text-slate-900">
+            {r.name}
+            <span className={clsx("rounded-md px-1.5 py-0.5 text-[12px] font-semibold ring-1", TONE[r.status])}>{REQUEST_STATUS[r.status]}</span>
+          </p>
+          <p className="mt-0.5 text-[13px] text-slate-500">{new Date(r.createdAt).toLocaleString("da-DK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Copenhagen" })}</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <a href={`tel:${r.phone.replace(/\s/g, "")}`} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 px-3 text-[14px] font-semibold hover:border-slate-300"><Phone size={14} /> {r.phone}</a>
-          <a href={`mailto:${r.email}`} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 px-3 text-[14px] font-semibold hover:border-slate-300"><Mail size={14} /> Skriv</a>
+        <div className="flex min-w-0 flex-wrap gap-2">
+          <a href={`tel:${r.phone.replace(/\s/g, "")}`} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 px-3 text-[14px] font-medium text-slate-700 hover:border-slate-300"><Phone size={14} /> {r.phone}</a>
+          <a href={`mailto:${r.email}`} className="inline-flex min-h-[40px] min-w-0 max-w-full items-center gap-1.5 rounded-lg border border-slate-200 px-3 text-[14px] font-medium text-slate-700 hover:border-slate-300"><Mail size={14} className="shrink-0" /> <span className="truncate">{r.email}</span></a>
         </div>
       </div>
+
+      <dl className="mt-4 grid gap-x-6 gap-y-2 border-t border-slate-100 pt-3 text-[14px] sm:grid-cols-2">
+        <div className="flex gap-2"><dt className="text-slate-500">Ejer i dag</dt><dd className="font-medium text-slate-800">{r.portfolio}</dd></div>
+        <div className="flex gap-2"><dt className="text-slate-500">Leder efter</dt><dd className="font-medium text-slate-800">{r.goals.join(", ") || "Ikke oplyst"}</dd></div>
+      </dl>
       {r.message && <p className="mt-3 whitespace-pre-line rounded-lg bg-slate-50 p-3 text-[15px] leading-relaxed text-slate-700">{r.message}</p>}
-      <label htmlFor={`note-${r.id}`} className="mt-3 block text-[13px] font-medium text-slate-600">Dine noter (pris, aftale, næste skridt)</label>
-      <textarea id={`note-${r.id}`} value={note} onChange={(e) => setNote(e.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-200 bg-white p-2.5 text-[15px] focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" />
-      {err && <p role="alert" className="mt-2 text-[14px] font-medium text-rose-600">{err}</p>}
-      <div className="mt-3 flex flex-wrap gap-2">
-        {r.status !== "inviteret" && (
-          <button type="button" onClick={invite} disabled={!!busy} className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg bg-blue-600 px-4 text-[14px] font-semibold text-white hover:bg-blue-500 disabled:opacity-60">
-            {busy === "invite" ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />} Godkend og invitér
-          </button>
+      {r.adminNote && <p className="mt-2 text-[13px] text-slate-500">Din note: {r.adminNote}</p>}
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        {isOpen(r.status) ? (
+          <>
+            <button type="button" onClick={() => run("godkend", onApprove)} disabled={!!busy} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-emerald-600 px-5 text-[15px] font-semibold text-white shadow-sm hover:bg-emerald-500 active:translate-y-px disabled:opacity-60">
+              {busy === "godkend" ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} strokeWidth={2.5} />} Godkend
+            </button>
+            <button type="button" onClick={() => run("afvis", onReject)} disabled={!!busy} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 text-[15px] font-semibold text-slate-700 hover:border-rose-300 hover:text-rose-700 active:translate-y-px disabled:opacity-60">
+              {busy === "afvis" ? <Loader2 size={16} className="animate-spin" /> : <X size={16} strokeWidth={2.5} />} Afvis
+            </button>
+            <span className="text-[13px] text-slate-500">Godkender du, får {r.name.split(" ")[0]} straks en mail med sit login.</span>
+          </>
+        ) : r.status === "inviteret" ? (
+          <>
+            <span className="inline-flex items-center gap-1.5 text-[14px] font-medium text-emerald-700"><Check size={15} /> Godkendt, og mailen med login er sendt</span>
+            {r.invitedUserId && <Link href={`/app/admin/medlemmer/${r.invitedUserId}`} className="ml-auto inline-flex min-h-[40px] items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">Se profil <ArrowRight size={14} /></Link>}
+          </>
+        ) : (
+          <>
+            <span className="text-[14px] text-slate-500">Afvist. Der er ikke sendt nogen mail.</span>
+            <button type="button" onClick={() => run("genaabn", onReopen)} disabled={!!busy} className="ml-auto inline-flex min-h-[40px] items-center gap-1.5 rounded-lg px-3 text-[14px] font-semibold text-slate-600 hover:bg-slate-50">
+              {busy === "genaabn" ? <Loader2 size={14} className="animate-spin" /> : <RotateCcw size={14} />} Fortryd
+            </button>
+          </>
         )}
-        {r.status === "ny" && <button type="button" onClick={() => setStatus("kontaktet")} disabled={!!busy} className="min-h-[42px] rounded-lg border border-slate-300 px-4 text-[14px] font-semibold hover:border-slate-400 disabled:opacity-60">{busy === "kontaktet" ? "Gemmer" : "Markér som kontaktet"}</button>}
-        {r.status !== "afvist" && r.status !== "inviteret" && <button type="button" onClick={() => setStatus("afvist")} disabled={!!busy} className="min-h-[42px] rounded-lg px-3 text-[14px] font-medium text-slate-500 hover:text-slate-800 disabled:opacity-60">Ikke et match</button>}
-        {(r.status === "afvist" || r.status === "kontaktet") && <button type="button" onClick={() => setStatus(r.status === "afvist" ? "ny" : "kontaktet")} disabled={!!busy} className="min-h-[42px] rounded-lg px-3 text-[14px] font-medium text-slate-500 hover:text-slate-800">{r.status === "afvist" ? "Genåbn" : "Gem note"}</button>}
       </div>
     </li>
   );
 }
 
-function MemberToggle({ m, onDone }: { m: MemberRow; onDone: (a: "member" | "revoked") => void }) {
+function ConfirmDialog({ r, action, onClose, onConfirm }: { r: AccessRequest; action: "godkend" | "afvis"; onClose: () => void; onConfirm: () => Promise<void> }) {
   const [busy, setBusy] = useState(false);
-  const [confirm, setConfirm] = useState(false);
-  const go = async () => {
-    setBusy(true);
-    const res = await call({ action: m.access === "member" ? "revoke" : "restore", userId: m.id });
-    setBusy(false); setConfirm(false);
-    if (res.ok) onDone(m.access === "member" ? "revoked" : "member");
-  };
-  if (m.access === "revoked") return <button type="button" onClick={go} disabled={busy} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-300 px-3 text-[14px] font-semibold hover:border-slate-400"><UserPlus size={15} /> Giv adgang igen</button>;
-  return confirm ? (
-    <span className="flex items-center gap-2 text-[14px]">
-      <span className="text-slate-600">Fjern adgangen?</span>
-      <button type="button" onClick={go} disabled={busy} className="min-h-[40px] rounded-lg bg-rose-600 px-3 font-semibold text-white">{busy ? "Fjerner" : "Ja, fjern"}</button>
-      <button type="button" onClick={() => setConfirm(false)} className="min-h-[40px] px-2 font-medium text-slate-500">Annullér</button>
-    </span>
-  ) : <button type="button" onClick={() => setConfirm(true)} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg px-3 text-[14px] font-medium text-slate-500 hover:text-rose-600"><UserMinus size={15} /> Fjern adgang</button>;
+  const approve = action === "godkend";
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape" && !busy) onClose(); };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [busy, onClose]);
+  return (
+    <div className="fixed inset-0 z-[900] flex items-end justify-center bg-slate-950/50 p-4 sm:items-center" onClick={() => !busy && onClose()}>
+      <div role="dialog" aria-modal="true" aria-labelledby="confirm-title" onClick={(e) => e.stopPropagation()} className="w-full max-w-[440px] rounded-2xl bg-white p-6 shadow-[0_30px_80px_-20px_rgba(2,6,23,0.5)]">
+        <span className={clsx("flex h-11 w-11 items-center justify-center rounded-full", approve ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600")}>{approve ? <Check size={20} strokeWidth={2.5} /> : <X size={20} strokeWidth={2.5} />}</span>
+        <h2 id="confirm-title" className="mt-4 text-[20px] font-semibold tracking-[-0.01em] text-slate-900">{approve ? `Godkend ${r.name}?` : `Afvis ${r.name}?`}</h2>
+        <p className="mt-1.5 text-[15px] leading-relaxed text-slate-600">
+          {approve ? <>{r.email} får en mail om, at de er godkendt, med et personligt link til at logge ind første gang.</> : <>Anmodningen markeres som afvist. Der sendes ingen mail, og du kan fortryde bagefter.</>}
+        </p>
+        <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <button type="button" onClick={onClose} disabled={busy} className="min-h-[46px] rounded-lg px-4 text-[15px] font-semibold text-slate-600 hover:bg-slate-50">Annullér</button>
+          <button type="button" autoFocus disabled={busy} onClick={async () => { setBusy(true); await onConfirm(); setBusy(false); }}
+            className={clsx("inline-flex min-h-[46px] items-center justify-center gap-2 rounded-lg px-5 text-[15px] font-semibold text-white disabled:opacity-60", approve ? "bg-emerald-600 hover:bg-emerald-500" : "bg-rose-600 hover:bg-rose-500")}>
+            {busy && <Loader2 size={16} className="animate-spin" />}{approve ? "Ja, godkend" : "Ja, afvis"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) => void }) {
@@ -181,7 +221,7 @@ function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) =
   const input = "mt-1.5 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-[16px] focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100";
   return (
     <form onSubmit={submit} className="mt-5 max-w-xl rounded-2xl border border-slate-200 bg-white p-5">
-      <p className="text-[15px] text-slate-600">Personen får en mail med et personligt link. Første gang vælger de adgangskode, og så starter guiden.</p>
+      <p className="text-[15px] text-slate-600">Giv adgang uden en anmodning. Personen får samme mail som ved en godkendelse.</p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <div><label htmlFor="inv-name" className="text-[14px] font-medium text-slate-700">Navn</label><input id="inv-name" value={name} onChange={(e) => setName(e.target.value)} className={input} /></div>
         <div><label htmlFor="inv-mail" className="text-[14px] font-medium text-slate-700">E-mail</label><input id="inv-mail" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={input} /></div>

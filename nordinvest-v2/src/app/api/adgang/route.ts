@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { confirmationEmail, notifyEmail, storeRequest, validate, type AccessRequest } from "@/lib/access/requests";
-import { sendEmail } from "@/lib/email";
-import { PITCH_FROM, REPORT_TO } from "@/lib/outreach/schedule";
+import { ACCESS_INBOX, confirmationEmail, notifyEmail, storeRequest, validate, type AccessRequest } from "@/lib/access/requests";
+import { PITCH_FROM, REPORT_FROM } from "@/lib/outreach/schedule";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,22 +26,22 @@ export async function POST(req: Request) {
   const n = notifyEmail(r);
   const [stored, notified] = await Promise.all([
     storeRequest(r),
-    sendEmail({ to: REPORT_TO, subject: n.subject, html: n.html, replyTo: r.email }).then((x) => x.ok),
+    send(REPORT_FROM, ACCESS_INBOX, n.subject, n.html, r.email),
   ]);
   if (!stored && !notified) return NextResponse.json({ ok: false, reason: "unavailable" }, { status: 503 });
 
   // The confirmation is a courtesy; a failure here does not fail the request.
   const c = confirmationEmail(r);
-  await sendEmailFrom(r.email, c.subject, c.html);
+  await send(PITCH_FROM, r.email, c.subject, c.html, ACCESS_INBOX);
   return NextResponse.json({ ok: true });
 }
 
-async function sendEmailFrom(to: string, subject: string, html: string) {
+async function send(from: string, to: string, subject: string, html: string, replyTo: string): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
-  if (!key) return;
-  await fetch("https://api.resend.com/emails", {
+  if (!key) return false;
+  return fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: PITCH_FROM, to: [to], reply_to: "contact@nordinvest.io", subject, html }),
-  }).catch(() => null);
+    body: JSON.stringify({ from, to: [to], reply_to: replyTo, subject, html }),
+  }).then((r) => r.ok).catch(() => false);
 }

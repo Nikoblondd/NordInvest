@@ -11,15 +11,20 @@ export function isAdminEmail(email?: string | null): boolean {
 }
 
 /*
- * Tool and admin access. Email alone is not enough: sign-ups are open and
+ * Tool and admin access. An admin is either an account an admin has marked
+ * with app_metadata.nordinvest_role = "admin", or an allowlisted e-mail.
+ * Email alone is not enough: sign-ups are open and
  * e-mails are auto-confirmed in Supabase, so someone could register an
  * allowlisted address that has no account yet. Only allowlisted accounts that
  * existed before the platform closed count; a new account never qualifies.
  */
 const ADMIN_ACCOUNTS_BEFORE = Date.parse("2026-10-12T00:00:00Z");
 
-export function isAdmin(user?: { email?: string | null; created_at?: string | null } | null): boolean {
-  if (!user || !isAdminEmail(user.email)) return false;
+export function isAdmin(user?: { email?: string | null; created_at?: string | null; app_metadata?: Record<string, unknown> | null } | null): boolean {
+  if (!user) return false;
+  // Granted on the account itself by another admin (service role only).
+  if (user.app_metadata?.nordinvest_role === "admin" && user.app_metadata?.nordinvest_access !== "revoked") return true;
+  if (!isAdminEmail(user.email)) return false;
   const created = Date.parse(user.created_at ?? "");
   return Number.isFinite(created) && created < ADMIN_ACCOUNTS_BEFORE;
 }

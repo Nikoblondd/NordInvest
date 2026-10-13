@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
  *  { action: "invite", email, name, requestId?, requestCreatedAt?, note? }
  *  { action: "revoke" | "restore", userId }
  *  { action: "status", requestId, requestCreatedAt, status, note? }
+ *  { action: "role", userId, role: "admin" | "member" }
  * Admin only. Invitations go out as a personal e-mail with a one-time link.
  */
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordinvest.io";
@@ -58,6 +59,16 @@ export async function POST(req: Request) {
     if (!target) return json({ ok: false, reason: "user" }, 404);
     if (isAdmin(target)) return json({ ok: false, reason: "admin" }, 422);
     const ok = await setAccess(b.userId, b.action === "revoke" ? "revoked" : "member");
+    return json({ ok }, ok ? 200 : 502);
+  }
+
+  if (b.action === "role") {
+    if (!b.userId || (b.role !== "admin" && b.role !== "member")) return json({ ok: false, reason: "bad" }, 422);
+    // Nobody removes their own admin role by accident.
+    if (b.userId === user.id && b.role !== "admin") return json({ ok: false, reason: "self" }, 422);
+    const target = await getAuthUser(b.userId);
+    if (!target) return json({ ok: false, reason: "user" }, 404);
+    const ok = await setAccess(b.userId, "member", { nordinvest_role: b.role === "admin" ? "admin" : null });
     return json({ ok }, ok ? 200 : 502);
   }
 
