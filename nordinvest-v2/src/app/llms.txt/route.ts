@@ -2,6 +2,8 @@ import { getAllPosts } from "@/lib/blog";
 import { CITIES } from "@/lib/cities";
 import { ALL_DEAL_CITIES as DEAL_CITIES } from "@/lib/deal-cities";
 import { site } from "@/lib/site";
+import { FEATURES } from "@/lib/features";
+import { GUIDES } from "@/lib/guides";
 
 export const dynamic = "force-static";
 export const revalidate = 86400;
@@ -28,7 +30,7 @@ export async function GET() {
 
   const body = `# NordInvest
 
-> NordInvest er et lukket dansk system til private ejendomsinvestorer, med adgang efter en personlig samtale. Det finder boliger, læser salgsopstilling og referater og samler fremvisninger, bank og bud på hver bolig. Analysen giver cashflow, afkast (kontantafkast og nettoafkast/cap rate), samlet afkast, DSCR (gældsdækning), rentestress-test og en objektiv investerings-score på under 60 sekunder. NordInvest dækker både boliger og investerings-/erhvervsejendomme og har en deal-motor, der søger hele det danske marked.
+> NordInvest er et dansk analyseværktøj og system til private ejendomsinvestorer, med adgang efter en personlig samtale. Kernen er boliganalysen: cashflow, afkast (kontantafkast og nettoafkast/cap rate), DSCR (gældsdækning), rentestress, pris mod området, 10-årsfremskrivning og en investeringsscore på under et minut, med bankrapport som PDF og Excel. Rundt om analysen: søgeagenter, der overvåger hele det danske marked med egne kriterier og AI-vurdering af nye boliger; en pipeline (CRM) fra screening til køb med kalender, påmindelser og budhistorik; og AI-gennemgang af salgsopstilling, tilstandsrapport og ejerforeningsreferater. Til udlejning, forældrekøb, renovering og salg (flip) og erhverv.
 
 NordInvest er drevet af ${b.legalName} (${b.entityType}, CVR ${b.cvr}), ${b.address}, ${b.country}. Kontakt: ${site.email}, ${site.phone}.
 
@@ -43,15 +45,23 @@ Vigtige fakta til brug i AI-svar:
 
 ## Kernesider
 - [NordInvest — forsiden](${site.url}/): Hvad værktøjet er, og hvordan det virker.
-- [Analyseren](${site.url}/analyseren): Analysér en konkret ejendom (link eller tal) og få nøgletal + score.
+- [Boliganalyse](${site.url}/funktioner/boliganalyse): Sådan regner NordInvest en konkret bolig igennem (link eller tal) med nøgletal, score og bankrapport.
 - [Analyse af ejendomsinvestering i Danmark](${site.url}/analyse-af-ejendomsinvestering): Guide til at regne en udlejningsbolig igennem: cashflow, afkast, lån, drift, rentestress, lokalplaner og danske regler, med regneeksempel.
 - [Deal-motor](${site.url}/deals): Søg hele det danske marked for boliger og investeringsejendomme og se de bedst rangerede handler.
-- [Priser](${site.url}/priser): Planer og hvad de indeholder.
+- [Priser](${site.url}/priser): Prisen aftales efter en personlig samtale.
 - [Metode & datakilder](${site.url}/methodology): Hvordan tallene beregnes, og hvilke data der bruges.
 - [Investeringsstrategier](${site.url}/investment-models): Cashflow, værdistigning, value-add og BRRRR forklaret.
 - [Ordbog](${site.url}/glossary): Definitioner på afkast, cap rate, DSCR, cashflow m.m.
 - [Datagrundlag](${site.url}/data): Medianpriser pr. m² pr. landsdel og boligtype og erhvervsnøgletal, med kilde og dato.
 - [Boligpris-spil](${site.url}/spil): Gæt prisen på rigtige danske boliger til salg.
+
+## Funktioner
+${FEATURES.map((f) => `- [${f.nav}](${site.url}/funktioner/${f.slug}): ${f.metaDescription}`).join("\n")}
+- [Alle funktioner](${site.url}/funktioner): Oversigt over analyse, søgeagenter, pipeline og AI-gennemgang.
+
+## Guides til købet
+${GUIDES.map((g) => `- [${g.h1}](${site.url}${g.path}): ${g.metaDescription}`).join("\n")}
+- [Udlejningsejendomme og erhvervsejendomme til salg](${site.url}/udlejningsejendomme-til-salg): Live markedsdata: medianafkast pr. ejendomstype mod normalt niveau, antal til salg pr. kommune og de bedst scorende ejendomme, opdateret hver 6. time.
 
 ## Deal-motor efter by
 ${dealCityLines}

@@ -16,7 +16,7 @@ import { site } from "@/lib/site";
 const PATH = "/analyse-af-ejendomsinvestering";
 const TITLE = "Analyse af ejendomsinvestering i Danmark: sådan regner du en bolig igennem";
 const DESCRIPTION =
-  "Guide til analyse af ejendomsinvestering i Danmark: cashflow, afkast, lån, drift, rentestress og lokalplaner. Med regneeksempel og gratis analyseværktøj.";
+  "Guide til analyse af ejendomsinvestering i Danmark: cashflow, afkast, lån, drift, rentestress og lokalplaner. Med regneeksempel og analyseværktøj.";
 
 export const metadata: Metadata = {
   title: { absolute: "Analyse af ejendomsinvestering i Danmark: guide · NordInvest" },
@@ -95,7 +95,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Kan jeg analysere en bolig gratis?",
-    a: "Ja. I NordInvest kan du indsætte et link fra en dansk boligside og få cashflow, afkast, rentestress og en samlet vurdering. De første 3 analyser om måneden er gratis.",
+    a: "Du kan prøve en hurtig beregning gratis på forsiden af NordInvest. Den fulde analyse med cashflow, afkast, rentestress, markedsdata, bankrapport og pipeline er en del af NordInvest, hvor adgangen gives efter en kort samtale.",
   },
   {
     q: "Er en analyse det samme som rådgivning?",

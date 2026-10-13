@@ -18,7 +18,7 @@ import { site } from "@/lib/site";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: { absolute: "NordInvest · Systemet til danske ejendomsinvestorer" },
-  description: "Find, regn, gennemgå og byd i ét system. NordInvest finder udlejningsboligerne, regner dem igennem, læser papirerne og holder styr på dine bud. Adgang efter en personlig samtale.",
+  description: "Analysér investeringsboliger og hold styr på hele købet: søgeagenter, pipeline, kalender, bud og AI, der læser papirerne. Adgang efter personlig samtale.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "NordInvest · Systemet til danske ejendomsinvestorer",
@@ -164,17 +164,17 @@ export default async function Home() {
 
           {[
             {
-              n: 1, title: "Alle dine boliger på én tavle", text: "Hver bolig er en sag, der flytter sig fra screening til bud. Du ser med det samme, hvor meget du har i spil, og hvad der mangler.",
+              n: 1, more: { href: "/funktioner/pipeline", label: "Om pipelinen" }, title: "Alle dine boliger på én tavle", text: "Hver bolig er en sag, der flytter sig fra screening til bud. Du ser med det samme, hvor meget du har i spil, og hvad der mangler.",
               points: [[KanbanSquare, "Tavle eller liste", "Træk en bolig videre, når du er klar"], [LineChart, "Tallene følger med", "Overskud og afkast står på hvert kort"], [Users, "Mægler og noter", "Navn, nummer og dine noter fra fremvisningen"]],
               screen: <PipelineScreen />, notice: { tone: "green" as const, label: "Flyttet til Bud", title: "Torvet 2, Viborg", text: "1,5 mio. kr. · +2.780 kr./md." },
             },
             {
-              n: 2, title: "Aldrig en glemt fremvisning", text: "Opgaver med dato på hver bolig, samlet i én uge. Du får en mail dagen før, så intet glipper, mens du har travlt.",
+              n: 2, more: { href: "/funktioner/pipeline", label: "Om kalenderen" }, title: "Aldrig en glemt fremvisning", text: "Opgaver med dato på hver bolig, samlet i én uge. Du får en mail dagen før, så intet glipper, mens du har travlt.",
               points: [[CalendarClock, "Hele ugen samlet", "Fremvisninger, bankmøder og frister"], [Bell, "Besked dagen før", "På mail, uden at du skal huske det"], [Check, "Afkryds og videre", "Klarede opgaver forsvinder fra listen"]],
               screen: <CalendarScreen />, notice: { tone: "blue" as const, label: "I morgen kl. 16.00", title: "Fremvisning, Algade 9", text: "Husk spørgsmålene om taget fra referatet." },
             },
             {
-              n: 3, title: "Klar til banken med ét tryk", text: "Banken vil se, at lejen betaler lånet. Du sender et budget med kilder, i stedet for et hjemmelavet regneark.",
+              n: 3, more: { href: "/funktioner/boliganalyse", label: "Om analysen og bankrapporten" }, title: "Klar til banken med ét tryk", text: "Banken vil se, at lejen betaler lånet. Du sender et budget med kilder, i stedet for et hjemmelavet regneark.",
               points: [[FileText, "Budget som PDF", "Udbetaling, lån, leje og overskud"], [ShieldCheck, "Kilder ved tallene", "BBR, Danmarks Statistik og solgte boliger"], [LineChart, "Rentestress med", "Hvor højt renten kan gå"]],
               screen: <BankScreen />, notice: { tone: "green" as const, label: "Sendt til banken", title: "Budget for Algade 9", text: "Overskud +2.120 kr./md. ved 4,5 % rente." },
             },
@@ -195,7 +195,7 @@ export default async function Home() {
                     );
                   })}
                 </ul>
-                <div className="mt-9"><Cta dark /></div>
+                <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"><Cta dark /><Link href={f.more.href} className="inline-flex min-h-[48px] items-center justify-center gap-1.5 px-2 text-[15px] font-semibold text-blue-300 hover:text-blue-200">{f.more.label} <ArrowRight size={15} /></Link></div>
               </Reveal>
               <div className={`relative ${i % 2 ? "lg:order-1" : ""}`}>
                 <div className="settle rounded-[22px] bg-white/[0.04] p-2 ring-1 ring-white/10 sm:p-3">{f.screen}</div>

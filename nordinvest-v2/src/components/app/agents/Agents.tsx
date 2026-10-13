@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Bell, BellOff, Clock, Loader2, Mail, MailX, Pause, Pencil, Play, Plus, Radar, RefreshCw, Trash2 } from "lucide-react";
 import { clsx } from "@/lib/clsx";
-import { MAX_AGENTS, criteriaChips, scheduleLabel, whenLabel, type Agent, type Hit, type HitStatus } from "@/lib/app/agents";
+import { MAX_AGENTS, STRATEGIES, criteriaChips, scheduleLabel, strategyOf, whenLabel, type Agent, type Hit, type HitStatus } from "@/lib/app/agents";
 import { saveHitToPipeline } from "@/lib/app/pipeline";
 import { AgentEditor, type AgentInput } from "./AgentEditor";
 import { HitCard } from "./HitCard";
@@ -174,7 +174,9 @@ export function AgentDetail({ initial }: { initial: Agent }) {
     gemt: a.hits.filter((h) => h.status === "gemt").length,
     afvist: a.hits.filter((h) => h.status === "afvist").length,
   };
-  const shown = a.hits.filter((h) => (filter === "nye" ? h.status === "ny" : filter === "alle" ? h.status !== "afvist" : h.status === filter));
+  const [order, setOrder] = useState<"match" | "nyeste">("match");
+  const shown = a.hits.filter((h) => (filter === "nye" ? h.status === "ny" : filter === "alle" ? h.status !== "afvist" : h.status === filter))
+    .sort((x, y) => (order === "match" ? (y.fit ?? y.score) - (x.fit ?? x.score) : y.foundAt.localeCompare(x.foundAt)));
 
   const patch = async (body: Record<string, unknown>) => {
     const res = await call("PATCH", { id: a.id, ...body });
@@ -205,7 +207,8 @@ export function AgentDetail({ initial }: { initial: Agent }) {
               <span className={clsx("h-1.5 w-1.5 rounded-full", a.active ? "bg-emerald-500" : "bg-slate-400")} />{a.active ? "Aktiv" : "På pause"}
             </span>
           </h1>
-          <p className="mt-2 flex flex-wrap gap-1.5">{criteriaChips(a.criteria).map((c) => <span key={c} className="rounded-md bg-white px-2 py-0.5 text-[13px] font-medium text-slate-600 ring-1 ring-slate-200">{c}</span>)}</p>
+          <p className="mt-2 flex flex-wrap gap-1.5"><span className="rounded-md bg-blue-50 px-2 py-0.5 text-[13px] font-semibold text-blue-800 ring-1 ring-blue-200">{STRATEGIES.find((x) => x.id === strategyOf(a))?.label}</span>{criteriaChips(a.criteria).map((c) => <span key={c} className="rounded-md bg-white px-2 py-0.5 text-[13px] font-medium text-slate-600 ring-1 ring-slate-200">{c}</span>)}</p>
+          {a.brief && <p className="mt-2 max-w-2xl text-[14px] italic text-slate-500">&ldquo;{a.brief}&rdquo;</p>}
         </div>
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={runNow} disabled={running} className={btn.secondary}>{running ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />} Kør nu</button>
@@ -218,7 +221,10 @@ export function AgentDetail({ initial }: { initial: Agent }) {
         <div className="min-w-0">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <Segmented label="Vis" value={filter} onChange={setFilter} size="sm" options={([["nye", "Nye"], ["alle", "Alle"], ["gemt", "Gemt"], ["afvist", "Afvist"]] as const).map(([id, l]) => ({ id, label: <>{l} <span className="tabular-nums opacity-50">{counts[id]}</span></> }))} />
-            {counts.nye > 0 && <button type="button" onClick={async () => { await patch({ readAll: true }); setFilter("alle"); }} className={btn.ghost}>Markér alle som set</button>}
+            <div className="flex flex-wrap items-center gap-2">
+              <Segmented label="Sortér" value={order} onChange={setOrder} size="sm" options={[{ id: "match", label: "Bedste match" }, { id: "nyeste", label: "Nyeste" }]} />
+              {counts.nye > 0 && <button type="button" onClick={async () => { await patch({ readAll: true }); setFilter("alle"); }} className={btn.ghost}>Markér alle som set</button>}
+            </div>
           </div>
           {shown.length === 0 ? (
             <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-white">
@@ -276,7 +282,7 @@ export function AgentDetail({ initial }: { initial: Agent }) {
       </div>
 
       <AgentEditor open={editing} onClose={() => setEditing(false)} initial={a} title="Ret søgeagent"
-        onSave={async (input) => patch({ name: input.name, schedule: input.schedule, email: input.email, ...(JSON.stringify(input.criteria) !== JSON.stringify(a.criteria) ? { criteria: input.criteria } : {}) })} />
+        onSave={async (input) => patch({ name: input.name, schedule: input.schedule, email: input.email, strategy: input.strategy, brief: input.brief ?? "", ...(JSON.stringify(input.criteria) !== JSON.stringify(a.criteria) ? { criteria: input.criteria } : {}) })} />
       {actions.toast && <Toast text={actions.toast.text} tone={actions.toast.tone} onClose={() => actions.setToast(null)} action={actions.toast.href ? <Link href={actions.toast.href} className="shrink-0 font-semibold text-blue-300 hover:underline">Åbn</Link> : undefined} />}
     </div>
   );

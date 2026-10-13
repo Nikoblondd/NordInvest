@@ -25,7 +25,7 @@ export const maxDuration = 60;
 
 const TITLE = "Deal-motor: find de bedste investeringsboliger";
 const DESCRIPTION =
-  "Deal-motoren scanner hele det danske boligmarked og rangerer boliger og erhvervsejendomme efter cashflow, afkast og score. Se de bedste handler gratis, opdateret hver 6. time.";
+  "Deal-motoren rangerer boliger og erhvervsejendomme til salg i hele Danmark efter cashflow, afkast og score. Se de bedste nu, opdateret hver 6. time.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -124,7 +124,8 @@ export default async function DealsPage() {
                   </h2>
                   <p className="mt-3 max-w-3xl leading-relaxed text-slate-600">
                     Ud af {snap.investmentsScanned.toLocaleString("da-DK")} investerings- og erhvervsejendomme på
-                    Ejendomstorvet har disse fem den højeste score. Tallene bygger på det oplyste startafkast.
+                    Ejendomstorvet har disse fem den højeste score. Tallene bygger på det oplyste startafkast.{" "}
+                    <Link href="/udlejningsejendomme-til-salg" className="font-medium text-blue-700 underline-offset-2 hover:underline">Se afkast pr. ejendomstype og flere udlejningsejendomme til salg</Link>.
                   </p>
                   <div className="mt-6">
                     <InvestmentRanking deals={snap.investments} />

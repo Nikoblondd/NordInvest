@@ -4,11 +4,13 @@ import { CITIES } from "@/lib/cities";
 import { ALL_DEAL_CITIES as DEAL_CITIES } from "@/lib/deal-cities";
 import { getFeatureExtras } from "@/lib/blog-feature";
 import { TERMS } from "@/lib/terms";
+import { FEATURES } from "@/lib/features";
+import { GUIDES } from "@/lib/guides";
 
 const BASE = "https://nordinvest.io";
 // When the static pages last changed. Bump it when their content changes; a
 // lastmod that is always "now" teaches search engines to ignore it.
-const STATIC_UPDATED = new Date("2026-09-29");
+const STATIC_UPDATED = new Date("2026-10-14");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -52,6 +54,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: p.priority,
   }));
 
+  // The platform pages added with the closed platform (October 2026).
+  const PLATFORM_UPDATED = new Date("2026-10-14");
+  const platformEntries: MetadataRoute.Sitemap = [
+    { url: `${BASE}/funktioner`, lastModified: PLATFORM_UPDATED, changeFrequency: "monthly", priority: 0.9 },
+    ...FEATURES.map((f) => ({ url: `${BASE}/funktioner/${f.slug}`, lastModified: PLATFORM_UPDATED, changeFrequency: "monthly" as const, priority: 0.85 })),
+    ...GUIDES.map((g) => ({ url: `${BASE}${g.path}`, lastModified: new Date(g.updated), changeFrequency: "monthly" as const, priority: 0.85 })),
+    { url: `${BASE}/udlejningsejendomme-til-salg`, lastModified: now, changeFrequency: "daily", priority: 0.85 },
+  ];
+
   const cityEntries: MetadataRoute.Sitemap = CITIES.map((c) => ({
     url: `${BASE}/investering-i-ejendom-${c.slug}`,
     lastModified: STATIC_UPDATED,
@@ -73,5 +84,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticEntries, ...dealCityEntries, ...cityEntries, ...postEntries];
+  return [...staticEntries, ...platformEntries, ...dealCityEntries, ...cityEntries, ...postEntries];
 }

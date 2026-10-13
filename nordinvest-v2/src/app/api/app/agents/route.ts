@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { toolUser } from "@/lib/gate";
 import { readStore, writeStore } from "@/lib/app/store";
 import { runAgent } from "@/lib/app/agent-run";
-import { MAX_AGENTS, cleanCriteria, cleanSchedule, nextRun, suggestName, type Agent, type HitStatus } from "@/lib/app/agents";
+import { MAX_AGENTS, cleanCriteria, cleanSchedule, cleanStrategy, nextRun, suggestName, type Agent, type HitStatus } from "@/lib/app/agents";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -39,6 +39,8 @@ export async function POST(req: Request) {
   const name = typeof b.name === "string" && b.name.trim() ? b.name.trim().slice(0, 80) : suggestName(criteria);
   const fresh: Agent = {
     id: crypto.randomUUID(), name, active: true, criteria, schedule, email: b.email !== false,
+    strategy: cleanStrategy(b.strategy) ?? (criteria.market === "investering" ? "erhverv" : "udlejning"),
+    brief: typeof b.brief === "string" ? b.brief.trim().slice(0, 600) : undefined,
     createdAt: now, updatedAt: now, lastRunAt: null, nextRunAt: nextRun(schedule), seen: [], runs: [], hits: [],
   };
   const { agent } = await runAgent(fresh, { first: true });
@@ -68,10 +70,13 @@ export async function PATCH(req: Request) {
     if (b.schedule !== undefined) a.schedule = cleanSchedule(b.schedule);
     if (typeof b.email === "boolean") a.email = b.email;
     if (typeof b.active === "boolean") a.active = b.active;
+    const strategyChanged = cleanStrategy(b.strategy) && cleanStrategy(b.strategy) !== a.strategy;
+    if (cleanStrategy(b.strategy)) a.strategy = cleanStrategy(b.strategy);
+    if (typeof b.brief === "string") a.brief = b.brief.trim().slice(0, 600);
     a.nextRunAt = a.active ? nextRun(a.schedule) : null;
     a.updatedAt = new Date().toISOString();
     // New criteria: start over, so the list matches what the agent now looks for.
-    if (criteriaChanged) a = (await runAgent({ ...a, seen: [], hits: [], lastRunAt: null }, { first: true })).agent;
+    if (criteriaChanged || strategyChanged) a = (await runAgent({ ...a, seen: [], hits: [], lastRunAt: null }, { first: true })).agent;
   }
   agents[i] = a;
   const ok = await writeStore("agents", user.id, agents);

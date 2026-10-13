@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, Building2, Home, Loader2 } from "lucide-react";
+import { Bell, Building2, Hammer, Home, Loader2, Sparkles, Users } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { CityPicker } from "@/components/deals/DealFinder";
 import { NumberInput } from "@/components/ui/NumberInput";
-import { EMPTY_CRITERIA, SUBCATS, TYPES, WEEKDAYS, nextRun, searchParams, suggestName, whenLabel, type Agent, type Criteria, type Freq, type Schedule } from "@/lib/app/agents";
+import { EMPTY_CRITERIA, STRATEGIES, SUBCATS, TYPES, WEEKDAYS, nextRun, searchParams, suggestName, whenLabel, type Agent, type Criteria, type Freq, type Schedule, type Strategy } from "@/lib/app/agents";
 import { Dialog, Segmented, Toggle, btn, input, label } from "../ui";
 import { PropertyImage } from "../PropertyImage";
 
@@ -16,13 +16,17 @@ import { PropertyImage } from "../PropertyImage";
  * many listings match right now, so the criteria are never a guess.
  */
 
-export type AgentInput = { name: string; criteria: Criteria; schedule: Schedule; email: boolean };
+export type AgentInput = { name: string; criteria: Criteria; schedule: Schedule; email: boolean; strategy?: Strategy; brief?: string };
 const HOURS = Array.from({ length: 18 }, (_, i) => 5 + i);
 
 export function AgentEditor({ open, onClose, initial, onSave, title }: {
   open: boolean; onClose: () => void; initial?: Partial<AgentInput> | Agent | null; onSave: (a: AgentInput) => Promise<string | null>; title: string;
 }) {
   const [c, setC] = useState<Criteria>(EMPTY_CRITERIA);
+  const [strategy, setStrategy] = useState<Strategy>("udlejning");
+  const [brief, setBrief] = useState("");
+  const [parsing, setParsing] = useState(false);
+  const [parsed, setParsed] = useState<string | null>(null);
   const [s, setS] = useState<Schedule>({ freq: "daily", hour: 7, weekday: 1 });
   const [email, setEmail] = useState(true);
   const [name, setName] = useState("");
@@ -36,6 +40,10 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
     setC({ ...EMPTY_CRITERIA, ...(initial?.criteria ?? {}) });
     setS({ freq: "daily", hour: 7, weekday: 1, ...(initial?.schedule ?? {}) });
     setEmail(initial?.email ?? true);
+    const init = initial as (Partial<AgentInput> & { strategy?: Strategy; brief?: string }) | null | undefined;
+    setStrategy(init?.strategy ?? (init?.criteria?.market === "investering" ? "erhverv" : "udlejning"));
+    setBrief(init?.brief ?? "");
+    setParsed(null);
     setName(initial?.name ?? "");
     setNameTouched(!!initial?.name);
     setErr(null);
@@ -68,7 +76,7 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
   const submit = async () => {
     if (c.priceMin && c.priceMax && c.priceMin > c.priceMax) return setErr("Mindsteprisen er højere end maksprisen.");
     setBusy(true); setErr(null);
-    const e = await onSave({ name: (nameTouched && name.trim()) || autoName, criteria: c, schedule: s, email });
+    const e = await onSave({ name: (nameTouched && name.trim()) || autoName, criteria: c, schedule: s, email, strategy, brief: brief.trim() || undefined });
     setBusy(false);
     if (e) setErr(e); else onClose();
   };
@@ -98,14 +106,38 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
         {/* What */}
         <section>
           <h3 className="text-[13px] font-semibold uppercase tracking-[0.06em] text-slate-500">Hvad leder du efter</h3>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            {([["bolig", "Boliger til udlejning", "Ejerlejligheder, villaer og rækkehuse", Home], ["investering", "Erhverv og investering", "Udlejningsejendomme, butik, kontor", Building2]] as const).map(([id, t, d, Icon]) => (
-              <button key={id} type="button" onClick={() => set({ market: id, priceMax: id === "investering" ? 20000000 : 3000000, subcat: null })} aria-pressed={c.market === id}
-                className={clsx("flex items-start gap-3 rounded-xl border p-3 text-left transition-colors", c.market === id ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600" : "border-slate-200 hover:border-slate-300")}>
-                <span className={clsx("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", c.market === id ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500")}><Icon size={17} /></span>
-                <span><span className="block text-[14px] font-semibold text-slate-900">{t}</span><span className="block text-[13px] text-slate-500">{d}</span></span>
-              </button>
-            ))}
+          <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50/40 p-3">
+            <label htmlFor="ag-brief" className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-800"><Sparkles size={14} className="text-blue-600" /> Beskriv med dine egne ord</label>
+            <textarea id="ag-brief" value={brief} onChange={(e) => setBrief(e.target.value)} rows={2} maxLength={600}
+              placeholder="Fx en 3-værelses i Aarhus C til forældrekøb under 2,5 mio., eller billige ældre huse på Fyn, jeg kan renovere"
+              className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white p-2.5 text-[15px] placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" />
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <button type="button" disabled={parsing || brief.trim().length < 4} onClick={async () => {
+                setParsing(true); setParsed(null);
+                const r = await fetch("/api/app/agents/parse", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: brief }) }).then((x) => x.json()).catch(() => null);
+                setParsing(false);
+                if (!r?.ok) return setParsed("Kunne ikke læse beskrivelsen. Udfyld felterne nedenfor.");
+                setC(r.criteria); setStrategy(r.strategy); if (!nameTouched) { setName(r.name); setNameTouched(true); }
+                setParsed(r.summary || "Kriterierne er udfyldt. Ret dem nedenfor, hvis noget skal være anderledes.");
+              }} className={btn.secondary}>{parsing ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />} Udfyld kriterierne</button>
+              {parsed && <span className="text-[13px] text-slate-600">{parsed}</span>}
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-4">
+            {STRATEGIES.map((st) => {
+              const Icon = st.id === "udlejning" ? Home : st.id === "familie" ? Users : st.id === "flip" ? Hammer : Building2;
+              const on = strategy === st.id;
+              return (
+                <button key={st.id} type="button" aria-pressed={on} onClick={() => {
+                  setStrategy(st.id);
+                  if (st.id === "erhverv" && c.market !== "investering") set({ market: "investering", priceMax: 20000000, subcat: null });
+                  if (st.id !== "erhverv" && c.market !== "bolig") set({ market: "bolig", priceMax: 3000000, subcat: null });
+                }} className={clsx("flex flex-col items-start gap-2 rounded-xl border p-3 text-left transition-colors", on ? "border-blue-600 bg-blue-50/50 ring-1 ring-blue-600" : "border-slate-200 hover:border-slate-300")}>
+                  <span className={clsx("flex h-8 w-8 items-center justify-center rounded-lg", on ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500")}><Icon size={16} /></span>
+                  <span><span className="block text-[14px] font-semibold text-slate-900">{st.label}</span><span className="block text-[12px] leading-snug text-slate-500">{st.lead}</span></span>
+                </button>
+              );
+            })}
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">

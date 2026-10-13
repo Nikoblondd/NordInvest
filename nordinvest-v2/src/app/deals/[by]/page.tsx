@@ -15,16 +15,16 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 // Worded the way people search: "investeringsejendomme <by>", "udlejningsejendom <by>".
-const title = (c: { in: string }) => `Investeringsejendomme ${c.in}: de bedste til udlejning`;
+const title = (c: { in: string }) => `Investeringsejendomme ${c.in} til salg: de bedste nu`;
 const description = (c: { name: string; in: string }) =>
-  `Investeringsejendomme, udlejningsboliger og erhvervsejendomme til salg ${c.in}, rangeret efter cashflow og afkast. Se hvilke der giver plus som udlejning. Opdateres hver 6. time.`;
+  `Investeringsejendomme og udlejningsboliger til salg ${c.in}, rangeret efter cashflow og afkast. Se hvilke der giver plus. Opdateres hver 6. time.`;
 
 export function generateMetadata({ params }: { params: { by: string } }): Metadata {
   const c = dealCity(params.by);
   if (!c) return {};
   const t = title(c);
   return {
-    title: t,
+    title: { absolute: t },
     description: description(c),
     alternates: { canonical: `/deals/${c.slug}` },
     openGraph: {

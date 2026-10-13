@@ -38,6 +38,15 @@ export function HitCard({ h, busy, onSave, onDismiss, onRestore, compact }: {
           <span className="tabular-nums text-slate-500">{h.capRate.toLocaleString("da-DK", { maximumFractionDigits: 1 })} % afkast</span>
           {h.priceChangePct != null && h.priceChangePct < 0 && <span className="inline-flex items-center gap-0.5 text-[12px] font-semibold text-emerald-700"><TrendingDown size={12} /> {Math.round(h.priceChangePct)} %</span>}
         </p>
+        {h.signals && h.signals.length > 0 && (
+          <p className="mt-1.5 flex flex-wrap gap-1">{h.signals.slice(0, compact ? 2 : 4).map((x) => <span key={x} className="rounded-md bg-blue-50 px-1.5 py-0.5 text-[12px] font-medium text-blue-800">{x}</span>)}</p>
+        )}
+        {h.ai?.take && (
+          <div className="mt-2 rounded-lg bg-slate-50 px-2.5 py-2 text-[13px] leading-snug text-slate-700">
+            <p><span className="font-semibold text-slate-900">{h.ai.by === "ai" ? "AI-vurdering" : "Vurdering"}{h.fit != null ? ` · match ${h.fit}` : ""}:</span> {h.ai.take}</p>
+            {!compact && h.ai.risk && <p className="mt-1 text-slate-500"><span className="font-medium text-slate-700">Tjek:</span> {h.ai.risk}</p>}
+          </div>
+        )}
         {!compact && <p className="mt-0.5 text-[12px] text-slate-400">{h.fresh ? `Fundet ${ago(h.foundAt)}` : "På markedet, da agenten startede"} · {h.source}</p>}
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           {h.status === "gemt" ? (

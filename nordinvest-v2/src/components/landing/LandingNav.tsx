@@ -9,6 +9,7 @@ import { hasAuthCookie } from "@/lib/supabase/lazy";
 
 /* Top bar for the public pages: real pages only, no in-page jumps. */
 const LINKS = [
+  { href: "/funktioner", label: "Funktioner" },
   { href: "/spil", label: "Ejendomsspillet" },
   { href: "/deals", label: "Bedste boliger" },
   { href: "/blog", label: "Viden" },

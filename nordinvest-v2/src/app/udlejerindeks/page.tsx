@@ -12,7 +12,7 @@ export const maxDuration = 60;
 
 const TITLE = "Udlejerindekset: hvor kan lejen betale lånet?";
 const DESCRIPTION =
-  "NordInvest Udlejerindeks rangerer alle danske kommuner efter, hvor stor en andel af boligerne til salg der giver positivt cashflow som udlejning. Opdateres hver 6. time.";
+  "Udlejerindekset rangerer alle danske kommuner efter, hvor stor en andel af boligerne til salg der giver positivt cashflow som udlejning. Opdateres hver 6. time.";
 
 export const metadata: Metadata = {
   title: TITLE,

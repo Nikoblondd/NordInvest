@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: { absolute: "Udlejning af lejlighed: regler og skat med eksempel (2026) · NordInvest" },
+  title: { absolute: "Udlejning af lejlighed: regler og skat med eksempel (2026)" },
   description:
     "Regler for udlejning af lejlighed og skat af lejeindtægten: depositum, lejekontrakt, hvad du må tage i husleje, bundfradrag på 1⅓ % og et regneeksempel.",
   alternates: { canonical: "/udlejning-af-lejlighed" },

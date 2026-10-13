@@ -9,7 +9,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Pris: aftales efter en kort samtale",
-  description: "NordInvest er et lukket system for danske ejendomsinvestorer. Prisen aftales efter en samtale på 20 minutter, ud fra hvor meget du køber, og hvad du har brug for. Ingen binding.",
+  description: "NordInvest er et lukket system for danske ejendomsinvestorer. Prisen aftales efter en samtale på 20 minutter ud fra dit behov. Ingen binding.",
   alternates: { canonical: "/priser" },
 };
 

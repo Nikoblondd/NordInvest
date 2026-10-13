@@ -9,6 +9,7 @@ import { LangToggle } from "./i18n/LangToggle";
 
 // The public pages. The tools are reached after a conversation, never from here.
 const links = [
+  { href: "/funktioner", label: "Funktioner" },
   { href: "/spil", label: "Ejendomsspillet" },
   { href: "/deals", label: "Bedste boliger" },
   { href: "/blog", label: "Viden" },

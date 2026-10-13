@@ -8,7 +8,7 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Ordbog om ejendomsinvestering: begreberne forklaret",
   description:
-    "Cash flow, afkastningsgrad, kontantafkast, markedsleje, omkostningsbestemt leje og andre begreber om udlejning og ejendomsinvestering forklaret med formel og eksempel.",
+    "Cash flow, afkastningsgrad, kontantafkast, markedsleje og omkostningsbestemt leje forklaret med formel og eksempel. Ordbog for ejendomsinvestorer.",
   alternates: { canonical: "/ordbog" },
 };
 

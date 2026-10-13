@@ -10,9 +10,9 @@ import { redirect } from "next/navigation";
 import { qs } from "@/lib/app/qs";
 
 const baseMeta: Metadata = {
-  title: "Analysér en ejendomsinvestering: overskud, afkast og renterisiko",
+  title: { absolute: "Analysér en ejendomsinvestering: overskud, afkast og renterisiko" },
   description:
-    "Analyse af ejendomsinvestering i Danmark: bruttoafkast, cash flow, rentestress-test og 10 år frem, med data fra BBR og Danmarks Statistik. En del af NordInvest, med adgang efter en kort samtale.",
+    "Analysér en ejendomsinvestering i Danmark: cash flow, afkast, rentestress og 10 år frem med data fra BBR og Danmarks Statistik. Adgang efter en kort samtale.",
   alternates: { canonical: "/analyseren" },
 };
 

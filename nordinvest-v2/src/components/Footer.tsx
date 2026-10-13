@@ -9,7 +9,12 @@ const columns = [
   {
     title: "Produkt",
     links: [
-      { href: "/analyseren", label: "Analyse af en bolig" },
+      { href: "/funktioner", label: "Alle funktioner" },
+      { href: "/funktioner/boliganalyse", label: "Boliganalyse og bankrapport" },
+      { href: "/funktioner/soegeagent", label: "Søgeagenter med AI" },
+      { href: "/funktioner/pipeline", label: "Pipeline, kalender og bud" },
+      { href: "/funktioner/dokumentgennemgang", label: "AI læser salgsopstillingen" },
+      { href: "/udlejningsejendomme-til-salg", label: "Udlejningsejendomme til salg" },
       { href: "/deals", label: "Bedste boliger lige nu" },
       { href: "/beregn-husleje", label: "Beregn husleje" },
       { href: "/beregn-afkast", label: "Beregn afkast" },
@@ -23,6 +28,9 @@ const columns = [
     title: "Ressourcer",
     links: [
       { href: "/blog", label: "Blog & guides" },
+      { href: "/foraeldrekoeb", label: "Forældrekøb: regler og skat" },
+      { href: "/saadan-byder-du-paa-en-bolig", label: "Sådan byder du på en bolig" },
+      { href: "/salgsopstilling", label: "Sådan læser du en salgsopstilling" },
       { href: "/methodology", label: "Metode & datakilder" },
       { href: "/data", label: "Åbent datagrundlag" },
       { href: "/investment-models", label: "Investeringsstrategier" },
@@ -54,6 +62,7 @@ const columns = [
 
 const QUICK = [
   { href: "/adgang", label: "Anmod om adgang" },
+  { href: "/funktioner", label: "Funktioner" },
   { href: "/spil", label: "Ejendomsspillet" },
   { href: "/deals", label: "Bedste boliger lige nu" },
   { href: "/blog", label: "Blog & guides" },

@@ -14,7 +14,7 @@ export const maxDuration = 60;
 export const metadata: Metadata = {
   title: { absolute: "Presse: boligdata om udlejning pr. kommune · NordInvest" },
   description:
-    "Hvor mange boliger til salg giver positivt cashflow som udlejning? Live tal for hele Danmark og 16 kommuner, med metode, citerbare sætninger og kontakt til NordInvest.",
+    "Hvor mange boliger til salg giver positivt cashflow som udlejning? Live tal for Danmark og 16 kommuner med metode og citerbare sætninger.",
   alternates: { canonical: "/presse" },
 };
 

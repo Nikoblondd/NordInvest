@@ -24,7 +24,7 @@ const aboutJsonLd = {
   url: `${site.url}/om`,
   name: "Om NordInvest",
   description:
-    "NordInvest er en dansk platform til analyse af ejendomsinvestering: cashflow, afkast, gældsdækning og en investerings-score på under 60 sekunder. Gratis at komme i gang.",
+    "NordInvest er en dansk platform til analyse af ejendomsinvestering og et system til hele købet: søgeagenter, pipeline, kalender, bud og AI-gennemgang af papirerne. Adgang efter en personlig samtale.",
   about: { "@id": `${site.url}/#organization` },
   mainEntity: {
     "@type": "Person",
@@ -52,7 +52,7 @@ export default async function OmPage() {
           <p className="mt-6 text-[18px] font-medium leading-relaxed text-stone-800 sm:text-xl">
             NordInvest regner en bolig eller en erhvervsejendom igennem på under et minut. Du indsætter
             linket fra boligsiden og ser, hvad den tjener hver måned, hvad renten kan tåle, og hvad den kan
-            blive til. Det er gratis at komme i gang.
+            blive til. Bagefter følger den boligen hele vejen: søgeagenter, fremvisninger, papirer, bank og bud.
           </p>
 
           <div className="mt-10 space-y-5 text-[17px] leading-relaxed text-stone-700 sm:space-y-6 sm:text-lg">
