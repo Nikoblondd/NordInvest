@@ -46,10 +46,11 @@ function num(v: any): number | null {
 // CDN only serves them through an image-class transform. "listingimagebannermax"
 // renders a crisp, card-sized image (≈880px wide), matching the residential
 // cards' image quality.
-function etImage(url: any): string | null {
+export function etImage(url: any): string | null {
   if (!url || typeof url !== "string") return null;
-  if (url.includes("?")) return url; // already carries a transform
-  return `${url}?class=listingimagebannermax`;
+  if (url.includes("class=")) return url; // already carries a transform
+  // Any other query (e.g. "?ai=none" from the market dataset) still 404s.
+  return `${url.split("?")[0]}?class=listingimagebannermax`;
 }
 
 function mapItem(r: any): InvestmentListing | null {

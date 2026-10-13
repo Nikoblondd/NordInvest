@@ -30,6 +30,18 @@ export type Criteria = {
 
 export type Schedule = { freq: Freq; hour: number; weekday: number };
 
+/** What the investor wants the property for. It decides how matches are ranked and judged. */
+export type Strategy = "udlejning" | "familie" | "flip" | "erhverv";
+export const STRATEGIES: { id: Strategy; label: string; lead: string }[] = [
+  { id: "udlejning", label: "Udlejning", lead: "Cash flow og afkast fra dag ét" },
+  { id: "familie", label: "Familiebolig", lead: "Forældrekøb eller egen bolig til en god pris" },
+  { id: "flip", label: "Renovering og salg", lead: "Billigt pr. m², ældre, med potentiale" },
+  { id: "erhverv", label: "Erhverv", lead: "Udlejningsejendomme, butik, kontor" },
+];
+
+/** The AI's short take on a match, in Danish. */
+export type HitAi = { fit: number; take: string; risk: string; by: "ai" | "regler" };
+
 export type HitStatus = "ny" | "set" | "gemt" | "afvist";
 export type Hit = {
   id: string;
@@ -54,6 +66,17 @@ export type Hit = {
   source: string;
   href: string;
   priceChangePct: number | null;
+  daysOnMarket?: number | null;
+  yearBuilt?: number | null;
+  energy?: string | null;
+  /** Kr. pr. m², and the median for the same postnummer among today's matches. */
+  sqm?: number | null;
+  zipSqm?: number | null;
+  /** Short facts an investor scans for: price cut, cheap per m², long on the market. */
+  signals?: string[];
+  /** 0-100: how well it fits the agent's strategy. */
+  fit?: number;
+  ai?: HitAi | null;
 };
 
 export type Run = { at: string; matches: number; fresh: number; emailed: boolean; ok: boolean };
@@ -62,6 +85,9 @@ export type Agent = {
   id: string;
   name: string;
   active: boolean;
+  strategy?: Strategy;
+  /** The member's own words, when the agent was described in plain Danish. */
+  brief?: string;
   criteria: Criteria;
   schedule: Schedule;
   email: boolean;
@@ -209,3 +235,6 @@ export function cleanSchedule(raw: unknown): Schedule {
   const weekday = Number.isInteger(r.weekday) && (r.weekday as number) >= 0 && (r.weekday as number) <= 6 ? (r.weekday as number) : 1;
   return { freq, hour, weekday };
 }
+
+export const strategyOf = (a: Pick<Agent, "strategy" | "criteria">): Strategy => a.strategy ?? (a.criteria.market === "investering" ? "erhverv" : "udlejning");
+export const cleanStrategy = (v: unknown): Strategy | undefined => (["udlejning", "familie", "flip", "erhverv"].includes(v as string) ? (v as Strategy) : undefined);

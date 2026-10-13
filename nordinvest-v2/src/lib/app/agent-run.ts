@@ -3,7 +3,8 @@ import { GET as searchDeals } from "@/app/api/deals/search/route";
 import { INTERNAL_HEADER, internalToken } from "@/lib/internal";
 import { dealHref, investHref } from "@/lib/deal-links";
 import { PITCH_FROM } from "@/lib/outreach/schedule";
-import { MAX_HITS, criteriaChips, nextRun, scheduleLabel, searchParams, type Agent, type Hit } from "./agents";
+import { MAX_HITS, criteriaChips, nextRun, scheduleLabel, searchParams, strategyOf, type Agent, type Hit, type Strategy } from "./agents";
+import { enrich, reviewHits } from "./agent-ai";
 
 /*
  * Server only: runs one search agent. The Deal-motor search is called
@@ -30,9 +31,12 @@ export async function searchFor(agent: Pick<Agent, "criteria">): Promise<{ ok: b
   }
 }
 
-function toHit(d: any, market: string, fresh: boolean, at: string): Hit {
+function toHit(d: any, market: string, fresh: boolean, at: string, strategy: Strategy): Hit {
   const inv = market === "investering";
-  const href = (inv ? investHref(d, "30", "5") : dealHref(d, "20", "5")).replace(/^\/analyseren/, "/app/analyser");
+  // A flip agent opens the flip analysis; everything else the rental analysis.
+  const href = strategy === "flip" && d.url
+    ? `/app/analyser/flip?url=${encodeURIComponent(d.url)}`
+    : (inv ? investHref(d, "30", "5") : dealHref(d, "20", "5")).replace(/^\/analyseren/, "/app/analyser");
   return {
     id: String(d.id),
     foundAt: at,
@@ -54,6 +58,9 @@ function toHit(d: any, market: string, fresh: boolean, at: string): Hit {
     source: String(d.source ?? ""),
     href,
     priceChangePct: d.priceChangePct ?? null,
+    daysOnMarket: d.daysOnMarket ?? null,
+    yearBuilt: d.yearBuilt ?? null,
+    energy: d.energyLabel ?? null,
   };
 }
 
@@ -69,8 +76,20 @@ export async function runAgent(agent: Agent, opts: { first?: boolean } = {}): Pr
   const seen = new Set(agent.seen);
   const isFirst = opts.first || agent.lastRunAt == null;
   const newOnes = plausible.filter((d) => !seen.has(String(d.id)));
-  const fresh = isFirst ? [] : newOnes.map((d) => toHit(d, agent.criteria.market, true, at));
-  const initial = isFirst ? plausible.slice(0, 30).map((d) => toHit(d, agent.criteria.market, false, at)) : [];
+  const strategy = strategyOf(agent);
+  const peers = plausible.map((d) => ({ zip: Number(d.zip) || 0, price: Number(d.price) || 0, area: d.area ?? null }));
+  let fresh = enrich(isFirst ? [] : newOnes.map((d) => toHit(d, agent.criteria.market, true, at, strategy)), peers, strategy);
+  let initial = enrich(isFirst ? plausible.map((d) => toHit(d, agent.criteria.market, false, at, strategy)) : [], peers, strategy);
+  // A new agent starts with the best fits on the market today, not just the first rows.
+  initial = initial.sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0)).slice(0, 30);
+  // The AI reads the best new matches (and, for a new agent, the top of today's market).
+  const toReview = [...fresh].sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0)).slice(0, 6).concat(initial.slice(0, isFirst ? 5 : 0));
+  if (toReview.length) {
+    const takes = await reviewHits(toReview, strategy, agent.brief);
+    const put = (h: Hit) => (takes.has(h.id) ? { ...h, ai: takes.get(h.id)!, fit: Math.round(((h.fit ?? 0) + takes.get(h.id)!.fit) / 2) } : h);
+    fresh = fresh.map(put);
+    initial = initial.map(put);
+  }
 
   const known = new Set(agent.hits.map((h) => h.id));
   const hits = [...fresh, ...initial].filter((h) => !known.has(h.id)).concat(agent.hits).slice(0, MAX_HITS);
@@ -89,14 +108,16 @@ export async function runAgent(agent: Agent, opts: { first?: boolean } = {}): Pr
 
 /** The e-mail for new matches. */
 export function agentEmail(agent: Agent, fresh: Hit[], firstName: string): { subject: string; html: string } {
-  const top = fresh.slice(0, 8);
+  const top = [...fresh].sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0)).slice(0, 8);
   const rows = top.map((h) => {
     const img = h.image ? `<img src="${esc(h.image)}" width="88" height="66" alt="" style="display:block;width:88px;height:66px;object-fit:cover;border-radius:8px;background:#f1f5f9">` : `<div style="width:88px;height:66px;border-radius:8px;background:#f1f5f9"></div>`;
     const cf = `${h.cashFlow >= 0 ? "+" : "-"}${Math.round(Math.abs(h.cashFlow)).toLocaleString("da-DK")} kr./md.`;
     return `<tr><td style="padding:12px 12px 12px 0;border-top:1px solid #eef2f7;vertical-align:top;width:88px">${img}</td>
 <td style="padding:12px 0;border-top:1px solid #eef2f7;vertical-align:top"><div style="font-weight:600;color:#0f172a">${esc(h.road)}</div>
 <div style="color:#64748b;font-size:13px">${h.zip} ${esc(h.city)} · ${kr(h.price)}${h.area ? ` · ${h.area} m²` : ""}</div>
-<div style="font-size:13px;margin-top:4px"><span style="color:${h.cashFlow >= 0 ? "#047857" : "#e11d48"};font-weight:600">${cf}</span> <span style="color:#64748b">· score ${h.score}</span></div>
+<div style="font-size:13px;margin-top:4px"><span style="color:${h.cashFlow >= 0 ? "#047857" : "#e11d48"};font-weight:600">${cf}</span> <span style="color:#64748b">· score ${h.score}${h.fit != null ? ` · match ${h.fit}` : ""}</span></div>
+${h.signals?.length ? `<div style="font-size:12px;color:#1d4ed8;margin-top:4px">${h.signals.slice(0, 3).map(esc).join(" · ")}</div>` : ""}
+${h.ai?.take ? `<div style="font-size:13px;color:#334155;margin-top:6px;line-height:1.45">${esc(h.ai.take)}</div>` : ""}
 <a href="${SITE}${esc(h.href)}" style="display:inline-block;margin-top:6px;color:#2563eb;font-weight:600;font-size:13px;text-decoration:none">Se analysen</a></td></tr>`;
   }).join("");
   const more = fresh.length > top.length ? `<p style="color:#64748b;font-size:14px">Og ${fresh.length - top.length} mere.</p>` : "";

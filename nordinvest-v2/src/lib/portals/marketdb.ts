@@ -5,6 +5,7 @@
 // images) is live on the platform the moment it syncs. Falls back to live portal
 // fetching when the table is empty or unreachable.
 
+import { etImage } from "./ejendomstorvet";
 import type { DealListing } from "@/lib/deals";
 import type { InvestmentListing } from "@/lib/portals/ejendomstorvet";
 
@@ -125,7 +126,7 @@ export async function readInvestmentDeals(opts: {
     id: r.id,
     source: "ejendomstorvet.dk",
     url: r.url ?? "",
-    image: r.image ?? null,
+    image: etImage(r.image),
     title: r.road || r.address || "",
     address: r.address ?? "",
     road: r.road ?? "",

@@ -6,8 +6,15 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Loader2, CheckCircle2, AlertCircle, FileSpreadsheet, ChevronDown, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, ArrowRight } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, AlertTriangle, XCircle, Info, FileSpreadsheet, ChevronDown, ChevronRight, HelpCircle, X, Bookmark, Check, FileText, Bell, BellRing, ArrowRight, CalendarPlus, ListPlus, Gavel, Upload, SlidersHorizontal } from "lucide-react";
 import { EMPTY_MAPPE, STAGES, STAGE_LABEL, type Mappe, type Stage } from "@/lib/mappe/checklist";
+import { AppHero } from "@/components/analyzer/story/AppHero";
+import type { HeroMetric } from "@/components/analyzer/story/DealHero";
+import { toneNum } from "@/components/analyzer/story/tone";
+import { EventDialog, type DialogState } from "@/components/app/EventDialog";
+import { Toast } from "@/components/app/ui";
+import { addTaskToRow } from "@/lib/app/pipeline";
+import { toTask } from "@/lib/app/calendar";
 import { analyze, kr, krMd, pct, num, type Strategy, type AnalysisResult } from "@/lib/analysis";
 import { runUncertainty } from "@/lib/uncertainty";
 import { assessInvestment } from "@/lib/deals";
@@ -29,7 +36,6 @@ import { RentReserve } from "@/components/analyzer/RentReserve";
 import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import { Comparables } from "@/components/analyzer/Comparables";
 import { ExpenseCheck } from "@/components/analyzer/ExpenseCheck";
-import { DealHero, type HeroMetric } from "@/components/analyzer/story/DealHero";
 import { MoneyFlow } from "@/components/analyzer/story/MoneyFlow";
 import { Chapter, ChapterNav, Details, Panel, type ChapterAnswer, type NavItem } from "@/components/analyzer/story/Chapter";
 import { RateStress } from "@/components/analyzer/story/RateStress";
@@ -45,7 +51,6 @@ import { PaywallGate } from "@/components/analyzer/PaywallGate";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { SignupGate } from "@/components/analyzer/SignupGate";
 import { UpgradeDialog, type UpgradeReason } from "@/components/upgrade/UpgradeDialog";
-import { UsageNudge } from "@/components/upgrade/UsageNudge";
 import { ShareAnalysis } from "@/components/analyzer/ShareAnalysis";
 import { ANON_FREE, countAnonAnalysis } from "@/lib/plan";
 import { TimeSavingsCapture } from "@/components/analyzer/TimeSavingsCapture";
@@ -249,6 +254,10 @@ export function AnalyzerApp() {
   const [exporting, setExporting] = useState(false);
   const [save, setSave] = useState<{ status: "idle" | "saving" | "saved" | "limit" | "error"; msg?: string; id?: string }>({ status: "idle" });
   const [saveStage, setSaveStage] = useState<Stage>("screening");
+  // The analysis as tabs inside the app, and the appointment dialog it can open.
+  const [tab, setTab] = useState("overblik");
+  const [planFor, setPlanFor] = useState<DialogState>(null);
+  const [actionMsg, setActionMsg] = useState<string | null>(null);
   const [watch, setWatch] = useState<{ status: "idle" | "saving" | "saved" | "error"; msg?: string }>({ status: "idle" });
   const [listingUrl, setListingUrl] = useState<string | null>(null);
   const [ex, setEx] = useState<Extract>({ status: "idle" });
@@ -269,7 +278,7 @@ export function AnalyzerApp() {
   // Upgrade path: the signup gate (3rd analysis without an account), this
   // month's usage for the nudge, and the dialog for paid-only actions.
   const [signupGated, setSignupGated] = useState(false);
-  const [usage, setUsage] = useState<{ authenticated: boolean; used: number; max: number; unlimited: boolean } | null>(null);
+  const [, setUsage] = useState<{ authenticated: boolean; used: number; max: number; unlimited: boolean } | null>(null);
   const [upgrade, setUpgrade] = useState<UpgradeReason | null>(null);
   // The analyser only runs inside the closed platform, where every member has
   // the bank report and Excel: no upgrade step in between.
@@ -713,7 +722,6 @@ export function AnalyzerApp() {
   // A forældrekøb is judged against the child renting, not as an investment.
   const pv = goal === "parents" ? parentsView(inputs, r) : null;
   const heroScoreShown = pv ? Math.max(0, Math.min(100, Math.round(50 + (pv.familyRent > 0 ? (pv.vsRenting / pv.familyRent) * 50 : 0)))) : displayScore;
-  const heroRatingShown = pv ? (pv.vsRenting >= 0 ? "Bedre end at leje" : "Dyrere end at leje") : displayRating;
   const heroHeadlineShown = pv ? `${dk(Math.abs(pv.vsRenting))} kr. ${pv.vsRenting >= 0 ? "bedre" : "dyrere"} end at leje.` : heroHeadline;
   const investVerdict = r.cashFlow >= 0
     ? `Lejen betaler lånet og giver ${dk(r.cashFlow)} kr. tilbage hver måned. ${r.dscr >= 1.25 ? "Der er god luft, hvis renten stiger." : "Der er ikke meget luft, hvis renten stiger."}`
@@ -907,18 +915,20 @@ export function AnalyzerApp() {
     else setWatch({ status: "saved" });
   };
 
-  const saveToPortfolio = async () => {
+  /** Saves the property to the pipeline (once) and returns its id. */
+  const saveToPortfolio = async (): Promise<string | null> => {
+    if (save.status === "saved" && save.id) return save.id;
     const supabase = await loadSupabase();
     if (!supabase) {
       window.location.href = "/auth/login?next=/app/analyser";
-      return;
+      return null;
     }
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
       window.location.href = "/auth/login?next=/app/analyser";
-      return;
+      return null;
     }
     setSave({ status: "saving" });
     // No quota check here anymore: the monthly limit is now enforced on the
@@ -966,8 +976,9 @@ export function AnalyzerApp() {
       error = res.error;
       id = res.data?.id;
     }
-    if (error) setSave({ status: "error", msg: error.message });
-    else setSave({ status: "saved", id });
+    if (error) { setSave({ status: "error", msg: error.message }); return null; }
+    setSave({ status: "saved", id });
+    return id ?? null;
   };
 
   // Time-savings survey → stored on the analysis row's property_data (jsonb), so
@@ -1109,50 +1120,133 @@ export function AnalyzerApp() {
     );
   }
 
-  // Alternating band tint, in render order: the colour change is the divider.
-  let band = 0;
-  const tint = (): "white" | "tint" => (band++ % 2 === 0 ? "white" : "tint");
   const navTitle = address ? address.split(",")[0] : "Din analyse";
-  // Inside the app every analysis can go straight into the pipeline.
-  const pipelineAction = save.status === "saved" ? (
-    <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-50 px-3.5 py-1.5 text-[13px] font-semibold text-emerald-700 ring-1 ring-emerald-200 hover:bg-emerald-100">
-      <Check aria-hidden size={14} /> <span className="hidden sm:inline">I pipeline</span><span className="sm:hidden">Gemt</span>
-    </a>
-  ) : (
-    <button type="button" onClick={saveToPortfolio} disabled={save.status === "saving"} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-blue-600 px-3.5 py-1.5 text-[13px] font-semibold text-white hover:bg-blue-700 active:scale-[0.96] disabled:opacity-60">
-      {save.status === "saving" ? <Loader2 aria-hidden size={14} className="animate-spin" /> : <Bookmark aria-hidden size={14} />} <span className="hidden sm:inline">Gem i pipeline</span><span className="sm:hidden">Gem</span>
-    </button>
+  // ---- The analysis workspace (inside the app) ----
+  const TONE_ICON = { good: CheckCircle2, warn: AlertTriangle, bad: XCircle, neutral: Info } as const;
+  const answers: { id: string; q: string; a: ChapterAnswer }[] = [
+    { id: "kalkule", q: "Tjener den penge?", a: cashAnswer },
+    ...(showPriceChapter ? [{ id: "pris", q: "Er prisen fair?", a: priceAnswer }] : []),
+    { id: "risici", q: "Hvad kan gå galt?", a: riskAnswer },
+    { id: "potentiale", q: "Er der skjult potentiale?", a: potentialAnswer },
+    { id: "fremtid", q: `Hvad bliver det til om ${r.holdYears} år?`, a: futureAnswer },
+    { id: "data", q: "Kan du stole på tallene?", a: dataAnswer },
+  ];
+  const tabs = [
+    { id: "overblik", label: "Overblik", tone: heroTone },
+    { id: "kalkule", label: "Regnestykket", tone: cashAnswer.tone },
+    ...(showPriceChapter ? [{ id: "pris", label: "Pris", tone: priceAnswer.tone }] : []),
+    { id: "risici", label: "Risici", tone: riskAnswer.tone },
+    { id: "potentiale", label: "Potentiale", tone: potentialAnswer.tone },
+    { id: "fremtid", label: `Om ${r.holdYears} år`, tone: futureAnswer.tone },
+    { id: "data", label: "Data", tone: dataAnswer.tone },
+  ];
+  const show = (id: string) => tab === id;
+  const openTab = (id: string) => {
+    setTab(id);
+    const bar = document.getElementById("analyse-tabs");
+    if (bar && bar.getBoundingClientRect().top < 64) window.scrollTo({ top: window.scrollY + bar.getBoundingClientRect().top - 72 });
+  };
+  const tabBar = (
+    <div id="analyse-tabs" className="sticky top-16 z-20 -mx-4 flex items-center gap-2 border-b border-slate-200 bg-slate-50/95 px-4 py-1.5 backdrop-blur sm:mx-0 sm:rounded-xl sm:border sm:bg-white/95 sm:px-1.5">
+      <nav aria-label="Analysens dele" role="tablist" className="flex min-w-0 flex-1 gap-0.5 overflow-x-auto [scrollbar-width:none]">
+        {tabs.map((t) => (
+          <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => openTab(t.id)}
+            className={clsx("inline-flex min-h-[38px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 text-[14px] font-semibold transition-colors", tab === t.id ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900")}>
+            {t.id !== "overblik" && <span aria-hidden className={clsx("h-1.5 w-1.5 rounded-full", t.tone === "good" ? "bg-emerald-500" : t.tone === "warn" ? "bg-amber-500" : t.tone === "bad" ? "bg-rose-500" : "bg-slate-400")} />}
+            {t.label}
+          </button>
+        ))}
+      </nav>
+      <button type="button" onClick={() => setSheetOpen(true)} className="hidden min-h-[38px] shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-[13px] font-semibold text-slate-800 hover:border-slate-300 sm:inline-flex"><SlidersHorizontal size={14} /> Justér tallene</button>
+    </div>
   );
-  const pipelineBand = (
-    <section aria-label="Pipeline" className="border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
-      <div className="mx-auto flex max-w-[1080px] flex-wrap items-center gap-3">
+  const overviewTab = (
+    <div className="space-y-5">
+      <section className="rounded-2xl border border-slate-200 bg-white">
+        <h2 className="border-b border-slate-100 px-5 py-3.5 text-[16px] font-semibold text-slate-900">Dommen punkt for punkt</h2>
+        <ul className="divide-y divide-slate-100">
+          {answers.map(({ id, q, a }) => {
+            const Icon = TONE_ICON[a.tone];
+            return (
+              <li key={id}>
+                <button type="button" onClick={() => openTab(id)} className="group flex w-full items-center gap-3 px-5 py-3.5 text-left hover:bg-slate-50">
+                  <Icon aria-hidden size={19} className={clsx("shrink-0", toneNum[a.tone])} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[15px] font-semibold text-slate-900">{q}</span>
+                    <span className={clsx("block text-[14px] font-medium", toneNum[a.tone])}>{a.text}</span>
+                  </span>
+                  <ChevronRight aria-hidden size={17} className="shrink-0 text-slate-300 group-hover:text-slate-600" />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+        <h2 className="text-[16px] font-semibold text-slate-900">Sådan ser en måned ud</h2>
+        <div className="mt-4">
+          <MoneyFlow rent={r.annualRent / 12} vacancy={r.opex.vacancy / 12} maintenance={r.opex.maintenance / 12} fixed={r.opex.fixed / 12} mortgage={r.monthlyMortgage} cashFlow={r.cashFlow} />
+        </div>
+      </section>
+    </div>
+  );
+
+  // Save first (once), then do the next step on the saved case.
+  const plan = async (kind: "fremvisning" | "andet" | "bank") => {
+    const id = await saveToPortfolio();
+    if (id) setPlanFor({ rowId: id, kind });
+  };
+  const goCase = async (fane: string) => {
+    const id = await saveToPortfolio();
+    if (id) window.location.href = `/app/ejendomme/${id}?fane=${fane}`;
+  };
+  const lightBtn = "flex min-h-[42px] w-full items-center gap-2.5 rounded-lg px-3 text-left text-[14px] font-semibold text-slate-800 transition-colors hover:bg-slate-100 disabled:opacity-60";
+  const actionPanel = (
+    <>
+      <section className="rounded-2xl border border-slate-200 bg-white p-4">
         {save.status === "saved" ? (
           <>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><Check aria-hidden size={18} strokeWidth={2.5} /></span>
-            <p className="min-w-0 flex-1 basis-[260px] text-[15px] text-slate-700"><b className="font-semibold text-slate-900">Boligen ligger i din pipeline.</b> Planlæg fremvisningen, upload papirerne eller registrér et bud på sagen.</p>
-            <div className="flex flex-wrap gap-2">
-              <a href={`/app/ejendomme/${save.id ?? ""}?fane=aftaler`} className="inline-flex min-h-[40px] items-center rounded-lg border border-slate-200 px-3 text-[14px] font-semibold text-slate-800 hover:border-slate-300">Planlæg fremvisning</a>
-              <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="inline-flex min-h-[40px] items-center gap-1 rounded-lg bg-slate-900 px-3.5 text-[14px] font-semibold text-white hover:bg-slate-800">Åbn sagen <ArrowRight aria-hidden size={14} /></a>
-            </div>
+            <p className="flex items-center gap-2 text-[15px] font-semibold text-emerald-700"><span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white"><Check aria-hidden size={14} strokeWidth={3} /></span> I din pipeline</p>
+            <p className="mt-1 text-[13px] text-slate-500">Alt, du gør herfra, gemmes på sagen.</p>
+            <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="mt-3 inline-flex min-h-[42px] w-full items-center justify-center gap-1.5 rounded-lg bg-slate-900 text-[14px] font-semibold text-white hover:bg-slate-800">Åbn sagen <ArrowRight aria-hidden size={15} /></a>
           </>
         ) : (
           <>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600"><Bookmark aria-hidden size={17} /></span>
-            <p className="min-w-0 flex-1 basis-[260px] text-[15px] text-slate-700"><b className="font-semibold text-slate-900">Vil du følge boligen?</b> Gem den i din pipeline med tallene, så kan du planlægge fremvisning, gemme papirer og byde derfra.</p>
-            <div className="flex flex-wrap items-center gap-2">
+            <p className="text-[15px] font-semibold text-slate-900">Følg boligen</p>
+            <p className="mt-0.5 text-[13px] text-slate-500">Gem den i din pipeline med tallene.</p>
+            <div className="mt-3 flex gap-2">
               <label className="sr-only" htmlFor="save-stage">Fase</label>
-              <select id="save-stage" value={saveStage} onChange={(e) => setSaveStage(e.target.value as Stage)} className="h-10 rounded-lg border border-slate-200 bg-white px-2.5 text-[14px] font-medium text-slate-800">
+              <select id="save-stage" value={saveStage} onChange={(e) => setSaveStage(e.target.value as Stage)} className="h-[42px] min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 text-[14px] font-medium text-slate-800">
                 {STAGES.filter((x) => x.id !== "koebt").map((x) => <option key={x.id} value={x.id}>{STAGE_LABEL[x.id]}</option>)}
               </select>
-              <button type="button" onClick={saveToPortfolio} disabled={save.status === "saving"} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg bg-blue-600 px-4 text-[14px] font-semibold text-white hover:bg-blue-500 disabled:opacity-60">
-                {save.status === "saving" ? <Loader2 aria-hidden size={15} className="animate-spin" /> : <Bookmark aria-hidden size={15} />} Gem i pipeline
+              <button type="button" onClick={() => void saveToPortfolio()} disabled={save.status === "saving"} className="inline-flex min-h-[42px] shrink-0 items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 text-[14px] font-semibold text-white hover:bg-blue-500 disabled:opacity-60">
+                {save.status === "saving" ? <Loader2 aria-hidden size={15} className="animate-spin" /> : <Bookmark aria-hidden size={15} />} Gem
               </button>
             </div>
-            {save.status === "error" && <p role="alert" className="w-full text-[14px] font-medium text-rose-600">Boligen kunne ikke gemmes. Prøv igen.</p>}
+            {save.status === "error" && <p role="alert" className="mt-2 text-[13px] font-medium text-rose-600">Kunne ikke gemme. Prøv igen.</p>}
           </>
         )}
-      </div>
-    </section>
+      </section>
+      <section className="rounded-2xl border border-slate-200 bg-white p-2">
+        <p className="px-3 pb-1 pt-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Næste skridt</p>
+        <button type="button" onClick={() => plan("fremvisning")} disabled={save.status === "saving"} className={lightBtn}><CalendarPlus aria-hidden size={16} className="text-sky-600" /> Planlæg fremvisning</button>
+        <button type="button" onClick={() => plan("andet")} disabled={save.status === "saving"} className={lightBtn}><ListPlus aria-hidden size={16} className="text-slate-500" /> Opret opgave</button>
+        <button type="button" onClick={() => goCase("bud")} disabled={save.status === "saving"} className={lightBtn}><Gavel aria-hidden size={16} className="text-orange-600" /> Registrér bud</button>
+        <button type="button" onClick={() => goCase("papirer")} disabled={save.status === "saving"} className={lightBtn}><Upload aria-hidden size={16} className="text-amber-600" /> Få papirerne læst</button>
+      </section>
+      <section className="rounded-2xl border border-slate-200 bg-white p-2">
+        <p className="px-3 pb-1 pt-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Til banken og andre</p>
+        <button type="button" onClick={() => requirePaid("report", openBankReport)} className={lightBtn}><FileText aria-hidden size={16} className="text-blue-600" /> Bankrapport (PDF)</button>
+        <button type="button" onClick={() => requirePaid("excel", exportExcel)} disabled={exporting} className={lightBtn}>{exporting ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <FileSpreadsheet aria-hidden size={16} className="text-emerald-600" />} {exporting ? "Laver Excel…" : "Hent som Excel"}</button>
+        {listingUrl && (watch.status === "saved"
+          ? <p className={clsx(lightBtn, "text-emerald-700 hover:bg-transparent")}><BellRing aria-hidden size={16} /> Prisvagt aktiv</p>
+          : <button type="button" onClick={startWatch} disabled={watch.status === "saving"} className={lightBtn}>{watch.status === "saving" ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <Bell aria-hidden size={16} className="text-slate-500" />} Giv besked ved prisfald</button>)}
+        <ShareAnalysis className={lightBtn} title={address ? `Analyse af ${address.split(",")[0]}` : "Min analyse af boligen"}
+          params={{ url: urlParam, addr: address, price: inputs.price, rent: inputs.monthlyRent, opex: inputs.monthlyOpex, downPaymentPct: inputs.downPaymentPct, interestRate: inputs.interestRate }} />
+        {watch.status === "error" && <p role="alert" className="px-3 pb-2 text-[13px] font-medium text-rose-600">Prisvagten kunne ikke startes.</p>}
+      </section>
+      <button type="button" onClick={() => setSheetOpen(true)} className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-[14px] font-semibold text-slate-800 hover:border-slate-300 sm:hidden"><SlidersHorizontal size={15} /> Justér tallene</button>
+    </>
   );
 
   return (
@@ -1207,26 +1301,32 @@ export function AnalyzerApp() {
               </p>
             </div>
           )}
-          <DealHero
-            images={images}
-            address={address}
-            score={heroScoreShown}
-            rating={heroRatingShown}
-            headline={heroHeadlineShown}
-            verdict={heroVerdictShown}
-            tone={heroToneShown}
-            notes={heroNotes}
-            metrics={heroMetricsShown}
-            probability={isInvestment ? null : { pct: Math.round(uncertainty.pCashFlowPositive * 100), runs: uncertainty.runs }}
-            listingUrl={listingUrl}
-            sourceLabel={sourceName(listingUrl)}
-            kindLabel={isInvestment ? `Investeringsejendom${subcatParam ? `, ${subcatParam}` : ""}` : goal === "parents" ? "Forældrekøb" : `Strategi: ${strategies.find((s) => s.id === inputs.strategy)?.label ?? ""}`}
-          />
-          {pipelineBand}
 
-          {isInvestment ? (
-            <>
-            <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} action={pipelineAction} />
+          <div className="mx-auto max-w-[1280px] px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+              <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+                <AppHero
+                  images={images}
+                  address={address}
+                  score={heroScoreShown}
+                  headline={heroHeadlineShown}
+                  verdict={heroVerdictShown}
+                  tone={heroToneShown}
+                  notes={heroNotes}
+                  metrics={heroMetricsShown}
+                  probability={isInvestment ? null : { pct: Math.round(uncertainty.pCashFlowPositive * 100), runs: uncertainty.runs }}
+                  listingUrl={listingUrl}
+                  sourceLabel={sourceName(listingUrl)}
+                  kindLabel={isInvestment ? `Erhverv${subcatParam ? `, ${subcatParam}` : ""}` : goal === "parents" ? "Forældrekøb" : `Udlejning, ${(strategies.find((x) => x.id === inputs.strategy)?.label ?? "").toLowerCase()}`}
+                />
+              </div>
+              <aside className="lg:col-start-2 lg:row-start-1 lg:row-span-2">
+                <div className="space-y-4 lg:sticky lg:top-20">{actionPanel}</div>
+              </aside>
+              <div className="min-w-0 lg:col-start-1 lg:row-start-2">
+                {isInvestment ? (
+                  <div className="-mx-4 sm:-mx-6 lg:mx-0 lg:overflow-hidden lg:rounded-2xl lg:border lg:border-slate-200">
+            <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} />
             <CommercialStory
               r={r}
               price={inputs.price}
@@ -1238,16 +1338,18 @@ export function AnalyzerApp() {
               onAdjust={() => setSheetOpen(true)}
               trust={<DataProvenance rows={provenanceRows} rentRule={rentRule} showRentCaveat={false} />}
             />
-            </>
-          ) : (
-            <>
-          <ChapterNav items={navItems} title={navTitle} onAdjust={() => setSheetOpen(true)} action={pipelineAction} />
+                  </div>
+                ) : (
+                  <>
+                    {tabBar}
+                    <div className="mt-4 space-y-5">
+                      {show("overblik") && overviewTab}
 
-          {!isInvestment && (
-            <section id="kalkule" className="scroll-mt-32 bg-[#f4f6f9] px-4 py-10 sm:px-6 sm:py-14">
-              <div className="mx-auto max-w-[1080px]">
-                <h2 className="text-[26px] font-semibold tracking-[-0.03em] sm:text-[32px]">Hele regnestykket</h2>
-                <p className="mt-2 max-w-2xl text-[16px] text-slate-600">
+          {show("kalkule") && (
+            <section id="kalkule" className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+              <div>
+                <h2 className="text-[20px] font-semibold tracking-[-0.02em] sm:text-[22px]">Hele regnestykket</h2>
+                <p className="mt-1 max-w-2xl text-[15px] text-slate-600">
                   {goal === "parents"
                     ? "Jeres forældrekøb fra købspris til det, der står tilbage, når barnet flytter. Ret et blåt felt, og resten regner med."
                     : <>Sådan hænger måneden sammen.<span className="hidden sm:inline"> Ret et blåt felt, og resten regner med. Klik på en række for at se, hvordan tallet er regnet.</span></>}
@@ -1277,7 +1379,8 @@ export function AnalyzerApp() {
             </section>
           )}
 
-          <Chapter id="oekonomi" question="Tjener den penge?" answer={cashAnswer} tint={tint()}>
+          {show("kalkule") && (
+          <Chapter flat id="oekonomi" question="Tjener den penge?" answer={cashAnswer}>
             <Panel>
               <MoneyFlow
                 rent={r.annualRent / 12}
@@ -1377,9 +1480,10 @@ export function AnalyzerApp() {
               </div>
             </Details>
           </Chapter>
+          )}
 
-          {showPriceChapter && (
-            <Chapter id="pris" question="Er prisen fair?" answer={priceAnswer} tint={tint()}>
+          {showPriceChapter && show("pris") && (
+            <Chapter flat id="pris" question="Er prisen fair?" answer={priceAnswer}>
               <Valuation bfe={bfe} price={inputs.price} />
               {(priceBench || rentBench) && (
                 <div className="grid gap-5 md:grid-cols-2">
@@ -1408,7 +1512,8 @@ export function AnalyzerApp() {
             </Chapter>
           )}
 
-          <Chapter id="risici" question="Hvad kan gå galt?" answer={riskAnswer} tint={tint()}>
+          {show("risici") && (
+          <Chapter flat id="risici" question="Hvad kan gå galt?" answer={riskAnswer}>
             <Panel>
               <RateStress
                 rate={inputs.interestRate}
@@ -1420,8 +1525,10 @@ export function AnalyzerApp() {
             </Panel>
             {address && <FutureBurdens address={address} />}
           </Chapter>
+          )}
 
-          <Chapter id="potentiale" question="Er der skjult potentiale?" answer={potentialAnswer} tint={tint()}>
+          {show("potentiale") && (
+          <Chapter flat id="potentiale" question="Er der skjult potentiale?" answer={potentialAnswer}>
             {rentReserve && <RentReserve reserve={rentReserve} />}
             {listingUrl && (
               <Link
@@ -1450,8 +1557,10 @@ export function AnalyzerApp() {
               onSnapshot={setRenoSnap}
             />
           </Chapter>
+          )}
 
-          <Chapter id="fremtid" question={`Hvad bliver det til om ${r.holdYears} år?`} answer={futureAnswer} tint={tint()}>
+          {show("fremtid") && (
+          <Chapter flat id="fremtid" question={`Hvad bliver det til om ${r.holdYears} år?`} answer={futureAnswer}>
             <Panel>
               <ProjectionStory
                 data={r.projection.map((y) => ({ year: y.year, paid: inputs.price - y.loanBalance, growth: y.propertyValue - inputs.price, cumulativeCashFlow: y.cumulativeCashFlow }))}
@@ -1465,8 +1574,10 @@ export function AnalyzerApp() {
               />
             </Panel>
           </Chapter>
+          )}
 
-          <Chapter id="data" question="Kan du stole på tallene?" answer={dataAnswer} tint={tint()}>
+          {show("data") && (
+          <Chapter flat id="data" question="Kan du stole på tallene?" answer={dataAnswer}>
             <DataProvenance rows={provenanceRows} rentRule={rentRule} showRentCaveat={!isInvestment} />
             <BrainBadge
               regionName={regionLabel(cal.region)}
@@ -1478,83 +1589,15 @@ export function AnalyzerApp() {
             />
             {bbr && <BbrPanel data={bbr} />}
           </Chapter>
-            </>
           )}
-
-          {/* Next steps: one primary (blue), the rest as quiet outline pills. */}
-          <section id="naeste" aria-labelledby="naeste-h" className="scroll-mt-32 bg-[#0a0e16] px-4 py-16 text-white sm:px-6 sm:py-20">
-            <div className="mx-auto max-w-[1080px]">
-              <h2 id="naeste-h" className="max-w-2xl text-[32px] font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance] sm:text-[44px]">
-                Gem den, del den, eller tag den med i banken.
-              </h2>
-              {usage && <UsageNudge {...usage} />}
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                {save.status === "saved" ? (
-                  <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
-                    <Check aria-hidden size={17} /> Gemt. Åbn sagen
-                  </a>
-                ) : (
-                  <button type="button" onClick={saveToPortfolio} disabled={save.status === "saving"}
-                    className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-[15px] font-semibold text-white transition-[background-color,transform] hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6aa8ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0e16] active:scale-[0.97] disabled:opacity-60">
-                    {save.status === "saving" ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <Bookmark aria-hidden size={17} />}
-                    {save.status === "saving" ? "Gemmer…" : "Gem i pipeline"}
-                  </button>
-                )}
-                <button type="button" onClick={() => requirePaid("report", openBankReport)} className={darkPill}>
-                  <FileText aria-hidden size={17} /> Bankrapport
-                </button>
-                <button type="button" onClick={() => requirePaid("excel", exportExcel)} disabled={exporting} className={darkPill}>
-                  {exporting ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <FileSpreadsheet aria-hidden size={17} />}
-                  {exporting ? "Laver Excel…" : "Excel"}
-                </button>
-                {listingUrl && (
-                  watch.status === "saved" ? (
-                    <a href="/app/ejendomme" className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-5 py-3 text-[15px] font-semibold text-emerald-300 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
-                      <BellRing aria-hidden size={17} /> Prisvagt aktiv
-                    </a>
-                  ) : (
-                    <button type="button" onClick={startWatch} disabled={watch.status === "saving"} className={darkPill}>
-                      {watch.status === "saving" ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <Bell aria-hidden size={17} />}
-                      Overvåg prisen
-                    </button>
-                  )
-                )}
-                <ShareAnalysis
-                  className={darkPill}
-                  title={address ? `Analyse af ${address.split(",")[0]}` : "Min analyse af boligen"}
-                  params={{
-                    url: urlParam,
-                    addr: address,
-                    price: inputs.price,
-                    rent: inputs.monthlyRent,
-                    opex: inputs.monthlyOpex,
-                    downPaymentPct: inputs.downPaymentPct,
-                    interestRate: inputs.interestRate,
-                  }}
-                />
-              </div>
-              <div aria-live="polite">
-                {save.status === "limit" && (
-                  <p className="mt-4 text-[15px] text-amber-200">
-                    Du har nået grænsen for at gemme boliger. <a href="tel:+4520993797" className="font-semibold underline">Ring til Nikolaj</a>, så åbner han for flere.
-                  </p>
-                )}
-                {save.status === "error" && <p className="mt-4 text-[15px] text-rose-300">Kunne ikke gemme: {save.msg}. Prøv igen om lidt.</p>}
-                {watch.status === "error" && <p className="mt-4 text-[15px] text-rose-300">Kunne ikke starte prisvagten: {watch.msg}. Prøv igen om lidt.</p>}
-              </div>
-              {listingUrl && watch.status === "idle" && (
-                <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/55">
-                  Prisvagten tjekker annoncen hver dag og giver dig besked, hvis prisen falder.
-                </p>
-              )}
-
-              <div className="mt-12 space-y-6 border-t border-white/10 pt-8 text-slate-900">
+                      {show("data") && (
+              <div className="space-y-4">
                 {analysisLogged && !tsHidden && (
-                  <div className="rounded-2xl bg-white p-5 sm:p-6">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
                     <TimeSavingsCapture onSubmit={submitTimeSavings} onDismiss={() => setTsHidden(true)} />
                   </div>
                 )}
-                <div className="rounded-2xl bg-white p-5 sm:p-6">
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
                   <PrecisionFeedback region={region} strategy={inputs.strategy} onSaved={() => { const q = region ? `?region=${encodeURIComponent(region)}` : ""; fetch(`/api/calibration${q}`).then((r) => r.json()).then(setCal).catch(() => {}); }} />
                 </div>
                 {savedParam && (
@@ -1565,10 +1608,16 @@ export function AnalyzerApp() {
                   />
                 )}
               </div>
-              <div id="analyse-end" aria-hidden className="h-px" />
-              <UpgradeDialog reason={upgrade} onClose={() => setUpgrade(null)} />
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-          </section>
+            <div id="analyse-end" aria-hidden className="h-px" />
+            <UpgradeDialog reason={upgrade} onClose={() => setUpgrade(null)} />
+          </div>
+
         </>
       )}
 
@@ -1589,6 +1638,10 @@ export function AnalyzerApp() {
       >
         {form}
       </Sheet>
+
+      <EventDialog state={planFor} onClose={() => setPlanFor(null)} homes={save.id ? [{ id: save.id, address: address ?? "Boligen" }] : []}
+        onSave={async (d) => { if (!d.rowId) return false; const ok = await addTaskToRow(d.rowId, toTask({ ...d, id: `t${Date.now()}` }), `${d.title} planlagt`); if (ok) setActionMsg("Aftalen ligger nu i din kalender og på sagen."); return ok; }} />
+      {actionMsg && <Toast text={actionMsg} onClose={() => setActionMsg(null)} />}
 
       {/* Analytikeren: in-analysis expert chat (appears once an analysis exists) */}
       {!gated && !(ex.status === "loading" && !priceParam) && (
@@ -1650,8 +1703,6 @@ export function AnalyzerApp() {
   );
 }
 
-const darkPill =
-  "inline-flex items-center gap-2 rounded-full bg-white/[0.08] px-5 py-3 text-[15px] font-semibold text-white ring-1 ring-inset ring-white/15 transition-[background-color,transform] hover:bg-white/[0.14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6aa8ff] active:scale-[0.97] disabled:opacity-60";
 
 /** While the listing is being read: the verdict's place holds a calm skeleton, not example numbers. */
 function LoadingBand({ stage }: { stage?: string }) {

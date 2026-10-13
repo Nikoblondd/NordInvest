@@ -46,3 +46,16 @@ export async function saveHitToPipeline(h: Hit, stage: Stage = "screening", from
   }).select("id").single();
   return error ? null : (data?.id as string);
 }
+
+/** Adds an appointment to a saved property, on top of what is stored now (never an old copy). */
+export async function addTaskToRow(rowId: string, task: import("@/lib/mappe/checklist").Task, logText: string): Promise<boolean> {
+  const supabase = createClient();
+  if (!supabase) return false;
+  const { data } = await supabase.from("analyses").select("property_data").eq("id", rowId).single();
+  if (!data) return false;
+  const pd = (data.property_data ?? {}) as Record<string, unknown>;
+  const m: Mappe = { ...EMPTY_MAPPE, ...((pd.mappe as Mappe | undefined) ?? {}) };
+  const next: Mappe = { ...m, tasks: [...(m.tasks ?? []), task], log: [{ at: new Date().toISOString(), text: logText, kind: "aftale" as const }, ...(m.log ?? [])].slice(0, 200), updatedAt: new Date().toISOString() };
+  const { error } = await supabase.from("analyses").update({ property_data: { ...pd, mappe: next } }).eq("id", rowId);
+  return !error;
+}

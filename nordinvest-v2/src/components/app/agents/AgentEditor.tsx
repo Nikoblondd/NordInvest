@@ -7,6 +7,7 @@ import { CityPicker } from "@/components/deals/DealFinder";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { EMPTY_CRITERIA, SUBCATS, TYPES, WEEKDAYS, nextRun, searchParams, suggestName, whenLabel, type Agent, type Criteria, type Freq, type Schedule } from "@/lib/app/agents";
 import { Dialog, Segmented, Toggle, btn, input, label } from "../ui";
+import { PropertyImage } from "../PropertyImage";
 
 /*
  * Create or change a search agent: what to look for (the Deal-motor's own
@@ -189,8 +190,7 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {preview.top.map((t) => (
                 <div key={t.id} className="overflow-hidden rounded-lg border border-slate-200">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {t.image ? <img src={t.image} alt="" loading="lazy" className="h-16 w-full object-cover" /> : <div className="h-16 bg-slate-100" />}
+                  <div className="h-16 w-full overflow-hidden bg-slate-50"><PropertyImage src={t.image} /></div>
                   <p className="truncate px-2 pt-1.5 text-[12px] font-semibold text-slate-800">{t.road}</p>
                   <p className="px-2 pb-1.5 text-[12px] tabular-nums text-slate-500">{Math.round(t.price).toLocaleString("da-DK")} kr.</p>
                 </div>

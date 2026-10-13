@@ -21,12 +21,15 @@ export function Chapter({
   question,
   answer,
   tint = "white",
+  flat,
   children,
 }: {
   id: string;
   question: string;
   answer: ChapterAnswer;
   tint?: "white" | "tint";
+  /** Inside the app: shown as an open tab, not a closed band. */
+  flat?: boolean;
   children: ReactNode;
 }) {
   const Icon = toneIcon[answer.tone];
@@ -39,6 +42,20 @@ export function Chapter({
     window.addEventListener("hashchange", check);
     return () => window.removeEventListener("hashchange", check);
   }, [id]);
+  if (flat) {
+    return (
+      <section id={id} aria-labelledby={`${id}-q`} className="space-y-5">
+        <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 sm:px-6">
+          <h2 id={`${id}-q`} className="text-[20px] font-semibold leading-tight tracking-[-0.02em] text-slate-900 sm:text-[22px]">{question}</h2>
+          <p className={clsx("mt-1 flex items-start gap-2 text-[15px] font-medium leading-snug", toneNum[answer.tone])}>
+            <Icon aria-hidden size={17} strokeWidth={2} className="mt-[2px] shrink-0" />
+            <span><span className="sr-only">{toneWord[answer.tone]}: </span>{answer.text}</span>
+          </p>
+        </div>
+        {children}
+      </section>
+    );
+  }
   return (
     <section
       id={id}

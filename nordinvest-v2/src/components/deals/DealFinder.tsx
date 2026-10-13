@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Loader2, Search, TrendingUp, MapPin, Sparkles, ArrowUpRight, Info, Home, Building2, Bell, Bookmark, Check, SlidersHorizontal, ChevronDown, X, Map as MapIcon, LayoutGrid, Lock } from "lucide-react";
+import { Loader2, Search, TrendingUp, Sparkles, ArrowUpRight, Info, Home, Building2, Bell, Bookmark, Check, SlidersHorizontal, ChevronDown, X, Map as MapIcon, LayoutGrid, Lock } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { num, kr } from "@/lib/analysis";
 import type { AnalyzedDeal, InvestmentDeal } from "@/lib/deals";
@@ -17,6 +17,7 @@ import { UpgradeDialog, type UpgradeReason } from "@/components/upgrade/UpgradeD
 import { usePlan } from "@/lib/plan";
 import type { DealAccess, LockedSummary } from "@/lib/deal-tiers";
 import { saveHitToPipeline } from "@/lib/app/pipeline";
+import { PropertyImage } from "@/components/app/PropertyImage";
 import type { Hit } from "@/lib/app/agents";
 
 // Leaflet touches `window`, so the map is client-only (no SSR).
@@ -225,12 +226,7 @@ function DealCard({ d, dp, ir, saved, onSave }: { d: AnalyzedDeal; dp: string; i
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_10px_28px_-16px_rgba(15,23,42,0.22)] transition-[box-shadow,transform] hover:-translate-y-px hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_16px_36px_-16px_rgba(15,23,42,0.3)]">
       <Link href={href} aria-label={`Åbn analyse: ${d.road || d.address}, ${d.zip} ${d.city}`} className="flex flex-1 flex-col rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
         <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
-          {d.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={d.image} alt={d.address} loading="lazy" draggable={false} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-          ) : (
-            <div className="flex h-full items-center justify-center text-slate-300"><MapPin size={28} /></div>
-          )}
+          <PropertyImage src={d.image} alt={d.address} className="transition-transform duration-300 group-hover:scale-[1.03]" />
           <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[12px] font-semibold text-slate-700 shadow-sm backdrop-blur">{d.source}</span>
           {d.priceChangePct != null && d.priceChangePct < 0 && (
             <span className="absolute right-3 top-3 rounded-full bg-emerald-500 px-2.5 py-1 text-[12px] font-semibold text-white shadow-sm">{num(d.priceChangePct, 0)} %</span>
@@ -292,12 +288,7 @@ function InvestmentCard({ d, dp, ir, saved, onSave }: { d: InvestmentDeal; dp: s
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-2 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_10px_28px_-16px_rgba(15,23,42,0.22)] transition-[box-shadow,transform] hover:-translate-y-px hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_16px_36px_-16px_rgba(15,23,42,0.3)]">
       <Link href={href} aria-label={`Åbn analyse: ${d.road || d.title}, ${d.zip} ${d.city}`} className="flex flex-1 flex-col rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
         <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
-          {d.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={d.image} alt={d.address} loading="lazy" draggable={false} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-          ) : (
-            <div className="flex h-full items-center justify-center text-slate-300"><Building2 size={28} /></div>
-          )}
+          <PropertyImage src={d.image} alt={d.address} className="transition-transform duration-300 group-hover:scale-[1.03]" />
           <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[12px] font-semibold text-slate-700 shadow-sm backdrop-blur">{d.source}</span>
           {d.subcategory && <span className="absolute right-3 top-3 rounded-full bg-slate-900/85 px-2.5 py-1 text-[12px] font-semibold text-white shadow-sm">{d.subcategory}</span>}
         </div>
