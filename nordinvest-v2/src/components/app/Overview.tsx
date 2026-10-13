@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Check, Gavel, Home, Plus, Radar, Search } from "lucide-react";
+import { ArrowRight, CalendarDays, Check, Gavel, Plus, Search } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { OFFER_STATUS, STAGES, STAGE_LABEL, type Stage } from "@/lib/mappe/checklist";
 import { KIND, addDays, clock, dayOf, mappeOf, street, timeOf, ymd } from "@/lib/app/calendar";
@@ -13,6 +13,7 @@ import { EventDialog, type DialogState } from "./EventDialog";
 import { HitCard } from "./agents/HitCard";
 import { useHitActions } from "./agents/Agents";
 import { ItemRow } from "./Calendar";
+import { PropertyImage } from "./PropertyImage";
 import { Toast, btn } from "./ui";
 import { useCalendar } from "./useCalendar";
 
@@ -163,8 +164,9 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
             </div>
           ) : agents.length === 0 ? (
             <div className="px-5 py-7">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-700"><Radar size={20} /></span>
-              <p className="mt-3 text-[15px] font-semibold text-slate-900">Lad markedet komme til dig</p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/app/il-agent.jpg" alt="" className="mx-auto mb-1 w-full max-w-[240px]" />
+              <p className="mt-1 text-[15px] font-semibold text-slate-900">Lad markedet komme til dig</p>
               <p className="mt-1 text-[14px] text-slate-500">En søgeagent kigger markedet igennem hver morgen med dine krav og giver besked om nye boliger.</p>
               <Link href="/app/find/agenter" className={clsx(btn.primary, "mt-4")}><Plus size={15} /> Opret en søgeagent</Link>
             </div>
@@ -174,10 +176,7 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
               <ul className="divide-y divide-slate-100">
                 {deals.slice(0, 3).map((d) => (
                   <li key={d.href} className="flex items-center gap-3 px-4 py-3 sm:px-5">
-                    {d.image
-                      // eslint-disable-next-line @next/next/no-img-element
-                      ? <img src={d.image} alt="" loading="lazy" className="h-11 w-11 shrink-0 rounded-lg bg-slate-100 object-cover" />
-                      : <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400"><Home size={18} /></span>}
+                    <span className="h-11 w-11 shrink-0 overflow-hidden rounded-lg ring-1 ring-slate-200/70"><PropertyImage src={d.image} /></span>
                     <span className="min-w-0 flex-1"><span className="block truncate text-[15px] font-semibold">{street(d.address)}</span><span className="block truncate text-[13px] text-slate-500">{d.zip} {d.city} · {kr(d.price)}</span></span>
                     <Link href={d.href} className="inline-flex h-9 shrink-0 items-center rounded-lg border border-slate-200 px-3 text-[13px] font-semibold text-slate-800 hover:border-slate-300">Analysér</Link>
                   </li>
@@ -188,8 +187,8 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
         </section>
       </div>
 
-      {/* Pipeline and bids */}
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+      {/* Pipeline and bids (only once there is something in it) */}
+      {live.length > 0 && <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <Link href="/app/ejendomme" data-tour="pipeline" className="block rounded-2xl border border-slate-200 bg-white p-5 transition-colors hover:border-slate-300">
           <div className="flex items-center justify-between text-[14px]"><span className="text-[16px] font-semibold">Pipeline</span><span className="text-slate-500">{totalStage} {totalStage === 1 ? "bolig" : "boliger"} i gang</span></div>
           <div className="mt-4 flex h-3 gap-0.5 overflow-hidden rounded-full bg-slate-100">
@@ -222,7 +221,7 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
             </ul>
           )}
         </section>
-      </div>
+      </div>}
 
       {recent.length > 0 && (
         <section aria-labelledby="recent-h" className="mt-6">
@@ -238,10 +237,7 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
               return (
                 <Link key={r.id} href={`/app/ejendomme/${r.id}`} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition-shadow hover:shadow-md">
                   <div className="relative h-28 bg-slate-100">
-                    {img
-                      // eslint-disable-next-line @next/next/no-img-element
-                      ? <img src={img} alt="" loading="lazy" className="h-full w-full object-cover" />
-                      : <span className="flex h-full items-center justify-center text-slate-300"><Home size={28} /></span>}
+                    <PropertyImage src={img} />
                     <span className="absolute left-2.5 top-2.5 rounded-md bg-white/95 px-2 py-0.5 text-[12px] font-semibold text-slate-800 shadow-sm">{STAGE_LABEL[m.stage]}</span>
                   </div>
                   <div className="p-3.5">

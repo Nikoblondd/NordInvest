@@ -198,13 +198,13 @@ function ScorePill({ score }: { score: number }) {
   const stroke = score >= 65 ? "#059669" : score >= 45 ? "#d97706" : "#e11d48";
   const r = 17, c = 2 * Math.PI * r;
   return (
-    <div className="flex shrink-0 flex-col items-center" aria-label={`Score ${score} af 100`}>
+    <div className="flex shrink-0 flex-col items-center" aria-label={`Foreløbig score ${score} af 100`} title="Foreløbig score ud fra annoncens tal. Den fulde analyse bruger også BBR, fotos og ejerudgiften fra salgsopstillingen, så tallet kan rykke sig lidt.">
       <svg width="42" height="42" viewBox="0 0 42 42" className="block">
         <circle cx="21" cy="21" r={r} fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
         <circle cx="21" cy="21" r={r} fill="none" stroke={stroke} strokeWidth="3.5" strokeLinecap="round" strokeDasharray={`${(c * Math.max(0, Math.min(100, score))) / 100} ${c}`} transform="rotate(-90 21 21)" />
         <text x="21" y="25.5" textAnchor="middle" fontSize="13" fontWeight="700" fill="#0f172a" className="tabular-nums">{score}</text>
       </svg>
-      <span className="mt-0.5 text-[11px] text-slate-500">score</span>
+      <span className="mt-0.5 text-[12px] text-slate-500">foreløbig</span>
     </div>
   );
 }
@@ -231,9 +231,9 @@ function DealCard({ d, dp, ir, saved, onSave }: { d: AnalyzedDeal; dp: string; i
           ) : (
             <div className="flex h-full items-center justify-center text-slate-300"><MapPin size={28} /></div>
           )}
-          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur">{d.source}</span>
+          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[12px] font-semibold text-slate-700 shadow-sm backdrop-blur">{d.source}</span>
           {d.priceChangePct != null && d.priceChangePct < 0 && (
-            <span className="absolute right-3 top-3 rounded-full bg-emerald-500 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">{num(d.priceChangePct, 0)} %</span>
+            <span className="absolute right-3 top-3 rounded-full bg-emerald-500 px-2.5 py-1 text-[12px] font-semibold text-white shadow-sm">{num(d.priceChangePct, 0)} %</span>
           )}
         </div>
         <div className="flex flex-1 flex-col px-2.5 pb-1 pt-3.5">
@@ -298,8 +298,8 @@ function InvestmentCard({ d, dp, ir, saved, onSave }: { d: InvestmentDeal; dp: s
           ) : (
             <div className="flex h-full items-center justify-center text-slate-300"><Building2 size={28} /></div>
           )}
-          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur">{d.source}</span>
-          {d.subcategory && <span className="absolute right-3 top-3 rounded-full bg-slate-900/85 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">{d.subcategory}</span>}
+          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[12px] font-semibold text-slate-700 shadow-sm backdrop-blur">{d.source}</span>
+          {d.subcategory && <span className="absolute right-3 top-3 rounded-full bg-slate-900/85 px-2.5 py-1 text-[12px] font-semibold text-white shadow-sm">{d.subcategory}</span>}
         </div>
         <div className="flex flex-1 flex-col px-2.5 pb-1 pt-3.5">
           <div className="flex items-start justify-between gap-3">
@@ -418,6 +418,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   };
 
   const doSearch = async (c: Criteria) => {
+    try { localStorage.setItem("ni_find_last", JSON.stringify(c)); } catch { /* storage blocked */ }
     setLoading(true);
     setErr(null);
     setCriteria(c);
@@ -511,7 +512,15 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   // Auto-run a saved search opened from the dashboard (/deals?…&run=1).
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
-    if (sp.get("run") !== "1") return;
+    if (sp.get("run") !== "1") {
+      // Open on the member's last search (or the whole country), never on an empty page.
+      let last: Criteria | null = null;
+      try { last = JSON.parse(localStorage.getItem("ni_find_last") || "null"); } catch { /* none */ }
+      const c: Criteria = last && Array.isArray(last.cities) ? last : { market: "bolig", cities: initialCity ? [initialCity] : [], type: "condo", sort: "score", priceMax: 4000000 };
+      setMarket(c.market as "bolig" | "investering"); setCities(c.cities); setType(c.type); setSort(c.sort); setPriceMax(c.priceMax);
+      doSearch(c);
+      return;
+    }
     const m = (sp.get("market") as "bolig" | "investering") || "bolig";
     const cs = (sp.get("municipality") || "koebenhavn").split(",").map((s) => s.trim()).filter(Boolean);
     const ty = sp.get("type") || "condo";
@@ -577,7 +586,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
           <button onClick={run} disabled={loading}
             className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 transition-colors hover:bg-blue-700 disabled:opacity-60">
             {loading ? <Loader2 size={17} className="animate-spin" /> : <Search size={17} />}
-            Find handler
+            Søg
           </button>
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
@@ -677,7 +686,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
                   <>
                     <TrendingUp size={16} className="shrink-0 text-emerald-500" />
                     <span className="truncate">
-                      {dk((deals?.length ?? 0) + (locked?.count ?? 0))} handler fundet
+                      {dk((deals?.length ?? 0) + (locked?.count ?? 0))} {market === "investering" ? "ejendomme" : "boliger"} fundet
                       {meta && <span className="font-normal text-slate-400"> · {dk(meta.scanned)} scannet</span>}
                     </span>
                   </>

@@ -25,8 +25,8 @@ export default function AnalysePage({ searchParams }: { searchParams: Record<str
         <div className="mx-auto max-w-[1080px] px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8">
           <PageHeader title="Analysér" sub="Overskud, afkast, renterisiko og 10 år frem på et minut. Gem boligen, så lander den i din pipeline med tallene." />
           <div className="mt-6"><AnalyseStart /></div>
-          <h2 className="mt-10 text-[18px] font-semibold">Eller regn selv</h2>
-          <p className="mt-1 text-[15px] text-slate-500">Skriv pris, leje og udgifter, så ser du resultatet med det samme.</p>
+          <h2 className="mt-10 text-[18px] font-semibold">Intet link? Regn selv</h2>
+          <p className="mb-4 mt-1 text-[15px] text-slate-500">Pris, leje og faste udgifter er nok. Resten har fornuftige standardværdier, som du kan rette bagefter.</p>
         </div>
       )}
       <Suspense fallback={<div className="mx-auto mt-6 h-96 max-w-[1080px] animate-pulse rounded-2xl bg-white" />}>

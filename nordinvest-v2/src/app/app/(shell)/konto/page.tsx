@@ -67,7 +67,7 @@ export default async function AccountPage({ searchParams }: { searchParams: { sk
       <VagtPanel initial={(watchRows ?? []) as Watch[]} />
       {/* Older saved searches keep working; new ones are search agents under Find boliger. */}
       {(searchRows ?? []).length > 0 && <SavedSearches initial={(searchRows ?? []) as SavedSearch[]} />}
-      <a href="/app/find/agenter" className="block rounded-2xl border border-slate-200 bg-white p-5 transition-colors hover:border-slate-300">
+      <a href="/app/find/agenter" className="mt-6 block rounded-2xl border border-slate-200 bg-white p-5 transition-colors hover:border-slate-300">
         <p className="text-[16px] font-semibold text-slate-900">Søgeagenter</p>
         <p className="mt-1 text-[14px] text-slate-500">Dine agenter, deres tidspunkter og mails styrer du under Find boliger → Søgeagenter.</p>
       </a>

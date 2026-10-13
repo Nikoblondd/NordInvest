@@ -21,8 +21,10 @@ export const btn = {
 export const input = "h-11 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100";
 export const label = "text-[13px] font-medium text-slate-700";
 
-export function Dialog({ open, onClose, title, sub, children, footer, wide }: {
+export function Dialog({ open, onClose, title, sub, children, footer, wide, error }: {
   open: boolean; onClose: () => void; title: string; sub?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; wide?: boolean;
+  /** Shown right under the title, so it is seen however far the form is scrolled. */
+  error?: string | null;
 }) {
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -55,6 +57,7 @@ export function Dialog({ open, onClose, title, sub, children, footer, wide }: {
           </div>
           <button type="button" onClick={onClose} aria-label="Luk" className="-mr-2 -mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700"><X size={18} /></button>
         </div>
+        {error && <p role="alert" className="border-b border-rose-100 bg-rose-50 px-5 py-2.5 text-[14px] font-medium text-rose-700">{error}</p>}
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
         {footer && <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-3 pb-[max(12px,env(safe-area-inset-bottom))]">{footer}</div>}
       </div>

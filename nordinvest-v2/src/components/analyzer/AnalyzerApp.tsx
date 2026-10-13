@@ -47,7 +47,7 @@ import { SignupGate } from "@/components/analyzer/SignupGate";
 import { UpgradeDialog, type UpgradeReason } from "@/components/upgrade/UpgradeDialog";
 import { UsageNudge } from "@/components/upgrade/UsageNudge";
 import { ShareAnalysis } from "@/components/analyzer/ShareAnalysis";
-import { ANON_FREE, countAnonAnalysis, fetchPlan, usePlan } from "@/lib/plan";
+import { ANON_FREE, countAnonAnalysis } from "@/lib/plan";
 import { TimeSavingsCapture } from "@/components/analyzer/TimeSavingsCapture";
 import { captureEvent } from "@/lib/analytics-events";
 import { buildProvenance, rentRegulationRule } from "@/lib/provenance";
@@ -268,13 +268,12 @@ export function AnalyzerApp() {
   const [analysisLogged, setAnalysisLogged] = useState(false);
   // Upgrade path: the signup gate (3rd analysis without an account), this
   // month's usage for the nudge, and the dialog for paid-only actions.
-  const plan = usePlan();
   const [signupGated, setSignupGated] = useState(false);
   const [usage, setUsage] = useState<{ authenticated: boolean; used: number; max: number; unlimited: boolean } | null>(null);
   const [upgrade, setUpgrade] = useState<UpgradeReason | null>(null);
-  const requirePaid = (reason: UpgradeReason, action: () => void) => {
-    fetchPlan().then((p) => (p.paid ? action() : setUpgrade(reason)));
-  };
+  // The analyser only runs inside the closed platform, where every member has
+  // the bank report and Excel: no upgrade step in between.
+  const requirePaid = (_reason: UpgradeReason, action: () => void) => action();
 
   const [bbr, setBbr] = useState<BbrEnrich | null>(null);
   const [images, setImages] = useState<string[]>([]);
@@ -387,6 +386,9 @@ export function AnalyzerApp() {
       const pd = (data.property_data ?? {}) as Record<string, unknown>;
       setInputs((prev) => ({ ...prev, ...pickInputs(pd) }));
       if (typeof pd.address === "string") setAddress(pd.address);
+      // Keep the photo and the listing link, so a reopened case looks like the analysis it came from.
+      if (typeof pd.listingUrl === "string") setListingUrl(pd.listingUrl);
+      if (typeof pd.image === "string") setImages((cur) => (cur.length ? cur : [pd.image as string]));
       // Reopened from the ejendomsmappe: it is already saved, and saving again
       // must update this row, not create a second one.
       usageRowIdRef.current = savedParam;
@@ -1090,22 +1092,14 @@ export function AnalyzerApp() {
   // Before anything is analysed: the form is the page's tool, shown inline.
   if (!ran) {
     return (
-      <section aria-labelledby="own-numbers" className="px-4 pb-20 sm:px-6">
-        <div className="mx-auto grid max-w-[1080px] gap-10 rounded-[28px] bg-[#f4f6f9] p-6 sm:p-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] lg:gap-16 lg:p-14">
-          <div>
-            <h2 id="own-numbers" className="text-[32px] font-semibold leading-[1.08] tracking-[-0.03em] text-slate-900 [text-wrap:balance] sm:text-[40px]">
-              Intet link? Indtast tallene selv.
-            </h2>
-            <p className="mt-4 max-w-md text-[17px] leading-relaxed text-slate-600">
-              Pris, leje og faste udgifter er nok til en dom. Resten har fornuftige standardværdier, som du kan rette bagefter.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-7">
+      <section aria-label="Regn selv" className="px-4 pb-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1080px]">
+          <div className="max-w-[560px] rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
             {form}
             <button
               type="button"
               onClick={() => { setRan(true); window.scrollTo({ top: 0 }); }}
-              className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-blue-600 px-6 py-3.5 text-[17px] font-semibold text-white transition-[background-color,transform] hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-[0.98]"
+              className="mt-6 inline-flex min-h-[48px] w-full items-center justify-center rounded-lg bg-blue-600 px-6 text-[16px] font-semibold text-white transition-colors hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:translate-y-px"
             >
               Analysér ejendommen
             </button>
@@ -1135,7 +1129,7 @@ export function AnalyzerApp() {
         {save.status === "saved" ? (
           <>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><Check aria-hidden size={18} strokeWidth={2.5} /></span>
-            <p className="min-w-0 flex-1 text-[15px] text-slate-700"><b className="font-semibold text-slate-900">Boligen ligger i din pipeline.</b> Planlæg fremvisningen, upload papirerne eller registrér et bud på sagen.</p>
+            <p className="min-w-0 flex-1 basis-[260px] text-[15px] text-slate-700"><b className="font-semibold text-slate-900">Boligen ligger i din pipeline.</b> Planlæg fremvisningen, upload papirerne eller registrér et bud på sagen.</p>
             <div className="flex flex-wrap gap-2">
               <a href={`/app/ejendomme/${save.id ?? ""}?fane=aftaler`} className="inline-flex min-h-[40px] items-center rounded-lg border border-slate-200 px-3 text-[14px] font-semibold text-slate-800 hover:border-slate-300">Planlæg fremvisning</a>
               <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="inline-flex min-h-[40px] items-center gap-1 rounded-lg bg-slate-900 px-3.5 text-[14px] font-semibold text-white hover:bg-slate-800">Åbn sagen <ArrowRight aria-hidden size={14} /></a>
@@ -1144,7 +1138,7 @@ export function AnalyzerApp() {
         ) : (
           <>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600"><Bookmark aria-hidden size={17} /></span>
-            <p className="min-w-0 flex-1 text-[15px] text-slate-700"><b className="font-semibold text-slate-900">Vil du følge boligen?</b> Gem den i din pipeline med tallene, så kan du planlægge fremvisning, gemme papirer og byde derfra.</p>
+            <p className="min-w-0 flex-1 basis-[260px] text-[15px] text-slate-700"><b className="font-semibold text-slate-900">Vil du følge boligen?</b> Gem den i din pipeline med tallene, så kan du planlægge fremvisning, gemme papirer og byde derfra.</p>
             <div className="flex flex-wrap items-center gap-2">
               <label className="sr-only" htmlFor="save-stage">Fase</label>
               <select id="save-stage" value={saveStage} onChange={(e) => setSaveStage(e.target.value as Stage)} className="h-10 rounded-lg border border-slate-200 bg-white px-2.5 text-[14px] font-medium text-slate-800">
@@ -1508,12 +1502,10 @@ export function AnalyzerApp() {
                 )}
                 <button type="button" onClick={() => requirePaid("report", openBankReport)} className={darkPill}>
                   <FileText aria-hidden size={17} /> Bankrapport
-                  {plan.loaded && !plan.paid && <PaidTag />}
                 </button>
                 <button type="button" onClick={() => requirePaid("excel", exportExcel)} disabled={exporting} className={darkPill}>
                   {exporting ? <Loader2 aria-hidden size={17} className="animate-spin" /> : <FileSpreadsheet aria-hidden size={17} />}
                   {exporting ? "Laver Excel…" : "Excel"}
-                  {plan.loaded && !plan.paid && <PaidTag />}
                 </button>
                 {listingUrl && (
                   watch.status === "saved" ? (
@@ -1694,13 +1686,6 @@ function Row({ l, v, pos, strong }: { l: string; v: string; pos?: boolean; stron
   );
 }
 
-function PaidTag() {
-  return (
-    <span className="ml-0.5 rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-white/70 ring-1 ring-inset ring-white/15">
-      Starter
-    </span>
-  );
-}
 
 
 /** The month in five lines, for phones: rent in, costs and loan out, what is left. */

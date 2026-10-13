@@ -68,14 +68,12 @@ export function AgentsHome({ initial, prefill }: { initial: Agent[]; prefill: Pa
     <div className="mt-6">
       {agents.length === 0 ? (
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-          <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-            <div>
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700"><Radar size={22} /></span>
-              <h2 className="mt-4 text-[22px] font-semibold tracking-[-0.02em] text-slate-900">Lad markedet komme til dig</h2>
+          <div className="grid grid-cols-1 gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <div className="order-2 lg:order-1">
+              <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-slate-900">Lad markedet komme til dig</h2>
               <p className="mt-2 max-w-md text-[15px] leading-relaxed text-slate-600">En søgeagent kigger hele markedet igennem med dine krav, på det tidspunkt du vælger, og sender en mail, når der kommer en ny bolig, der passer. Du slipper for at tjekke Boligsiden hver morgen.</p>
               <button type="button" onClick={() => setEditor({})} className={clsx(btn.primary, "mt-5")}><Plus size={16} /> Opret din første agent</button>
-            </div>
-            <ol className="space-y-3">
+            <ol className="mt-6 space-y-2.5">
               {[["Vælg dine krav", "Område, type, pris og hvad tallene mindst skal vise."], ["Vælg tidspunkt", "Hver morgen kl. 7, på hverdage eller en gang om ugen."], ["Få besked", "Kun når der er noget nyt. Gem det i din pipeline med ét tryk."]].map(([t, d], i) => (
                 <li key={t} className="flex gap-3 rounded-xl bg-slate-50 p-3.5">
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[13px] font-bold text-blue-700 ring-1 ring-blue-100">{i + 1}</span>
@@ -83,6 +81,9 @@ export function AgentsHome({ initial, prefill }: { initial: Agent[]; prefill: Pa
                 </li>
               ))}
             </ol>
+            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/app/il-agent.jpg" alt="Illustration af en søgeagent, der scanner byens boliger" className="order-1 mx-auto w-full max-w-[460px] lg:order-2" />
           </div>
         </div>
       ) : (

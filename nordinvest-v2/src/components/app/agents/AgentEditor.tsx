@@ -83,7 +83,7 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
   );
 
   return (
-    <Dialog open={open} onClose={onClose} title={title} sub="Agenten gennemsøger hele markedet på dine tidspunkter og giver besked, når der kommer nye boliger." wide
+    <Dialog error={err} open={open} onClose={onClose} title={title} sub="Agenten gennemsøger hele markedet på dine tidspunkter og giver besked, når der kommer nye boliger." wide
       footer={<>
         <span className="mr-auto text-[13px] text-slate-500" aria-live="polite">
           {preview.status === "loading" ? <span className="inline-flex items-center gap-1.5"><Loader2 size={13} className="animate-spin" /> Tæller…</span>
@@ -199,7 +199,6 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
             <p className="mt-2 text-[13px] text-slate-500">Dem, der matcher nu, ser du med det samme. Fremover giver agenten kun besked om nye.</p>
           </section>
         )}
-        {err && <p role="alert" className="rounded-lg bg-rose-50 px-3 py-2 text-[14px] font-medium text-rose-700">{err}</p>}
       </div>
     </Dialog>
   );

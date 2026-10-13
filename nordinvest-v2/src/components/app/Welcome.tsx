@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
@@ -49,7 +50,7 @@ export function Welcome({ initialName, initialPhone, email, needsPassword }: { i
     <div className="flex min-h-[100dvh] items-center justify-center bg-slate-50 px-4 py-10" style={{ background: "radial-gradient(900px 500px at 20% 0%, rgba(37,99,235,0.08), transparent 70%), #f8fafc" }}>
       <div className="w-full max-w-[460px]">
         <div className="mb-6 flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0b1b33] text-[15px] font-bold text-white">N</span>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-slate-200/60"><Image src="/nordinvest-logo.png" alt="" width={40} height={40} className="h-[78%] w-[78%] object-contain" /></span>
           <span className="text-[18px] font-semibold">NordInvest</span>
         </div>
         <form onSubmit={submit} noValidate className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_30px_80px_-40px_rgba(11,27,51,0.4)] sm:p-8">

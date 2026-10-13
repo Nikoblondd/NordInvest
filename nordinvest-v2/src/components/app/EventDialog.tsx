@@ -75,7 +75,7 @@ export function EventDialog({ state, onClose, homes, onSave, onDelete }: {
   };
 
   return (
-    <Dialog open={!!state} onClose={onClose} title={it ? "Ret aftale" : "Ny aftale"}
+    <Dialog error={err} open={!!state} onClose={onClose} title={it ? "Ret aftale" : "Ny aftale"}
       footer={<>
         {it && onDelete && <button type="button" className={clsx(btn.danger, "mr-auto")} disabled={!!busy} onClick={async () => { setBusy("delete"); const ok = await onDelete(it); setBusy(null); if (ok) onClose(); }}>{busy === "delete" ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />} Slet</button>}
         {it?.due && <button type="button" className={btn.ghost} onClick={() => downloadIcs(it)}><CalendarPlus size={15} /> Til din kalender</button>}
@@ -139,7 +139,6 @@ export function EventDialog({ state, onClose, homes, onSave, onDelete }: {
           <label htmlFor="ev-note" className={label}>Note <span className="font-normal text-slate-400">(valgfrit)</span></label>
           <textarea id="ev-note" value={note} onChange={(e) => setNote(e.target.value)} rows={3} placeholder="Fx spørg til fællesudgifter og vedligeholdelsesplan" className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white p-3 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" />
         </div>
-        {err && <p role="alert" className="rounded-lg bg-rose-50 px-3 py-2 text-[14px] font-medium text-rose-700">{err}</p>}
         <button type="submit" className="hidden" aria-hidden tabIndex={-1} />
       </form>
     </Dialog>

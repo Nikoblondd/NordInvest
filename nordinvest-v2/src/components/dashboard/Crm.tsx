@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { CalendarPlus, ChevronDown, Columns3, FileText, Gavel, Home, List, MoreHorizontal, Plus, Search, Trash2, X } from "lucide-react";
+import { CalendarPlus, ChevronDown, Columns3, FileText, Gavel, List, MoreHorizontal, Plus, Search, Trash2, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { EMPTY_MAPPE, OFFER_STATUS, STAGES, STAGE_LABEL, type Mappe, type Offer, type Stage } from "@/lib/mappe/checklist";
 import { saveMappe } from "@/lib/mappe/save";
@@ -10,6 +10,7 @@ import { KIND, clock, dayLabel, dayOf, parseDay, timeOf, withLog, ymd } from "@/
 import { EventDialog, type DialogState } from "@/components/app/EventDialog";
 import { OfferDialog, applyOffer, offersOf, OFFER_TONE } from "@/components/app/OfferDialog";
 import { Segmented, Toast, btn } from "@/components/app/ui";
+import { PropertyImage } from "@/components/app/PropertyImage";
 import type { Draft } from "@/components/app/useCalendar";
 
 /*
@@ -212,13 +213,9 @@ function CardMenu({ r, stage, onMove, onPlan, onOffer }: Actions & { r: CrmRow; 
 
 function Thumb({ r, stage, size = 44 }: { r: CrmRow; stage: Col; size?: number }) {
   const img = typeof r.property_data?.image === "string" ? r.property_data.image : null;
-  const [broken, setBroken] = useState(false);
   return (
-    <span className={clsx("flex shrink-0 items-center justify-center overflow-hidden rounded-lg", TONE[stage].soft)} style={{ width: size, height: size }}>
-      {img && !broken
-        // eslint-disable-next-line @next/next/no-img-element
-        ? <img src={img} alt="" loading="lazy" onError={() => setBroken(true)} className="h-full w-full object-cover" />
-        : <Home size={Math.round(size * 0.45)} strokeWidth={1.8} />}
+    <span className={clsx("flex shrink-0 items-center justify-center overflow-hidden rounded-lg ring-1 ring-slate-200/70", TONE[stage].soft)} style={{ width: size, height: size }}>
+      <PropertyImage src={img} />
     </span>
   );
 }
@@ -260,7 +257,7 @@ function Board({ cols, byStage, ...a }: ViewProps) {
   const [dragId, setDragId] = useState<string | null>(null);
   const [over, setOver] = useState<Col | null>(null);
   return (
-    <div className="mt-4 hidden gap-3 overflow-x-auto pb-3 lg:grid" style={{ gridTemplateColumns: `repeat(${cols.length}, minmax(176px, 1fr))` }}>
+    <div className="mt-4 hidden snap-x gap-3 overflow-x-auto pb-3 [scrollbar-width:thin] lg:grid" style={{ gridTemplateColumns: `repeat(${cols.length}, minmax(236px, 1fr))` }}>
       {cols.map((c) => {
         const total = byStage[c].reduce((n, r) => n + priceOf(r), 0);
         return (
@@ -352,7 +349,7 @@ function ListView({ cols, byStage, ...a }: ViewProps) {
                 const price = priceOf(r);
                 return (
                   <li key={r.id} className={clsx("flex flex-wrap items-center gap-3 px-3 py-3 lg:px-4", grid)}>
-                    <Link href={`/app/ejendomme/${r.id}`} className="flex min-w-0 flex-1 items-center gap-3">
+                    <Link href={`/app/ejendomme/${r.id}`} className="order-1 flex min-w-0 flex-1 items-center gap-3 lg:order-none">
                       <Thumb r={r} stage={c} />
                       <span className="min-w-0">
                         <span className="block truncate text-[15px] font-semibold text-slate-900 hover:text-blue-700">{street(addr)}</span>
@@ -360,12 +357,12 @@ function ListView({ cols, byStage, ...a }: ViewProps) {
                         <span className="mt-1 flex flex-wrap gap-1.5 lg:hidden">{price > 0 && <span className="text-[13px] font-semibold tabular-nums text-slate-700">{kr(price)}</span>}<OfferChip o={offersOf(m)[0]} /></span>
                       </span>
                     </Link>
-                    <StagePill stage={c} onChange={(s) => a.onMove(r.id, s)} label={street(addr)} />
+                    <span className="order-3 w-full pl-[56px] lg:order-none lg:w-auto lg:pl-0"><StagePill stage={c} onChange={(s) => a.onMove(r.id, s)} label={street(addr)} /></span>
                     <span className="hidden text-[14px] tabular-nums text-slate-800 lg:block">{price > 0 ? kr(price) : "–"}</span>
                     <span className="hidden min-w-0 lg:block">{offersOf(m)[0] ? <OfferChip o={offersOf(m)[0]} /> : <span className="text-[13px] text-slate-400">Intet bud</span>}</span>
                     <span className="hidden min-w-0 lg:block">{nextAppt(m) || overdue(m) ? <ApptChip m={m} /> : <button type="button" onClick={() => a.onPlan(r)} className="text-[13px] font-medium text-blue-700 hover:underline">Planlæg</button>}</span>
-                    <span className="flex justify-end"><CardMenu r={r} stage={c} {...a} /></span>
-                    <span className="w-full lg:hidden"><ApptChip m={m} /></span>
+                    <span className="order-2 flex justify-end lg:order-none"><CardMenu r={r} stage={c} {...a} /></span>
+                    <span className="order-4 w-full pl-[56px] empty:hidden lg:hidden"><ApptChip m={m} /></span>
                   </li>
                 );
               })}
@@ -380,19 +377,9 @@ function ListView({ cols, byStage, ...a }: ViewProps) {
 function EmptyBoard() {
   return (
     <div className="relative mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <div aria-hidden className="grid grid-cols-3 gap-2 p-3 opacity-60 sm:grid-cols-6">
-        {STAGES.map((s, i) => (
-          <div key={s.id} className={clsx("overflow-hidden rounded-lg bg-slate-100", i > 2 && "hidden sm:block")}>
-            <div className={clsx("h-1", TONE[s.id].bar)} />
-            <p className="px-2 pt-2 text-[12px] font-semibold text-slate-500">{s.label}</p>
-            <div className="space-y-1.5 p-2">
-              {Array.from({ length: i === 0 ? 2 : i < 3 ? 1 : 0 }).map((_, k) => <div key={k} className="h-12 rounded-md bg-white" />)}
-              <div className="h-12 rounded-md border border-dashed border-slate-300" />
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="border-t border-slate-100 px-5 py-8 text-center sm:py-10">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/app/il-pipe.jpg" alt="" className="mx-auto mt-6 w-full max-w-[340px]" />
+      <div className="px-5 pb-10 pt-2 text-center">
         <h2 className="text-[20px] font-semibold text-slate-900">Ingen boliger endnu</h2>
         <p className="mx-auto mt-1.5 max-w-md text-[15px] text-slate-600">Gem en bolig fra Find boliger, fra en søgeagent eller fra en analyse. Så lander den her, og du kan følge den fra første kig til køb.</p>
         <div className="mt-5 flex flex-wrap justify-center gap-2">

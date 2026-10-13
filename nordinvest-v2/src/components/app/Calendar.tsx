@@ -272,7 +272,7 @@ export function ItemRow({ i, onOpen, onToggle, showDay }: { i: CalItem; onOpen: 
         <span className="min-w-0 flex-1">
           <span className={clsx("line-clamp-2 block break-words text-[15px] font-medium leading-snug text-slate-900", i.done && "text-slate-400 line-through")}>{i.title}</span>
           <span className="flex min-w-0 items-center gap-1 truncate text-[13px] text-slate-500">
-            {i.address ? street(i.address) : KIND[i.kind].label}{i.place && (!i.address || street(i.place) !== street(i.address)) && <><span aria-hidden>·</span><MapPin size={12} className="shrink-0" /><span className="truncate">{i.place}</span></>}
+            {i.address ? street(i.address) : KIND[i.kind].label}{i.place && (!i.address || !i.address.toLowerCase().startsWith(i.place.toLowerCase())) && <><span aria-hidden>·</span><MapPin size={12} className="shrink-0" /><span className="truncate">{i.place}</span></>}
           </span>
         </span>
         <span className="shrink-0 text-right text-[13px] tabular-nums text-slate-600">
@@ -317,8 +317,9 @@ function Agenda({ items, today, onOpen, onToggle, onAdd }: { items: CalItem[]; t
   if (!overdue.length && !coming.length) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
-        <CalendarDays className="mx-auto text-slate-300" size={30} />
-        <p className="mt-3 text-[16px] font-semibold text-slate-800">Ingen kommende aftaler</p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/app/il-cal.jpg" alt="" className="mx-auto w-full max-w-[260px]" />
+        <p className="mt-2 text-[16px] font-semibold text-slate-800">Ingen kommende aftaler</p>
         <p className="mx-auto mt-1 max-w-sm text-[14px] text-slate-500">Planlæg en fremvisning, et bankmøde eller en frist for dit bud. Du får en mail dagen før.</p>
         <button type="button" onClick={onAdd} className={clsx(btn.primary, "mt-4")}><Plus size={16} /> Ny aftale</button>
       </div>

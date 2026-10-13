@@ -13,6 +13,7 @@ import { EventDialog, type DialogState } from "./EventDialog";
 import { OfferDialog, applyOffer, offersOf, OFFER_TONE } from "./OfferDialog";
 import { ItemRow } from "./Calendar";
 import { btn } from "./ui";
+import { PropertyImage } from "./PropertyImage";
 import type { Draft } from "./useCalendar";
 
 /*
@@ -140,12 +141,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
 
       {/* Header */}
       <div className="mt-2 flex flex-wrap items-start gap-4">
-        <span className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:h-20 sm:w-20">
-          {image
-            // eslint-disable-next-line @next/next/no-img-element
-            ? <img src={image} alt="" className="h-full w-full object-cover" />
-            : <span className="flex h-full w-full items-center justify-center text-slate-300"><Home size={28} /></span>}
-        </span>
+        <span className="h-16 w-16 shrink-0 overflow-hidden rounded-xl ring-1 ring-slate-200 sm:h-20 sm:w-20"><PropertyImage src={image} /></span>
         <div className="min-w-0 flex-1 basis-[240px]">
           <h1 className="text-[24px] font-semibold leading-tight tracking-[-0.02em] [text-wrap:balance] sm:text-[30px]">{street}</h1>
           <p className="mt-1 text-[15px] text-slate-500">{[rest.join(",").trim(), price ? kr(price) : "", pd.area ? `${pd.area} m²` : ""].filter(Boolean).join(" · ")}</p>
@@ -291,7 +287,9 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
             <div className="space-y-5">
               <Card title="Aftaler" action={<button type="button" onClick={() => setEvent({ rowId: row.id, kind: "fremvisning" })} className={btn.primary}><Plus size={15} /> Ny aftale</button>} pad={false}>
                 {late.length + upcoming.length === 0 ? (
-                  <div className="px-5 py-8 text-center">
+                  <div className="px-5 pb-8 pt-4 text-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/app/il-cal.jpg" alt="" className="mx-auto w-full max-w-[220px]" />
                     <p className="text-[15px] font-medium text-slate-700">Ingen kommende aftaler</p>
                     <p className="mt-1 text-[14px] text-slate-500">Planlæg fremvisningen, et bankmøde eller et opkald til mægleren. Du får en mail dagen før.</p>
                     <div className="mt-4 flex flex-wrap justify-center gap-1.5">

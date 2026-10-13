@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Building2, CalendarDays, Calculator, ChevronDown, CircleHelp, Home, KeyRound, LayoutGrid, LogOut, Phone, Plus, Rocket, Search, Settings, BarChart3, Users, X } from "lucide-react";
@@ -44,7 +45,7 @@ export function AppShell({ user, props, counts, children }: { user: ShellUser; p
       {/* Rail (desktop) */}
       <aside data-tour="nav" className="sticky top-0 hidden h-[100dvh] w-[248px] shrink-0 flex-col bg-[#0b1b33] px-3 pb-4 pt-5 text-white lg:flex">
         <Link href="/app" className="flex items-center gap-2.5 px-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[14px] font-bold text-[#0b1b33]">N</span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-slate-200/60"><Image src="/nordinvest-logo.png" alt="" width={40} height={40} className="h-[78%] w-[78%] object-contain" /></span>
           <span className="text-[17px] font-semibold tracking-[-0.01em]">NordInvest</span>
         </Link>
         <Link href="/app/analyser" data-tour="add" className="mt-6 flex h-10 items-center justify-center gap-2 rounded-lg bg-blue-600 text-[14px] font-semibold transition-colors hover:bg-blue-500">
@@ -108,7 +109,7 @@ function TopBar({ user, props }: { user: ShellUser; props: ShellProperty[] }) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6 lg:px-8">
       <Link href="/app" className="flex items-center lg:hidden" aria-label="Overblik">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0b1b33] text-[14px] font-bold text-white">N</span>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-slate-200/60"><Image src="/nordinvest-logo.png" alt="" width={40} height={40} className="h-[78%] w-[78%] object-contain" /></span>
       </Link>
       <QuickFind props={props} />
       <Link href="/app/analyser" data-tour="add" className="hidden h-10 items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 text-[14px] font-semibold text-white hover:bg-blue-500 sm:flex lg:hidden"><Plus size={16} /> Tilføj</Link>

@@ -73,7 +73,10 @@ export function AnalystChat({ context }: { context: Record<string, unknown> }) {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const pct = max > 0 ? window.scrollY / max : 0;
       if (pct >= 0.3) {
-        setNudge(true);
+        // Once per device, and only for a few seconds: it must never sit on top of the numbers.
+        let seen = false;
+        try { seen = localStorage.getItem("ni_analyst_nudge") === "1"; localStorage.setItem("ni_analyst_nudge", "1"); } catch { /* storage blocked */ }
+        if (!seen) { setNudge(true); setTimeout(() => setNudge(false), 9000); }
         setNudgeDone(true);
         window.removeEventListener("scroll", onScroll);
       }

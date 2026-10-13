@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Bookmark, Check, ExternalLink, Home, Loader2, TrendingDown, X } from "lucide-react";
+import { ArrowUpRight, Bookmark, Check, ExternalLink, Loader2, TrendingDown, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import type { Hit } from "@/lib/app/agents";
+import { PropertyImage } from "../PropertyImage";
 
 /* One listing an agent found: the numbers, and what the member can do with it. */
 
@@ -20,10 +21,7 @@ export function HitCard({ h, busy, onSave, onDismiss, onRestore, compact }: {
   return (
     <article className={clsx("flex gap-3 rounded-2xl border bg-white p-3 transition-shadow hover:shadow-[0_8px_24px_-12px_rgba(15,23,42,0.25)]", h.status === "ny" ? "border-blue-200" : "border-slate-200", h.status === "afvist" && "opacity-60")}>
       <Link href={h.href} className="relative h-[84px] w-[112px] shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:h-[96px] sm:w-[136px]">
-        {h.image
-          // eslint-disable-next-line @next/next/no-img-element
-          ? <img src={h.image} alt="" loading="lazy" className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = "none"; }} />
-          : <span className="flex h-full items-center justify-center text-slate-300"><Home size={24} /></span>}
+        <PropertyImage src={h.image} />
         {h.status === "ny" && <span className="absolute left-1.5 top-1.5 rounded-md bg-blue-600 px-1.5 py-0.5 text-[12px] font-bold text-white">Ny</span>}
       </Link>
       <div className="min-w-0 flex-1">

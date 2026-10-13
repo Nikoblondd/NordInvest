@@ -154,7 +154,7 @@ export function ChapterNav({
   return (
     <div className="sticky top-16 z-30 border-b border-slate-200/70 bg-white/80 px-4 backdrop-blur-xl backdrop-saturate-150 sm:px-6">
       <div className="mx-auto flex h-14 max-w-[1080px] items-center gap-3">
-        <div className="hidden min-w-0 max-w-[260px] shrink truncate text-[15px] font-semibold tracking-[-0.01em] text-slate-900 lg:block" translate="no">
+        <div className={clsx("hidden min-w-0 max-w-[260px] shrink truncate text-[15px] font-semibold tracking-[-0.01em] text-slate-900", action ? "2xl:block" : "lg:block")} translate="no">
           {title}
         </div>
         <nav aria-label="Kapitler i analysen" className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] lg:flex lg:justify-center">

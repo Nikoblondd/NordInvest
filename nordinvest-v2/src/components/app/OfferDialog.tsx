@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { NumberInput } from "@/components/ui/NumberInput";
-import { OFFER_STATUS, type Mappe, type Offer } from "@/lib/mappe/checklist";
+import { OFFER_STATUS, STAGE_LABEL, type Mappe, type Offer } from "@/lib/mappe/checklist";
 import { withLog, ymd } from "@/lib/app/calendar";
 import { Dialog, btn, input, label } from "./ui";
 
@@ -38,10 +38,13 @@ export function applyOffer(m: Mappe, o: Offer, existed: boolean): Mappe {
     tasks.push({ id: taskId, kind: "bud", title: o.status === "modbud" ? "Svar på modbud" : "Svarfrist på dit bud", due: o.deadline, done: false });
   }
   next = { ...next, tasks };
-  const text = existed
-    ? `Bud på ${kr(o.amount)}: ${OFFER_STATUS[o.status].toLowerCase()}${o.status === "modbud" && o.counter ? `, modbud ${kr(o.counter)}` : ""}`
-    : `Bud afgivet: ${kr(o.amount)}`;
-  return withLog(next, text, "bud");
+  const text = !existed ? `Bud afgivet: ${kr(o.amount)}`
+    : o.status === "modbud" ? `Sælger kom med modbud${o.counter ? ` på ${kr(o.counter)}` : ""} (dit bud ${kr(o.amount)})`
+    : o.status === "accepteret" ? `Buddet på ${kr(o.amount)} blev accepteret`
+    : o.status === "afslaaet" ? `Buddet på ${kr(o.amount)} blev afslået`
+    : `Bud på ${kr(o.amount)} opdateret`;
+  const logged = withLog(next, text, "bud");
+  return next.stage !== m.stage ? withLog(logged, `Flyttet til ${STAGE_LABEL[next.stage]}`, "fase") : logged;
 }
 
 export function OfferDialog({ open, onClose, offer, price, maxBid, onSave }: {
@@ -81,7 +84,7 @@ export function OfferDialog({ open, onClose, offer, price, maxBid, onSave }: {
 
   const pct = amount && price ? Math.round(((amount - price) / price) * 1000) / 10 : null;
   return (
-    <Dialog open={open} onClose={onClose} title={offer ? "Opdatér bud" : "Registrér bud"} sub={price ? `Udbudspris ${kr(price)}${maxBid ? ` · dit maks ${kr(maxBid)}` : ""}` : undefined}
+    <Dialog error={err} open={open} onClose={onClose} title={offer ? "Opdatér bud" : "Registrér bud"} sub={price ? `Udbudspris ${kr(price)}${maxBid ? ` · dit maks ${kr(maxBid)}` : ""}` : undefined}
       footer={<><button type="button" className={btn.secondary} onClick={onClose}>Annullér</button><button type="button" className={btn.primary} disabled={busy} onClick={submit}>{busy && <Loader2 size={15} className="animate-spin" />}{offer ? "Gem" : "Registrér bud"}</button></>}>
       <div className="space-y-4">
         <div className="grid gap-3 sm:grid-cols-2">
@@ -126,7 +129,6 @@ export function OfferDialog({ open, onClose, offer, price, maxBid, onSave }: {
           <label htmlFor="of-note" className={label}>Note <span className="font-normal text-slate-400">(forbehold, aftaler)</span></label>
           <textarea id="of-note" value={note} onChange={(e) => setNote(e.target.value)} rows={2} placeholder="Fx med advokat- og finansieringsforbehold" className="mt-1.5 w-full rounded-lg border border-slate-300 p-3 text-[15px] placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" />
         </div>
-        {err && <p role="alert" className="rounded-lg bg-rose-50 px-3 py-2 text-[14px] font-medium text-rose-700">{err}</p>}
       </div>
     </Dialog>
   );
