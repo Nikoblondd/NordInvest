@@ -18,19 +18,19 @@ import { createClient } from "@/lib/supabase/client";
 type Step = { target: string | null; title: string; text: string };
 
 const STEPS: Step[] = [
-  { target: null, title: "Velkommen indenfor", text: "På to minutter viser jeg dig, hvordan NordInvest hænger sammen: fra en bolig, du finder, til det bud, du afgiver." },
-  { target: "nav", title: "Hele systemet i én menu", text: "Fem steder, ét system. Alt, hvad du finder, regner, planlægger og læser, bliver gemt på boligen, så du aldrig taster noget to gange." },
-  { target: "quickfind", title: "Ét felt til det hele", text: "Indsæt et link fra Boligsiden, Home eller EDC, så regner vi boligen igennem. Skriv en adresse, så finder du en af dine egne. På computer åbner ⌘K feltet." },
-  { target: "kpis", title: "Status på et øjeblik", text: "Boliger i din pipeline, dagens aftaler, bud ude og nye boliger fra dine søgeagenter. Tryk på et tal for at gå derhen." },
-  { target: "next-steps", title: "Dagens plan", text: "Dine aftaler i dag og de næste 7 dage. Sæt flueben, når du er færdig. Du får en mail dagen før hver aftale." },
-  { target: "opportunities", title: "Nyt fra dine agenter", text: "Søgeagenterne kigger markedet igennem på dine tidspunkter. Nye boliger lander her, og du gemmer dem i pipelinen med ét tryk." },
-  { target: "pipeline", title: "Din pipeline", text: "Hver farve er en fase i købet: screening, fremvisning, papirer, bank og bud. Tryk for at se boligerne." },
-  { target: "nav-ejendomme", title: "Ejendomme", text: "Din pipeline som tavle eller liste. Hver bolig er en sag med aftaler, bud, papirer, tjekliste og mæglerens kontakt." },
+  { target: null, title: "Velkommen til NordInvest", text: "En kort gennemgang af platformen, fra du finder en ejendom, til du afgiver bud." },
+  { target: "nav", title: "Menuen", text: "Analyser, aftaler, bud og dokumenter gemmes på ejendommen, så tallene kun skal indtastes én gang." },
+  { target: "quickfind", title: "Hurtigsøgning", text: "Indsæt et link fra Boligsiden, Home eller EDC for at analysere boligen, eller søg efter en adresse blandt dine ejendomme. På computer åbner ⌘K feltet." },
+  { target: "kpis", title: "Status", text: "Ejendomme i pipelinen, dagens aftaler, aktive bud og nye fund fra søgeagenterne. Klik på et tal for at åbne det." },
+  { target: "next-steps", title: "Dagens plan", text: "Aftaler i dag og de næste 7 dage. Markér dem som udført, når de er klaret. Du får en mail dagen før hver aftale." },
+  { target: "opportunities", title: "Nyt fra dine agenter", text: "Søgeagenterne gennemgår markedet på de tidspunkter, du har valgt. Nye fund vises her og kan gemmes i pipelinen med ét klik." },
+  { target: "pipeline", title: "Din pipeline", text: "Hver farve er en fase i købsprocessen: screening, fremvisning, papirer, bank og bud. Klik for at se ejendommene." },
+  { target: "nav-ejendomme", title: "Ejendomme", text: "Pipelinen som tavle eller liste. Hver ejendom har en sag med aftaler, bud, dokumenter, tjekliste og mæglerens kontaktoplysninger." },
   { target: "nav-kalender", title: "Kalender", text: "Fremvisninger, bankmøder og svarfrister for alle dine boliger i én kalender, som måned, uge eller liste." },
-  { target: "nav-find", title: "Find boliger", text: "Søg i hele markedet med dine egne filtre, eller opret en søgeagent, der holder øje for dig og giver besked på mail." },
-  { target: "nav-analyser", title: "Analysér", text: "Overskud, afkast, renterisiko og 10 år frem på et minut. Tryk Gem i pipeline, så følger du boligen derfra." },
-  { target: "help", title: "Hjælp er altid tæt på", text: "Her kan du starte guiden igen eller ringe direkte til mig. Jeg tager selv telefonen. Nikolaj" },
-  { target: "add", title: "Kom i gang", text: "Tryk Tilføj bolig, indsæt et link i søgefeltet øverst, eller opret din første søgeagent under Find boliger." },
+  { target: "nav-find", title: "Find boliger", text: "Søg i hele markedet med dine egne filtre, eller opret en søgeagent, der giver besked på mail om nye fund." },
+  { target: "nav-analyser", title: "Analysér", text: "Cash flow, afkast, rentefølsomhed og fremskrivning over 10 år. Gem analysen i pipelinen for at følge ejendommen videre." },
+  { target: "help", title: "Hjælp", text: "Her kan du starte guiden igen eller ringe direkte til mig. Nikolaj" },
+  { target: "add", title: "Kom i gang", text: "Klik på Tilføj bolig, indsæt et link i søgefeltet, eller opret din første søgeagent under Find boliger." },
 ];
 
 const EVENT = "ni:tour";
@@ -164,7 +164,7 @@ export function Tour({ name, initial }: { name: string; initial: string | null }
           </div>
           <div className="p-6 sm:p-7">
             <h2 id="tour-welcome" className="text-[24px] font-semibold leading-tight tracking-[-0.02em] text-slate-900">Velkommen til NordInvest{name ? `, ${name}` : ""}.</h2>
-            <p className="mt-2 text-[16px] leading-relaxed text-slate-600">Vil du have en rundvisning på to minutter? Jeg viser dig trin for trin, hvor alt ligger, og hvordan det hænger sammen.</p>
+            <p className="mt-2 text-[16px] leading-relaxed text-slate-600">Få en kort gennemgang af, hvor du finder hvad, og hvordan delene hænger sammen.</p>
             <button type="button" onClick={begin} className="mt-6 inline-flex min-h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-[16px] font-semibold text-white transition-colors hover:bg-blue-500 active:translate-y-px">
               Begynd tutorial <ArrowRight size={17} />
             </button>

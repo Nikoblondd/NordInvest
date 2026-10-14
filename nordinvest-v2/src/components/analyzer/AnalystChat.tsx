@@ -44,7 +44,7 @@ function renderRich(text: string): ReactNode[] {
 }
 
 const GREETING =
-  "Hej! Jeg er Analytikeren. Spørg mig om hvad som helst i analysen — et tal du er i tvivl om, et begreb der lyder kompliceret, hvor tallene kommer fra, eller om handlen egentlig er god. Jeg kigger med på de faktiske tal.";
+  "Jeg er Analytikeren og kender tallene i din analyse. Spørg om et nøgletal, et begreb, datagrundlaget eller min vurdering af investeringen.";
 
 export function AnalystChat({ context }: { context: Record<string, unknown> }) {
   const [open, setOpen] = useState(false);
@@ -154,7 +154,7 @@ export function AnalystChat({ context }: { context: Record<string, unknown> }) {
           </button>
           <div className="text-[13px] font-semibold text-slate-900">Analytikeren</div>
           <p className="mt-1 text-[13px] leading-snug text-slate-600">
-            Undrer du dig over, hvor tallene kommer fra, eller hvordan analysen er lavet? Spørg mig!
+            Spørgsmål til tallene eller beregningen? Spørg Analytikeren.
           </p>
           <button
             onClick={openChat}
@@ -214,7 +214,7 @@ export function AnalystChat({ context }: { context: Record<string, unknown> }) {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
                 rows={1}
-                placeholder="Spørg om et tal, et begreb, dommen…"
+                placeholder="Spørg om et nøgletal, et begreb eller vurderingen…"
                 className="max-h-28 flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:bg-white"
               />
               <button
@@ -226,7 +226,7 @@ export function AnalystChat({ context }: { context: Record<string, unknown> }) {
                 {streaming ? <Loader2 size={17} className="animate-spin" /> : <Send size={16} />}
               </button>
             </div>
-            <p className="mt-1.5 px-1 text-[10px] text-slate-400">Analytikeren forklarer og vurderer — det er ikke autoriseret rådgivning.</p>
+            <p className="mt-1.5 px-1 text-[10px] text-slate-400">Analytikeren forklarer og vurderer. Det er ikke finansiel rådgivning.</p>
           </div>
         </div>
       )}

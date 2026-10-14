@@ -44,15 +44,15 @@ export function FlipSheet({
   const running = (property.monthlyExpenses ?? Math.round(property.area * 30)) + 1200;
   const rows: SheetRow[] = [
     { kind: "head", label: "Køb" },
-    { kind: "row", key: "price", label: "Købspris", value: property.price, formula: "Udbudsprisen. Skriv dit bud for at se, hvad det gør.", input: { value: property.price, set: setPrice, suffix: "kr." } },
-    { kind: "row", key: "down", label: "Udbetaling", value: cash ? 100 : answers.downPct, formula: "Din egen andel af købsprisen. 100 % er kontant køb.", input: { value: cash ? 100 : answers.downPct, set: (n) => set(n >= 100 ? { finance: "cash" } : { finance: "loan", downPct: Math.max(5, n) }), suffix: "%" } },
+    { kind: "row", key: "price", label: "Købspris", value: property.price, formula: "Udbudsprisen. Indtast dit bud for at se effekten.", input: { value: property.price, set: setPrice, suffix: "kr." } },
+    { kind: "row", key: "down", label: "Udbetaling", value: cash ? 100 : answers.downPct, formula: "Udbetaling i procent af købsprisen. 100 % er kontant køb.", input: { value: cash ? 100 : answers.downPct, set: (n) => set(n >= 100 ? { finance: "cash" } : { finance: "loan", downPct: Math.max(5, n) }), suffix: "%" } },
     { kind: "row", key: "skoede", label: "Tinglysning af skøde", value: result.buy.tinglysning, formula: "= 1.850 kr. + 0,6 % × købspris" },
     { kind: "row", key: "pant", label: "Tinglysning af pantebrev", value: result.buy.pant, formula: cash ? "Intet lån, intet pantebrev" : "= 1.825 kr. + 1,25 % × lån (satsen fra 1.1.2026)" },
     { kind: "row", key: "lawyer", label: "Køberrådgiver", value: result.buy.lawyer, formula: "Skøn for advokat eller køberrådgiver" },
     { kind: "head", label: "Renovering" },
     { kind: "row", key: "mat", label: "Materialer", value: result.costs.materials, formula: "= summen af materialerne i planen, Silvan- og XL-BYG-priser inkl. moms", link: { href: "#renovering", text: "Se poster" } },
-    { kind: "row", key: "lab", label: "Håndværkere", value: result.costs.labour, formula: "= timer × timepris for faget i din region × 1,25 moms. Det, du laver selv, tæller 0 kr.", link: { href: "#renovering", text: "Se poster" } },
-    { kind: "row", key: "buf", label: `Buffer, ${bufferPct} %`, value: result.costs.buffer, formula: `= ${bufferPct} % × (materialer + håndværkere). Skjulte fejl findes altid.` },
+    { kind: "row", key: "lab", label: "Håndværkere", value: result.costs.labour, formula: "= timer × timepris for faget i din region × 1,25 moms. Eget arbejde tæller 0 kr.", link: { href: "#renovering", text: "Se poster" } },
+    { kind: "row", key: "buf", label: `Buffer, ${bufferPct} %`, value: result.costs.buffer, formula: `= ${bufferPct} % × (materialer + håndværkere). Dækker skjulte fejl.` },
     { kind: "head", label: live ? "Mens du bor der" : "Ejertid" },
     { kind: "row", key: "months", label: live ? "Måneder du bor der" : "Måneder fra køb til salg", value: answers.months, formula: live ? "Parcelhusreglen kræver, at du faktisk bor der. Hver måned koster renter og drift, men du sparer din nuværende boligudgift." : "Renovering plus tid til salg. Hver måned koster renter og drift.", input: { value: answers.months, set: (n) => set({ months: Math.max(1, Math.min(60, n)) }), suffix: "mdr." } },
     ...(cash ? [] : [{ kind: "row" as const, key: "rate", label: "Rente", value: answers.rate, formula: "Samlet rente på lånet om året", input: { value: answers.rate, set: (n: number) => set({ rate: n }), suffix: "%", decimals: 1 } }]),
@@ -60,7 +60,7 @@ export function FlipSheet({
     { kind: "row", key: "running", label: "Ejerudgift og forbrug", value: result.hold.running, formula: `= ${kr(running)} pr. md. × ${answers.months} mdr. (ejerudgift fra annoncen + 1.200 kr. forbrug)` },
     ...(live
       ? [
-          { kind: "row" as const, key: "housing", label: "Din boligudgift i dag", value: answers.currentHousing ?? 0, formula: "Husleje, eller ydelse og faste udgifter på din nuværende bolig. Den betaler du ikke, mens du bor her.", input: { value: answers.currentHousing ?? 0, set: (n: number) => set({ currentHousing: Math.max(0, n) }), suffix: "kr./md." } },
+          { kind: "row" as const, key: "housing", label: "Din boligudgift i dag", value: answers.currentHousing ?? 0, formula: "Husleje, eller ydelse og faste udgifter på din nuværende bolig. Den udgift bortfalder, mens du bor i boligen.", input: { value: answers.currentHousing ?? 0, set: (n: number) => set({ currentHousing: Math.max(0, n) }), suffix: "kr./md." } },
           { kind: "row" as const, key: "saved", label: "Sparet boligudgift", value: result.hold.saved, formula: `= ${kr(answers.currentHousing ?? 0)} × ${answers.months} mdr.`, tone: "good" as const },
         ]
       : []),

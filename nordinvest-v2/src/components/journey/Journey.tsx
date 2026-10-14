@@ -39,10 +39,10 @@ const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
 const EASE = [0.2, 0.7, 0.2, 1] as const;
 
 const GOALS: { id: Goal; title: string; sub: string; icon: typeof Home }[] = [
-  { id: "cashflow", title: "Udlejning", sub: "Køb og lej ud. Kan lejen betale lånet hver måned?", icon: KeyRound },
-  { id: "flip", title: "Flip", sub: "Køb, renovér og sælg. Hvad tjener du efter skat?", icon: Hammer },
-  { id: "live_flip", title: "Bo og flip", sub: "Bo i den, mens du renoverer, og sælg skattefrit.", icon: Repeat },
-  { id: "parents", title: "Forældrekøb", sub: "Køb en bolig, dit barn lejer, mens det studerer.", icon: Users },
+  { id: "cashflow", title: "Udlejning", sub: "Køb og udlejning med fokus på cash flow.", icon: KeyRound },
+  { id: "flip", title: "Flip", sub: "Køb, renovering og salg. Fortjeneste efter skat.", icon: Hammer },
+  { id: "live_flip", title: "Bo og flip", sub: "Bo i boligen under renoveringen, og sælg skattefrit.", icon: Repeat },
+  { id: "parents", title: "Forældrekøb", sub: "Køb en bolig, som dit barn lejer under studiet.", icon: Users },
 ];
 
 function readListing(u: string, d: Record<string, unknown>): Listing {
@@ -89,9 +89,9 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
       .then((d) => {
         const l = readListing(u, d);
         setListing(l);
-        if (!d?.ok) setErr("Vi kunne ikke læse alle tal fra annoncen. Du kan rette dem i analysen.");
+        if (!d?.ok) setErr("Ikke alle tal kunne læses fra annoncen. De kan rettes i analysen.");
       })
-      .catch(() => setErr("Vi kunne ikke hente annoncen. Du kan stadig fortsætte og indtaste tallene selv."))
+      .catch(() => setErr("Annoncen kunne ikke hentes. Du kan fortsætte og indtaste tallene selv."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -165,7 +165,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
   const submitLink = (e: React.FormEvent) => {
     e.preventDefault();
     const u = url.trim();
-    if (!/^https?:\/\//i.test(u)) return setErr("Indsæt hele linket fra boligsiden. Det starter med https://");
+    if (!/^https?:\/\//i.test(u)) return setErr("Indsæt hele linket til boligen. Det starter med https://");
     captureEvent("journey_link", {});
     fetchListing(u);
     setStep("goal");
@@ -211,8 +211,8 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
 
       {step === "link" && (
         <motion.form key="link" onSubmit={submitLink} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE }} className="mt-12">
-          <h1 className="text-[36px] font-semibold leading-[1.05] tracking-[-0.035em] [text-wrap:balance] sm:text-[52px]">Hvilken bolig kigger du på?</h1>
-          <p className="mt-4 max-w-xl text-[17px] leading-relaxed text-slate-600">Indsæt linket fra Boligsiden, EDC, home, Nybolig eller en anden mægler. Så viser vi, hvad den kan, alt efter hvad du vil med den.</p>
+          <h1 className="text-[36px] font-semibold leading-[1.05] tracking-[-0.035em] [text-wrap:balance] sm:text-[52px]">Indsæt link til boligen</h1>
+          <p className="mt-4 max-w-xl text-[17px] leading-relaxed text-slate-600">Indsæt linket fra Boligsiden, EDC, home, Nybolig eller en anden mægler. Analysen tilpasses din strategi.</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <label className="relative flex-1">
               <span className="sr-only">Link til boligen</span>
@@ -230,7 +230,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
       {step === "goal" && (
         <motion.div key="goal" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE }} className="mt-8">
           <h2 className={clsx("font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance]", h1)}>Hvad vil du med boligen?</h2>
-          <p className="mt-2.5 text-[15px] text-slate-600">Hvert valg stiller sine egne spørgsmål og giver sin egen analyse.</p>
+          <p className="mt-2.5 text-[15px] text-slate-600">Hver strategi har sine egne spørgsmål og sin egen analyse.</p>
           <div className="mt-6 grid gap-2.5 sm:grid-cols-2">
             {GOALS.map((s, i) => {
               const Icon = s.icon;
@@ -314,7 +314,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
                 />
                 <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-[15px] text-slate-500">{q.unit}</span>
               </label>
-              {q.suggest ? <p className="mt-2 text-[13px] text-slate-500">Vores skøn ud fra boligens størrelse og område: {kr(q.suggest)} om måneden.</p> : null}
+              {q.suggest ? <p className="mt-2 text-[13px] text-slate-500">Estimat ud fra boligens størrelse og område: {kr(q.suggest)} om måneden.</p> : null}
               <button type="submit" className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 text-[15px] font-semibold text-white shadow-btn ring-1 ring-inset ring-white/10 hover:bg-blue-700 active:translate-y-px sm:w-auto sm:px-7">
                 Fortsæt <ArrowRight size={16} />
               </button>
@@ -328,7 +328,7 @@ export function JourneyFlow({ initialUrl, variant, onClose }: { initialUrl?: str
           <Loader2 className="animate-spin text-blue-600" size={28} />
           <p className="mt-5 text-[20px] font-semibold tracking-[-0.02em]">Bygger din analyse</p>
           <p className="mt-2 text-[15px] text-slate-500">
-            {goalOf(answers) === "flip" || goalOf(answers) === "live_flip" ? "Henter boligpriser i postnummeret og priser på materialer" : "Regner leje, lån og udgifter igennem med dine svar"}
+            {goalOf(answers) === "flip" || goalOf(answers) === "live_flip" ? "Henter boligpriser i postnummeret og priser på materialer" : "Beregner leje, lån og udgifter ud fra dine svar"}
           </p>
         </motion.div>
       )}

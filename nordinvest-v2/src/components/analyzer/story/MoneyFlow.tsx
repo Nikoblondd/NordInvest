@@ -40,15 +40,15 @@ export function MoneyFlow({
   const positive = cashFlow >= 0;
 
   const all: Part[] = [
-    { id: "laan", label: "Lån", amount: mortgage, bar: "bg-blue-600", ink: "text-white", explain: "Ydelsen på lånet: renter og afdrag. Afdraget bliver til friværdi i boligen, så den del er opsparing, ikke tabte penge." },
-    { id: "faste", label: "Faste udgifter", amount: fixed, bar: "bg-[#93b4f5]", ink: "text-slate-900", explain: "Ejerudgiften: ejendomsskat, forsikring, fællesudgifter og andre faste regninger, som følger med boligen uanset lejer." },
-    { id: "vedl", label: "Vedligehold", amount: maintenance, bar: "bg-slate-400", ink: "text-white", explain: "Penge lagt til side til reparationer og slid: maling, hvidevarer, tag og vinduer. Bruges ikke hver måned, men kommer." },
-    { id: "tomgang", label: "Tomgang", amount: vacancy, bar: "bg-slate-300", ink: "text-slate-900", explain: "Måneder uden lejer mellem to lejemål, fordelt ud over året. Selv gode boliger står tomme en gang imellem." },
+    { id: "laan", label: "Lån", amount: mortgage, bar: "bg-blue-600", ink: "text-white", explain: "Renter og afdrag. Afdraget øger friværdien og er dermed opsparing." },
+    { id: "faste", label: "Faste udgifter", amount: fixed, bar: "bg-[#93b4f5]", ink: "text-slate-900", explain: "Ejendomsskat, forsikring, fællesudgifter og øvrige faste udgifter." },
+    { id: "vedl", label: "Vedligehold", amount: maintenance, bar: "bg-slate-400", ink: "text-white", explain: "Hensættelse til reparationer og udskiftning, fx maling, hvidevarer, tag og vinduer." },
+    { id: "tomgang", label: "Tomgang", amount: vacancy, bar: "bg-slate-300", ink: "text-slate-900", explain: "Forventet lejetab mellem to lejemål, fordelt over året." },
   ];
   // A zero post (no ejerudgift entered, say) would only print "−0 kr".
   const parts = all.filter((p) => Math.round(p.amount) > 0);
   if (positive) {
-    parts.push({ id: "dig", label: "Til dig", amount: cashFlow, bar: "bg-emerald-500", ink: "text-white", explain: "Det, der er tilbage, når lejen har betalt lånet og alle udgifter. Det lander på din konto." });
+    parts.push({ id: "dig", label: "Cash flow", amount: cashFlow, bar: "bg-emerald-500", ink: "text-white", explain: "Lejeindtægt efter ydelse på lån og driftsudgifter." });
   }
   const costs = mortgage + fixed + maintenance + vacancy;
   const scale = Math.max(rent, costs, 1);
@@ -59,7 +59,7 @@ export function MoneyFlow({
     <div>
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <div className="text-[15px] font-medium text-slate-500">{yearly ? "Hvert år" : "Hver måned"}</div>
+          <div className="text-[15px] font-medium text-slate-500">{yearly ? "Pr. år" : "Pr. måned"}</div>
           <div
             className={clsx(
               "mt-1 whitespace-nowrap text-[44px] font-semibold leading-none tabular-nums tracking-[-0.035em] sm:text-[56px]",
@@ -91,8 +91,8 @@ export function MoneyFlow({
       </div>
       <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-slate-500">
         {positive
-          ? "Det lander på din konto, når lejen har betalt lån og alle udgifter."
-          : `Lejen dækker ikke lån og udgifter. Du skal selv lægge ${dk(Math.abs(cashFlow * k))} kr til ${yearly ? "om året" : "hver måned"}.`}
+          ? "Cash flow efter ydelse på lån og driftsudgifter."
+          : `Lejen dækker ikke lån og udgifter. Underskuddet er ${dk(Math.abs(cashFlow * k))} kr. ${yearly ? "pr. år" : "pr. måned"}.`}
       </p>
 
       {/* The bar: the rent, sliced by where it goes. */}
@@ -133,7 +133,7 @@ export function MoneyFlow({
           </motion.div>
           {!positive && (
             <div aria-hidden className="pointer-events-none absolute -inset-y-2 border-l-2 border-dashed border-rose-500" style={{ left: `${rentAt}%` }}>
-              <span className="absolute -bottom-6 -translate-x-1/2 whitespace-nowrap text-[12px] font-semibold text-rose-600">Lejen rækker hertil</span>
+              <span className="absolute -bottom-6 -translate-x-1/2 whitespace-nowrap text-[12px] font-semibold text-rose-600">Lejeindtægt</span>
             </div>
           )}
         </div>
@@ -172,7 +172,7 @@ export function MoneyFlow({
             {pickedPart.explain}
           </p>
         ) : (
-          <p className="mt-4 px-2 text-[13px] text-slate-400">Tryk på en del af lejen for at se, hvad den dækker.</p>
+          <p className="mt-4 px-2 text-[13px] text-slate-400">Klik på en post for en forklaring.</p>
         )}
       </div>
     </div>

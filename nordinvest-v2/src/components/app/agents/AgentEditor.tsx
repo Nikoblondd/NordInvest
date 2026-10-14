@@ -183,7 +183,7 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
 
         {/* When */}
         <section>
-          <h3 className="text-[13px] font-semibold uppercase tracking-[0.06em] text-slate-500">Hvornår skal agenten kigge</h3>
+          <h3 className="text-[13px] font-semibold uppercase tracking-[0.06em] text-slate-500">Tidspunkt for søgning</h3>
           <div className="mt-3 flex flex-wrap items-end gap-3">
             <Segmented label="Hvor ofte" value={s.freq} onChange={(freq: Freq) => setS((p) => ({ ...p, freq }))} options={[{ id: "daily", label: "Hver dag" }, { id: "weekdays", label: "Hverdage" }, { id: "weekly", label: "Ugentligt" }]} />
             {s.freq === "weekly" && (
@@ -207,7 +207,7 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
         {/* Notify + name */}
         <section className="grid gap-4 sm:grid-cols-2">
           <div className="flex items-start justify-between gap-4 rounded-xl border border-slate-200 p-3.5">
-            <span><span className="block text-[14px] font-semibold text-slate-900">Mail mig om nye boliger</span><span className="block text-[13px] text-slate-500">Kun når der er noget nyt. Ellers hører du intet.</span></span>
+            <span><span className="block text-[14px] font-semibold text-slate-900">Mail ved nye fund</span><span className="block text-[13px] text-slate-500">Der sendes kun mail, når der er nye boliger.</span></span>
             <Toggle on={email} onChange={setEmail} label="Mail mig om nye boliger" />
           </div>
           <div>

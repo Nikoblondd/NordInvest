@@ -182,12 +182,12 @@ export function FlipReport() {
       .catch(() => {});
   }, [result, property, listing, url]);
 
-  if (failed) return <p className="mt-20 text-center text-slate-600">Vi kunne ikke hente boligen. <Link className="text-blue-700 underline" href="/app/analyser">Prøv igen</Link></p>;
+  if (failed) return <p className="mt-20 text-center text-slate-600">Boligen kunne ikke hentes. <Link className="text-blue-700 underline" href="/app/analyser">Prøv igen</Link></p>;
   if (listing && missing.length) {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center px-4 py-16">
         <p className="text-[22px] font-semibold tracking-[-0.02em] text-slate-900">Vi mangler {missing.join(" og ")}</p>
-        <p className="mt-2 text-[15px] leading-relaxed text-slate-600">Mæglerens side viste ikke alle tal{listing.address ? ` for ${listing.address}` : ""}. Find boligen på Boligsiden og indsæt det link i stedet, så har vi alt.</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-slate-600">Mæglerens side viste ikke alle tal{listing.address ? ` for ${listing.address}` : ""}. Find boligen på Boligsiden, og indsæt det link i stedet.</p>
         <Link href="/app/analyser" className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl bg-blue-600 px-6 text-[15px] font-semibold text-white hover:bg-blue-700">Prøv et andet link</Link>
       </div>
     );
@@ -237,8 +237,8 @@ export function FlipReport() {
   const good = result.profit > 0 && result.margin >= answers.target / 100;
   const ok = result.profit > 0;
   const kind = answers.strategy === "live_flip" ? "bo og flip" : "flip";
-  const verdict = good ? `Det kan blive en god ${kind}.` : ok ? "Der er penge i den, men for lidt." : `Den regner ikke som ${kind} til den pris.`;
-  const rating = good ? "God flip" : ok ? "Tynd margin" : "Taber penge";
+  const verdict = good ? `Rentabel som ${kind} til den pris.` : ok ? "Positiv fortjeneste, men under dit krav." : `Ikke rentabel som ${kind} til den pris.`;
+  const rating = good ? "God flip" : ok ? "Lav margin" : "Tab";
   const set = (patch: Partial<FlipAnswers>) => setAnswers((a) => ({ ...a, ...patch }));
   const comps = market.ok ? market.comps : [];
   const scoreColor = good ? "text-emerald-600" : ok ? "text-amber-600" : "text-rose-500";
@@ -249,12 +249,12 @@ export function FlipReport() {
     .filter(Boolean).join(", ").replace(/^./, (c) => c.toUpperCase()) || "Intet arbejde valgt";
   const arvNote = arvTouched ? "Din egen salgspris." : suggestedArv && arvBasis
                   ? arvBasis.weak
-                    ? `Vores bud: ${kr(suggestedArv)} Annoncerne i postnummeret viser ingen klar merpris for renoverede boliger, så vi regner med 10 % over boligens egen pris pr. m². Kender du området bedre, så ret den.`
+                    ? `Estimat: ${kr(suggestedArv)}. Annoncerne i postnummeret viser ingen klar merpris for renoverede boliger, så estimatet er 10 % over boligens egen pris pr. m². Ret tallet, hvis du kender området bedre.`
                     : arvBasis.anchored
-                    ? `Vores bud: ${kr(suggestedArv)} Boligen er sat til ${kr((listing?.price ?? property.price) / property.area)} pr. m², under postnummerets niveau, så vi lægger renoveringens løft i området oven i dens egen pris i stedet for at bruge medianen. Kender du området bedre, så ret den.`
-                    : `Vores bud: ${kr(suggestedArv)} (${property.area} m² × median for renoverede). Kender du området bedre, så ret den.`
+                    ? `Estimat: ${kr(suggestedArv)}. Boligen er sat til ${kr((listing?.price ?? property.price) / property.area)} pr. m², under postnummerets niveau, så estimatet lægger renoveringens merpris i området oven i boligens egen pris i stedet for at bruge medianen. Ret tallet, hvis du kender området bedre.`
+                    : `Estimat: ${kr(suggestedArv)} (${property.area} m² × median for renoverede). Ret tallet, hvis du kender området bedre.`
                   : suggestedArv
-                  ? `Vi fandt for få boliger til salg i postnummeret til en sikker værdi, så vi har sat den til 20 % over udbudsprisen. Ret den til det, du tror, den kan sælges for.`
+                  ? `For få boliger til salg i postnummeret til et sikkert estimat. Værdien er sat til 20 % over udbudsprisen. Ret den til den forventede salgspris.`
                   : "Indtast din egen salgspris.";
 
   // The same numbers as the sheet, as a workbook with live formulas (paid).
@@ -404,12 +404,12 @@ export function FlipReport() {
           </p>
           {ai.status === "running" && (
             <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-[13px] text-slate-200 ring-1 ring-inset ring-white/15">
-              <Loader2 size={13} className="animate-spin" /> AI&apos;en gennemgår billederne. Tallene opdateres, når planen er klar.
+              <Loader2 size={13} className="animate-spin" /> Billederne analyseres. Tallene opdateres, når planen er klar.
             </p>
           )}
           {ai.status === "done" && planFromAi && (
             <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-400/10 px-3 py-1.5 text-[13px] text-emerald-200 ring-1 ring-inset ring-emerald-300/20">
-              <Check size={13} strokeWidth={2.6} /> Regnet med AI&apos;ens plan ud fra {ai.images} billeder
+              <Check size={13} strokeWidth={2.6} /> Beregnet med renoveringsplan ud fra {ai.images} billeder
             </p>
           )}
         </div>
@@ -419,7 +419,7 @@ export function FlipReport() {
       <section id="kalkule" className="bg-[#f4f6f9] px-4 py-10 sm:px-6 sm:py-14">
         <div className="mx-auto max-w-[1080px]">
           <h2 className="text-[26px] font-semibold tracking-[-0.03em] sm:text-[32px]">Hele regnestykket</h2>
-          <p className="mt-2 max-w-2xl text-[16px] text-slate-600">Ret et blåt felt, og resten regner med. Klik på en række for at se, hvordan tallet er regnet. Afsnittene under er dokumentationen bag hver række.</p>
+          <p className="mt-2 max-w-2xl text-[16px] text-slate-600">Ret et blåt felt, så opdateres beregningen. Klik på en række for at se udregningen. Afsnittene nedenfor dokumenterer hver række.</p>
           <div className="mt-6">
             <FlipSheet
               property={property}
@@ -441,7 +441,7 @@ export function FlipReport() {
       {upgrade && <UpgradeDialog reason="flip_excel" onClose={() => setUpgrade(false)} />}
 
       {/* Condition and plan */}
-      <Band id="stand" title="Hvad skal laves?" answer={ai.status === "running" ? "AI'en kigger på billederne fra annoncen …" : `${ai.status === "done" ? `AI'en har set ${ai.images} billeder: ` : ""}${planSummary}. Ret planen, hvor du ved bedre.`} tone="neutral">
+      <Band id="stand" title="Renoveringsplan" answer={ai.status === "running" ? "Billederne fra annoncen analyseres …" : `${ai.status === "done" ? `Vurderet ud fra ${ai.images} billeder: ` : ""}${planSummary}. Planen kan rettes.`} tone="neutral">
         {ai.status === "running" && (
           <div className="mb-5 flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50/60 px-4 py-3 text-[14px] text-blue-900">
             <ScanSearch size={18} className="shrink-0 animate-pulse" /> Vurderer køkken, bad, gulve, vinduer, tag og facade ud fra annoncens billeder. Det tager 20 til 40 sekunder.
@@ -482,12 +482,12 @@ export function FlipReport() {
             );
           })}
         </div>
-        {planFromAi && <p className="mt-4 text-[13px] text-slate-500">Det, AI&apos;en ikke kunne se, følger det niveau, du valgte ({answers.level === "cosmetic" ? "opfriskning" : answers.level === "medium" ? "køkken og bad" : "totalrenovering"}).</p>}
-        {ai.status === "error" && <p className="mt-4 text-[13px] text-amber-700">AI-vurderingen virkede ikke denne gang. Planen følger dit valgte niveau.</p>}
+        {planFromAi && <p className="mt-4 text-[13px] text-slate-500">Poster, der ikke kunne vurderes på billederne, følger det valgte niveau ({answers.level === "cosmetic" ? "opfriskning" : answers.level === "medium" ? "køkken og bad" : "totalrenovering"}).</p>}
+        {ai.status === "error" && <p className="mt-4 text-[13px] text-amber-700">Billederne kunne ikke vurderes. Planen følger det valgte niveau.</p>}
       </Band>
 
       {/* ARV */}
-      <Band id="vaerdi" muted title="Hvad er den værd efter renoveringen?" answer={market.ok && market.medianRenovated ? `Renoverede boliger i ${market.zip} er sat til salg til ${kr(market.medianRenovated)} pr. m²` : "For få renoverede boliger i postnummeret til en sikker værdi"} tone={market.ok && market.medianRenovated ? "good" : "warn"}>
+      <Band id="vaerdi" muted title="Værdi efter renovering" answer={market.ok && market.medianRenovated ? `Renoverede boliger i ${market.zip} er sat til salg til ${kr(market.medianRenovated)} pr. m²` : "For få renoverede boliger i postnummeret til en sikker værdi"} tone={market.ok && market.medianRenovated ? "good" : "warn"}>
         <div className="mb-6"><Valuation bfe={listing.bfe} price={listing.price ?? property.price} area={property.area} /></div>
         {market.ok && market.sold && (
           <p className="mb-6 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[14px] leading-relaxed text-emerald-900">
@@ -536,10 +536,10 @@ export function FlipReport() {
       </Band>
 
       {/* Timeline */}
-      <Band id="tidsplan" muted title="Hvor lang tid tager det?" answer={`${weeks.weeks} ugers renovering${saleDays ? ` og typisk ${Math.round(saleDays)} dage til salg i ${market.ok ? market.zip : "området"}` : ""}`} tone={realisticMonths > answers.months ? "warn" : "good"}>
+      <Band id="tidsplan" muted title="Tidsplan" answer={`${weeks.weeks} ugers renovering${saleDays ? ` og typisk ${Math.round(saleDays)} dage til salg i ${market.ok ? market.zip : "området"}` : ""}`} tone={realisticMonths > answers.months ? "warn" : "good"}>
         <Gantt phases={weeks.phases} weeks={weeks.weeks} />
         <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-[14px]">
-          <span>Realistisk fra køb til salg: <b className="tabular-nums">{realisticMonths} måneder</b>. Du har regnet med {answers.months}.</span>
+          <span>Realistisk fra køb til salg: <b className="tabular-nums">{realisticMonths} måneder</b>. Beregningen bruger {answers.months}.</span>
           {realisticMonths !== answers.months && (
             <button type="button" onClick={() => set({ months: realisticMonths })} className="no-print rounded-full bg-slate-900 px-3.5 py-1.5 text-[13px] font-semibold text-white">Brug {realisticMonths} måneder</button>
           )}
@@ -567,7 +567,7 @@ export function FlipReport() {
       </Band>
 
       {/* Stress */}
-      <Band id="risiko" title="Hvad hvis det går skævt?" answer={grid.rows[2].values[2] >= 0 ? "Den holder også i det værste scenarie" : "Et dårligt salg og en dyr renovering æder fortjenesten"} tone={grid.rows[2].values[2] >= 0 ? "good" : "warn"}>
+      <Band id="risiko" title="Risiko" answer={grid.rows[2].values[2] >= 0 ? "Positiv fortjeneste også i det forsigtige scenarie" : "En lavere salgspris og dyrere renovering kan fjerne fortjenesten"} tone={grid.rows[2].values[2] >= 0 ? "good" : "warn"}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[520px] border-separate border-spacing-1 text-sm">
             <thead><tr><th />{grid.cols.map((c) => <th key={c} className="px-2 pb-2 text-left text-xs font-medium text-slate-500">{c}</th>)}</tr></thead>
@@ -581,7 +581,7 @@ export function FlipReport() {
             </tbody>
           </table>
         </div>
-        <p className="mt-3 text-[13px] text-slate-500">Fortjeneste efter skat. Du skal kunne sælge til mindst {kr(result.breakEvenArv)} for ikke at tabe penge.</p>
+        <p className="mt-3 text-[13px] text-slate-500">Fortjeneste efter skat. Break-even-salgsprisen er {kr(result.breakEvenArv)}.</p>
       </Band>
 
       {/* Shopping list */}
@@ -614,7 +614,7 @@ export function FlipReport() {
       </Band>
 
       {/* Checklist */}
-      <Band id="tjekliste" title="Før du byder" answer="Det, flippere oftest bliver ramt af" tone="neutral">
+      <Band id="tjekliste" title="Tjekliste før bud" answer="De hyppigste faldgruber ved flip" tone="neutral">
         <Checklist answers={answers} year={property.yearBuilt} />
       </Band>
 
@@ -817,7 +817,7 @@ function Checklist({ answers, year }: { answers: FlipAnswers; year: number | nul
     { t: "Servitutter i tingbogen", b: "Byggelinjer, vejret og deklarationer kan begrænse, hvad du må. Slå ejendommen op på tinglysning.dk." },
     { t: "Finansiering af renoveringen", b: "Vis banken byggebudgettet herfra og få renoveringen godkendt med udbetaling i rater, før du skriver under." },
     { t: "Sammenlign tilbud på samme opgave", b: "Bed mindst tre håndværkere om pris på præcis det samme: nedrivning, bortskaffelse, materialer, tidsplan. Ellers kan tilbuddene ikke sammenlignes." },
-    { t: "Forbehold i købsaftalen", b: "Skriv advokat- og finansieringsforbehold ind. Fortrydelsesretten på 6 hverdage koster 1 % af prisen og er ikke en plan." },
+    { t: "Forbehold i købsaftalen", b: "Skriv advokat- og finansieringsforbehold ind. Fortrydelsesretten på 6 hverdage koster 1 % af købesummen." },
   ];
   if (year && year < 1977) items.splice(1, 0, { t: "Asbest og bly i ældre huse", b: `Huset er fra ${year}. Før 1977 kan der være asbest i gulve, tag og rør. Nedrivning kræver anmeldelse og koster ekstra.`, warn: true });
   if (answers.level !== "cosmetic") items.push({ t: "Vådrum og autoriseret arbejde", b: "Badeværelset skal vådrumssikres efter SBi-anvisning 252, og el og VVS skal laves af autoriserede. Gør du det selv uden autorisation, kan køber kræve afslag." });

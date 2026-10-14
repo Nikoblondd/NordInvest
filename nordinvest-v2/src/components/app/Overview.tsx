@@ -68,7 +68,7 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
     { done: agents.length > 0, t: "Opret en søgeagent", d: "Den holder øje med markedet og giver besked om nye boliger.", href: "/app/find/agenter" },
     { done: rows.length > 0, t: "Gem en bolig i pipelinen", d: "Fra Find boliger, en agent eller en analyse.", href: "/app/find" },
     { done: rows.some((r) => (mappeOf(r).tasks ?? []).length > 0) || events.length > 0, t: "Planlæg en fremvisning", d: "Aftaler samles i kalenderen. Du får en mail dagen før.", href: "/app/kalender" },
-    { done: rows.some((r) => (mappeOf(r).docs ?? []).length > 0), t: "Få papirerne læst", d: "Upload salgsopstilling eller referat på en bolig.", href: rows[0] ? `/app/ejendomme/${rows[0].id}?fane=papirer` : "/app/find" },
+    { done: rows.some((r) => (mappeOf(r).docs ?? []).length > 0), t: "Gennemgå salgsdokumenter", d: "Upload salgsopstilling eller referat på en bolig.", href: rows[0] ? `/app/ejendomme/${rows[0].id}?fane=papirer` : "/app/find" },
   ];
   const startDone = start.filter((s) => s.done).length;
   const dateStr = new Date().toLocaleDateString("da-DK", { weekday: "long", day: "numeric", month: "long" }).replace(/^./, (c) => c.toUpperCase());
@@ -166,13 +166,13 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
             <div className="px-5 py-7">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/app/il-agent.jpg" alt="" className="mx-auto mb-1 w-full max-w-[240px]" />
-              <p className="mt-1 text-[15px] font-semibold text-slate-900">Lad markedet komme til dig</p>
-              <p className="mt-1 text-[14px] text-slate-500">En søgeagent kigger markedet igennem hver morgen med dine krav og giver besked om nye boliger.</p>
+              <p className="mt-1 text-[15px] font-semibold text-slate-900">Søgeagenter</p>
+              <p className="mt-1 text-[14px] text-slate-500">En søgeagent gennemgår markedet efter dine kriterier og giver besked om nye boliger.</p>
               <Link href="/app/find/agenter" className={clsx(btn.primary, "mt-4")}><Plus size={15} /> Opret en søgeagent</Link>
             </div>
           ) : (
             <div>
-              <p className="px-5 pt-4 text-[14px] text-slate-500">Intet nyt siden sidst. Imens er dette de bedste på markedet i dag:</p>
+              <p className="px-5 pt-4 text-[14px] text-slate-500">Ingen nye fund siden sidst. Dagens bedste boliger på markedet:</p>
               <ul className="divide-y divide-slate-100">
                 {deals.slice(0, 3).map((d) => (
                   <li key={d.href} className="flex items-center gap-3 px-4 py-3 sm:px-5">
@@ -206,7 +206,7 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
         <section className="rounded-2xl border border-slate-200 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5"><h2 className="text-[16px] font-semibold">Bud</h2></div>
           {bids.length === 0 ? (
-            <p className="px-5 py-6 text-[14px] text-slate-500">Ingen bud ude lige nu. Registrér et bud på en bolig, så følger du modbud og svarfrister her.</p>
+            <p className="px-5 py-6 text-[14px] text-slate-500">Ingen aktive bud. Registrerede bud, modbud og svarfrister vises her.</p>
           ) : (
             <ul className="divide-y divide-slate-100">
               {bids.map(({ r, o }) => (

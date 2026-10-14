@@ -86,10 +86,10 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
         <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3">
           <div className="min-w-0">
             <div className="text-[13px] font-medium text-emerald-700">
-              Teknisk værdi-uplift
+              Værdiforøgelse
             </div>
             <div className="mt-0.5 text-xs leading-snug text-emerald-800">
-              Ekstra årlig NOI kapitaliseret ved regionens cap rate.
+              Den ekstra årlige lejeindtægt omregnet til ejendomsværdi ved områdets afkastkrav.
             </div>
           </div>
           <div className="shrink-0 text-right">
@@ -105,7 +105,7 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
       {positive && reserve.path.length > 0 && (
         <div className="mt-4">
           <div className="mb-2 text-[13px] font-medium text-slate-500">
-            Sådan realiseres reserven
+            Plan for at hæve lejen
           </div>
           <div className="space-y-2">
             {reserve.path.map((p) => (
@@ -132,7 +132,7 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
       >
         <span className="flex min-w-0 items-center gap-2 truncate text-slate-600">
           <Info size={13} className="shrink-0 text-slate-400" />
-          <span className="truncate">Juridisk regime: {reserve.regimeLabel}</span>
+          <span className="truncate">Lejeregulering: {reserve.regimeLabel}</span>
         </span>
         <ChevronDown
           size={14}
@@ -143,8 +143,8 @@ export function RentReserve({ reserve }: { reserve: RentReserveResult }) {
         <div className="mt-2 rounded-lg border border-slate-100 bg-slate-50 p-3 text-[12px] leading-relaxed text-slate-600">
           {reserve.explain}{" "}
           <span className="block pt-2 text-xs text-slate-500">
-            Beslutningsstøtte, ikke juridisk rådgivning. Konkrete lejevarslinger
-            skal altid udarbejdes med udlejer-advokat eller huslejenævn.
+            Vejledende, ikke juridisk rådgivning. Lejevarslinger bør udarbejdes
+            af en advokat med speciale i lejeret.
           </span>
         </div>
       )}

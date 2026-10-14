@@ -199,7 +199,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
             <div className="space-y-5">
               <Card title="Tallene" action={<Link href={`/app/analyser?saved=${row.id}`} className="inline-flex items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">Åbn analysen <ArrowRight size={14} /></Link>}>
                 {ar.cashFlow == null && ar.capRate == null ? (
-                  <p className="text-[15px] text-slate-500">Ingen tal endnu. Åbn analysen for at regne boligen igennem.</p>
+                  <p className="text-[15px] text-slate-500">Ingen analyse endnu. Åbn analysen for at beregne ejendommen.</p>
                 ) : (
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {ar.cashFlow != null && <Fig k="Overskud" v={`${ar.cashFlow >= 0 ? "+" : "-"}${Math.round(Math.abs(ar.cashFlow)).toLocaleString("da-DK")}`} u="kr./md." tone={ar.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"} />}
@@ -276,7 +276,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
                       {m.contact.email && <a href={`mailto:${m.contact.email}`} className="inline-flex min-h-[40px] items-center gap-1.5 font-medium text-blue-700"><Mail size={14} /> Skriv</a>}
                     </div>
                   </div>
-                ) : <p className="text-[15px] text-slate-500">Gem mæglerens navn og nummer, så har du dem ved hånden.</p>}
+                ) : <p className="text-[15px] text-slate-500">Tilføj mæglerens kontaktoplysninger.</p>}
               </Card>
             </div>
           </div>
@@ -291,7 +291,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/app/il-cal.jpg" alt="" className="mx-auto w-full max-w-[220px]" />
                     <p className="text-[15px] font-medium text-slate-700">Ingen kommende aftaler</p>
-                    <p className="mt-1 text-[14px] text-slate-500">Planlæg fremvisningen, et bankmøde eller et opkald til mægleren. Du får en mail dagen før.</p>
+                    <p className="mt-1 text-[14px] text-slate-500">Planlæg fremvisning, bankmøde eller opkald til mægleren. Du får en påmindelse på mail dagen før.</p>
                     <div className="mt-4 flex flex-wrap justify-center gap-1.5">
                       {(["fremvisning", "bank", "maegler", "raadgiver"] as const).map((k) => <button key={k} type="button" onClick={() => setEvent({ rowId: row.id, kind: k })} className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold text-slate-700 ring-1 ring-slate-200 hover:ring-slate-300"><span className={clsx("h-2 w-2 rounded-full", KIND[k].dot)} />{KIND[k].label}</button>)}
                     </div>
@@ -320,7 +320,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
                 <div className="px-5 py-8 text-center">
                   <Gavel className="mx-auto text-slate-300" size={26} />
                   <p className="mt-2 text-[15px] font-medium text-slate-700">Intet bud endnu</p>
-                  <p className="mt-1 text-[14px] text-slate-500">Registrér dit bud, så kan du følge modbud og svarfrister her og i kalenderen.</p>
+                  <p className="mt-1 text-[14px] text-slate-500">Registrér dit bud for at følge modbud og svarfrister her og i kalenderen.</p>
                 </div>
               ) : (
                 <ol className="relative px-5 py-4">
@@ -349,11 +349,11 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
                   <span className="text-[13px] text-slate-500">kr.</span>
                 </div>
                 {m.maxBid && price ? <p className="mt-2 text-[13px] text-slate-500">{num(((m.maxBid - price) / price) * 100)} % fra udbudsprisen</p> : null}
-                <Link href={`/app/analyser?saved=${row.id}`} className="mt-3 inline-flex min-h-[40px] items-center gap-1.5 text-[14px] font-semibold text-blue-700 hover:underline"><Calculator size={15} /> Regn på dit maks i analysen</Link>
+                <Link href={`/app/analyser?saved=${row.id}`} className="mt-3 inline-flex min-h-[40px] items-center gap-1.5 text-[14px] font-semibold text-blue-700 hover:underline"><Calculator size={15} /> Beregn dit maksimale bud i analysen</Link>
               </Card>
               <Card title="Før du byder">
                 <ul className="space-y-2.5 text-[15px] text-slate-700">
-                  {["Byd med advokat- og finansieringsforbehold", "Sæt en kort svarfrist, så du ikke venter i ugevis", "Få en købers rådgiver til at læse købsaftalen"].map((t) => <li key={t} className="flex gap-2.5"><Check size={17} className="mt-0.5 shrink-0 text-emerald-600" />{t}</li>)}
+                  {["Byd med advokat- og finansieringsforbehold", "Sæt en kort svarfrist", "Lad en købers rådgiver gennemgå købsaftalen"].map((t) => <li key={t} className="flex gap-2.5"><Check size={17} className="mt-0.5 shrink-0 text-emerald-600" />{t}</li>)}
                 </ul>
               </Card>
             </div>
@@ -427,7 +427,7 @@ function Todo({ items, onAdd, onToggle, onOpen }: { items: CalItem[]; onAdd: (t:
     <section className="h-fit rounded-2xl border border-slate-200 bg-white">
       <div className="border-b border-slate-100 px-5 py-3.5"><h2 className="text-[15px] font-semibold">Huskeliste</h2><p className="text-[13px] text-slate-500">Ting uden dato, fx &quot;Bed om energimærke&quot;.</p></div>
       <form onSubmit={(e) => { e.preventDefault(); if (t.trim()) { onAdd(t.trim().slice(0, 140)); setT(""); } }} className="flex gap-2 px-4 pt-4">
-        <label htmlFor="todo" className="sr-only">Ny ting på huskelisten</label>
+        <label htmlFor="todo" className="sr-only">Ny opgave</label>
         <input id="todo" value={t} onChange={(e) => setT(e.target.value)} placeholder="Tilføj til huskelisten" className="h-10 min-w-0 flex-1 rounded-lg border border-slate-200 px-3 text-[15px] focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" />
         <button type="submit" disabled={!t.trim()} className="h-10 rounded-lg bg-slate-900 px-3.5 text-[14px] font-semibold text-white disabled:opacity-40">Tilføj</button>
       </form>
@@ -514,7 +514,7 @@ function Checklist({ m, kind, view, setView, setStage, done, toggle, rowId, goPa
                       ? <Link href={`/app/analyser?saved=${rowId}`} className="mt-1 inline-flex min-h-[40px] items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">{c.where.label} <ArrowRight size={13} /></Link>
                       : <p className="mt-1 text-[13px] text-slate-500">Hvor: {c.where.label}</p>)}
                   {c.stage === "dokumenter" && c.id !== "energi" && !ok && (
-                    <button type="button" onClick={goPapers} className="mt-2 inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 px-3 text-[14px] font-semibold text-slate-800 hover:border-slate-300"><Upload size={14} /> Upload og få den gennemgået</button>
+                    <button type="button" onClick={goPapers} className="mt-2 inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-slate-200 px-3 text-[14px] font-semibold text-slate-800 hover:border-slate-300"><Upload size={14} /> Upload til gennemgang</button>
                   )}
                 </div>
               </li>
@@ -553,7 +553,7 @@ function ContactForm({ contact, onChange }: { contact: Contact; onChange: (c: Co
             {contact.phone && <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-blue-600 text-[15px] font-semibold text-white hover:bg-blue-500"><Phone size={16} /> Ring {contact.phone}</a>}
             {contact.email && <a href={`mailto:${contact.email}`} className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-slate-300 text-[15px] font-semibold hover:border-slate-400"><Mail size={16} /> Skriv til {contact.name?.split(" ")[0] || "mægleren"}</a>}
           </div>
-        ) : <p className="mt-2 text-[15px] text-slate-500">Når du har gemt et nummer eller en mail, kan du ringe eller skrive herfra med ét tryk.</p>}
+        ) : <p className="mt-2 text-[15px] text-slate-500">Gemte kontaktoplysninger kan bruges til at ringe eller skrive direkte herfra.</p>}
       </section>
     </div>
   );

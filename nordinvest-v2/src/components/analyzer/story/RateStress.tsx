@@ -93,7 +93,7 @@ export function RateStress({
         />
         {/* today and break-even ticks */}
         <div aria-hidden className="relative mt-2 h-12 text-[12px]">
-          <Tick at={pos(rate)} label={`I dag ${p1(rate)} %`} />
+          <Tick at={pos(rate)} label={`Aktuel ${p1(rate)} %`} />
           <Tick at={pos(be)} label={`Break-even ${p1(be)} %`} strong low={Math.abs(pos(be) - pos(rate)) < 28} />
         </div>
       </div>
@@ -110,14 +110,14 @@ export function RateStress({
               Math.abs(test - r) < 0.001 ? "bg-slate-900 text-white ring-slate-900" : "bg-white text-slate-700 ring-slate-200 hover:bg-slate-50",
             )}
           >
-            {d === 0 ? "Renten i dag" : `+${d} %-point`}
+            {d === 0 ? "Aktuel rente" : `+${d} procentpoint`}
           </button>
         ))}
       </div>
       <p className="mt-4 text-[15px] leading-relaxed text-slate-500">
         {headroom >= 0
-          ? `Renten kan stige fra ${p1(rate)} % til ${p1(be)} %, før cash flow bliver negativt. Træk i renten for at se, hvad det koster dig.`
-          : `Handlen taber allerede penge ved ${p1(rate)} %. Renten skal ned på ${p1(be)} %, før den går i nul.`}
+          ? `Renten kan stige fra ${p1(rate)} % til ${p1(be)} %, før cash flow bliver negativt. Træk i skyderen for at se effekten af en anden rente.`
+          : `Cash flow er negativt ved ${p1(rate)} %. Break-even-renten er ${p1(be)} %.`}
       </p>
     </div>
   );

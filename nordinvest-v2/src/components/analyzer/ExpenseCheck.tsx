@@ -81,7 +81,7 @@ export function ExpenseCheck({
     return (
       <div aria-busy="true" className="mt-3 flex min-h-[64px] items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-500 ring-1 ring-slate-100">
         <Loader2 className="h-3.5 w-3.5 animate-spin" />
-        Tjekker om udgifterne matcher sammenlignelige boliger…
+        Sammenligner udgifterne med lignende boliger…
       </div>
     );
   }
@@ -99,14 +99,14 @@ export function ExpenseCheck({
           Udgifts-tjek: {tone.label}
         </div>
         <p className={clsx("mt-0.5 text-xs", tone.text)}>
-          Denne bolig: {krM2(d.statedExpensePerM2)} — median for {d.sampleSize} sammenlignelige: {krM2(d.medianExpensePerM2)} ({arrow}
+          Denne bolig: {krM2(d.statedExpensePerM2)}. Median for {d.sampleSize} sammenlignelige: {krM2(d.medianExpensePerM2)} ({arrow}
           {d.deltaPct.toFixed(0)} %)
         </p>
         {d.verdict === "undervurderet" && (
           <p className="mt-1 text-xs text-amber-700">
-            Mæglerens budget for faste udgifter ligger markant under normalt niveau for
-            området. Kvalificér tallet før du regner videre — spørg specifikt ind til
-            forsikring, ejendomsskat og eventuel grundejerforening.
+            Mæglerens budget for faste udgifter ligger markant under det normale niveau
+            for området. Få tallet bekræftet, især forsikring, ejendomsskat og eventuel
+            grundejerforening.
           </p>
         )}
       </div>

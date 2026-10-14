@@ -29,7 +29,7 @@ export function BrainBadge({
     tier === "none"
       ? globalCount > 0
         ? `Kalibreret på ${globalCount} handler på landsplan`
-        : "Ny model — kalibreres med de første handler"
+        : "Ny model. Kalibreres med de første handler"
       : `Kalibreret på ${regionCount} faktiske handler i ${regionName}`;
 
   return (

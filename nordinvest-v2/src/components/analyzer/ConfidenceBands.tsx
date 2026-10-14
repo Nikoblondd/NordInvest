@@ -76,12 +76,12 @@ export function ConfidenceBands({ u }: { u: UncertaintyResult }) {
         <div>
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
             <ShieldCheck size={16} className="text-blue-600" />
-            Konfidens-analyse
+            Usikkerhed i beregningen
           </div>
           <p className="mt-1 max-w-xl text-xs text-slate-500">
-            Vi kører {u.runs.toLocaleString("da-DK")} scenarier, hvor leje, rente, værdistigning, tomgang og udgifter
-            varierer inden for realistiske spænd. Båndet viser interval fra konservativt (P10) til optimistisk (P90) —
-            stregen er det forventede (median). Smallere bånd = højere sikkerhed.
+            Beregningen er kørt i {u.runs.toLocaleString("da-DK")} scenarier med forskellig leje, rente, værdistigning,
+            tomgang og udgifter. Båndet går fra et forsigtigt udfald (P10) til et optimistisk (P90), og stregen
+            viser medianen. Jo smallere bånd, desto sikrere er tallet.
           </p>
         </div>
       </div>
@@ -113,16 +113,16 @@ export function ConfidenceBands({ u }: { u: UncertaintyResult }) {
           <div className="text-sm">
             <div className="font-semibold text-slate-900">{pctPos} % sandsynlighed for positivt cash flow</div>
             <div className="mt-0.5 text-xs text-slate-600">
-              Konservativt (P10): <b className="tnum">{dk(u.cashFlow.p10)} kr/md.</b> — dét bør handlen kunne bære, selv når det går imod dig.
+              Forsigtigt udfald (P10): <b className="tnum">{dk(u.cashFlow.p10)} kr./md.</b> Det niveau bør investeringen kunne bære.
             </div>
           </div>
         </div>
         <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <ShieldCheck size={18} className="mt-0.5 shrink-0 text-slate-500" />
           <div className="text-sm">
-            <div className="font-semibold text-slate-900">{pctSolid} % af scenarier er “solide” (score ≥ 65)</div>
+            <div className="font-semibold text-slate-900">{pctSolid} % af scenarierne giver en score på mindst 65</div>
             <div className="mt-0.5 text-xs text-slate-600">
-              Samlet gevinst spænder fra <b className="tnum">{dk(u.totalProfit.p10)}</b> til <b className="tnum">{dk(u.totalProfit.p90)} kr</b> over perioden.
+              Den samlede gevinst ligger mellem <b className="tnum">{dk(u.totalProfit.p10)}</b> til <b className="tnum">{dk(u.totalProfit.p90)} kr</b> over perioden.
             </div>
           </div>
         </div>

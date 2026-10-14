@@ -187,20 +187,20 @@ export function assessInvestment(
   const score = scoreInvestment(capRate, dscr, cashOnCash, subcategory);
 
   let note: string | null = null;
-  if (capRate > b.high) note = "Usædvanligt højt afkast for typen. Det er ofte et tegn på tomme lokaler, en svag lejer eller en dårlig beliggenhed. Se lejekontrakterne og ejendommen, før du byder.";
-  else if (capRate > b.goodHi) note = "Højt afkast for typen. Tjek beliggenheden, og om lejeren kan betale.";
-  else if (capRate < b.low) note = "Lavt afkast for typen. Prisen er høj i forhold til lejen.";
-  else if (dscr < 1.1) note = "Gælden er kun lige dækket ved denne udbetaling og rente.";
+  if (capRate > b.high) note = "Usædvanligt højt afkast for ejendomstypen. Det skyldes ofte tomgang, en svag lejer eller en dårlig beliggenhed. Gennemgå lejekontrakterne før bud.";
+  else if (capRate > b.goodHi) note = "Højt afkast for ejendomstypen. Undersøg beliggenhed og lejerens betalingsevne.";
+  else if (capRate < b.low) note = "Lavt afkast for ejendomstypen. Prisen er høj i forhold til lejeindtægten.";
+  else if (dscr < 1.1) note = "Lav gældsdækning ved den valgte udbetaling og rente.";
 
   const rating = score >= 78 ? "Stærk" : score >= 62 ? "Solid" : score >= 45 ? "Middel" : "Svag";
   const verdict =
     dscr < 1.0
-      ? "Gælden er ikke dækket ved denne udbetaling og rente — forhandl pris eller læg mere ud."
+      ? "Driftsresultatet dækker ikke ydelsen ved den valgte udbetaling og rente. Forhandl prisen, eller øg udbetalingen."
       : score >= 62
-      ? `Solid investeringsejendom. Afkastet passer til typen og gælden er dækket (DSCR ${dscr.toFixed(2)}).`
+      ? `Solid investeringsejendom. Afkastet er normalt for typen, og gælden er dækket (DSCR ${dscr.toFixed(2).replace(".", ",")}).`
       : score >= 45
-      ? "Grænsehandel. Tallene hænger, men marginen er tynd — verificér lejekontrakter og drift."
-      : "Svag som investering ved disse tal — genforhandl eller spring over.";
+      ? "Marginal investering. Tallene hænger sammen, men marginen er lille. Verificér lejekontrakter og drift."
+      : "Svag investering ved de nuværende tal. Genforhandl prisen.";
   return { score, note, rating, verdict };
 }
 

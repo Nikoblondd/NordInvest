@@ -324,17 +324,17 @@ function scoreAndVerdict(a: {
   else if (score >= 45) rating = "Middel";
   else rating = "Svag";
 
-  // Plain words: what the rent does with the loan, and what to do about it.
+  // One sentence: whether the rent carries the loan, and what to do about it.
   let verdict: string;
   if (score >= 65) {
     verdict =
       a.dscr >= 1.2
-        ? "Solid handel. Lejen betaler lånet og alle udgifter, og der er luft, hvis renten stiger."
-        : "Godt afkast, men lejen dækker kun lige lånet. Forhandl prisen eller læg mere ud.";
+        ? "Solid investering. Lejen dækker lån og driftsudgifter med en god rentebuffer."
+        : "Godt afkast, men lav gældsdækning. Forhandl prisen, eller øg udbetalingen.";
   } else if (score >= 45) {
-    verdict = "Grænsehandel. Tallene hænger sammen, men der er ikke meget at give af. Se, hvad en højere rente gør.";
+    verdict = "Marginal investering. Tallene hænger sammen, men bufferen er lille. Tjek rentefølsomheden.";
   } else {
-    verdict = "Spring over eller forhandl prisen ned. Lejen kan ikke bære handlen, som den ser ud nu.";
+    verdict = "Svag investering ved de nuværende tal. Lejen kan ikke bære finansieringen uden en lavere pris.";
   }
   return { score, rating, verdict };
 }

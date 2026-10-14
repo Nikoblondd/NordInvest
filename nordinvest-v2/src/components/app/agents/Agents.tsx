@@ -70,11 +70,11 @@ export function AgentsHome({ initial, prefill }: { initial: Agent[]; prefill: Pa
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
           <div className="grid grid-cols-1 gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_1fr] lg:items-center">
             <div className="order-2 lg:order-1">
-              <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-slate-900">Lad markedet komme til dig</h2>
-              <p className="mt-2 max-w-md text-[15px] leading-relaxed text-slate-600">En søgeagent kigger hele markedet igennem med dine krav, på det tidspunkt du vælger, og sender en mail, når der kommer en ny bolig, der passer. Du slipper for at tjekke Boligsiden hver morgen.</p>
+              <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-slate-900">Søgeagenter</h2>
+              <p className="mt-2 max-w-md text-[15px] leading-relaxed text-slate-600">En søgeagent gennemgår hele markedet efter dine kriterier på de tidspunkter, du vælger, og sender en mail, når en ny bolig matcher.</p>
               <button type="button" onClick={() => setEditor({})} className={clsx(btn.primary, "mt-5")}><Plus size={16} /> Opret din første agent</button>
             <ol className="mt-6 space-y-2.5">
-              {[["Vælg dine krav", "Område, type, pris og hvad tallene mindst skal vise."], ["Vælg tidspunkt", "Hver morgen kl. 7, på hverdage eller en gang om ugen."], ["Få besked", "Kun når der er noget nyt. Gem det i din pipeline med ét tryk."]].map(([t, d], i) => (
+              {[["Kriterier", "Område, type, pris og minimumskrav til nøgletallene."], ["Tidspunkt", "Hver morgen kl. 7, på hverdage eller en gang om ugen."], ["Besked", "Mail ved nye fund, som kan gemmes i pipelinen med ét klik."]].map(([t, d], i) => (
                 <li key={t} className="flex gap-3 rounded-xl bg-slate-50 p-3.5">
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[13px] font-bold text-blue-700 ring-1 ring-blue-100">{i + 1}</span>
                   <span><span className="block text-[14px] font-semibold text-slate-900">{t}</span><span className="block text-[13px] text-slate-500">{d}</span></span>
@@ -99,7 +99,7 @@ export function AgentsHome({ initial, prefill }: { initial: Agent[]; prefill: Pa
           </div>
           <Card title={<span className="flex items-center gap-2">Nyt fra dine agenter {hits.length > 0 && <span className="rounded-full bg-blue-600 px-1.5 text-[12px] font-bold text-white">{hits.length}</span>}</span>} pad={false} className="h-fit xl:sticky xl:top-20">
             {hits.length === 0 ? (
-              <Empty icon={<Bell size={20} />} title="Intet nyt lige nu" text="Når en agent finder en ny bolig, ligger den her, og du får en mail." />
+              <Empty icon={<Bell size={20} />} title="Ingen nye fund" text="Nye fund fra dine agenter vises her og sendes på mail." />
             ) : (
               <div className="max-h-[70vh] space-y-2 overflow-y-auto p-3">
                 {hits.slice(0, 20).map(({ a, h }) => (
@@ -229,7 +229,7 @@ export function AgentDetail({ initial }: { initial: Agent }) {
           {shown.length === 0 ? (
             <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-white">
               <Empty icon={<Radar size={20} />} title={filter === "nye" ? "Intet nyt siden sidst" : filter === "gemt" ? "Intet gemt fra denne agent" : filter === "afvist" ? "Intet afvist" : "Ingen boliger matcher lige nu"}
-                text={filter === "nye" ? `Agenten kigger igen ${whenLabel(a.nextRunAt)}.` : filter === "alle" ? "Agenten giver besked, så snart der kommer en, der passer. Du kan også løsne kravene." : undefined}
+                text={filter === "nye" ? `Agenten kigger igen ${whenLabel(a.nextRunAt)}.` : filter === "alle" ? "Agenten giver besked ved nye fund. Færre krav giver flere fund." : undefined}
                 action={filter === "alle" ? <button type="button" onClick={() => setEditing(true)} className={btn.secondary}><Pencil size={15} /> Ret kravene</button> : undefined} />
             </div>
           ) : (

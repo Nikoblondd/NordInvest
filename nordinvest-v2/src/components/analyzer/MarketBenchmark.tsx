@@ -70,7 +70,7 @@ export function MarketBenchmark({
 
       <p className="mt-3 text-xs leading-relaxed text-slate-500">
         Kilde: {benchmark.source}, opdateret {benchmark.asOf}. Medianpris pr. m² for sammenlignelige
-        udbudte boliger — ikke en vurdering af den enkelte bolig.
+        udbudte boliger, ikke en vurdering af den enkelte bolig.
       </p>
     </section>
   );

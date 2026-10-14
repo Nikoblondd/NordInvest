@@ -16,7 +16,7 @@ export default async function MembersPage() {
   const [members, requests] = await Promise.all([listMembers(), listRequests()]);
   return (
     <div className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <PageHeader title="Medlemmer" sub="Alle med en konto, og hvordan de bruger NordInvest. Tryk på en person for at se hele profilen." />
+      <PageHeader title="Medlemmer" sub="Alle med en konto, og hvordan de bruger NordInvest. Klik på en person for at se profilen." />
       <MembersBoard members={members} pending={requests.filter((r) => r.status === "ny" || r.status === "kontaktet").length} />
     </div>
   );

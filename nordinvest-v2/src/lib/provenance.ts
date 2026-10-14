@@ -73,7 +73,7 @@ export function buildProvenance(s: ProvInput): ProvRow[] {
       const label = s.rentBenchmark.tier === "documented" ? "Månedlig leje" : "Månedlig leje";
       rows.push({ key: "rent", label, tier, source: s.rentBenchmark.source });
     } else {
-      rows.push({ key: "rent", label: "Månedlig leje", tier: "est", source: "Estimeret ud fra areal og lokalt lejeniveau — ret gerne" });
+      rows.push({ key: "rent", label: "Månedlig leje", tier: "est", source: "Estimeret ud fra areal og lokalt lejeniveau. Kan rettes" });
     }
   } else {
     rows.push({ key: "rent", label: "Månedlig leje", tier: "input", source: "Indtastet af dig" });
@@ -85,7 +85,7 @@ export function buildProvenance(s: ProvInput): ProvRow[] {
   } else if (has(s.found, "monthlyExpenses")) {
     rows.push({ key: "opex", label: "Faste udgifter", tier: "doc", source: "Ejerudgift fra annoncen" });
   } else if (s.opexEstimated) {
-    rows.push({ key: "opex", label: "Faste udgifter", tier: "est", source: "Estimeret ud fra areal — ret gerne" });
+    rows.push({ key: "opex", label: "Faste udgifter", tier: "est", source: "Estimeret ud fra areal. Kan rettes" });
   } else {
     rows.push({ key: "opex", label: "Faste udgifter", tier: "input", source: "Indtastet af dig" });
   }
@@ -128,10 +128,10 @@ export function rentRegulationRule(byggeaar: number | null): RentRule {
   if (byggeaar == null) {
     return {
       level: "unknown",
-      title: "Er lejen lovlig?",
+      title: "Lovlig leje",
       body:
         "Byggeåret er ukendt, så vi kan ikke vurdere, om ejendommen er lejereguleret. " +
-        "Annonceret leje er ikke nødvendigvis den leje, du lovligt må opkræve. Undersøg lejefastsættelsen, før du regner med tallet.",
+        "Den annoncerede leje er ikke nødvendigvis den lovlige leje. Undersøg lejefastsættelsen, før du bruger tallet.",
     };
   }
   if (byggeaar <= 1991) {
@@ -140,7 +140,7 @@ export function rentRegulationRule(byggeaar: number | null): RentRule {
       title: "Lejen kan være reguleret (opført " + byggeaar + ")",
       body:
         "Ejendomme taget i brug før 1992 kan være omfattet af omkostningsbestemt leje i regulerede kommuner. " +
-        "Den lovlige leje kan da ligge under den annoncerede. Få lejefastsættelsen bekræftet, før du stoler på lejen — den bærer hele afkastet.",
+        "Den lovlige leje kan derfor ligge under den annoncerede. Få lejefastsættelsen bekræftet, da afkastet afhænger af den.",
     };
   }
   return {

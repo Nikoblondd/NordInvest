@@ -55,7 +55,7 @@ export function Welcome({ initialName, initialPhone, email, needsPassword }: { i
         </div>
         <form onSubmit={submit} noValidate className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_30px_80px_-40px_rgba(11,27,51,0.4)] sm:p-8">
           <h1 className="text-[26px] font-semibold leading-tight tracking-[-0.02em]">Velkommen indenfor</h1>
-          <p className="mt-1.5 text-[15px] text-slate-600">To sekunder, så er din konto klar. Du er logget ind som <b className="font-semibold text-slate-800">{email}</b>.</p>
+          <p className="mt-1.5 text-[15px] text-slate-600">Færdiggør din konto. Du er logget ind som <b className="font-semibold text-slate-800">{email}</b>.</p>
           <div className="mt-6 space-y-4">
             <div>
               <label htmlFor="w-name" className="text-[14px] font-medium text-slate-700">Navn</label>

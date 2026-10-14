@@ -12,7 +12,7 @@ import { CLASS_YIELD, DEFAULT_YIELD } from "@/lib/deals";
  * old-school investor: one receipt that shows the year's money in and out, a
  * plain table of what higher interest does, ten years in three building blocks,
  * what to check before bidding and where the numbers come from. Every section
- * is open; no ratio is called by its technical name.
+ * is open and uses the standard Danish investment terms.
  */
 
 const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
@@ -22,17 +22,17 @@ const pct1 = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits
 type Check = { title: string; why: string };
 
 const COMMON: Check[] = [
-  { title: "Lejekontrakterne", why: "Bed om alle kontrakter. Se hvor længe lejeren er bundet (uopsigelighed), og hvornår lejen reguleres. Afkastet i annoncen gælder kun, så længe lejen bliver betalt." },
-  { title: "Lejerens økonomi", why: "Slå lejeren op på CVR og se de seneste regnskaber. En lejer med underskud kan forsvinde, og så står lokalerne tomme." },
-  { title: "Hvem betaler vedligehold", why: "Står det i kontrakten, at lejeren betaler indvendigt, og du betaler tag, facade og installationer? Det kan flytte afkastet flere procent." },
-  { title: "Driftsbudgettet", why: "Bed om det seneste driftsbudget og regnskab for ejendommen. Tjek skat, forsikring og administration, så tallet i annoncen holder." },
+  { title: "Lejekontrakter", why: "Gennemgå alle lejekontrakter: uopsigelighed, regulering af lejen og lejerens forpligtelser. Afkastet i annoncen forudsætter, at lejen bliver betalt." },
+  { title: "Lejerens økonomi", why: "Slå lejeren op på CVR og gennemgå de seneste regnskaber. En lejer med underskud øger risikoen for tomgang." },
+  { title: "Fordeling af vedligeholdelse", why: "Kontrollér, hvad lejer og udlejer hver især skal vedligeholde. Udvendig vedligeholdelse af tag, facade og installationer kan ændre afkastet mærkbart." },
+  { title: "Driftsbudget og regnskab", why: "Bed om driftsbudget og seneste regnskab for ejendommen. Kontrollér ejendomsskat, forsikring og administration op mod annoncens tal." },
 ];
 const BY_TYPE: Record<string, Check[]> = {
-  "Lager & produktion": [{ title: "Miljø og forurening", why: "Tjek jordforurening hos regionen og om der har været værksted eller olietank. Oprydning betaler ejeren, ikke lejeren." }],
-  "Detailhandel & butik": [{ title: "Beliggenhed og gadeliv", why: "En butik lever af folk, der går forbi. Se på tomme butikker i gaden og hvor længe de har stået tomme." }],
-  "Kontor": [{ title: "Tomme kontorer i området", why: "Kontorlejere kan flytte, når kontrakten udløber. Se hvor mange kontorer der står til leje i byen." }],
-  "Boligudlejning": [{ title: "Reglerne for huslejen", why: "Boliger bygget før 1992 har ofte reguleret husleje. Tjek at lejen må være det, annoncen siger." }],
-  "Hotel & restaurant": [{ title: "Forpagterens forretning", why: "Lejen afhænger af, at stedet tjener penge. Bed om omsætningen de seneste tre år." }],
+  "Lager & produktion": [{ title: "Miljø og forurening", why: "Undersøg jordforurening hos regionen, og om der har været værksted eller olietank på grunden. Oprydning påhviler ejeren." }],
+  "Detailhandel & butik": [{ title: "Beliggenhed og kundegrundlag", why: "Butikslejemål afhænger af passage. Se på tomme butikker i området, og hvor længe de har stået tomme." }],
+  "Kontor": [{ title: "Kontorudbud i området", why: "Kontorlejere kan fraflytte, når kontrakten udløber. Undersøg, hvor mange kontorlejemål der er til leje i byen." }],
+  "Boligudlejning": [{ title: "Huslejeregulering", why: "Boliger i ejendomme taget i brug før 1992 har ofte reguleret husleje. Kontrollér, at den aktuelle leje er lovlig." }],
+  "Hotel & restaurant": [{ title: "Forpagterens økonomi", why: "Lejen afhænger af, at forretningen kører. Bed om omsætning og regnskab for de seneste tre år." }],
 };
 
 const mio = (n: number) => `${(n / 1e6).toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mio. kr.`;
@@ -65,13 +65,15 @@ export function CommercialStory({
   const typeName = subcategory ? subcategory.toLowerCase().replace("&", "og") : "erhvervsejendomme";
   const yieldTone = r.capRate < band.low || r.capRate > band.high ? "warn" : "good";
   const yieldNote = r.capRate < band.low
-    ? "Det er lavt for typen. Prisen er høj i forhold til lejen."
+    ? "Lavt for ejendomstypen. Prisen er høj i forhold til lejeindtægten."
     : r.capRate > band.high
-      ? "Det er usædvanligt højt for typen. Ofte et tegn på en risiko, fx en svag lejer eller tomme lokaler."
-      : r.capRate >= band.goodLo
-        ? "Det er et fornuftigt niveau for typen."
-        : "Det er i den lave ende for typen.";
-  // Of every 100 kr. the tenant pays, how much goes to the bank and to you.
+      ? "Usædvanligt højt for ejendomstypen. Det skyldes ofte en risiko, fx en svag lejer eller tomgang."
+      : r.capRate > band.goodHi
+        ? "Højt for ejendomstypen. Undersøg beliggenhed og lejerens betalingsevne."
+        : r.capRate >= band.goodLo
+        ? "Normalt niveau for ejendomstypen."
+        : "I den lave ende for ejendomstypen.";
+  // How the operating result splits between the loan payment and cash flow.
   const toBank = r.noi > 0 ? Math.min(100, Math.round((loanYear / r.noi) * 100)) : 100;
 
   // What higher interest does to the monthly result, from the same loan.
@@ -91,40 +93,40 @@ export function CommercialStory({
   const endMoney = r.cashInvested + r.totalProfit;
   const times = r.cashInvested > 0 ? endMoney / r.cashInvested : 0;
   const blocks = [
-    { k: "Overskud udbetalt", v: cashOut, dot: "bg-emerald-500", note: "Lejen efter lånet, lagt sammen år for år" },
-    { k: "Lånet betalt ned", v: paidDown, dot: "bg-[#a9c4fb]", note: "Lejeren betaler dit lån af for dig" },
-    { k: "Værdistigning", v: growth, dot: "bg-blue-600", note: `Hvis ejendommen stiger ${pct1(appreciationPct)} om året` },
+    { k: "Akkumuleret cash flow", v: cashOut, dot: "bg-emerald-500", note: "Cash flow efter finansiering, summeret over perioden" },
+    { k: "Afdrag på lån", v: paidDown, dot: "bg-[#a9c4fb]", note: "Nedbragt gæld, betalt af lejeindtægten" },
+    { k: "Værdistigning", v: growth, dot: "bg-blue-600", note: `Ved ${pct1(appreciationPct)} årlig værdistigning` },
   ];
 
   return (
     <>
       {/* 1. Money */}
-      <Part id="oekonomi" tint q="Tjener den penge?" tone={yearly >= 0 ? "good" : "bad"}
-        a={yearly >= 0 ? `Ja. Du får ${kr(yearly)} om året, når lånet er betalt.` : `Nej. Du skal selv lægge ${kr(-yearly)} til om året.`}>
+      <Part id="oekonomi" tint q="Økonomi" tone={yearly >= 0 ? "good" : "bad"}
+        a={yearly >= 0 ? `Positivt cash flow på ${kr(yearly)} om året efter finansiering.` : `Negativt cash flow på ${kr(-yearly)} om året efter finansiering.`}>
         <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:items-start">
           <div className={`${card} overflow-hidden`}>
             <dl className="px-5 pt-5 text-[17px] sm:px-6">
               <div className="flex items-baseline justify-between gap-4 py-2">
-                <dt className="text-slate-700">Lejen ind <span className="text-slate-500">(efter driftsudgifter)</span></dt>
+                <dt className="text-slate-700">Driftsresultat <span className="text-slate-500">(leje efter driftsudgifter)</span></dt>
                 <dd className="shrink-0 font-semibold tabular-nums text-emerald-700">{signed(r.noi)}</dd>
               </div>
               <div className="flex items-baseline justify-between gap-4 py-2">
-                <dt className="text-slate-700">Renter og afdrag på lånet</dt>
+                <dt className="text-slate-700">Ydelse på lån <span className="text-slate-500">(renter og afdrag)</span></dt>
                 <dd className="shrink-0 font-semibold tabular-nums text-slate-500">{signed(-loanYear)}</dd>
               </div>
               <div className="mt-2 flex items-baseline justify-between gap-4 border-t-2 border-slate-900 pt-3">
-                <dt className="text-[18px] font-semibold text-slate-900">{yearly >= 0 ? "Tilbage til dig om året" : "Du mangler om året"}</dt>
+                <dt className="text-[18px] font-semibold text-slate-900">Cash flow pr. år</dt>
                 <dd className={`shrink-0 text-[22px] font-bold tabular-nums ${yearly >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{signed(yearly)}</dd>
               </div>
-              <p className="pb-5 pt-1 text-[15px] text-slate-600">Det er {kr(Math.abs(r.cashFlow))} om måneden{yearly < 0 ? ", som du selv skal lægge til" : ""}.</p>
+              <p className="pb-5 pt-1 text-[15px] text-slate-600">Svarer til {signed(r.cashFlow)} pr. måned.</p>
             </dl>
             <dl className="grid grid-cols-2 divide-x divide-slate-200 border-t border-slate-200 bg-slate-50/70">
               <div className="min-w-0 px-5 py-4 sm:px-6">
-                <dt className="text-[14px] text-slate-500">Du lægger selv</dt>
+                <dt className="text-[14px] text-slate-500">Egenkapital</dt>
                 <dd className="mt-0.5 text-[18px] font-semibold tabular-nums text-slate-900">{kr(r.cashInvested)}</dd>
               </div>
               <div className="min-w-0 px-5 py-4 sm:px-6">
-                <dt className="text-[14px] text-slate-500">Lån</dt>
+                <dt className="text-[14px] text-slate-500">Lånebeløb</dt>
                 <dd className="mt-0.5 text-[18px] font-semibold tabular-nums text-slate-900">{kr(r.loan)}</dd>
               </div>
             </dl>
@@ -132,19 +134,19 @@ export function CommercialStory({
 
           <div className="space-y-6">
             <div className={`${card} p-5 sm:p-6`}>
-              <p className="text-[17px] text-slate-800">Af hver <b className="font-semibold">100 kr.</b> lejeren betaler, går</p>
+              <p className="text-[17px] font-semibold text-slate-900">Fordeling af driftsresultatet</p>
               <div className="mt-4 flex h-12 overflow-hidden rounded-xl text-[15px] font-semibold tabular-nums">
-                <span className="flex items-center justify-center bg-slate-200 text-slate-700" style={{ width: `${Math.max(toBank, 18)}%` }}>{toBank} kr.</span>
-                {toBank < 100 && <span className="flex flex-1 items-center justify-center bg-emerald-500 text-white">{100 - toBank} kr.</span>}
+                <span className="flex items-center justify-center bg-slate-200 text-slate-700" style={{ width: `${Math.max(toBank, 18)}%` }}>{toBank} %</span>
+                {toBank < 100 && <span className="flex flex-1 items-center justify-center bg-emerald-500 text-white">{100 - toBank} %</span>}
               </div>
               <div className="mt-2.5 flex justify-between text-[15px] text-slate-600">
-                <span>til banken</span>
-                {toBank < 100 && <span>til dig</span>}
+                <span>Ydelse på lån</span>
+                {toBank < 100 && <span>Cash flow</span>}
               </div>
             </div>
             <div className={`${card} p-5 sm:p-6`}>
               <p className="text-[17px] text-slate-800">
-                Ejendommen giver <b className={`font-semibold tabular-nums ${yieldTone === "good" ? "text-emerald-700" : "text-amber-700"}`}>{pct1(r.capRate)}</b> om året af prisen. For {typeName} ligger det normalt mellem {pct1(band.goodLo)} og {pct1(band.goodHi)}.
+                Nettoafkast: <b className={`font-semibold tabular-nums ${yieldTone === "good" ? "text-emerald-700" : "text-amber-700"}`}>{pct1(r.capRate)}</b>. Det normale niveau for {typeName} er {pct1(band.goodLo)} til {pct1(band.goodHi)}.
               </p>
               <YieldScale value={r.capRate} band={band} />
               <p className="mt-3 text-[15px] text-slate-600">{yieldNote}</p>
@@ -152,26 +154,26 @@ export function CommercialStory({
           </div>
         </div>
         <button type="button" onClick={onAdjust} className="mt-6 inline-flex min-h-[48px] items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-900 hover:border-slate-400 active:translate-y-px">
-          <SlidersHorizontal size={18} strokeWidth={1.8} /> Ret pris, udbetaling eller rente
+          <SlidersHorizontal size={18} strokeWidth={1.8} /> Ret pris, udbetaling og rente
         </button>
       </Part>
 
       {/* 2. Interest */}
-      <Part id="risici" q="Hvad hvis renten stiger?" tone={r.breakEvenRate - base >= 2 ? "good" : r.breakEvenRate > base ? "warn" : "bad"}
-        a={r.breakEvenRate > base ? `Renten kan stige til ${pct1(r.breakEvenRate)}, før lejen ikke længere betaler lånet.` : "Lejen betaler ikke lånet ved dagens rente."}>
+      <Part id="risici" q="Rentefølsomhed" tone={r.breakEvenRate - base >= 2 ? "good" : r.breakEvenRate > base ? "warn" : "bad"}
+        a={r.breakEvenRate > base ? `Break-even-renten er ${pct1(r.breakEvenRate)}. Over den dækker driftsresultatet ikke længere ydelsen.` : "Driftsresultatet dækker ikke ydelsen ved den nuværende rente."}>
         <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
           <div className={`${card} p-5 sm:p-6`}>
             <table className="w-full text-[17px]">
               <thead>
                 <tr className="text-left text-[14px] text-slate-500">
-                  <th className="pb-2 font-medium">Renten</th>
-                  <th className="pb-2 text-right font-medium">Tilbage til dig pr. md.</th>
+                  <th className="pb-2 font-medium">Rente</th>
+                  <th className="pb-2 text-right font-medium">Cash flow pr. md.</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {rows.map((x) => (
                   <tr key={x.at} className={x.today ? "bg-slate-50" : ""}>
-                    <td className="py-3 pl-1 text-slate-700">{pct1(x.at)}{x.today && <span className="ml-2 text-[14px] text-slate-500">i dag</span>}</td>
+                    <td className="py-3 pl-1 text-slate-700">{pct1(x.at)}{x.today && <span className="ml-2 text-[14px] text-slate-500">aktuel</span>}</td>
                     <td className={`py-3 pr-1 text-right font-semibold tabular-nums ${x.cf >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{signed(x.cf)}</td>
                   </tr>
                 ))}
@@ -179,24 +181,24 @@ export function CommercialStory({
             </table>
           </div>
           <div className={`${card} p-5 sm:p-6`}>
-            <p className="text-[15px] text-slate-500">Hvor meget renten kan stige</p>
+            <p className="text-[15px] text-slate-500">Rentebuffer</p>
             <RateRoom today={base} breakEven={r.breakEvenRate} />
             <p className="mt-4 text-[15px] leading-relaxed text-slate-600">
-              Erhvervslån har ofte variabel rente. Derfor er det vigtigt, at der er luft, hvis renten stiger. {r.breakEvenRate - base >= 3 ? "Her er der god luft." : r.breakEvenRate > base ? "Her er luften lille, så overvej en større udbetaling eller fast rente." : "Overvej en lavere pris eller en større udbetaling."}
+              Erhvervslån har ofte variabel rente, så rentebufferen har betydning. {r.breakEvenRate - base >= 3 ? "Bufferen er god." : r.breakEvenRate > base ? "Bufferen er lille. En større udbetaling eller fast rente giver mere sikkerhed." : "Handlen kræver en lavere pris eller en større udbetaling."}
             </p>
           </div>
         </div>
       </Part>
 
       {/* 3. Ten years */}
-      <Part id="fremtid" tint q={`Hvad bliver det til om ${r.holdYears} år?`} tone={r.totalProfit >= 0 ? "good" : "bad"}
-        a={`Dine ${mio(r.cashInvested)} kan blive til ${mio(Math.max(0, endMoney))}`}>
+      <Part id="fremtid" tint q={`Afkast over ${r.holdYears} år`} tone={r.totalProfit >= 0 ? "good" : "bad"}
+        a={`En egenkapital på ${mio(r.cashInvested)} kan vokse til ${mio(Math.max(0, endMoney))}`}>
         <div className={`${card} p-5 sm:p-8`}>
           <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:items-center">
             <div>
-              <p className="text-[15px] text-slate-500">Din samlede gevinst efter {r.holdYears} år</p>
+              <p className="text-[15px] text-slate-500">Samlet gevinst efter {r.holdYears} år</p>
               <p className={`mt-1 text-[40px] font-bold leading-none tracking-[-0.03em] tabular-nums sm:text-[52px] ${r.totalProfit >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{signed(r.totalProfit)}</p>
-              {times > 0 && <p className="mt-3 text-[17px] text-slate-700">Det er <b className="font-semibold">{times.toLocaleString("da-DK", { maximumFractionDigits: 1 })} gange</b> de penge, du lægger i den.</p>}
+              {times > 0 && <p className="mt-3 text-[17px] text-slate-700">Svarer til <b className="font-semibold">{times.toLocaleString("da-DK", { maximumFractionDigits: 1 })} gange</b> den investerede egenkapital.</p>}
             </div>
             <ul className="space-y-3">
               {blocks.map((b) => (
@@ -212,15 +214,15 @@ export function CommercialStory({
             </ul>
           </div>
           <div className="mt-8 border-t border-slate-100 pt-6">
-            <p className="mb-1 text-[16px] font-semibold text-slate-900">Sådan vokser din formue år for år</p>
+            <p className="mb-1 text-[16px] font-semibold text-slate-900">Udvikling i friværdi og cash flow</p>
             <WealthChart data={r.projection.map((y) => ({ year: y.year, paid: price - y.loanBalance, growth: y.propertyValue - price, cumulativeCashFlow: y.cumulativeCashFlow }))} />
           </div>
-          <p className="mt-5 text-[13px] leading-relaxed text-slate-500">Gevinsten er efter salgsomkostninger, men før skat. Den regner med {pct1(appreciationPct)} værdistigning om året og samme rente hele perioden.</p>
+          <p className="mt-5 text-[13px] leading-relaxed text-slate-500">Gevinsten er efter salgsomkostninger og før skat. Beregningen forudsætter {pct1(appreciationPct)} årlig værdistigning og uændret rente i hele perioden.</p>
         </div>
       </Part>
 
       {/* 4. Checks */}
-      <Part id="tjek" q="Tjek det her, før du byder" tone="neutral" a="Det, en erfaren investor altid beder om. Tryk på et punkt for at se hvorfor.">
+      <Part id="tjek" q="Tjekliste før bud" tone="neutral" a="Punkter, der bør være undersøgt, før du afgiver bud.">
         <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:items-start">
           <ul className={`${card} divide-y divide-slate-100 px-5 sm:px-6`}>
             {checks.map((c) => (
@@ -241,7 +243,7 @@ export function CommercialStory({
       </Part>
 
       {/* 5. Trust */}
-      <Part id="data" tint q="Kan du stole på tallene?" tone="neutral" a="Lejen og afkastet kommer fra sælgers annonce. Resten er regnet ud af os.">
+      <Part id="data" tint q="Datagrundlag" tone="neutral" a="Pris og afkast stammer fra sælgers annonce. Øvrige tal er beregnet af NordInvest.">
         {trust}
       </Part>
     </>
@@ -277,10 +279,10 @@ function RateRoom({ today, breakEven }: { today: number; breakEven: number }) {
         <span className="absolute inset-y-0 w-1 -translate-x-1/2 bg-slate-900" style={{ left: x(today) }} />
       </div>
       <div className="relative mt-2 h-10 text-[14px]">
-        <span className="absolute -translate-x-1/2 text-center font-semibold text-slate-900" style={{ left: x(today) }}>{pct1(today)}<span className="block text-[12px] font-normal text-slate-500">i dag</span></span>
-        {ok && <span className="absolute -translate-x-1/2 text-center font-semibold text-emerald-700" style={{ left: `min(${x(breakEven)}, 88%)` }}>{pct1(breakEven)}<span className="block text-[12px] font-normal text-slate-500">grænsen</span></span>}
+        <span className="absolute -translate-x-1/2 text-center font-semibold text-slate-900" style={{ left: x(today) }}>{pct1(today)}<span className="block text-[12px] font-normal text-slate-500">aktuel</span></span>
+        {ok && <span className="absolute -translate-x-1/2 text-center font-semibold text-emerald-700" style={{ left: `min(${x(breakEven)}, 88%)` }}>{pct1(breakEven)}<span className="block text-[12px] font-normal text-slate-500">break-even</span></span>}
       </div>
-      {ok && <p className="mt-2 text-[17px] text-slate-800">Der er <b className="font-semibold text-emerald-700">{pct1(breakEven - today)}-point</b> luft.</p>}
+      {ok && <p className="mt-2 text-[17px] text-slate-800">Renten kan stige <b className="font-semibold text-emerald-700">{(breakEven - today).toLocaleString("da-DK", { maximumFractionDigits: 1 })} procentpoint</b>, før cash flow bliver negativt.</p>}
     </div>
   );
 }

@@ -32,13 +32,13 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
   const inv = assessInvestment(r.capRate, r.dscr, r.cashOnCash, l.subcat);
   const tone = inv.score >= 62 ? "good" : inv.score >= 45 ? "warn" : "bad";
   const verdict = r.cashFlow >= 0
-    ? `Lejen betaler lånet og giver ${dk(r.cashFlow)} kr. tilbage hver måned. ${r.dscr >= 1.25 ? "Der er god luft, hvis renten stiger." : "Der er ikke meget luft, hvis renten stiger."}`
-    : `Lejen betaler ikke hele lånet. Du skal selv lægge ${dk(Math.abs(r.cashFlow))} kr. til hver måned.`;
+    ? `Positivt cash flow på ${dk(r.cashFlow)} kr. pr. måned efter finansiering. ${r.dscr >= 1.25 ? "Rentebufferen er god." : "Rentebufferen er begrænset."}`
+    : `Negativt cash flow på ${dk(Math.abs(r.cashFlow))} kr. pr. måned efter finansiering. Driftsresultatet dækker ikke ydelsen.`;
   const metrics: HeroMetric[] = [
-    { label: r.cashFlow >= 0 ? "Overskud pr. md." : "Underskud pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "bad" },
-    { label: "Afkast om året", value: num(r.capRate), unit: "%", tone },
-    { label: "Du lægger selv", value: dk(r.cashInvested), unit: "kr", tone: "neutral", note: "Udbetaling og købsomkostninger" },
-    { label: "Lejen dækker lånet", value: num(r.dscr), unit: "gange", tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
+    { label: "Cash flow pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "bad" },
+    { label: "Nettoafkast", value: num(r.capRate), unit: "%", tone },
+    { label: "Egenkapital", value: dk(r.cashInvested), unit: "kr", tone: "neutral", note: "Udbetaling og købsomkostninger" },
+    { label: "Gældsdækning (DSCR)", value: num(r.dscr), tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
   ];
   const adjust = () => document.getElementById("juster")?.scrollIntoView({ behavior: "smooth", block: "center" });
 
@@ -46,17 +46,17 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
     <main className="pb-4">
       <div className="mx-auto max-w-[1080px] px-4 pt-6 sm:px-6 sm:pt-10">
         <p className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[13px] font-medium text-slate-600 ring-1 ring-slate-200">
-          <Info size={14} className="text-blue-600" /> Delt analyse fra NordInvest. Tallene kommer fra annoncen.
+          <Info size={14} className="text-blue-600" /> Delt analyse fra NordInvest. Pris og afkast stammer fra annoncen.
         </p>
         <AppHero
-          images={l.imgs ?? []} address={l.addr} score={inv.score} headline={inv.rating === "Stærk" || inv.rating === "Solid" ? `${inv.rating} investering` : inv.rating === "Middel" ? "Tallene hænger sammen" : "Svag ved disse tal"}
+          images={l.imgs ?? []} address={l.addr} score={inv.score} headline={inv.rating === "Stærk" || inv.rating === "Solid" ? `${inv.rating} investering` : inv.rating === "Middel" ? "Marginal investering" : "Svag investering"}
           verdict={verdict} tone={tone} notes={inv.note ? [inv.note] : []} metrics={metrics} probability={null}
           listingUrl={l.url} sourceLabel="Ejendomstorvet" kindLabel={`Erhverv${l.subcat ? `, ${l.subcat}` : ""}`}
         />
 
         <section id="juster" className="mt-4 scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <p className="text-[16px] font-semibold text-slate-900">Prøv med dine egne tal</p>
-          <p className="mt-0.5 text-[14px] text-slate-500">Pris {dk(l.price)} kr. Lejen efter driftsudgifter er {dk(l.rent * 12)} kr. om året, som i annoncen.</p>
+          <p className="text-[16px] font-semibold text-slate-900">Finansiering</p>
+          <p className="mt-0.5 text-[14px] text-slate-500">Købspris {dk(l.price)} kr. Driftsresultat {dk(l.rent * 12)} kr. om året ifølge annoncen.</p>
           <div className="mt-5 grid gap-6 sm:grid-cols-2">
             <Slider label="Udbetaling" value={dp} min={10} max={100} step={5} unit="%" sub={`${dk((l.price * dp) / 100)} kr.`} onChange={setDp} />
             <Slider label="Rente på lånet" value={rate} min={2} max={9} step={0.25} unit="%" sub="Om året" onChange={setRate} />
@@ -69,10 +69,10 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
           r={r} price={l.price} rate={rate} termYears={30} subcategory={l.subcat} appreciationPct={3} address={null} onAdjust={adjust}
           trust={
             <ul className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-[16px] leading-relaxed text-slate-700 sm:p-6">
-              <li><b className="font-semibold text-slate-900">Pris og afkast:</b> fra sælgers annonce på Ejendomstorvet. Lejen er afkastet gange prisen, altså efter driftsudgifter.</li>
-              <li><b className="font-semibold text-slate-900">Lånet:</b> annuitetslån over 30 år med den rente og udbetaling, du har valgt ovenfor.</li>
-              <li><b className="font-semibold text-slate-900">De 10 år:</b> 3 % værdistigning og 2 % lejestigning om året, købsomkostninger på 1,5 % og salgsomkostninger ved salg. Før skat.</li>
-              <li className="text-[14px] text-slate-500">Analysen er et regnestykke, ikke rådgivning. Tjek lejekontrakter og driftsbudget, før du byder.</li>
+              <li><b className="font-semibold text-slate-900">Pris og afkast:</b> fra sælgers annonce på Ejendomstorvet. Driftsresultatet er beregnet som afkast × købspris.</li>
+              <li><b className="font-semibold text-slate-900">Finansiering:</b> annuitetslån over 30 år med den valgte rente og udbetaling.</li>
+              <li><b className="font-semibold text-slate-900">Fremskrivning:</b> 3 % årlig værdistigning, 2 % årlig lejestigning, købsomkostninger på 1,5 % og salgsomkostninger. Før skat.</li>
+              <li className="text-[14px] text-slate-500">Analysen er en beregning, ikke rådgivning. Gennemgå lejekontrakter og driftsbudget før bud.</li>
             </ul>
           }
         />
@@ -81,12 +81,12 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
       <div className="mx-auto mt-8 max-w-[1080px] px-4 sm:px-6">
         <div className="flex flex-col gap-5 rounded-2xl bg-slate-900 p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
           <div className="max-w-[560px]">
-            <p className="text-[20px] font-semibold tracking-[-0.01em]">Regnet igennem med NordInvest</p>
-            <p className="mt-1.5 text-[15px] leading-relaxed text-slate-300">NordInvest er analyseværktøjet for danske ejendomsinvestorer: analyse, bankrapport, søgeagenter og pipeline samlet ét sted.</p>
+            <p className="text-[20px] font-semibold tracking-[-0.01em]">Analyseret med NordInvest</p>
+            <p className="mt-1.5 text-[15px] leading-relaxed text-slate-300">NordInvest er et analyseværktøj til danske ejendomsinvestorer med analyse, bankrapport, søgeagenter og pipeline.</p>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:items-end">
             <Link href="/adgang?kilde=delt-analyse" className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-white px-5 text-[16px] font-semibold text-slate-900 hover:bg-slate-100">Få adgang <ArrowRight size={17} /></Link>
-            <Link href="/funktioner" className="text-center text-[14px] font-medium text-slate-300 hover:text-white">Se hvad det kan</Link>
+            <Link href="/funktioner" className="text-center text-[14px] font-medium text-slate-300 hover:text-white">Se funktionerne</Link>
           </div>
         </div>
       </div>

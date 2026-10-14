@@ -496,12 +496,12 @@ export function AnalyzerApp() {
         const err = String(d.error ?? "");
         const msg =
           err === "boligsiden_not_active"
-            ? "Denne bolig er ikke længere aktiv på Boligsiden. Indtast tallene selv under “Justér tallene”. Analysen bliver lige så præcis."
+            ? "Boligen er ikke længere aktiv på Boligsiden. Indtast tallene under “Justér tallene”."
             : err === "invalid_url"
-            ? "Linket ser ikke rigtigt ud. Kopier hele URL'en fra boligsiden og prøv igen."
+            ? "Linket er ugyldigt. Kopiér hele adressen fra boligportalen, og prøv igen."
             : err.startsWith("fetch_")
-            ? "Siden blokerede vores hentning. Indtast tallene selv under “Justér tallene”. Analysen bliver lige så præcis."
-            : "Kunne ikke hente data automatisk fra dette link. Indtast tallene selv under “Justér tallene”. Analysen bliver lige så præcis.";
+            ? "Siden kunne ikke hentes. Indtast tallene under “Justér tallene”."
+            : "Data kunne ikke hentes fra linket. Indtast tallene under “Justér tallene”.";
         setEx({ status: "fail", msg });
       }
     };
@@ -718,48 +718,47 @@ export function AnalyzerApp() {
 
   const heroTone: Tone = displayScore >= 65 ? "good" : displayScore >= 45 ? "warn" : "bad";
   const heroHeadline =
-    displayScore >= 80 ? "Stærk handel." : displayScore >= 65 ? "God handel." : displayScore >= 45 ? "Tvivlsom handel." : "Svag handel.";
+    displayScore >= 80 ? "Stærk investering" : displayScore >= 65 ? "God investering" : displayScore >= 45 ? "Usikker investering" : "Svag investering";
   // A forældrekøb is judged against the child renting, not as an investment.
   const pv = goal === "parents" ? parentsView(inputs, r) : null;
   const heroScoreShown = pv ? Math.max(0, Math.min(100, Math.round(50 + (pv.familyRent > 0 ? (pv.vsRenting / pv.familyRent) * 50 : 0)))) : displayScore;
-  const heroHeadlineShown = pv ? `${dk(Math.abs(pv.vsRenting))} kr. ${pv.vsRenting >= 0 ? "bedre" : "dyrere"} end at leje.` : heroHeadline;
+  const heroHeadlineShown = pv ? `${dk(Math.abs(pv.vsRenting))} kr. ${pv.vsRenting >= 0 ? "bedre" : "dyrere"} end leje` : heroHeadline;
   const investVerdict = r.cashFlow >= 0
-    ? `Lejen betaler lånet og giver ${dk(r.cashFlow)} kr. tilbage hver måned. ${r.dscr >= 1.25 ? "Der er god luft, hvis renten stiger." : "Der er ikke meget luft, hvis renten stiger."}`
-    : `Lejen betaler ikke hele lånet. Du skal selv lægge ${dk(Math.abs(r.cashFlow))} kr. til hver måned.`;
+    ? `Positivt cash flow på ${dk(r.cashFlow)} kr. pr. måned efter finansiering. ${r.dscr >= 1.25 ? "Rentebufferen er god." : "Rentebufferen er begrænset."}`
+    : `Negativt cash flow på ${dk(Math.abs(r.cashFlow))} kr. pr. måned efter finansiering. Driftsresultatet dækker ikke ydelsen.`;
   const heroVerdictShown = isInvestment ? investVerdict : pv
-    ? `${r.cashFlow >= 0 ? `Barnets husleje dækker alt og giver ${dk(r.cashFlow)} kr. i overskud om måneden.` : `Det koster jer ${dk(Math.abs(r.cashFlow))} kr. om måneden ud over barnets husleje.`} Når I sælger om ${pv.years} år, er ${dk(pv.familyRent)} kr. i husleje blevet i familien i stedet for at gå til en udlejer.`
+    ? `${r.cashFlow >= 0 ? `Barnets husleje dækker alle udgifter og giver et overskud på ${dk(r.cashFlow)} kr. pr. måned.` : `Udgiften er ${dk(Math.abs(r.cashFlow))} kr. pr. måned ud over barnets husleje.`} Over ${pv.years} år bliver ${dk(pv.familyRent)} kr. i husleje i familien frem for at gå til en udlejer.`
     : displayVerdict;
   const heroToneShown: Tone = pv ? (pv.vsRenting >= 0 ? "good" : "bad") : heroTone;
   const heroNotes = [
     ...(inv?.note ? [inv.note.replace(" — ", ". ")] : []),
-    ...(!isInvestment && rentEstimated ? ["Bygger på en estimeret leje. Bekræft den, før du handler."] : []),
+    ...(!isInvestment && rentEstimated ? ["Lejen er estimeret. Bekræft den, før du byder."] : []),
   ];
-  // Plain names and a one-line note under each number: people kept opening
-  // the info icons to learn what "kontantafkast" or "gældsdækning" meant.
+  // The standard names, each with a one-line note on what it measures.
   const heroMetrics: HeroMetric[] = [
     {
-      label: r.cashFlow >= 0 ? "Overskud pr. md." : "Underskud pr. md.",
+      label: "Cash flow pr. md.",
       value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`,
       unit: "kr",
       tone: r.cashFlow >= 500 ? "good" : r.cashFlow >= 0 ? "warn" : "bad",
-      note: "Efter lånet og alle udgifter",
+      note: "Efter finansiering og driftsudgifter",
     },
-    { label: "Afkast af prisen", value: num(r.capRate), unit: "%", tone: r.capRate >= 5 ? "good" : r.capRate >= 3.5 ? "warn" : "bad", note: "Om året, før lånet" },
-    { label: "Afkast af dine penge", value: num(r.cashOnCash), unit: "%", tone: r.cashOnCash >= 8 ? "good" : r.cashOnCash >= 0 ? "warn" : "bad", note: `Af de ${dk(r.cashInvested)} kr., du lægger` },
-    { label: "Lejen dækker lånet", value: num(r.dscr), unit: "gange", tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad", note: r.dscr >= 1.25 ? "Over 1,25 er trygt" : r.dscr >= 1 ? "Lige akkurat. 1,25 er trygt" : "Lejen betaler ikke hele lånet" },
+    { label: "Nettoafkast", value: num(r.capRate), unit: "%", tone: r.capRate >= 5 ? "good" : r.capRate >= 3.5 ? "warn" : "bad", note: "Årligt, før finansiering" },
+    { label: "Kontantafkast", value: num(r.cashOnCash), unit: "%", tone: r.cashOnCash >= 8 ? "good" : r.cashOnCash >= 0 ? "warn" : "bad", note: `Af egenkapital på ${dk(r.cashInvested)} kr.` },
+    { label: "Gældsdækning (DSCR)", value: num(r.dscr), tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad", note: r.dscr >= 1.25 ? "Bankerne kræver typisk 1,25" : r.dscr >= 1 ? "Under bankernes typiske krav på 1,25" : "Dækker ikke ydelsen" },
   ];
 
-  // An investeringsejendom gets the same four numbers in plain words.
+  // An investeringsejendom gets the four numbers an investor checks first.
   const investMetrics: HeroMetric[] = [
-    { label: r.cashFlow >= 0 ? "Overskud pr. md." : "Underskud pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "bad" },
-    { label: "Afkast om året", value: num(r.capRate), unit: "%", tone: inv && inv.score >= 62 ? "good" : inv && inv.score >= 45 ? "warn" : "bad" },
-    { label: "Du lægger selv", value: dk(r.cashInvested), unit: "kr", tone: "neutral", note: "Udbetaling og købsomkostninger" },
-    { label: "Lejen dækker lånet", value: num(r.dscr), unit: "gange", tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
+    { label: "Cash flow pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "bad" },
+    { label: "Nettoafkast", value: num(r.capRate), unit: "%", tone: inv && inv.score >= 62 ? "good" : inv && inv.score >= 45 ? "warn" : "bad" },
+    { label: "Egenkapital", value: dk(r.cashInvested), unit: "kr", tone: "neutral", note: "Udbetaling og købsomkostninger" },
+    { label: "Gældsdækning (DSCR)", value: num(r.dscr), tone: r.dscr >= 1.25 ? "good" : r.dscr >= 1 ? "warn" : "bad" },
   ];
   const heroMetricsShown: HeroMetric[] = isInvestment ? investMetrics : pv
     ? [
-        { label: r.cashFlow >= 0 ? "Overskud pr. md." : "Jeres udgift pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "warn" },
-        { label: "I forhold til leje", value: `${pv.vsRenting >= 0 ? "+" : "−"}${dk(Math.abs(pv.vsRenting))}`, unit: "kr", tone: pv.vsRenting >= 0 ? "good" : "bad" },
+        { label: r.cashFlow >= 0 ? "Overskud pr. md." : "Udgift pr. md.", value: `${r.cashFlow >= 0 ? "+" : "−"}${dk(Math.abs(r.cashFlow))}`, unit: "kr", tone: r.cashFlow >= 0 ? "good" : "warn" },
+        { label: "Forskel mod leje", value: `${pv.vsRenting >= 0 ? "+" : "−"}${dk(Math.abs(pv.vsRenting))}`, unit: "kr", tone: pv.vsRenting >= 0 ? "good" : "bad" },
         { label: "Husleje i familien", value: dk(pv.familyRent), unit: "kr", tone: "good" },
         { label: `Gevinst efter ${pv.years} år`, value: `${pv.afterTax >= 0 ? "+" : "−"}${dk(Math.abs(pv.afterTax))}`, unit: "kr", tone: pv.afterTax >= 0 ? "good" : "warn" },
       ]
@@ -767,8 +766,8 @@ export function AnalyzerApp() {
 
   const cashAnswer: ChapterAnswer =
     r.cashFlow >= 0
-      ? { tone: r.cashFlow >= 500 ? "good" : "warn", text: `Ja, ${dk(r.cashFlow)} kr i overskud hver måned` }
-      : { tone: "bad", text: `Nej, du lægger ${dk(Math.abs(r.cashFlow))} kr til hver måned` };
+      ? { tone: r.cashFlow >= 500 ? "good" : "warn", text: `Cash flow på +${dk(r.cashFlow)} kr. pr. måned` }
+      : { tone: "bad", text: `Cash flow på −${dk(Math.abs(r.cashFlow))} kr. pr. måned` };
 
   const priceDelta = priceBench && propertyPriceM2 ? ((propertyPriceM2 - priceBench.value) / priceBench.value) * 100 : null;
   const showPriceChapter = !isInvestment && (!!priceBench || !!rentBench || (!!zip && !!area && area > 10));
@@ -781,61 +780,61 @@ export function AnalyzerApp() {
     : "markedet";
   const priceAnswer: ChapterAnswer =
     priceDelta == null
-      ? { tone: "neutral", text: "Se hvad lignende boliger koster" }
+      ? { tone: "neutral", text: "Sammenlign med lignende boliger" }
       : priceDelta <= -3
-      ? { tone: "good", text: `Ja, ${Math.round(Math.abs(priceDelta))} % under ${benchScope} pr. m²` }
+      ? { tone: "good", text: `${Math.round(Math.abs(priceDelta))} % under ${benchScope} pr. m²` }
       : priceDelta <= 3
-      ? { tone: "good", text: `Ja, på niveau med ${benchScope} pr. m²` }
+      ? { tone: "good", text: `På niveau med ${benchScope} pr. m²` }
       : priceDelta <= 15
-      ? { tone: "warn", text: `Lidt dyr: ${Math.round(priceDelta)} % over ${benchScope} pr. m²` }
-      : { tone: "bad", text: `Nej, ${Math.round(priceDelta)} % over ${benchScope} pr. m²` };
+      ? { tone: "warn", text: `${Math.round(priceDelta)} % over ${benchScope} pr. m²` }
+      : { tone: "bad", text: `${Math.round(priceDelta)} % over ${benchScope} pr. m²` };
 
   const headroom = Number.isFinite(r.breakEvenRate) ? r.breakEvenRate - inputs.interestRate : 0;
   const riskAnswer: ChapterAnswer =
     headroom >= 2
-      ? { tone: "good", text: `Robust. Tåler ${p1(headroom)} %-point højere rente` }
+      ? { tone: "good", text: `Rentebuffer på ${p1(headroom)} procentpoint` }
       : headroom >= 0
-      ? { tone: "warn", text: `Sårbar. Kun ${p1(headroom)} %-point rentebuffer` }
-      : { tone: "bad", text: "Taber allerede penge ved din rente" };
+      ? { tone: "warn", text: `Lille rentebuffer: ${p1(headroom)} procentpoint` }
+      : { tone: "bad", text: "Negativt cash flow ved den valgte rente" };
 
   const potentialAnswer: ChapterAnswer =
     rentReserve?.verdict === "reserve"
-      ? { tone: "good", text: `Ja, +${dk(rentReserve.realisticMonthlyUplift)} kr/md. i lejereserve` }
+      ? { tone: "good", text: `Lejereserve på ${dk(rentReserve.realisticMonthlyUplift)} kr. pr. måned` }
       : rentReserve?.verdict === "over-market"
-      ? { tone: "warn", text: "Lejen ligger over markedet. Risiko ved genudlejning" }
-      : { tone: "neutral", text: "Regn på istandsættelse og værdiskabelse" };
+      ? { tone: "warn", text: "Lejen er over markedsniveau. Risiko ved genudlejning" }
+      : { tone: "neutral", text: "Beregn istandsættelse og værdiforøgelse" };
 
   const futureAnswer: ChapterAnswer =
     r.totalProfit > 0
       ? {
           tone: Number.isFinite(r.irr) && r.irr >= 8 ? "good" : "warn",
-          text: `+${dk(r.totalProfit)} kr efter ${r.holdYears} år${Number.isFinite(r.irr) ? `, ${num(r.irr)} % om året` : ""}`,
+          text: `+${dk(r.totalProfit)} kr. efter ${r.holdYears} år${Number.isFinite(r.irr) ? `, IRR ${num(r.irr)} %` : ""}`,
         }
-      : { tone: "bad", text: `${dk(r.totalProfit)} kr efter ${r.holdYears} år` };
+      : { tone: "bad", text: `${dk(r.totalProfit)} kr. efter ${r.holdYears} år` };
 
   const docCount = provenanceRows.filter((row) => row.tier === "doc").length;
   const dataShare = provenanceRows.length ? docCount / provenanceRows.length : 0;
   const dataAnswer: ChapterAnswer = {
     tone: dataShare >= 0.6 ? "good" : dataShare >= 0.3 ? "warn" : "bad",
-    text: `${docCount} af ${provenanceRows.length} nøgletal er dokumenteret`,
+    text: `${docCount} af ${provenanceRows.length} nøgletal er dokumenterede`,
   };
 
   const navItems: NavItem[] = isInvestment ? [
-    { id: "overblik", label: "Dommen", tone: heroTone },
-    { id: "oekonomi", label: "Pengene", tone: r.cashFlow >= 0 ? "good" : "bad" },
-    { id: "risici", label: "Renten", tone: riskAnswer.tone },
-    { id: "fremtid", label: "Om 10 år", tone: r.totalProfit >= 0 ? "good" : "bad" },
+    { id: "overblik", label: "Overblik", tone: heroTone },
+    { id: "oekonomi", label: "Økonomi", tone: r.cashFlow >= 0 ? "good" : "bad" },
+    { id: "risici", label: "Rente", tone: riskAnswer.tone },
+    { id: "fremtid", label: "10 år", tone: r.totalProfit >= 0 ? "good" : "bad" },
     { id: "tjek", label: "Tjekliste", tone: "neutral" },
-    { id: "data", label: "Tallene", tone: "neutral" },
+    { id: "data", label: "Datagrundlag", tone: "neutral" },
   ] : [
-    { id: "overblik", label: "Dommen", tone: heroTone },
-    ...(isInvestment ? [] : [{ id: "kalkule", label: "Regnestykket", tone: (r.cashFlow >= 0 ? "good" : "bad") as Tone }]),
+    { id: "overblik", label: "Overblik", tone: heroTone },
+    ...(isInvestment ? [] : [{ id: "kalkule", label: "Beregning", tone: (r.cashFlow >= 0 ? "good" : "bad") as Tone }]),
     { id: "oekonomi", label: "Økonomi", tone: cashAnswer.tone },
     ...(showPriceChapter ? [{ id: "pris", label: "Pris", tone: priceAnswer.tone }] : []),
     { id: "risici", label: "Risici", tone: riskAnswer.tone },
     { id: "potentiale", label: "Potentiale", tone: potentialAnswer.tone },
-    { id: "fremtid", label: "Fremtid", tone: futureAnswer.tone },
-    { id: "data", label: "Data", tone: dataAnswer.tone },
+    { id: "fremtid", label: "Fremskrivning", tone: futureAnswer.tone },
+    { id: "data", label: "Datagrundlag", tone: dataAnswer.tone },
   ];
 
   const exportExcel = async () => {
@@ -1124,21 +1123,21 @@ export function AnalyzerApp() {
   // ---- The analysis workspace (inside the app) ----
   const TONE_ICON = { good: CheckCircle2, warn: AlertTriangle, bad: XCircle, neutral: Info } as const;
   const answers: { id: string; q: string; a: ChapterAnswer }[] = [
-    { id: "kalkule", q: "Tjener den penge?", a: cashAnswer },
-    ...(showPriceChapter ? [{ id: "pris", q: "Er prisen fair?", a: priceAnswer }] : []),
-    { id: "risici", q: "Hvad kan gå galt?", a: riskAnswer },
-    { id: "potentiale", q: "Er der skjult potentiale?", a: potentialAnswer },
-    { id: "fremtid", q: `Hvad bliver det til om ${r.holdYears} år?`, a: futureAnswer },
-    { id: "data", q: "Kan du stole på tallene?", a: dataAnswer },
+    { id: "kalkule", q: "Cash flow", a: cashAnswer },
+    ...(showPriceChapter ? [{ id: "pris", q: "Pris mod markedet", a: priceAnswer }] : []),
+    { id: "risici", q: "Rentefølsomhed", a: riskAnswer },
+    { id: "potentiale", q: "Lejereserve og potentiale", a: potentialAnswer },
+    { id: "fremtid", q: `Afkast over ${r.holdYears} år`, a: futureAnswer },
+    { id: "data", q: "Datagrundlag", a: dataAnswer },
   ];
   const tabs = [
     { id: "overblik", label: "Overblik", tone: heroTone },
-    { id: "kalkule", label: "Regnestykket", tone: cashAnswer.tone },
+    { id: "kalkule", label: "Beregning", tone: cashAnswer.tone },
     ...(showPriceChapter ? [{ id: "pris", label: "Pris", tone: priceAnswer.tone }] : []),
     { id: "risici", label: "Risici", tone: riskAnswer.tone },
     { id: "potentiale", label: "Potentiale", tone: potentialAnswer.tone },
-    { id: "fremtid", label: `Om ${r.holdYears} år`, tone: futureAnswer.tone },
-    { id: "data", label: "Data", tone: dataAnswer.tone },
+    { id: "fremtid", label: `${r.holdYears} år`, tone: futureAnswer.tone },
+    { id: "data", label: "Datagrundlag", tone: dataAnswer.tone },
   ];
   const show = (id: string) => tab === id;
   const openTab = (id: string) => {
@@ -1163,7 +1162,7 @@ export function AnalyzerApp() {
   const overviewTab = (
     <div className="space-y-5">
       <section className="rounded-2xl border border-slate-200 bg-white">
-        <h2 className="border-b border-slate-100 px-5 py-3.5 text-[16px] font-semibold text-slate-900">Dommen punkt for punkt</h2>
+        <h2 className="border-b border-slate-100 px-5 py-3.5 text-[16px] font-semibold text-slate-900">Vurdering</h2>
         <ul className="divide-y divide-slate-100">
           {answers.map(({ id, q, a }) => {
             const Icon = TONE_ICON[a.tone];
@@ -1183,7 +1182,7 @@ export function AnalyzerApp() {
         </ul>
       </section>
       <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-        <h2 className="text-[16px] font-semibold text-slate-900">Sådan ser en måned ud</h2>
+        <h2 className="text-[16px] font-semibold text-slate-900">Månedligt budget</h2>
         <div className="mt-4">
           <MoneyFlow rent={r.annualRent / 12} vacancy={r.opex.vacancy / 12} maintenance={r.opex.maintenance / 12} fixed={r.opex.fixed / 12} mortgage={r.monthlyMortgage} cashFlow={r.cashFlow} />
         </div>
@@ -1206,14 +1205,14 @@ export function AnalyzerApp() {
       <section className="rounded-2xl border border-slate-200 bg-white p-4">
         {save.status === "saved" ? (
           <>
-            <p className="flex items-center gap-2 text-[15px] font-semibold text-emerald-700"><span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white"><Check aria-hidden size={14} strokeWidth={3} /></span> I din pipeline</p>
-            <p className="mt-1 text-[13px] text-slate-500">Alt, du gør herfra, gemmes på sagen.</p>
+            <p className="flex items-center gap-2 text-[15px] font-semibold text-emerald-700"><span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white"><Check aria-hidden size={14} strokeWidth={3} /></span> Gemt i pipeline</p>
+            <p className="mt-1 text-[13px] text-slate-500">Opgaver, bud og noter gemmes på sagen.</p>
             <a href={save.id ? `/app/ejendomme/${save.id}` : "/app/ejendomme"} className="mt-3 inline-flex min-h-[42px] w-full items-center justify-center gap-1.5 rounded-lg bg-slate-900 text-[14px] font-semibold text-white hover:bg-slate-800">Åbn sagen <ArrowRight aria-hidden size={15} /></a>
           </>
         ) : (
           <>
-            <p className="text-[15px] font-semibold text-slate-900">Følg boligen</p>
-            <p className="mt-0.5 text-[13px] text-slate-500">Gem den i din pipeline med tallene.</p>
+            <p className="text-[15px] font-semibold text-slate-900">Gem i pipeline</p>
+            <p className="mt-0.5 text-[13px] text-slate-500">Ejendommen gemmes med analysens tal.</p>
             <div className="mt-3 flex gap-2">
               <label className="sr-only" htmlFor="save-stage">Fase</label>
               <select id="save-stage" value={saveStage} onChange={(e) => setSaveStage(e.target.value as Stage)} className="h-[42px] min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 text-[14px] font-medium text-slate-800">
@@ -1232,16 +1231,16 @@ export function AnalyzerApp() {
         <button type="button" onClick={() => plan("fremvisning")} disabled={save.status === "saving"} className={lightBtn}><CalendarPlus aria-hidden size={16} className="text-sky-600" /> Planlæg fremvisning</button>
         <button type="button" onClick={() => plan("andet")} disabled={save.status === "saving"} className={lightBtn}><ListPlus aria-hidden size={16} className="text-slate-500" /> Opret opgave</button>
         <button type="button" onClick={() => goCase("bud")} disabled={save.status === "saving"} className={lightBtn}><Gavel aria-hidden size={16} className="text-orange-600" /> Registrér bud</button>
-        <button type="button" onClick={() => goCase("papirer")} disabled={save.status === "saving"} className={lightBtn}><Upload aria-hidden size={16} className="text-amber-600" /> Få papirerne læst</button>
+        <button type="button" onClick={() => goCase("papirer")} disabled={save.status === "saving"} className={lightBtn}><Upload aria-hidden size={16} className="text-amber-600" /> Gennemgå salgsdokumenter</button>
       </section>
       <section className="rounded-2xl border border-slate-200 bg-white p-2">
-        <p className="px-3 pb-1 pt-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Til banken og andre</p>
+        <p className="px-3 pb-1 pt-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Del og eksportér</p>
         <button type="button" onClick={() => requirePaid("report", openBankReport)} className={lightBtn}><FileText aria-hidden size={16} className="text-blue-600" /> Bankrapport (PDF)</button>
-        <button type="button" onClick={() => requirePaid("excel", exportExcel)} disabled={exporting} className={lightBtn}>{exporting ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <FileSpreadsheet aria-hidden size={16} className="text-emerald-600" />} {exporting ? "Laver Excel…" : "Hent som Excel"}</button>
+        <button type="button" onClick={() => requirePaid("excel", exportExcel)} disabled={exporting} className={lightBtn}>{exporting ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <FileSpreadsheet aria-hidden size={16} className="text-emerald-600" />} {exporting ? "Eksporterer…" : "Eksportér til Excel"}</button>
         {listingUrl && (watch.status === "saved"
           ? <p className={clsx(lightBtn, "text-emerald-700 hover:bg-transparent")}><BellRing aria-hidden size={16} /> Prisvagt aktiv</p>
           : <button type="button" onClick={startWatch} disabled={watch.status === "saving"} className={lightBtn}>{watch.status === "saving" ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <Bell aria-hidden size={16} className="text-slate-500" />} Giv besked ved prisfald</button>)}
-        <ShareAnalysis className={lightBtn} title={address ? `Analyse af ${address.split(",")[0]}` : "Min analyse af boligen"}
+        <ShareAnalysis className={lightBtn} title={address ? `Analyse af ${address.split(",")[0]}` : "Analyse af ejendommen"}
           params={{ url: urlParam, addr: address, price: inputs.price, rent: inputs.monthlyRent, opex: inputs.monthlyOpex, downPaymentPct: inputs.downPaymentPct, interestRate: inputs.interestRate }} />
         {watch.status === "error" && <p role="alert" className="px-3 pb-2 text-[13px] font-medium text-rose-600">Prisvagten kunne ikke startes.</p>}
       </section>
@@ -1296,7 +1295,7 @@ export function AnalyzerApp() {
           {journeyNote && (
             <div className="border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
               <p className="mx-auto max-w-[1080px] text-[14px] text-slate-600">
-                <span className="font-semibold text-slate-900">Tilpasset dine svar:</span> {journeyNote}.{" "}
+                <span className="font-semibold text-slate-900">Tilpasset din strategi:</span> {journeyNote}.{" "}
                 <button type="button" onClick={() => setSheetOpen(true)} className="font-medium text-blue-700 underline underline-offset-2">Ret tallene</button>
               </p>
             </div>
@@ -1348,18 +1347,18 @@ export function AnalyzerApp() {
           {show("kalkule") && (
             <section id="kalkule" className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
               <div>
-                <h2 className="text-[20px] font-semibold tracking-[-0.02em] sm:text-[22px]">Hele regnestykket</h2>
+                <h2 className="text-[20px] font-semibold tracking-[-0.02em] sm:text-[22px]">Beregning</h2>
                 <p className="mt-1 max-w-2xl text-[15px] text-slate-600">
                   {goal === "parents"
-                    ? "Jeres forældrekøb fra købspris til det, der står tilbage, når barnet flytter. Ret et blåt felt, og resten regner med."
-                    : <>Sådan hænger måneden sammen.<span className="hidden sm:inline"> Ret et blåt felt, og resten regner med. Klik på en række for at se, hvordan tallet er regnet.</span></>}
+                    ? "Forældrekøbet fra købspris til resultat ved salg. Ret et blåt felt, så opdateres beregningen."
+                    : <>Den fulde beregning.<span className="hidden sm:inline"> Ret et blåt felt, så opdateres beregningen. Klik på en række for at se udregningen.</span></>}
                 </p>
                 {/* Phones: the month as a short receipt; the 29-line sheet is one tap away. */}
                 <div className="mt-6 sm:hidden">
                   <MonthReceipt r={r} rent={inputs.monthlyRent} fixed={inputs.monthlyOpex} child={goal === "parents"} />
                   <button type="button" onClick={() => setFullSheet((v) => !v)} aria-expanded={fullSheet}
                     className="mt-4 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white text-[16px] font-semibold text-slate-900 active:translate-y-px">
-                    {fullSheet ? "Skjul hele regnearket" : "Vis hele regnearket"} <ChevronDown aria-hidden size={18} className={fullSheet ? "rotate-180" : ""} />
+                    {fullSheet ? "Skjul den fulde beregning" : "Vis den fulde beregning"} <ChevronDown aria-hidden size={18} className={fullSheet ? "rotate-180" : ""} />
                   </button>
                 </div>
                 <div className={fullSheet ? "mt-6" : "mt-6 hidden sm:block"}>
@@ -1380,7 +1379,7 @@ export function AnalyzerApp() {
           )}
 
           {show("kalkule") && (
-          <Chapter flat id="oekonomi" question="Tjener den penge?" answer={cashAnswer}>
+          <Chapter flat id="oekonomi" question="Cash flow" answer={cashAnswer}>
             <Panel>
               <MoneyFlow
                 rent={r.annualRent / 12}
@@ -1392,63 +1391,63 @@ export function AnalyzerApp() {
               />
             </Panel>
             <Panel>
-              <h3 className="text-[21px] font-semibold tracking-[-0.02em] text-slate-900">Alle nøgletal</h3>
-              <p className="mt-1 text-[15px] text-slate-500">Tryk på spørgsmålstegnet for at se, hvad et tal betyder.</p>
+              <h3 className="text-[21px] font-semibold tracking-[-0.02em] text-slate-900">Nøgletal</h3>
+              <p className="mt-1 text-[15px] text-slate-500">Klik på spørgsmålstegnet for en forklaring.</p>
               <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-7 md:grid-cols-4">
                 <KeyStat
                   label="Cash flow pr. md." value={dk(r.cashFlow)} unit="kr" tone={cfTone}
-                  sub={r.cashFlow >= 0 ? `+${dk(r.annualCashFlow)} kr om året` : `−${dk(Math.abs(r.annualCashFlow))} kr om året`}
-                  explain="Det, der reelt lander på din konto hver måned, når lejen har betalt lånet og alle udgifter. Positivt betyder, at ejendommen betaler dig. Negativt betyder, at du lægger penge til hver måned."
-                  how="Månedlig leje minus ydelsen på lånet minus alle driftsudgifter."
+                  sub={r.cashFlow >= 0 ? `+${dk(r.annualCashFlow)} kr. pr. år` : `−${dk(Math.abs(r.annualCashFlow))} kr. pr. år`}
+                  explain="Lejeindtægt fratrukket driftsudgifter og ydelse på lån. Negativt cash flow skal dækkes af egne midler."
+                  how="Månedlig leje − driftsudgifter − ydelse på lån."
                 />
                 <KeyStat
                   label="Nettoafkast" value={num(r.capRate)} unit="%"
                   tone={r.capRate >= 5 ? "text-emerald-600" : r.capRate >= 3 ? "text-slate-900" : "text-rose-600"}
-                  sub="Før lån, om året"
-                  explain={`Hvor mange procent af prisen ejendommen tjener om året, efter driftsudgifter men før lån. ${num(r.capRate)} % betyder, at ejendommen selv giver ${num(r.capRate)} % af sin pris tilbage hvert år. Højere er bedre.`}
-                  how="Driftsresultatet (leje minus tomgang, vedligehold og faste udgifter) delt med købsprisen."
+                  sub="Årligt, før finansiering"
+                  explain={`Driftsresultatet i procent af købsprisen. Viser ejendommens afkast uafhængigt af finansieringen.`}
+                  how="Driftsresultat (leje − tomgang, vedligehold og faste udgifter) / købspris."
                 />
                 <KeyStat
                   label="Kontantafkast" value={num(r.cashOnCash)} unit="%"
                   tone={r.cashOnCash >= 8 ? "text-emerald-600" : r.cashOnCash >= 0 ? "text-slate-900" : "text-rose-600"}
-                  sub={`På ${dk(r.cashInvested)} kr investeret`}
-                  explain={`Hvor meget dine egne penge tjener om året. Du lægger ${dk(r.cashInvested)} kr (udbetaling og købsomkostninger) og får ${dk(r.annualCashFlow)} kr tilbage i cash flow. Det er ${num(r.cashOnCash)} %.`}
-                  how="Årligt cash flow delt med de penge, du selv lægger."
+                  sub={`Af egenkapital på ${dk(r.cashInvested)} kr.`}
+                  explain={`Årligt cash flow i procent af egenkapitalen (udbetaling og købsomkostninger). Her ${dk(r.annualCashFlow)} kr. af ${dk(r.cashInvested)} kr.`}
+                  how="Årligt cash flow / egenkapital."
                 />
                 <KeyStat
                   label="Gældsdækning" value={num(r.dscr)} tone={dscrTone}
-                  sub={r.dscr >= 1.25 ? "Banken siger typisk ja" : r.dscr >= 1 ? "På kanten" : "Under 1,0"}
-                  explain={`Kan lejen betale lånet? 1,0 er lige akkurat. ${num(r.dscr)} betyder, at ejendommen tjener ${num(r.dscr)} gange så meget som ydelsen. Banker vil typisk gerne se mindst 1,25.`}
-                  how="Driftsresultatet (NOI) delt med den årlige ydelse på lånet."
+                  sub={r.dscr >= 1.25 ? "Over bankernes typiske krav" : r.dscr >= 1 ? "Under bankernes typiske krav" : "Dækker ikke ydelsen"}
+                  explain={`Driftsresultatet i forhold til ydelsen på lånet. 1,0 betyder, at driftsresultatet netop dækker ydelsen. Banker kræver typisk mindst 1,25.`}
+                  how="Driftsresultat (NOI) / årlig ydelse på lån."
                 />
                 <KeyStat
                   label="Bruttoafkast" value={num(r.grossYield)} unit="%"
                   sub="Før udgifter"
-                  explain="Årlig leje i forhold til prisen, før udgifter. Et hurtigt førstetjek. Nettoafkastet er det mere ærlige tal, fordi det trækker udgifterne fra."
-                  how="Årlig leje delt med købsprisen."
+                  explain="Årlig leje i procent af købsprisen, før driftsudgifter. Nettoafkastet er mere retvisende, fordi det fratrækker udgifterne."
+                  how="Årlig leje / købspris."
                 />
                 <KeyStat
                   label={`IRR over ${r.holdYears} år`} value={num(r.irr)} unit="%"
                   tone={isFinite(r.irr) && r.irr >= 8 ? "text-emerald-600" : "text-slate-900"}
                   sub="Cash flow og værdistigning"
-                  explain="Det samlede årlige afkast på dine penge over hele perioden: cash flow og værdistigning lagt sammen til én procent. Over 8 til 10 % er stærkt."
-                  how="Alle pengestrømme (udbetaling ud nu, cash flow ind hvert år, salg til sidst) regnet om til én årlig rente."
+                  explain="Den årlige forrentning af egenkapitalen over hele ejerperioden, inklusive cash flow og værdistigning. Over 8-10 % regnes som stærkt."
+                  how="Den interne rente af alle betalinger: egenkapital ved køb, årligt cash flow og nettoprovenu ved salg."
                 />
                 <KeyStat
                   label="Equity multiple" value={num(r.equityMultiple)} unit="x"
-                  sub="Penge tilbage pr. krone"
-                  explain={`Hvor mange gange du får dine penge igen i alt. ${num(r.equityMultiple)}x betyder, at du for hver krone, du lægger, får ${num(r.equityMultiple)} kr tilbage over perioden.`}
-                  how="Alt du får ud (samlet cash flow og nettoprovenu ved salg) delt med det, du selv lægger."
+                  sub="Samlet udbetaling pr. investeret krone"
+                  explain={`Hvor mange gange egenkapitalen kommer retur over perioden. ${num(r.equityMultiple)}x betyder ${num(r.equityMultiple)} kr. retur pr. investeret krone.`}
+                  how="(Samlet cash flow + nettoprovenu ved salg) / egenkapital."
                 />
                 <KeyStat
                   label="Break-even belægning" value={num(r.breakEvenOccupancy, 0)} unit="%"
-                  sub="Lavere giver mere buffer"
-                  explain={`Hvor tom ejendommen må stå, før du taber penge. ${num(r.breakEvenOccupancy, 0)} % betyder, at det går lige op, selv hvis den kun er udlejet ${num(r.breakEvenOccupancy, 0)} % af tiden. Over 100 % betyder, at lejen ikke dækker, heller ikke fuldt udlejet.`}
-                  how="Hvor stor en del af lejen, der skal til for at dække lån og udgifter."
+                  sub="Lavere giver større buffer"
+                  explain={`Den udlejningsgrad, hvor cash flow er nul. Ved ${num(r.breakEvenOccupancy, 0)} % udlejning dækker lejen præcis lån og udgifter. Over 100 % betyder, at lejen ikke dækker, selv ved fuld udlejning.`}
+                  how="(Driftsudgifter + ydelse på lån) / lejeindtægt ved fuld udlejning."
                 />
               </div>
             </Panel>
-            <Details label="hele budgettet, finansieringen og usikkerheden">
+            <Details label="driftsbudget, finansiering og usikkerhed">
               <div className="grid gap-10 md:grid-cols-2">
                 <div>
                   <h3 className="text-[17px] font-semibold text-slate-900">Driftsbudget, år 1</h3>
@@ -1468,7 +1467,7 @@ export function AnalyzerApp() {
                     <Row l="Købspris" v={kr(inputs.price)} />
                     <Row l="Udbetaling" v={kr(r.downPayment)} />
                     <Row l="Købsomkostninger" v={kr(r.cashInvested - r.downPayment)} />
-                    <div className="border-t border-slate-100 pt-2.5"><Row l="Du investerer" v={kr(r.cashInvested)} strong /></div>
+                    <div className="border-t border-slate-100 pt-2.5"><Row l="Egenkapital" v={kr(r.cashInvested)} strong /></div>
                     <Row l="Lån" v={kr(r.loan)} />
                     <Row l="Belåningsgrad" v={pct(r.ltv, 0)} />
                     <Row l="Månedlig ydelse" v={krMd(r.monthlyMortgage)} />
@@ -1483,7 +1482,7 @@ export function AnalyzerApp() {
           )}
 
           {showPriceChapter && show("pris") && (
-            <Chapter flat id="pris" question="Er prisen fair?" answer={priceAnswer}>
+            <Chapter flat id="pris" question="Pris mod markedet" answer={priceAnswer}>
               <Valuation bfe={bfe} price={inputs.price} />
               {(priceBench || rentBench) && (
                 <div className="grid gap-5 md:grid-cols-2">
@@ -1513,7 +1512,7 @@ export function AnalyzerApp() {
           )}
 
           {show("risici") && (
-          <Chapter flat id="risici" question="Hvad kan gå galt?" answer={riskAnswer}>
+          <Chapter flat id="risici" question="Risici" answer={riskAnswer}>
             <Panel>
               <RateStress
                 rate={inputs.interestRate}
@@ -1528,7 +1527,7 @@ export function AnalyzerApp() {
           )}
 
           {show("potentiale") && (
-          <Chapter flat id="potentiale" question="Er der skjult potentiale?" answer={potentialAnswer}>
+          <Chapter flat id="potentiale" question="Lejereserve og potentiale" answer={potentialAnswer}>
             {rentReserve && <RentReserve reserve={rentReserve} />}
             {listingUrl && (
               <Link
@@ -1536,10 +1535,10 @@ export function AnalyzerApp() {
                 className="mb-5 flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-blue-300"
               >
                 <span className="min-w-0">
-                  <span className="block text-[15px] font-semibold text-slate-900">Vil du renovere og sælge i stedet?</span>
-                  <span className="block text-[14px] text-slate-600">Flip-analysen giver værdi efter renovering, budget med rigtige priser, skat og dit maksimale bud.</span>
+                  <span className="block text-[15px] font-semibold text-slate-900">Renovering og videresalg</span>
+                  <span className="block text-[14px] text-slate-600">Flip-analysen beregner værdi efter renovering, renoveringsbudget, skat og maksimalt bud.</span>
                 </span>
-                <span className="shrink-0 text-[14px] font-semibold text-blue-700">Prøv flip →</span>
+                <span className="shrink-0 text-[14px] font-semibold text-blue-700">Åbn flip-analyse →</span>
               </Link>
             )}
             <RenovationModule
@@ -1560,7 +1559,7 @@ export function AnalyzerApp() {
           )}
 
           {show("fremtid") && (
-          <Chapter flat id="fremtid" question={`Hvad bliver det til om ${r.holdYears} år?`} answer={futureAnswer}>
+          <Chapter flat id="fremtid" question={`Afkast over ${r.holdYears} år`} answer={futureAnswer}>
             <Panel>
               <ProjectionStory
                 data={r.projection.map((y) => ({ year: y.year, paid: inputs.price - y.loanBalance, growth: y.propertyValue - inputs.price, cumulativeCashFlow: y.cumulativeCashFlow }))}
@@ -1577,7 +1576,7 @@ export function AnalyzerApp() {
           )}
 
           {show("data") && (
-          <Chapter flat id="data" question="Kan du stole på tallene?" answer={dataAnswer}>
+          <Chapter flat id="data" question="Datagrundlag" answer={dataAnswer}>
             <DataProvenance rows={provenanceRows} rentRule={rentRule} showRentCaveat={!isInvestment} />
             <BrainBadge
               regionName={regionLabel(cal.region)}
@@ -1625,7 +1624,7 @@ export function AnalyzerApp() {
         open={sheetOpen}
         onClose={() => setSheetOpen(false)}
         title="Justér tallene"
-        description="Ret et tal, så regnes hele analysen om med det samme."
+        description="Analysen opdateres, når du ændrer et tal."
         footer={
           <button
             type="button"
@@ -1640,7 +1639,7 @@ export function AnalyzerApp() {
       </Sheet>
 
       <EventDialog state={planFor} onClose={() => setPlanFor(null)} homes={save.id ? [{ id: save.id, address: address ?? "Boligen" }] : []}
-        onSave={async (d) => { if (!d.rowId) return false; const ok = await addTaskToRow(d.rowId, toTask({ ...d, id: `t${Date.now()}` }), `${d.title} planlagt`); if (ok) setActionMsg("Aftalen ligger nu i din kalender og på sagen."); return ok; }} />
+        onSave={async (d) => { if (!d.rowId) return false; const ok = await addTaskToRow(d.rowId, toTask({ ...d, id: `t${Date.now()}` }), `${d.title} planlagt`); if (ok) setActionMsg("Aftalen er gemt i kalenderen og på sagen."); return ok; }} />
       {actionMsg && <Toast text={actionMsg} onClose={() => setActionMsg(null)} />}
 
       {/* Analytikeren: in-analysis expert chat (appears once an analysis exists) */}
@@ -1744,10 +1743,10 @@ function MonthReceipt({ r, rent, fixed, child }: { r: AnalysisResult; rent: numb
   const k = (n: number) => `${Math.round(Math.abs(n)).toLocaleString("da-DK")} kr.`;
   const upkeep = (r.opex.vacancy + r.opex.maintenance) / 12;
   const rows: [string, number][] = [
-    [child ? "Barnets husleje" : "Lejen ind", rent],
-    ["Renter og afdrag", -r.monthlyMortgage],
+    [child ? "Barnets husleje" : "Lejeindtægt", rent],
+    ["Ydelse på lån", -r.monthlyMortgage],
     ["Ejerudgift og faste udgifter", -fixed],
-    ["Vedligehold og tomme måneder", -upkeep],
+    ["Vedligehold og tomgang", -upkeep],
   ];
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
@@ -1759,17 +1758,17 @@ function MonthReceipt({ r, rent, fixed, child }: { r: AnalysisResult; rent: numb
           </div>
         ))}
         <div className="mt-1.5 flex items-baseline justify-between gap-4 border-t-2 border-slate-900 py-3">
-          <dt className="text-[17px] font-semibold text-slate-900">{r.cashFlow >= 0 ? "Tilbage til dig hver måned" : "Du lægger til hver måned"}</dt>
+          <dt className="text-[17px] font-semibold text-slate-900">Cash flow pr. måned</dt>
           <dd className={`shrink-0 text-[19px] font-bold tabular-nums ${r.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{r.cashFlow >= 0 ? "+" : "−"}{k(r.cashFlow)}</dd>
         </div>
       </dl>
       <dl className="grid grid-cols-2 divide-x divide-slate-200 border-t border-slate-200 bg-slate-50/70">
         <div className="min-w-0 px-5 py-3.5">
-          <dt className="text-[13px] text-slate-500">Du lægger selv</dt>
+          <dt className="text-[13px] text-slate-500">Egenkapital</dt>
           <dd className="mt-0.5 text-[16px] font-semibold tabular-nums text-slate-900">{k(r.cashInvested)}</dd>
         </div>
         <div className="min-w-0 px-5 py-3.5">
-          <dt className="text-[13px] text-slate-500">Gevinst om {r.holdYears} år</dt>
+          <dt className="text-[13px] text-slate-500">Gevinst efter {r.holdYears} år</dt>
           <dd className={`mt-0.5 text-[16px] font-semibold tabular-nums ${r.totalProfit >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{r.totalProfit >= 0 ? "+" : "−"}{k(r.totalProfit)}</dd>
         </div>
       </dl>

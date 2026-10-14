@@ -189,7 +189,7 @@ export function RenovationModule({
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-semibold text-slate-900">Istandsættelse &amp; value-add (BRRR)</span>
           <span className="block text-xs text-slate-500">
-            Regn renovering om til værdiskabelse, refinansiering og afkast — som et proff.
+            Beregn værdiforøgelse, refinansiering og afkast ved renovering.
           </span>
         </span>
         {totalReno > 0 && <span className="mr-1 hidden text-sm font-semibold text-slate-700 tnum sm:block">{kr(totalReno)}</span>}
@@ -213,7 +213,7 @@ export function RenovationModule({
               </div>
               {ai.result.summary && <p className="mt-2 text-sm leading-relaxed text-slate-600">{ai.result.summary}</p>}
               <p className="mt-2 text-xs text-slate-400">
-                Posterne herunder er forudfyldt ud fra billederne — <b>ret dem frit</b>. AI hjælper, du bestemmer.
+                Posterne er forudfyldt ud fra annoncens billeder og kan rettes.
               </p>
             </div>
           ) : (
@@ -221,11 +221,11 @@ export function RenovationModule({
               <div className="min-w-0 flex-1">
                 <div className="text-sm font-semibold text-slate-900">Lad AI vurdere standen ud fra fotos</div>
                 <div className="text-xs text-slate-500">
-                  Læser annoncens billeder, scorer standen og foreslår renoveringsposter med danske priser — forankret i BBR-data.
+                  Vurderer standen ud fra annoncens billeder og BBR og foreslår renoveringsposter med danske priser.
                 </div>
-                {ai.status === "noimg" && <div className="mt-1 text-xs text-amber-600">Ingen brugbare fotos fundet på annoncen.</div>}
+                {ai.status === "noimg" && <div className="mt-1 text-xs text-amber-600">Annoncen har ingen brugbare billeder.</div>}
                 {ai.status === "noconfig" && <div className="mt-1 text-xs text-amber-600">AI-analyse er ikke aktiveret endnu.</div>}
-                {ai.status === "error" && <div className="mt-1 text-xs text-rose-600">Kunne ikke analysere lige nu. Prøv igen.</div>}
+                {ai.status === "error" && <div className="mt-1 text-xs text-rose-600">Billederne kunne ikke analyseres. Prøv igen.</div>}
               </div>
               <button
                 onClick={runAi}
@@ -233,7 +233,7 @@ export function RenovationModule({
                 className="flex shrink-0 items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800 disabled:opacity-60"
               >
                 {ai.status === "analyzing" ? <Loader2 size={16} className="animate-spin" /> : <Wand2 size={16} />}
-                {ai.status === "analyzing" ? "Analyserer fotos…" : "Analysér fotos med AI"}
+                {ai.status === "analyzing" ? "Analyserer fotos…" : "Vurdér stand ud fra billeder"}
               </button>
             </div>
           )}
@@ -304,17 +304,17 @@ export function RenovationModule({
                 />
                 <Stat label="Cash flow / md." value={krMd(r.cfMonth)} tone={r.cfMonth >= 0 ? "text-emerald-600" : "text-rose-500"} />
                 <Stat label="Ny ydelse" value={krMd(r.newPay)} />
-                <Stat label="Samlet investeret" value={kr(r.cashInvested)} hint="udbetaling + reno" />
+                <Stat label="Samlet investeret" value={kr(r.cashInvested)} hint="udbetaling og renovering" />
               </div>
 
               <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50/60 p-4 text-sm leading-relaxed text-amber-900">
-                <b>Sådan læser du det:</b> BRRR handler om at renovere så meget værdi frem, at du kan låne penge ud igen ved
-                at refinansiere — og genbruge din kapital til næste bolig.{" "}
+                <b>BRRRR:</b> Renoveringen øger værdien, så ejendommen kan refinansieres, og egenkapitalen kan
+                bruges igen til næste køb.{" "}
                 {r.cocAfter === Infinity
-                  ? "Her får du hele din kapital ud: uendeligt afkast på de penge, der er tilbage i handlen."
+                  ? "Hele egenkapitalen frigøres ved refinansieringen."
                   : r.pulledOut > 0
-                  ? `Du får ${kr(r.pulledOut)} tilbage og har kun ${kr(r.leftIn)} bundet — resten arbejder videre.`
-                  : "Endnu ingen kapital udtrukket — hæv ARV eller renovér mere målrettet for at frigøre penge."}
+                  ? `Refinansieringen frigør ${kr(r.pulledOut)}. Der er ${kr(r.leftIn)} bundet i ejendommen.`
+                  : "Refinansieringen frigør ingen kapital. Det kræver en højere værdi efter renovering."}
               </div>
             </div>
           </div>

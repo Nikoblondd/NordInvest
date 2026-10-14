@@ -23,7 +23,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: { ny?
   }
   return (
     <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <PageHeader title="Find boliger" sub="Deal-motoren regner hele markedet igennem hver 6. time. Søg selv, eller lad en søgeagent holde øje for dig." />
+      <PageHeader title="Find boliger" sub="Deal-motoren beregner hele markedet hver 6. time. Søg selv, eller opret en søgeagent." />
       <FindTabs active="agenter" fresh={fresh} />
       <AgentsHome initial={agents} prefill={prefill} />
     </div>

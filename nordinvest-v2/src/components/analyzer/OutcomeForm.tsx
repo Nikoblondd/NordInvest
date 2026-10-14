@@ -51,7 +51,7 @@ export function OutcomeForm({
     return (
       <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
         <Check className="mx-auto text-emerald-600" size={26} />
-        <p className="mt-2 font-semibold text-emerald-900">Tak — det gør en reel forskel.</p>
+        <p className="mt-2 font-semibold text-emerald-900">Tak. Dine tal er gemt.</p>
         <p className="mt-1 text-sm text-emerald-700">
           Dine faktiske tal er nu en del af NordInvest-hjernen og gør fremtidige analyser skarpere.
         </p>
@@ -68,7 +68,7 @@ export function OutcomeForm({
           </span>
           <span>
             <span className="block text-sm font-semibold text-slate-900">Har du købt eller solgt? Registrér det faktiske resultat</span>
-            <span className="block text-xs text-slate-500">Dine rigtige tal træner modellen — og gør din næste analyse mere præcis.</span>
+            <span className="block text-xs text-slate-500">De faktiske tal bruges til at kalibrere modellen.</span>
           </span>
         </button>
       ) : (

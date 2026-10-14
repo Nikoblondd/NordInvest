@@ -61,7 +61,7 @@ export function BankReport() {
       <div className="mx-auto max-w-lg px-6 py-24 text-center">
         <h1 className="text-xl font-bold text-slate-900">Ingen rapportdata</h1>
         <p className="mt-2 text-sm text-slate-500">
-          Åbn en analyse på værktøjet og tryk “Download bankrapport” for at generere rapporten.
+          Åbn en analyse, og vælg “Bankrapport (PDF)”.
         </p>
         <a href="/analyseren" className="mt-6 inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white">
           <ArrowLeft size={16} /> Til analyseværktøjet
@@ -171,7 +171,7 @@ export function BankReport() {
         <section className="avoid-break mt-6">
           <h2 className="text-sm font-bold text-slate-900">Nøgletal med konfidensinterval</h2>
           <p className="mt-0.5 text-xs text-slate-500">
-            Beregnet på {u.runs.toLocaleString("da-DK")} scenarier. Intervallet går fra konservativt (P10) til optimistisk (P90); forventet er medianen.
+            Beregnet på {u.runs.toLocaleString("da-DK")} scenarier. Intervallet går fra forsigtigt (P10) til optimistisk (P90). Forventet er medianen.
           </p>
           <div className="-mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
           <table className="mt-3 w-full min-w-[440px] border-collapse text-sm">
@@ -194,7 +194,7 @@ export function BankReport() {
           </div>
           <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600">
             <b className="text-slate-900">{Math.round(u.pCashFlowPositive * 100)} %</b> af scenarierne giver positivt cash flow.
-            Selv i det konservative scenarie (P10) er cash flow <b className="text-slate-900">{dk(u.cashFlow.p10)} kr/md.</b>
+            I det forsigtige scenarie (P10) er cash flow <b className="text-slate-900">{dk(u.cashFlow.p10)} kr/md.</b>
           </div>
         </section>
 

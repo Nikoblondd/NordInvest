@@ -135,7 +135,7 @@ function YearScrubber({ data, downPayment, sel, onSel }: { data: WealthYear[]; d
         ))}
       </dl>
       {growth < 0 && (
-        <p className="mt-3 text-[14px] text-rose-700">Boligen er {dk(Math.abs(growth))} kr mindre værd end købsprisen i år {d.year}. Det er trukket fra udbetalingen.</p>
+        <p className="mt-3 text-[14px] text-rose-700">Boligen er {dk(Math.abs(growth))} kr mindre værd end købsprisen i år {d.year}. Faldet er fratrukket egenkapitalen.</p>
       )}
 
       <div className="mt-6">

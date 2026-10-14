@@ -44,7 +44,7 @@ export function RentBenchmark({
   const Icon = near ? Minus : over ? TrendingUp : TrendingDown;
   const verdict =
     rounded == null
-      ? "Vi kan ikke sammenligne uden ejendommens areal"
+      ? "Sammenligning kræver ejendommens areal"
       : near
       ? "på niveau med markedet"
       : over
@@ -91,12 +91,12 @@ export function RentBenchmark({
 
       {estimated ? (
         <p className="mt-4 text-sm leading-relaxed text-slate-600">
-          Vi har regnet med {Math.round(currentRent).toLocaleString("da-DK")} kr./md., et forsigtigt skøn for postnummeret, hvor store boliger tæller lavere pr. m². Kender du lejen, så ret den under Justér.
+          Beregningen bruger {Math.round(currentRent).toLocaleString("da-DK")} kr./md., et forsigtigt skøn for postnummeret. Store boliger vægtes lavere pr. m². Kender du lejen, kan du rette den under Justér.
         </p>
       ) : (
         <div className={clsx("mt-4 flex items-center gap-2 text-sm font-semibold", tone)}>
           <Icon size={16} />
-          <span>Din leje ligger {verdict}.</span>
+          <span>Lejen ligger {verdict}.</span>
         </div>
       )}
 
@@ -191,7 +191,7 @@ function ContributionForm({
   if (step === "done") {
     return (
       <div className="mt-4 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/60 px-3 py-2 text-xs font-medium text-emerald-800">
-        <Check size={13} /> Tak. Dit bidrag gør markedslejen mere præcis for andre.
+        <Check size={13} /> Tak. Dit tal indgår anonymt i markedslejen.
       </div>
     );
   }
@@ -203,8 +203,8 @@ function ContributionForm({
         <div className="flex items-center justify-between gap-3">
           <p className="min-w-0 text-xs leading-relaxed text-slate-600">
             <Users size={12} className="mr-1 -mt-0.5 inline text-slate-500" />
-            <span className="font-semibold text-slate-800">Hvad ser du lejen ligge på i området?</span>{" "}
-            Ét klik. Anonymt aggregeret. Skarpere data for alle.
+            <span className="font-semibold text-slate-800">Kender du lejeniveauet i området?</span>{" "}
+            Dit tal indgår anonymt i markedslejen.
           </p>
           <div className="flex shrink-0 items-center gap-1">
             <button
@@ -225,7 +225,7 @@ function ContributionForm({
       ) : (
         <>
           <div className="text-xs font-semibold text-slate-800">
-            Hvad ligger lignende {areaM2 ? `~${areaM2} m² ` : ""}lejemål på i området?
+            Leje for lignende lejemål{areaM2 ? ` på ca. ${areaM2} m²` : ""} i området
           </div>
           <div className="mt-2 flex items-center gap-2">
             <div className="flex flex-1 items-center rounded-lg border border-slate-200 bg-white focus-within:border-blue-500">

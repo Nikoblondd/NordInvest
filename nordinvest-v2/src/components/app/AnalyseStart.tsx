@@ -19,7 +19,7 @@ export function AnalyseStart() {
   return (
     <div data-tour="analyse-start" className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
       <h2 className="text-[18px] font-semibold">Indsæt et boliglink</h2>
-      <p className="mt-1 text-[15px] text-slate-500">Fra Boligsiden, Home, EDC, Nybolig, Danbolig eller Ejendomstorvet. Vi henter tallene, og du vælger din plan.</p>
+      <p className="mt-1 text-[15px] text-slate-500">Fra Boligsiden, Home, EDC, Nybolig, Danbolig eller Ejendomstorvet. Tallene hentes automatisk.</p>
       <form onSubmit={(e) => { e.preventDefault(); go(); }} className="mt-4 flex flex-col gap-2 sm:flex-row">
         <label htmlFor="analyse-link" className="sr-only">Link til boligen</label>
         <div className={`flex h-12 flex-1 items-center gap-2 rounded-lg border px-3 focus-within:ring-2 ${err ? "border-rose-400 focus-within:ring-rose-100" : "border-slate-300 focus-within:border-blue-600 focus-within:ring-blue-100"}`}>

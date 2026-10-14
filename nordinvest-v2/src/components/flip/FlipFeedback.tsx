@@ -47,7 +47,7 @@ export function FlipFeedback({ zip, address, profit }: { zip: string; address: s
   if (state === "done") {
     return (
       <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-[15px] font-medium text-emerald-800">
-        <Check size={18} /> Tak. Vi læser alt, og flip-modellen bliver rettet efter det.
+        <Check size={18} /> Tak. Din feedback bruges til at forbedre flip-modellen.
       </div>
     );
   }
@@ -58,7 +58,7 @@ export function FlipFeedback({ zip, address, profit }: { zip: string; address: s
   return (
     <form onSubmit={send} className="no-print rounded-2xl border border-slate-200 bg-white p-5 shadow-card sm:p-6">
       <p className="text-[18px] font-semibold tracking-[-0.01em] text-slate-900">Ramte vi rigtigt?</p>
-      <p className="mt-1 text-[14.5px] text-slate-600">Du kender boligerne bedre end vi gør. Sig til, hvad der er forkert, så retter vi modellen.</p>
+      <p className="mt-1 text-[14.5px] text-slate-600">Er et tal forkert? Din rettelse bruges til at forbedre flip-modellen.</p>
       <div className="mt-4 flex flex-wrap gap-2">
         {VERDICTS.map((x) => (
           <button key={x.v} type="button" onClick={() => setVerdict(x.v)} className={chip(verdict === x.v)} aria-pressed={verdict === x.v}>
@@ -92,7 +92,7 @@ export function FlipFeedback({ zip, address, profit }: { zip: string; address: s
             <button type="submit" disabled={state === "saving"} className="inline-flex h-11 items-center gap-2 rounded-xl bg-slate-900 px-5 text-[14.5px] font-semibold text-white hover:bg-slate-800 disabled:opacity-60">
               {state === "saving" && <Loader2 size={15} className="animate-spin" />} Send
             </button>
-            {state === "error" && <span className="text-[14px] text-rose-600">Det gik ikke igennem. Prøv igen.</span>}
+            {state === "error" && <span className="text-[14px] text-rose-600">Feedback kunne ikke sendes. Prøv igen.</span>}
           </div>
           <p className="text-[12.5px] text-slate-500">Vi bruger kun din e-mail til at spørge ind til din feedback.</p>
         </div>

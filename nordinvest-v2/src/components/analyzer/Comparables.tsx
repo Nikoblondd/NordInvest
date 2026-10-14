@@ -116,7 +116,7 @@ export function Comparables({
       <section className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-8">
         <h3 className="text-sm font-semibold text-slate-900">Sammenlignelige boliger</h3>
         <p className="mt-2 text-sm text-slate-500">
-          Ingen tilstrækkeligt sammenlignelige aktive udbud i {zip} lige nu. Prøv igen om nogle dage — Boligsiden opdaterer løbende.
+          Der er ikke nok sammenlignelige boliger til salg i {zip} lige nu. Listen opdateres løbende.
         </p>
       </section>
     );
