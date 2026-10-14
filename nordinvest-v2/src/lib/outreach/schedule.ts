@@ -1,8 +1,9 @@
 import week from "@/lib/outreach/press-week-41.json";
+import brokers43 from "@/lib/outreach/maegler-uge-43.json";
 
-/* The press outreach for week 41 (5-9 October 2026): one pitch per news desk, each with its own send time. */
+/* Outreach the weekday cron sends: press (week 41) and erhvervsmæglere (15, 16 and 19 October), one mail per person, each with its own send time. */
 export type Pitch = { id: string; to: string; subject: string; text: string; sendAt: string };
-export const PITCHES = week as Pitch[];
+export const PITCHES = [...(week as Pitch[]), ...(brokers43 as Pitch[])];
 export const PITCH_FROM = "Nikolaj Blond <contact@nordinvest.io>";
 export const PITCH_REPLY_TO = "contact@nordinvest.io";
 /** The founder's own inbox for receipts and the daily report. */

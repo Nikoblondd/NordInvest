@@ -55,8 +55,8 @@ export async function GET(req: Request) {
     body: JSON.stringify({
       from: REPORT_FROM,
       to: [REPORT_TO],
-      subject: `Pressemails i dag: ${results.filter((r) => r.ok).length} af ${results.length} sat i kø`,
-      text: `Dagens pressemails sendes fra contact@nordinvest.io på disse tidspunkter. Svar lander i contact@nordinvest.io.\n\n${lines}\n\nDu får dagsrapporten kl. 17.`,
+      subject: `Udsendte mails i dag: ${results.filter((r) => r.ok).length} af ${results.length} sat i kø`,
+      text: `Dagens mails sendes fra contact@nordinvest.io på disse tidspunkter. Svar lander i contact@nordinvest.io.\n\n${lines}\n\nDu får dagsrapporten kl. 17.`,
     }),
   }).catch(() => null);
   return NextResponse.json({ ok: results.every((r) => r.ok), day, results });
