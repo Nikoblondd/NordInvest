@@ -41,7 +41,7 @@ export function AccessBand({ title = "Klar til at regne på din næste bolig?", 
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link href="/adgang" className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-lg bg-white px-5 text-[16px] font-semibold text-[#0b1b33] hover:bg-slate-100">Anmod om adgang <ArrowRight size={17} /></Link>
-          <a href={site.phoneHref} className="inline-flex min-h-[50px] items-center justify-center rounded-lg border border-white/25 px-5 text-[16px] font-semibold text-white hover:bg-white/10">Ring {site.phone}</a>
+          <Link href="/kontakt" className="inline-flex min-h-[50px] items-center justify-center rounded-lg border border-white/25 px-5 text-[16px] font-semibold text-white hover:bg-white/10">Kontakt os</Link>
         </div>
       </div>
     </section>

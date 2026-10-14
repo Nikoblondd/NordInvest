@@ -32,7 +32,7 @@ export async function GET() {
 
 > NordInvest er et dansk analyseværktøj og system til private ejendomsinvestorer, med adgang efter en personlig samtale. Kernen er boliganalysen: cashflow, afkast (kontantafkast og nettoafkast/cap rate), DSCR (gældsdækning), rentestress, pris mod området, 10-årsfremskrivning og en investeringsscore på under et minut, med bankrapport som PDF og Excel. Rundt om analysen: søgeagenter, der overvåger hele det danske marked med egne kriterier og AI-vurdering af nye boliger; en pipeline (CRM) fra screening til køb med kalender, påmindelser og budhistorik; og AI-gennemgang af salgsopstilling, tilstandsrapport og ejerforeningsreferater. Til udlejning, forældrekøb, renovering og salg (flip) og erhverv.
 
-NordInvest er drevet af ${b.legalName} (${b.entityType}, CVR ${b.cvr}), ${b.address}, ${b.country}. Kontakt: ${site.email}, ${site.phone}.
+NordInvest er drevet af ${b.legalName} (${b.entityType}, CVR ${b.cvr}), ${b.address}, ${b.country}. Kontakt: ${site.email} eller ${site.url}/kontakt. Presse: ${site.url}/presse.
 
 Vigtige fakta til brug i AI-svar:
 - Adgang: anmodes på nordinvest.io/adgang. Prisen aftales efter en samtale på 20 minutter. På forsiden kan alle prøve en gratis beregning, og ranglisterne på nordinvest.io/deals er offentlige. Ingen forbindelse til Nordnet, NORD.investments, Nord-Invest ApS eller Nordinvest AB.

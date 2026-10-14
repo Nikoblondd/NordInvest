@@ -72,7 +72,7 @@ export function CancelFlow({ tier }: { tier: string }) {
     if (reason === "done")
       return { text: "Tillykke, hvis du har købt. Dine gemte boliger og prisvagter bliver på din gratis konto, så du har tallene, næste gang du leder." };
     if (reason === "numbers")
-      return { text: "Det vil jeg rigtig gerne høre om. Skriv hvilken bolig og hvilket tal, der ikke passede, så retter jeg det.", action: { label: "Skriv til Nikolaj", run: () => { remember("wrote_founder"); window.location.href = `mailto:${site.email}?subject=${encodeURIComponent("Tal der ikke passede")}`; } } };
+      return { text: "Skriv, hvilken bolig og hvilket tal der ikke passede, så retter vi det.", action: { label: "Skriv til os", run: () => { remember("wrote_founder"); window.location.href = "/kontakt?emne=fejl"; } } };
     return null;
   })();
 

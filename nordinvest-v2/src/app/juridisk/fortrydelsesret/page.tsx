@@ -52,7 +52,7 @@ export default function Page() {
         {
           h: "5. Sådan kontakter du os",
           p: [
-            `${identity}. Skriv til ${site.email} eller ring på ${site.phone}. Vi svarer hurtigst muligt.`,
+            `${identity}. Skriv til ${site.email}.`,
           ],
         },
       ]}

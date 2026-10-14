@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Check, Phone } from "lucide-react";
+import Link from "next/link";
+import { Check, Mail } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { geist } from "@/components/home/fonts";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { AccessForm } from "@/components/landing/AccessForm";
-import { site } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { hasToolAccess } from "@/lib/access";
 
@@ -50,7 +50,7 @@ export default async function AdgangPage({ searchParams }: { searchParams: { kil
               <Image src="/founder.jpg" alt="Nikolaj Blond" width={56} height={56} className="h-14 w-14 shrink-0 rounded-xl object-cover" priority />
               <div className="min-w-0">
                 <p className="text-[15px] font-semibold">Nikolaj Blond, stifter</p>
-                <a href={site.phoneHref} className="inline-flex min-h-[40px] items-center gap-1.5 text-[15px] text-blue-300 hover:text-blue-200"><Phone size={14} /> {site.phone}</a>
+                <Link href="/kontakt?emne=adgang" className="inline-flex min-h-[40px] items-center gap-1.5 text-[15px] text-blue-300 hover:text-blue-200"><Mail size={14} /> Spørgsmål? Skriv til os</Link>
               </div>
             </div>
           </div>

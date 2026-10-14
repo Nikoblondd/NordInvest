@@ -66,9 +66,7 @@ export function AccessForm({ source = "adgang" }: { source?: string }) {
       <div ref={doneRef} tabIndex={-1} className="rounded-2xl bg-white p-6 text-slate-900 shadow-[0_30px_80px_-30px_rgba(11,27,51,0.5)] outline-none sm:p-8">
         <CheckCircle2 className="text-emerald-600" size={32} />
         <h2 className="mt-4 text-[24px] font-semibold tracking-[-0.02em]">Tak. Din anmodning er modtaget.</h2>
-        <p className="mt-2 text-[16px] leading-relaxed text-slate-600">Jeg ringer dig op inden for en arbejdsdag. Du har også fået en bekræftelse på mail.</p>
-        <p className="mt-4 text-[15px] text-slate-600">Haster det? Ring på <a href="tel:+4520993797" className="font-semibold text-blue-700">+45 20 99 37 97</a>.</p>
-        <p className="mt-6 text-[15px] font-medium text-slate-900">Nikolaj Blond</p>
+        <p className="mt-2 text-[16px] leading-relaxed text-slate-600">Du hører fra os inden for en arbejdsdag. Du har også fået en bekræftelse på mail.</p>
         <Link href="/" className="mt-6 inline-flex min-h-[44px] items-center rounded-lg border border-slate-300 px-4 text-[15px] font-semibold hover:border-slate-400">Tilbage til forsiden</Link>
       </div>
     );
@@ -125,7 +123,7 @@ export function AccessForm({ source = "adgang" }: { source?: string }) {
       </div>
 
       {state === "error" && (
-        <p role="alert" className="mt-5 rounded-lg bg-rose-50 px-4 py-3 text-[15px] text-rose-800">Anmodningen kunne ikke sendes lige nu. Prøv igen, eller ring på <a href="tel:+4520993797" className="font-semibold underline">+45 20 99 37 97</a>.</p>
+        <p role="alert" className="mt-5 rounded-lg bg-rose-50 px-4 py-3 text-[15px] text-rose-800">Anmodningen kunne ikke sendes. Prøv igen, eller skriv til contact@nordinvest.io.</p>
       )}
 
       <button type="submit" disabled={state === "sending"} className="mt-6 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-[16px] font-semibold text-white transition-colors hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:translate-y-px disabled:opacity-70">

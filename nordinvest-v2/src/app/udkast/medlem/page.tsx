@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, CalendarDays, Calculator, ChevronRight, FileText, Home, LayoutGrid, ListChecks, Phone, Plus, Search, Settings, StickyNote } from "lucide-react";
+import { Building2, CalendarDays, Calculator, ChevronRight, FileText, Home, LayoutGrid, ListChecks, Mail, Plus, Search, Settings, StickyNote } from "lucide-react";
 import { geist } from "@/components/home/fonts";
 
 export const metadata = { title: "Udkast: medlemsområde", robots: { index: false } };
@@ -31,7 +31,7 @@ export default function DraftMember() {
         </nav>
         <div className="mt-auto space-y-0.5">
           <span className="flex h-10 items-center gap-3 rounded-lg px-3 text-[14px] text-white/65"><Settings size={17} /> Konto</span>
-          <span className="flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-white/65"><Phone size={16} /> Ring til Nikolaj</span>
+          <span className="flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-white/65"><Mail size={16} /> Kontakt</span>
         </div>
       </aside>
 

@@ -29,7 +29,7 @@ const STEPS: Step[] = [
   { target: "nav-kalender", title: "Kalender", text: "Fremvisninger, bankmøder og svarfrister for alle dine boliger i én kalender, som måned, uge eller liste." },
   { target: "nav-find", title: "Find boliger", text: "Søg i hele markedet med dine egne filtre, eller opret en søgeagent, der giver besked på mail om nye fund." },
   { target: "nav-analyser", title: "Analysér", text: "Cash flow, afkast, rentefølsomhed og fremskrivning over 10 år. Gem analysen i pipelinen for at følge ejendommen videre." },
-  { target: "help", title: "Hjælp", text: "Her kan du starte guiden igen eller ringe direkte til mig. Nikolaj" },
+  { target: "help", title: "Hjælp", text: "Her kan du starte guiden igen eller skrive til os under Kontakt. Vi svarer typisk inden for en arbejdsdag." },
   { target: "add", title: "Kom i gang", text: "Klik på Tilføj bolig, indsæt et link i søgefeltet, eller opret din første søgeagent under Find boliger." },
 ];
 

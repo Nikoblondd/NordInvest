@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Bell, CalendarClock, Calculator, Check, FileSearch, FileText, Gamepad2, KanbanSquare, LineChart, Phone, Search, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, Bell, CalendarClock, Calculator, Check, FileSearch, FileText, Gamepad2, KanbanSquare, LineChart, Mail, Search, ShieldCheck, Users } from "lucide-react";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { TryButton } from "@/components/landing/TryModal";
 import type { Metadata } from "next";
@@ -232,15 +232,14 @@ export default async function Home() {
         <div className="mx-auto grid max-w-[1320px] gap-14 px-4 py-20 sm:px-8 sm:py-28 lg:grid-cols-2 lg:gap-20">
           <Reveal>
             <H2 accent="fra første dag.">Vi sætter det op sammen,</H2>
-            <Lead>Du bliver ikke sendt rundt i en manual. Vi starter med en samtale om dine boliger, og du har mit nummer bagefter.</Lead>
+            <Lead>Du bliver ikke sendt rundt i en manual. Vi starter med en samtale om dine boliger, og du kan altid skrive til os, når du har spørgsmål.</Lead>
             <div className="mt-10 flex items-center gap-5 rounded-2xl bg-white p-5 ring-1 ring-slate-200">
               <Image src="/founder.jpg" alt="Nikolaj Blond, stifter af NordInvest" width={80} height={80} className="h-20 w-20 shrink-0 rounded-xl object-cover" priority />
               <div className="min-w-0">
                 <p className="text-[17px] font-semibold">{site.founder.name}</p>
-                <p className="text-[14px] text-slate-500">Stifter. Tager selv telefonen.</p>
+                <p className="text-[14px] text-slate-500">Stifter af NordInvest</p>
                 <div className="mt-1 flex flex-wrap gap-x-4 text-[14px] font-medium">
-                  <a href={site.phoneHref} className="inline-flex min-h-[40px] items-center text-blue-700 hover:underline">{site.phone}</a>
-                  <a href={`mailto:${site.email}`} className="inline-flex min-h-[40px] items-center text-blue-700 hover:underline">{site.email}</a>
+                  <Link href="/kontakt" className="inline-flex min-h-[40px] items-center text-blue-700 hover:underline">Kontakt os</Link>
                 </div>
               </div>
             </div>
@@ -281,7 +280,7 @@ export default async function Home() {
         <div className="mx-auto grid max-w-[1320px] gap-10 px-4 pb-24 pt-10 sm:px-8 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
           <Reveal>
             <H2>Det spørger investorer om</H2>
-            <p className="mt-5 text-[17px] text-slate-600">Er dit spørgsmål ikke her? Ring på <a href={site.phoneHref} className="font-semibold text-blue-700">{site.phone}</a>.</p>
+            <p className="mt-5 text-[17px] text-slate-600">Er dit spørgsmål ikke her? <Link href="/kontakt?emne=spoergsmaal" className="font-semibold text-blue-700">Skriv til os</Link>.</p>
           </Reveal>
           <Reveal delay={120}><Faq items={FAQ} /></Reveal>
         </div>
@@ -294,7 +293,7 @@ export default async function Home() {
             <H2 dark accent="om det passer til dig.">Lad os finde ud af,</H2>
             <Lead dark>En samtale på 20 minutter om, hvordan du investerer, og hvad du har brug for. Passer NordInvest ikke til dig, siger jeg det.</Lead>
             <ol className="mt-10 space-y-6">
-              {[["Send en anmodning", "Det tager 2 minutter. Jeg ringer dig op inden for en arbejdsdag."], ["Vi afdækker dit behov", "Hvad du ejer, hvad du vil købe, og hvor det i dag tager for lang tid eller føles usikkert."], ["Du får et ærligt svar", "Passer NordInvest til dig, aftaler vi pris og sætter det op sammen. Ellers siger jeg det."]].map(([t, d], i) => (
+              {[["Send en anmodning", "Det tager 2 minutter. Du hører fra os inden for en arbejdsdag."], ["Vi afdækker dit behov", "Hvad du ejer, hvad du vil købe, og hvor det i dag tager for lang tid eller føles usikkert."], ["Du får et ærligt svar", "Passer NordInvest til dig, aftaler vi pris og sætter det op sammen. Ellers siger jeg det."]].map(([t, d], i) => (
                 <li key={t} className="flex gap-4">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500 text-[14px] font-semibold">{i + 1}</span>
                   <span><span className="block text-[17px] font-semibold">{t}</span><span className="mt-0.5 block text-[15px] leading-relaxed text-white/60">{d}</span></span>
@@ -303,7 +302,7 @@ export default async function Home() {
             </ol>
             <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
               <Cta dark />
-              <a href={site.phoneHref} className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-white/25 max-sm:w-full px-5 text-[16px] font-semibold text-white hover:border-white/50"><Phone size={17} /> Ring {site.phone}</a>
+              <Link href="/kontakt" className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-white/25 max-sm:w-full px-5 text-[16px] font-semibold text-white hover:border-white/50"><Mail size={17} /> Kontakt os</Link>
             </div>
           </Reveal>
           <Reveal delay={150} y={32} className="relative mx-auto hidden w-full max-w-md sm:block">

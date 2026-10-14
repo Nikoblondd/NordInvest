@@ -121,7 +121,7 @@ export default async function OmPage() {
             <dt className="font-medium text-stone-900">CVR</dt><dd className="tabular-nums">{site.business.cvr}</dd>
             <dt className="font-medium text-stone-900">Adresse</dt><dd>{site.business.address}, {site.business.country}</dd>
             <dt className="font-medium text-stone-900">Kontakt</dt>
-            <dd><a href={`mailto:${site.email}`} className="underline underline-offset-4">{site.email}</a> · <a href={site.phoneHref} className="whitespace-nowrap underline underline-offset-4">{site.phone}</a></dd>
+            <dd><a href={`mailto:${site.email}`} className="underline underline-offset-4">{site.email}</a> · <a href="/kontakt" className="underline underline-offset-4">Kontaktformular</a></dd>
           </dl>
           <p className="mt-6 text-[15px] leading-relaxed text-stone-600">
             Presse, samarbejde eller investering: skriv til <a href={`mailto:${site.email}`} className="underline underline-offset-4">{site.email}</a>, så svarer jeg selv.

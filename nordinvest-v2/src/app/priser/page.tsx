@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, Phone } from "lucide-react";
+import { ArrowRight, Check, Mail } from "lucide-react";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { geist } from "@/components/home/fonts";
 import { Faq } from "@/components/landing/Faq";
-import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Pris: aftales efter en kort samtale",
@@ -44,7 +43,7 @@ export default function PriserPage() {
               <p className="mt-5 max-w-xl text-[18px] leading-relaxed text-slate-600">NordInvest er et lukket system for danske ejendomsinvestorer. Vi starter med en samtale på 20 minutter om, hvordan du investerer, og aftaler derefter en pris, der passer til dig.</p>
               <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
                 <Link href="/adgang" className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-[16px] font-semibold text-white hover:bg-blue-500">Anmod om adgang <ArrowRight size={17} /></Link>
-                <a href={site.phoneHref} className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-800 hover:border-slate-400"><Phone size={17} /> Ring {site.phone}</a>
+                <Link href="/kontakt?emne=adgang" className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-800 hover:border-slate-400"><Mail size={17} /> Kontakt os</Link>
               </div>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_-30px_rgba(11,27,51,0.3)] sm:p-8">

@@ -25,7 +25,7 @@ export default function Page() {
         {
           h: "1. Dataansvarlig",
           p: [
-            `${identity} er dataansvarlig for behandlingen af de personoplysninger, vi modtager om dig. Har du spørgsmål til behandlingen, kan du kontakte os på ${site.email} eller ${site.phone}.`,
+            `${identity} er dataansvarlig for behandlingen af de personoplysninger, vi modtager om dig. Har du spørgsmål til behandlingen, kan du kontakte os på ${site.email}.`,
           ],
         },
         {

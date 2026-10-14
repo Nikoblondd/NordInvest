@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Menu, Phone, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { site } from "@/lib/site";
 import { hasAuthCookie } from "@/lib/supabase/lazy";
 
 /* Top bar for the public pages: real pages only, no in-page jumps. */
@@ -37,7 +36,6 @@ export function LandingNav() {
           {LINKS.map((l) => <Link key={l.href} href={l.href} className="rounded transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300">{l.label}</Link>)}
         </div>
         <div className="flex items-center gap-1 sm:gap-3">
-          <a href={site.phoneHref} className="hidden items-center gap-1.5 text-[15px] font-medium text-slate-700 hover:text-slate-900 xl:flex"><Phone size={15} /> {site.phone}</a>
           <Link href={member ? "/app" : "/auth/login"} prefetch={false} className="hidden min-h-[40px] items-center px-2 text-[15px] font-medium text-slate-700 hover:text-slate-900 sm:inline-flex">{member ? "Åbn NordInvest" : "Log ind"}</Link>
           <Link href="/adgang" className="inline-flex min-h-[40px] items-center rounded-lg bg-blue-600 px-3.5 text-[14px] font-semibold text-white transition-colors hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:px-4 sm:text-[15px]">Anmod om adgang</Link>
           <button type="button" aria-label={open ? "Luk menu" : "Åbn menu"} aria-expanded={open} onClick={() => setOpen((v) => !v)} className="-mr-2 flex h-11 w-11 items-center justify-center text-slate-700 lg:hidden">
@@ -53,7 +51,7 @@ export function LandingNav() {
             <li><Link href={member ? "/app" : "/auth/login"} prefetch={false} onClick={() => setOpen(false)} className="flex min-h-[56px] items-center text-[18px] font-medium text-slate-900">{member ? "Åbn NordInvest" : "Log ind"}</Link></li>
           </ul>
           <Link href="/adgang" onClick={() => setOpen(false)} className="mt-6 flex min-h-[52px] items-center justify-center rounded-lg bg-blue-600 text-[16px] font-semibold text-white">Anmod om adgang</Link>
-          <a href={site.phoneHref} className="mt-3 flex min-h-[52px] items-center justify-center gap-2 rounded-lg border border-slate-300 text-[16px] font-semibold text-slate-900"><Phone size={17} /> Ring {site.phone}</a>
+          <Link href="/kontakt" onClick={() => setOpen(false)} className="mt-3 flex min-h-[52px] items-center justify-center rounded-lg border border-slate-300 text-[16px] font-semibold text-slate-900">Kontakt</Link>
         </div>
       )}
     </>

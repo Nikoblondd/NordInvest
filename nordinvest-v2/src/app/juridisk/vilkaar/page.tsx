@@ -26,7 +26,7 @@ export default function Page() {
           h: "1. Om tjenesten og udbyderen",
           p: [
             "NordInvest er et analyseværktøj, der hjælper dig med at vurdere ejendomsinvesteringer. Ved at oprette en konto accepterer du disse vilkår.",
-            `Tjenesten udbydes af ${identity}. Du kan kontakte os på ${site.email} eller ${site.phone}.`,
+            `Tjenesten udbydes af ${identity}. Du kan kontakte os på ${site.email}.`,
           ],
         },
         {

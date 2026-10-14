@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Phone } from "lucide-react";
+import Link from "next/link";
+import { Mail } from "lucide-react";
 import { PageHeader } from "@/components/app/PageHeader";
 import { GuideButton } from "@/components/app/GuideButton";
 import { PasswordForm } from "@/components/app/PasswordForm";
@@ -9,7 +10,6 @@ import { SavedSearches, type SavedSearch } from "@/components/dashboard/SavedSea
 import { DealsOptIn } from "@/components/account/DealsOptIn";
 import { ManageSubscriptionButton } from "@/components/dashboard/ManageSubscriptionButton";
 import { appUser } from "@/lib/app/data";
-import { site } from "@/lib/site";
 import type { Watch } from "@/lib/vagt";
 
 export const dynamic = "force-dynamic";
@@ -43,11 +43,11 @@ export default async function AccountPage({ searchParams }: { searchParams: { sk
           <div>
             <p className="text-[13px] text-slate-500">Medlemskab</p>
             <p className="text-[16px] font-semibold">{me.admin ? "Administrator" : "Medlem af NordInvest"}</p>
-            <p className="mt-0.5 text-[14px] text-slate-500">Prisen er aftalt personligt. Spørgsmål om din aftale? Ring til Nikolaj.</p>
+            <p className="mt-0.5 text-[14px] text-slate-500">Prisen er aftalt personligt. Spørgsmål til din aftale kan sendes under Kontakt.</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {hasStripe && <ManageSubscriptionButton label="Betaling og kvitteringer" className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 text-[15px] font-semibold text-slate-800 hover:border-slate-400" />}
-            <a href={site.phoneHref} className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 text-[15px] font-semibold text-slate-800 hover:border-slate-400"><Phone size={15} /> {site.phone}</a>
+            <Link href="/app/kontakt?emne=adgang" className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 text-[15px] font-semibold text-slate-800 hover:border-slate-400"><Mail size={15} /> Kontakt</Link>
           </div>
         </div>
         <div className="p-5">

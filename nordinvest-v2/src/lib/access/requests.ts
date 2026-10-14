@@ -95,9 +95,9 @@ export function confirmationEmail(r: AccessRequest): { subject: string; html: st
     subject: "Tak for din anmodning til NordInvest",
     html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
 <p>Hej ${first},</p>
-<p>Tak for din anmodning om adgang til NordInvest. Jeg ringer dig op på ${esc(r.phone)} inden for en arbejdsdag, så vi kan tage en kort snak om, hvordan du investerer, og hvad du har brug for.</p>
-<p>Passer det dårligt, så svar bare på denne mail med et tidspunkt, der passer dig bedre.</p>
-<p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · +45 20 99 37 97</p>
+<p>Tak for din anmodning om adgang til NordInvest. Du hører fra os inden for en arbejdsdag, så vi kan aftale en kort samtale om, hvordan du investerer, og hvad du har brug for.</p>
+<p>Har du spørgsmål inden da, kan du svare på denne mail.</p>
+<p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · contact@nordinvest.io</p>
 <p style="font-size:12px;color:#94a3b8">Du får denne mail, fordi du har anmodet om adgang på nordinvest.io. Vi bruger kun dine oplysninger til at kontakte dig om adgang.</p></div>`,
   };
 }
@@ -111,7 +111,7 @@ export function invitationEmail(name: string, link: string): { subject: string; 
 <p>Din anmodning om adgang til NordInvest er godkendt, og din konto er klar. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode, og bagefter viser en kort guide dig rundt.</p>
 <p style="margin:28px 0"><a href="${link}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Åbn NordInvest</a></p>
 <p style="font-size:13px;color:#64748b">Linket virker én gang og kun i en begrænset periode. Er det udløbet, så svar bare på denne mail, så sender jeg et nyt.</p>
-<p>Har du spørgsmål undervejs, så ring direkte til mig.</p>
-<p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · +45 20 99 37 97</p></div>`,
+<p>Har du spørgsmål undervejs, kan du skrive til os under Kontakt i NordInvest eller svare på denne mail.</p>
+<p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · contact@nordinvest.io</p></div>`,
   };
 }
