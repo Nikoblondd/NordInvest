@@ -186,9 +186,8 @@ For hver bolig: fit 0-100 (hvor godt den passer kunden), take: én konkret sætn
 
 function ruleTake(h: Hit, strategy: Strategy): HitAi {
   const below = h.sqm && h.zipSqm ? Math.round(((h.zipSqm - h.sqm) / h.zipSqm) * 100) : null;
-  const cf = `${h.cashFlow >= 0 ? "+" : "-"}${Math.abs(Math.round(h.cashFlow)).toLocaleString("da-DK")} kr./md.`;
   let take = "";
-  if (strategy === "udlejning" || strategy === "erhverv") take = `${h.cashFlow >= 0 ? "Betaler sig selv" : "Kræver tilskud"} med ${cf} og ${h.capRate.toFixed(1).replace(".", ",")} % afkast${below && below > 0 ? `, og prisen pr. m² er ${below} % under området` : ""}.`;
+  if (strategy === "udlejning" || strategy === "erhverv") take = `${h.cashFlow >= 0 ? "Positivt" : "Negativt"} cash flow på ${Math.abs(Math.round(h.cashFlow)).toLocaleString("da-DK")} kr./md. og ${h.capRate.toFixed(1).replace(".", ",")} % nettoafkast${below && below > 0 ? `. Prisen pr. m² er ${below} % under området` : ""}.`;
   if (strategy === "familie") take = below != null ? `${below > 0 ? `${below} % billigere` : `${Math.abs(below)} % dyrere`} pr. m² end andre boliger i ${h.zip}${h.rooms ? `, ${h.rooms} værelser` : ""}.` : `Pris ${kr(h.price)}${h.rooms ? ` for ${h.rooms} værelser` : ""}.`;
   if (strategy === "flip") take = below != null && below > 0 ? `Købes ${below} % under kvm-prisen i ${h.zip}, så der er plads til en renovering${h.yearBuilt ? ` af en bolig fra ${h.yearBuilt}` : ""}.` : "Prisen pr. m² ligger på niveau med området, så gevinsten skal komme fra renoveringen alene.";
   const risk = h.priceChangePct && h.priceChangePct < 0 ? "Spørg mægleren, hvorfor prisen er sat ned." : (h.daysOnMarket ?? 0) >= 90 ? "Længe til salg: find ud af, hvad der holder købere væk." : strategy === "flip" ? "Få en håndværker med til fremvisningen og prissæt renoveringen." : "Bekræft lejen og fællesudgifterne i salgsopstillingen.";

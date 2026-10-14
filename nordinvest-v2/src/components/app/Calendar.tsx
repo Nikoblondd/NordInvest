@@ -335,7 +335,7 @@ function Agenda({ items, today, onOpen, onToggle, onAdd }: { items: CalItem[]; t
       )}
       {Array.from(groups.entries()).map(([d, list]) => (
         <section key={d}>
-          <h3 className={clsx("pb-2 text-[14px] font-semibold", d === today ? "text-blue-700" : "text-slate-900")}>{dayLabel(d, today)} <span className="font-medium text-slate-400">{parseDay(d).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</span></h3>
+          <h3 className={clsx("pb-2 text-[14px] font-semibold", d === today ? "text-blue-700" : "text-slate-900")}>{dayLabel(d, today)}{/^I (dag|morgen|går)$/.test(dayLabel(d, today)) && <span className="font-medium text-slate-400"> {parseDay(d).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</span>}</h3>
           <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white">{list.map((i) => <ItemRow key={i.key} i={i} onOpen={() => onOpen(i)} onToggle={() => onToggle(i)} />)}</ul>
         </section>
       ))}

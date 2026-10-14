@@ -138,13 +138,13 @@ export function PortfolioCard({ row }: { row: Row }) {
           labels + tabular numbers, so the row reads like a real financial
           summary and not four generic stat cards. */}
       <div className="relative mt-4 grid grid-cols-2 divide-x divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-100 bg-slate-50/40">
-        <Stat label="Afkast af prisen" value={ar.capRate != null ? pct(ar.capRate) : "–"} />
+        <Stat label="Nettoafkast" value={ar.capRate != null ? pct(ar.capRate) : "–"} />
         <Stat
-          label="Overskud pr. md."
+          label="Cash flow pr. md."
           value={ar.cashFlow != null ? krMd(ar.cashFlow) : "–"}
           tone={ar.cashFlow != null && ar.cashFlow < 0 ? "bad" : "default"}
         />
-        <Stat label="Lejen dækker lånet" value={ar.dscr != null ? `${num(ar.dscr)} gange` : "–"} />
+        <Stat label="Gældsdækning (DSCR)" value={ar.dscr != null ? num(ar.dscr) : "–"} />
         <Stat label="Afkast om året, 10 år" value={ar.irr != null ? pct(ar.irr) : "–"} />
       </div>
 

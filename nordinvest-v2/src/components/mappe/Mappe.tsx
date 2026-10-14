@@ -195,9 +195,9 @@ export function Mappe({ row }: { row: MappeRow }) {
                 <Link href={`/app/analyser?saved=${row.id}`} className="-my-2 inline-flex min-h-[40px] items-center text-[14px] font-semibold text-blue-700 hover:underline">Åbn analysen →</Link>
               </div>
               <dl className="mt-3 divide-y divide-slate-100 text-[15px]">
-                {ar.cashFlow != null && <Row k="Overskud pr. md." v={`${ar.cashFlow >= 0 ? "+" : "−"}${kr(Math.abs(ar.cashFlow))}`} tone={ar.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"} />}
-                {ar.capRate != null && <Row k="Afkast af prisen" v={`${num(ar.capRate)} %`} />}
-                {ar.dscr != null && <Row k="Lejen dækker lånet" v={`${num(ar.dscr, 2)} gange`} />}
+                {ar.cashFlow != null && <Row k="Cash flow pr. md." v={`${ar.cashFlow >= 0 ? "+" : "−"}${kr(Math.abs(ar.cashFlow))}`} tone={ar.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"} />}
+                {ar.capRate != null && <Row k="Nettoafkast" v={`${num(ar.capRate)} %`} />}
+                {ar.dscr != null && <Row k="Gældsdækning (DSCR)" v={num(ar.dscr, 2)} />}
                 {row.investment_score != null && <Row k="Score" v={`${row.investment_score} af 100`} />}
               </dl>
             </div>
@@ -279,9 +279,9 @@ export function Documents({ address, price, docs, onAdd, onRemove }: { address: 
 
   return (
     <section id="dokumenter" className="mt-8 scroll-mt-24">
-      <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-slate-900 sm:text-[28px]">Dokumenterne</h2>
+      <h2 className="text-[20px] font-semibold tracking-[-0.02em] text-slate-900 sm:text-[22px]">Salgsdokumenter</h2>
       <p className="mt-1.5 max-w-2xl text-[16px] text-slate-600">
-        Upload salgsopstillingen, tilstandsrapporten eller ejerforeningens papirer. AI&apos;en læser dem og viser tallene, risiciene med sidetal og de spørgsmål, du bør stille.
+        Upload salgsopstilling, tilstandsrapport eller ejerforeningens dokumenter. Gennemgangen viser nøgletal, risici med sidehenvisning og spørgsmål til mægleren.
       </p>
 
       <div

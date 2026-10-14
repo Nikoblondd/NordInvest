@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { CalendarPlus, ChevronDown, Columns3, FileText, Gavel, List, MoreHorizontal, Plus, Search, Trash2, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
@@ -181,33 +182,67 @@ type ViewProps = Actions & { cols: Col[]; byStage: Record<Col, CrmRow[]> };
 
 /** The card's menu: everything you can drag, plus the two most common next steps. */
 function CardMenu({ r, stage, onMove, onPlan, onOffer }: Actions & { r: CrmRow; stage: Col }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number; maxH: number } | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const open = pos !== null;
+  // The board scrolls sideways, which clips anything inside it. The menu is
+  // therefore drawn on top of the page, below the button or above it when
+  // there is not room, and always inside the window.
+  const place = () => {
+    const b = btnRef.current?.getBoundingClientRect();
+    if (!b) return;
+    const W = 224, H = menuRef.current?.offsetHeight ?? 420, gap = 6, pad = 8;
+    const below = window.innerHeight - b.bottom - gap - pad;
+    const above = b.top - gap - pad;
+    const up = below < H && above > below;
+    const maxH = Math.max(160, up ? above : below);
+    const top = up ? Math.max(pad, b.top - gap - Math.min(H, maxH)) : b.bottom + gap;
+    const left = Math.min(Math.max(pad, b.right - W), window.innerWidth - W - pad);
+    setPos({ top, left, maxH });
+  };
   useEffect(() => {
     if (!open) return;
-    const close = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
-    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    place();
+    const close = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (!menuRef.current?.contains(t) && !btnRef.current?.contains(t)) setPos(null);
+    };
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setPos(null); };
+    const shut = () => setPos(null);
     document.addEventListener("mousedown", close);
     document.addEventListener("keydown", esc);
-    return () => { document.removeEventListener("mousedown", close); document.removeEventListener("keydown", esc); };
+    window.addEventListener("resize", shut);
+    window.addEventListener("scroll", shut, true);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", esc);
+      window.removeEventListener("resize", shut);
+      window.removeEventListener("scroll", shut, true);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
+  const close = () => setPos(null);
   const item = "flex min-h-[40px] w-full items-center gap-2.5 px-3 text-left text-[14px] text-slate-700 hover:bg-slate-50";
   return (
-    <div ref={ref} className="relative">
-      <button type="button" aria-label={`Handlinger for ${street(addrOf(r))}`} aria-expanded={open} onClick={() => setOpen((v) => !v)}
+    <>
+      <button ref={btnRef} type="button" aria-label={`Handlinger for ${street(addrOf(r))}`} aria-haspopup="menu" aria-expanded={open}
+        onClick={() => (open ? close() : setPos({ top: -9999, left: -9999, maxH: 600 }))}
         className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700"><MoreHorizontal size={17} /></button>
-      {open && (
-        <div role="menu" className="absolute right-0 top-9 z-30 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-xl shadow-slate-900/10">
-          <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); onPlan(r); }}><CalendarPlus size={15} className="text-slate-400" /> Planlæg aftale</button>
-          <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); onOffer(r); }}><Gavel size={15} className="text-slate-400" /> Registrér bud</button>
+      {open && createPortal(
+        <div ref={menuRef} role="menu" style={{ top: pos.top, left: pos.left, maxHeight: pos.maxH }}
+          className="fixed z-[80] w-56 overflow-y-auto rounded-xl border border-slate-200 bg-white py-1 shadow-xl shadow-slate-900/10">
+          <button type="button" role="menuitem" className={item} onClick={() => { close(); onPlan(r); }}><CalendarPlus size={15} className="text-slate-400" /> Planlæg aftale</button>
+          <button type="button" role="menuitem" className={item} onClick={() => { close(); onOffer(r); }}><Gavel size={15} className="text-slate-400" /> Registrér bud</button>
           <p className="border-t border-slate-100 px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-400">Flyt til</p>
           {STAGES.filter((s) => s.id !== stage).map((s) => (
-            <button key={s.id} type="button" role="menuitem" className={item} onClick={() => { setOpen(false); onMove(r.id, s.id); }}><span className={clsx("h-2 w-2 rounded-full", TONE[s.id].bar)} />{s.label}</button>
+            <button key={s.id} type="button" role="menuitem" className={item} onClick={() => { close(); onMove(r.id, s.id); }}><span className={clsx("h-2 w-2 rounded-full", TONE[s.id].bar)} />{s.label}</button>
           ))}
-          {stage !== "droppet" && <button type="button" role="menuitem" className={clsx(item, "border-t border-slate-100 text-rose-600 hover:bg-rose-50")} onClick={() => { setOpen(false); onMove(r.id, "droppet"); }}><Trash2 size={15} /> Drop boligen</button>}
-        </div>
+          {stage !== "droppet" && <button type="button" role="menuitem" className={clsx(item, "border-t border-slate-100 text-rose-600 hover:bg-rose-50")} onClick={() => { close(); onMove(r.id, "droppet"); }}><Trash2 size={15} /> Drop boligen</button>}
+        </div>,
+        document.body,
       )}
-    </div>
+    </>
   );
 }
 

@@ -162,8 +162,24 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
 
       {/* Stage bar */}
       {m.stage !== "droppet" && (
-        <nav aria-label="Fase" className="mt-5 overflow-x-auto [scrollbar-width:none]">
-          <ol className="flex min-w-[640px]">
+        <>
+        {/* Phones: the six stages as one segmented bar with the current one named. */}
+        <div className="mt-5 sm:hidden">
+          <div className="flex items-baseline justify-between text-[13px]">
+            <span className="font-semibold text-slate-900">Fase {stageIndex + 1} af {STAGES.length}: {STAGES[stageIndex]?.label}</span>
+            {stageIndex < STAGES.length - 1 && <button type="button" onClick={() => setStage(STAGES[stageIndex + 1].id)} className="font-semibold text-blue-700">Næste fase</button>}
+          </div>
+          <ol className="mt-2 flex gap-1" aria-label="Fase">
+            {STAGES.map((s, i) => (
+              <li key={s.id} className="flex-1">
+                <button type="button" onClick={() => setStage(s.id)} aria-label={s.label} aria-current={i === stageIndex ? "step" : undefined}
+                  className={clsx("block h-2 w-full rounded-full", i === stageIndex ? STAGE_TONE[s.id] : i < stageIndex ? "bg-slate-800" : "bg-slate-200")} />
+              </li>
+            ))}
+          </ol>
+        </div>
+        <nav aria-label="Fase" className="mt-5 hidden sm:block">
+          <ol className="flex">
             {STAGES.map((s, i) => {
               const passed = i < stageIndex, on = i === stageIndex;
               return (
@@ -178,6 +194,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
             })}
           </ol>
         </nav>
+        </>
       )}
 
       {/* Tabs */}
@@ -202,9 +219,9 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
                   <p className="text-[15px] text-slate-500">Ingen analyse endnu. Åbn analysen for at beregne ejendommen.</p>
                 ) : (
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {ar.cashFlow != null && <Fig k="Overskud" v={`${ar.cashFlow >= 0 ? "+" : "-"}${Math.round(Math.abs(ar.cashFlow)).toLocaleString("da-DK")}`} u="kr./md." tone={ar.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"} />}
-                    {ar.capRate != null && <Fig k="Afkast af prisen" v={num(ar.capRate)} u="%" />}
-                    {ar.dscr != null && <Fig k="Lejen dækker lånet" v={num(ar.dscr, 2)} u="gange" />}
+                    {ar.cashFlow != null && <Fig k="Cash flow" v={`${ar.cashFlow >= 0 ? "+" : "-"}${Math.round(Math.abs(ar.cashFlow)).toLocaleString("da-DK")}`} u="kr./md." tone={ar.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"} />}
+                    {ar.capRate != null && <Fig k="Nettoafkast" v={num(ar.capRate)} u="%" />}
+                    {ar.dscr != null && <Fig k="Gældsdækning" v={num(ar.dscr, 2)} u="DSCR" />}
                     {row.investment_score != null && <Fig k="Score" v={String(row.investment_score)} u="af 100" />}
                   </div>
                 )}
@@ -221,7 +238,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
                         <button type="button" onClick={() => { setView(s.id); pick("tjekliste"); }} className={clsx("flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-[14px] transition-colors hover:border-slate-300", m.stage === s.id ? "border-slate-900" : "border-slate-200")}>
                           <span className={clsx("flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[12px] font-bold", n === its.length ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-600")}>{n === its.length ? <Check size={12} strokeWidth={3} /> : n}</span>
                           <span className="min-w-0 flex-1 truncate font-medium">{s.label}</span>
-                          <span className="text-[12px] tabular-nums text-slate-400">{n}/{its.length}</span>
+                          <span className="hidden text-[12px] tabular-nums text-slate-400 min-[420px]:inline">{n}/{its.length}</span>
                         </button>
                       </li>
                     );
@@ -361,7 +378,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
         )}
 
         {tab === "papirer" && (
-          <div className="-mt-8">
+          <div className="-mt-4">
             <Documents address={address} price={price} docs={m.docs}
               onAdd={(d) => { const check = DOC_CHECK[d.type]; persist((c) => withLog({ ...c, docs: [d, ...c.docs], checks: check ? { ...c.checks, [check]: true } : c.checks }, `${d.title} gennemgået`, "dokument")); }}
               onRemove={(id) => persist((c) => ({ ...c, docs: c.docs.filter((d) => d.id !== id) }))} />

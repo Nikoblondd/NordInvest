@@ -147,7 +147,7 @@ function AgentRow({ a, onChange }: { a: Agent; onChange: (a: Agent) => void }) {
           <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-slate-500">
             <span className="inline-flex items-center gap-1"><Clock size={13} /> {scheduleLabel(a.schedule)}</span>
             {a.active && <span>Næste: {whenLabel(a.nextRunAt)}</span>}
-            <span className="inline-flex items-center gap-1">{a.email ? <><Mail size={13} /> Mail til</> : <><MailX size={13} /> Ingen mail</>}</span>
+            <span className="inline-flex items-center gap-1">{a.email ? <><Mail size={13} /> Mail slået til</> : <><MailX size={13} /> Ingen mail</>}</span>
             <span>{a.hits.filter((h) => h.status !== "afvist").length} fundet</span>
           </p>
         </Link>

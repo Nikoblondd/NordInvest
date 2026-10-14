@@ -30,7 +30,7 @@ export function HitCard({ h, busy, onSave, onDismiss, onRestore, compact }: {
             <p className="truncate text-[15px] font-semibold text-slate-900 hover:text-blue-700">{h.road}</p>
             <p className="truncate text-[13px] text-slate-500">{h.zip} {h.city}{h.area ? ` · ${h.area} m²` : ""}{h.rooms ? ` · ${h.rooms} vær.` : ""}</p>
           </Link>
-          <span className={clsx("shrink-0 rounded-md px-1.5 py-0.5 text-[12px] font-bold tabular-nums", h.score >= 65 ? "bg-emerald-50 text-emerald-700" : h.score >= 45 ? "bg-amber-50 text-amber-800" : "bg-rose-50 text-rose-700")}>{h.score}</span>
+          <span className={clsx("shrink-0 rounded-md px-1.5 py-0.5 text-[12px] font-bold tabular-nums", h.score >= 65 ? "bg-emerald-50 text-emerald-700" : h.score >= 45 ? "bg-amber-50 text-amber-800" : "bg-rose-50 text-rose-700")} title="Investeringsscore ud af 100">Score {h.score}</span>
         </div>
         <p className="mt-1 flex flex-wrap items-baseline gap-x-2 text-[14px]">
           <b className="font-semibold tabular-nums text-slate-900">{kr(h.price)}</b>
