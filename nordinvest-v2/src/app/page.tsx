@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Bell, CalendarClock, Calculator, Check, FileSearch, FileText, Gamepad2, KanbanSquare, LineChart, Mail, Search, ShieldCheck, Users } from "lucide-react";
@@ -14,6 +14,7 @@ import { Faq } from "@/components/landing/Faq";
 import { CountUp, Reveal } from "@/components/landing/motion";
 import { getDealSnapshot } from "@/lib/deals-snapshot";
 import { site } from "@/lib/site";
+import { HaveAccount } from "@/components/auth/HaveAccount";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -83,6 +84,7 @@ export default async function Home() {
               <Cta />
               <TryButton className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-800 hover:border-slate-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100">Prøv en beregning</TryButton>
             </div>
+            <Suspense><HaveAccount className="hero-rise mt-4" /></Suspense>
             <div style={{ ["--d" as string]: "380ms" }} className="hero-rise mt-8 hidden flex-wrap gap-2 sm:flex">
               {[[Search, "Deal-motor"], [LineChart, "Analyse"], [FileText, "Papirgennemgang"], [KanbanSquare, "Pipeline"]].map(([Icon, l]) => {
                 const I = Icon as typeof Search;
@@ -304,6 +306,7 @@ export default async function Home() {
               <Cta dark />
               <Link href="/kontakt" className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-white/25 max-sm:w-full px-5 text-[16px] font-semibold text-white hover:border-white/50"><Mail size={17} /> Kontakt os</Link>
             </div>
+            <Suspense><HaveAccount dark className="mt-5" /></Suspense>
           </Reveal>
           <Reveal delay={150} y={32} className="relative mx-auto hidden w-full max-w-md sm:block">
             <div className="absolute -left-3 -top-3 h-full w-full rounded-2xl bg-blue-600" />

@@ -80,7 +80,7 @@ export function AccessForm({ source = "adgang" }: { source?: string }) {
   return (
     <form ref={formRef} onSubmit={submit} noValidate className="rounded-2xl bg-white p-5 text-slate-900 shadow-[0_30px_80px_-30px_rgba(11,27,51,0.5)] sm:p-8">
       <h2 className="text-[22px] font-semibold tracking-[-0.02em]">Anmod om adgang</h2>
-      <p className="mt-1 text-[15px] text-slate-500">Tager 2 minutter. Jeg vender selv tilbage.</p>
+      <p className="mt-1 text-[15px] text-slate-500">Tager 2 minutter. Har du allerede en konto? <Link href="/auth/login?next=%2Fapp" prefetch={false} className="font-semibold text-blue-700 underline underline-offset-2">Log ind</Link></p>
 
       {/* Hidden from people; bots fill it in. */}
       <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden"><label>Hjemmeside<input name="website" tabIndex={-1} autoComplete="off" /></label></div>

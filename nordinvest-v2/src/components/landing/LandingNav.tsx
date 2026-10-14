@@ -36,7 +36,7 @@ export function LandingNav() {
           {LINKS.map((l) => <Link key={l.href} href={l.href} className="rounded transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300">{l.label}</Link>)}
         </div>
         <div className="flex items-center gap-1 sm:gap-3">
-          <Link href={member ? "/app" : "/auth/login"} prefetch={false} className="hidden min-h-[40px] items-center px-2 text-[15px] font-medium text-slate-700 hover:text-slate-900 sm:inline-flex">{member ? "Åbn NordInvest" : "Log ind"}</Link>
+          <Link href={member ? "/app" : "/auth/login"} prefetch={false} className="hidden min-h-[40px] items-center whitespace-nowrap px-2 text-[15px] font-medium text-slate-700 hover:text-slate-900 sm:inline-flex">{member ? "Åbn NordInvest" : "Log ind"}</Link>
           <Link href="/adgang" className="inline-flex min-h-[40px] items-center rounded-lg bg-blue-600 px-3.5 text-[14px] font-semibold text-white transition-colors hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:px-4 sm:text-[15px]">Anmod om adgang</Link>
           <button type="button" aria-label={open ? "Luk menu" : "Åbn menu"} aria-expanded={open} onClick={() => setOpen((v) => !v)} className="-mr-2 flex h-11 w-11 items-center justify-center text-slate-700 lg:hidden">
             {open ? <X size={22} /> : <Menu size={22} />}

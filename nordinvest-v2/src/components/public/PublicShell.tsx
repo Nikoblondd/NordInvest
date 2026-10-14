@@ -4,7 +4,9 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { Footer } from "@/components/Footer";
 import { geist } from "@/components/home/fonts";
+import { Suspense } from "react";
 import { site } from "@/lib/site";
+import { HaveAccount } from "@/components/auth/HaveAccount";
 
 /* The frame for public content pages: the landing nav, a breadcrumb, the footer. */
 export function PublicShell({ crumbs, children }: { crumbs: { href: string; label: string }[]; children: ReactNode }) {
@@ -38,6 +40,7 @@ export function AccessBand({ title = "Klar til at regne på din næste bolig?", 
         <div className="max-w-2xl">
           <h2 className="text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance] sm:text-[40px]">{title}</h2>
           <p className="mt-4 text-[17px] leading-relaxed text-white/70">{text}</p>
+          <Suspense><HaveAccount dark className="mt-4" /></Suspense>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link href="/adgang" className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-lg bg-white px-5 text-[16px] font-semibold text-[#0b1b33] hover:bg-slate-100">Anmod om adgang <ArrowRight size={17} /></Link>

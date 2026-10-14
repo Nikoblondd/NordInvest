@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Lock } from "lucide-react";
+import { Suspense } from "react";
 import { TryButton } from "@/components/landing/TryModal";
+import { HaveAccount } from "@/components/auth/HaveAccount";
 
 /*
  * What visitors see where a member tool lives (analyser, Deal-motor): what the
@@ -19,6 +21,7 @@ export function LockedTool({ title, lead, h1 = true }: { title: string; lead: st
           <Link href="/adgang" className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-[16px] font-semibold text-white hover:bg-blue-500">Anmod om adgang <ArrowRight size={17} /></Link>
           <TryButton className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-800 hover:border-slate-400">Prøv en gratis beregning</TryButton>
         </div>
+        <Suspense><HaveAccount className="mt-4" /></Suspense>
       </div>
     </section>
   );

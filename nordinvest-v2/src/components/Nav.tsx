@@ -129,7 +129,7 @@ export function Nav() {
               <Link
                 href="/auth/login"
                 prefetch={false}
-                className="hidden text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 md:block"
+                className="hidden whitespace-nowrap text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 sm:block"
               >
                 Log ind
               </Link>
