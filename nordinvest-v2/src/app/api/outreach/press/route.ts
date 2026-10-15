@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { checkBatch, outreachHeaders, unsubscribeUrl } from "@/lib/outreach/guard";
+import { readSuppressed } from "@/lib/outreach/suppression";
 import { OUTREACH_PAUSED, PITCH_FROM, PITCH_REPLY_TO, REPORT_FROM, REPORT_TO, dkDay, dkTime, pitchesOn } from "@/lib/outreach/schedule";
 
 /*
@@ -28,6 +30,17 @@ export async function GET(req: Request) {
   const key = process.env.RESEND_API_KEY;
   if (!key) return NextResponse.json({ ok: false, error: "resend_not_configured" }, { status: 500 });
 
+  // Deliverability rules (lib/outreach/guard): if the day's batch breaks one, nothing is sent.
+  const guard = checkBatch(todays, await readSuppressed());
+  if (!guard.ok) {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Idempotency-Key": `press-blocked-${day}` },
+      body: JSON.stringify({ from: REPORT_FROM, to: [REPORT_TO], subject: `Udsendelsen ${day} er stoppet`, text: `Dagens mails blev ikke sendt, fordi de bryder reglerne for at undgå spam:\n\n- ${guard.problems.join("\n- ")}` }),
+    }).catch(() => null);
+    return NextResponse.json({ ok: false, blocked: guard.problems });
+  }
+
   const results: { id: string; to: string; at: string; ok: boolean; info: string }[] = [];
   // Resend allows 10 requests a second; pause between calls and retry once on 429.
   const send = async (p: (typeof todays)[number], future: boolean) => {
@@ -35,7 +48,7 @@ export async function GET(req: Request) {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Idempotency-Key": `press-${p.id}-${day}` },
-        body: JSON.stringify({ from: PITCH_FROM, to: [p.to], reply_to: PITCH_REPLY_TO, subject: p.subject, text: p.text, ...(future ? { scheduled_at: p.sendAt } : {}) }),
+        body: JSON.stringify({ from: PITCH_FROM, to: [p.to], reply_to: PITCH_REPLY_TO, subject: p.subject, text: `${p.text}\n\n--\nØnsker du ikke flere mails fra NordInvest: ${unsubscribeUrl(p.to)}`, headers: outreachHeaders(p.to), ...(future ? { scheduled_at: p.sendAt } : {}) }),
       }).catch((e: Error) => ({ ok: false, status: 0, json: async () => ({ message: e.message }) }) as Response);
       if (res.status !== 429) return res;
       await new Promise((r) => setTimeout(r, 1500));
