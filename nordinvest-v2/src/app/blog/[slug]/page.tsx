@@ -88,7 +88,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
         description: meta.description,
         datePublished: meta.date,
         dateModified: meta.date,
-        author: { "@id": `${site.url}/#organization`, "@type": "Organization", name: meta.author },
+        author: { "@type": "Person", "@id": `${site.url}/om#nikolaj-blond`, name: site.founder.name, url: `${site.url}/om`, jobTitle: "Stifter af NordInvest", worksFor: { "@id": `${site.url}/#organization` } },
         publisher: {
           "@id": `${site.url}/#organization`,
           "@type": "Organization",

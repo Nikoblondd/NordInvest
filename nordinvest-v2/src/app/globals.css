@@ -412,3 +412,16 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
 @keyframes tourPhoto { from { transform: scale(1.08); } to { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .tour-spot, .tour-pop, .tour-bar, .tour-photo { animation: none !important; transition: none !important; } }
 .tour-active [data-consent] { display: none !important; }
+
+/* Page transitions: new pages ease in instead of snapping onto the screen.
+   Opacity for whole pages; content inside the app also rises a few pixels.
+   `backwards` leaves no transform behind, so fixed and sticky children keep
+   working once the animation is over. */
+@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes page-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* Set only on pages that arrive by navigation (see PageTransition), so the first page paints at once. */
+.page-in { animation: page-in 0.22s ease-out backwards; }
+.page-rise { animation: page-rise 0.26s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+@keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+.skeleton { animation: skeleton-pulse 1.4s ease-in-out infinite; background: #e9eef5; border-radius: 10px; }
+@media (prefers-reduced-motion: reduce) { .page-in, .page-rise, .skeleton { animation: none; } }

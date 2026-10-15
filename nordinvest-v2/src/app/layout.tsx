@@ -8,6 +8,7 @@ import { ConsentAnalytics } from "@/components/analytics/ConsentAnalytics";
 import { site } from "@/lib/site";
 import { LangScript } from "@/components/i18n/LangScript";
 import { I18nRuntime } from "@/components/i18n/I18nRuntime";
+import { NavProgress } from "@/components/NavProgress";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -169,6 +170,7 @@ export default function RootLayout({
         />
         <Suspense fallback={null}>
           <AuthCodeHandler />
+          <NavProgress />
         </Suspense>
         {children}
         {/* Vercel Web Analytics — cookieless, privacy-friendly, no consent banner. */}

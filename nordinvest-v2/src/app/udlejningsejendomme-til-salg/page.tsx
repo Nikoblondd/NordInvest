@@ -159,6 +159,8 @@ export default async function Page() {
             </div>
             <Link href="/deals" className="block rounded-2xl border border-slate-200 bg-white p-5 hover:border-slate-300"><span className="block font-semibold text-slate-900">De bedste boliginvesteringer</span><span className="text-[14px] text-slate-600">Ejerlejligheder og huse rangeret af Deal-motoren.</span></Link>
             <Link href="/analyse-af-ejendomsinvestering" className="block rounded-2xl border border-slate-200 bg-white p-5 hover:border-slate-300"><span className="block font-semibold text-slate-900">Guide: regn en investering igennem</span><span className="text-[14px] text-slate-600">Cash flow, afkast, lån, drift og rentestress.</span></Link>
+            <Link href="/blog/godt-afkast-udlejningsejendom" className="block rounded-2xl border border-slate-200 bg-white p-5 hover:border-slate-300"><span className="block font-semibold text-slate-900">Hvad er et godt afkast?</span><span className="text-[14px] text-slate-600">Medianafkast efter type, pris og kommune.</span></Link>
+            <Link href="/blog/erhvervsejendom-som-investering" className="block rounded-2xl border border-slate-200 bg-white p-5 hover:border-slate-300"><span className="block font-semibold text-slate-900">Erhvervsejendom som investering</span><span className="text-[14px] text-slate-600">Butik, kontor og lager: afkast og risici.</span></Link>
           </aside>
         </div>
       </section>

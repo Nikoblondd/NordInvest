@@ -137,7 +137,7 @@ export function Nav() {
                 href="/adgang"
                 className="flex items-center gap-2 whitespace-nowrap rounded-lg bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-500 max-[379px]:px-3 max-[379px]:text-[13px] sm:px-4"
               >
-                Anmod om adgang <ArrowRight size={16} className="hidden min-[400px]:block" />
+                <span className="max-[379px]:hidden">Anmod om adgang</span><span className="min-[380px]:hidden">Få adgang</span> <ArrowRight size={16} className="hidden min-[400px]:block" />
               </Link>
             </>
           )}

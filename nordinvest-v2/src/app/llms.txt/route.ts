@@ -63,6 +63,13 @@ ${FEATURES.map((f) => `- [${f.nav}](${site.url}/funktioner/${f.slug}): ${f.metaD
 ${GUIDES.map((g) => `- [${g.h1}](${site.url}${g.path}): ${g.metaDescription}`).join("\n")}
 - [Udlejningsejendomme og erhvervsejendomme til salg](${site.url}/udlejningsejendomme-til-salg): Live markedsdata: medianafkast pr. ejendomstype mod normalt niveau, antal til salg pr. kommune og de bedst scorende ejendomme, opdateret hver 6. time.
 
+## Nøgletal fra markedet (NordInvests opgørelse, 15. oktober 2026)
+- Medianafkast (nettoafkast) for boligudlejningsejendomme til salg i Danmark: 6,1 % (1.213 ejendomme med oplyst afkast på Ejendomstorvet). Midterste halvdel 5,1-7,4 %.
+- Medianafkast for erhvervsejendomme: butik 7,1 %, kontor 7,2 %, hotel og restaurant 7,2 %, lager og produktion 7,8 %.
+- Boligudlejning under 3 mio. kr.: 7,3 %. 3-10 mio. kr.: 5,9 %. 10-30 mio. kr.: 5,0 %. Over 30 mio. kr.: 4,9 %.
+- Boligudlejning efter kommune: Aarhus 3,9 %, Aalborg 4,9 %, Odense 5,0 %, Vejle 5,9 %, Kolding 6,4 %, Hjørring 7,1 %, Varde 8,0 %.
+- Uddybning: ${site.url}/blog/godt-afkast-udlejningsejendom og ${site.url}/blog/erhvervsejendom-som-investering
+
 ## Deal-motor efter by
 ${dealCityLines}
 

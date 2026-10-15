@@ -28,9 +28,10 @@ const aboutJsonLd = {
   about: { "@id": `${site.url}/#organization` },
   mainEntity: {
     "@type": "Person",
+    "@id": `${site.url}/om#nikolaj-blond`,
     name: site.founder.name,
-    jobTitle: "Stifter"
-    ,image: `${site.url}${site.founder.photo}`,
+    jobTitle: "Stifter af NordInvest",
+    image: `${site.url}${site.founder.photo}`,
     worksFor: { "@id": `${site.url}/#organization` },
     sameAs: [site.linkedin],
   },

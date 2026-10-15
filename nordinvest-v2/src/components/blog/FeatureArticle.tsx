@@ -48,7 +48,7 @@ export function FeatureArticle({
         description: meta.description,
         datePublished: meta.date,
         dateModified: updated,
-        author: { "@type": "Organization", "@id": `${site.url}/#organization`, name: "NordInvest", url: site.url },
+        author: { "@type": "Person", "@id": `${site.url}/om#nikolaj-blond`, name: site.founder.name, url: `${site.url}/om`, jobTitle: "Stifter af NordInvest", worksFor: { "@id": `${site.url}/#organization` } },
         publisher: {
           "@type": "Organization",
           "@id": `${site.url}/#organization`,

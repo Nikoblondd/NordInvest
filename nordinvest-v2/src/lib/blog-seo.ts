@@ -6,6 +6,18 @@
  */
 
 export const BLOG_SEO: Record<string, { title?: string; description?: string }> = {
+  "godt-afkast-udlejningsejendom": {
+    title: "Godt afkast på en udlejningsejendom? Tal for 2026",
+    description: "Et godt nettoafkast på en udlejningsejendom ligger på 5-7,5 %. Medianen er 6,1 % for 1.213 ejendomme til salg. Se tal efter type, pris og kommune.",
+  },
+  "erhvervsejendom-som-investering": {
+    title: "Erhvervsejendom som investering: afkast og risici 2026",
+    description: "Butik, kontor eller lager? Medianafkastet for erhvervsejendomme til salg er 7,1-7,8 %. Se typerne, lejekontraktens betydning og et regneeksempel.",
+  },
+  "driftsbudget-udlejningsbolig": {
+    title: "Driftsbudget for udlejningsbolig: tomgang og vedligehold",
+    description: "Sådan laver du et realistisk driftsbudget for en udlejningsbolig: tomgang, vedligehold, fællesudgifter og ejendomsskat, med et regneeksempel.",
+  },
   "foraeldrekoeb-2026": { title: "Forældrekøb 2026: regler, skat og det ærlige regnestykke" },
   "airbnb-regler-2026": {
     title: "Airbnb-regler 2026: 70 dage, bundfradrag og skat",
