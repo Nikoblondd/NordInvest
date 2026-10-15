@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Bell, BellOff, Clock, Loader2, Mail, MailX, Pause, Pencil, Play, Plus, Radar, RefreshCw, Trash2 } from "lucide-react";
 import { clsx } from "@/lib/clsx";
-import { MAX_AGENTS, STRATEGIES, criteriaChips, scheduleLabel, strategyOf, whenLabel, type Agent, type Hit, type HitStatus } from "@/lib/app/agents";
+import { MAX_AGENTS, STRATEGIES, criteriaChips, perRunOf, scheduleLabel, strategyOf, whenLabel, type Agent, type Hit, type HitStatus } from "@/lib/app/agents";
 import { saveHitToPipeline } from "@/lib/app/pipeline";
 import { AgentEditor, type AgentInput } from "./AgentEditor";
 import { HitCard } from "./HitCard";
@@ -243,6 +243,7 @@ export function AgentDetail({ initial }: { initial: Agent }) {
           <Card title="Indstillinger">
             <dl className="space-y-3 text-[14px]">
               <div className="flex justify-between gap-3"><dt className="text-slate-500">Kører</dt><dd className="text-right font-medium text-slate-800 first-letter:uppercase">{scheduleLabel(a.schedule)}</dd></div>
+              <div className="flex justify-between gap-3"><dt className="text-slate-500">Pr. kørsel</dt><dd className="text-right font-medium text-slate-800">Højst {perRunOf(a)} nye</dd></div>
               <div className="flex justify-between gap-3"><dt className="text-slate-500">Næste gang</dt><dd className="text-right font-medium text-slate-800 first-letter:uppercase">{a.active ? whenLabel(a.nextRunAt) : "På pause"}</dd></div>
               <div className="flex justify-between gap-3"><dt className="text-slate-500">Sidst</dt><dd className="text-right font-medium text-slate-800 first-letter:uppercase">{whenLabel(a.lastRunAt)}</dd></div>
               <div className="flex items-center justify-between gap-3">
@@ -282,7 +283,7 @@ export function AgentDetail({ initial }: { initial: Agent }) {
       </div>
 
       <AgentEditor open={editing} onClose={() => setEditing(false)} initial={a} title="Ret søgeagent"
-        onSave={async (input) => patch({ name: input.name, schedule: input.schedule, email: input.email, strategy: input.strategy, brief: input.brief ?? "", ...(JSON.stringify(input.criteria) !== JSON.stringify(a.criteria) ? { criteria: input.criteria } : {}) })} />
+        onSave={async (input) => patch({ name: input.name, schedule: input.schedule, email: input.email, maxPerRun: input.maxPerRun, strategy: input.strategy, brief: input.brief ?? "", ...(JSON.stringify(input.criteria) !== JSON.stringify(a.criteria) ? { criteria: input.criteria } : {}) })} />
       {actions.toast && <Toast text={actions.toast.text} tone={actions.toast.tone} onClose={() => actions.setToast(null)} action={actions.toast.href ? <Link href={actions.toast.href} className="shrink-0 font-semibold text-blue-300 hover:underline">Åbn</Link> : undefined} />}
     </div>
   );

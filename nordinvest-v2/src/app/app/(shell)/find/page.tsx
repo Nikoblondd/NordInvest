@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 import { FindTabs } from "@/components/app/FindTabs";
 import { appUser } from "@/lib/app/data";
 import { readStore } from "@/lib/app/store";
-import type { Agent } from "@/lib/app/agents";
+import { tidyAgent, type Agent } from "@/lib/app/agents";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Find boliger" };
@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Find boliger" };
 export default async function FindPage() {
   const me = await appUser();
   if (!me) redirect("/auth/login?next=/app/find");
-  const agents = await readStore<Agent>("agents", me.user.id);
+  const agents = await readStore<Agent>("agents", me.user.id).then((l) => l.map(tidyAgent));
   const fresh = agents.reduce((n, a) => n + a.hits.filter((h) => h.status === "ny").length, 0);
   return (
     <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">

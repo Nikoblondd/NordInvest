@@ -69,6 +69,9 @@ export async function GET(req: Request) {
   // Score the whole area, not just the newest rows, so "best" means best;
   // `limit` only caps how many come back.
   const pool = Math.max(limit, nationwide && municipalities.length === 0 ? 4000 : 1500);
+  // Search agents ask only for listings that came on the market since their last run.
+  const sinceRaw = p.get("since");
+  const since = sinceRaw && !Number.isNaN(Date.parse(sinceRaw)) ? new Date(sinceRaw).toISOString() : undefined;
   const typeParam = p.get("type") || "condo";
   // `type=all` (used by the nationwide map) means every residential type.
   const type = typeParam === "all" ? undefined : typeParam;
@@ -108,9 +111,10 @@ export async function GET(req: Request) {
     // Provinces spanned by the selected kommuner (for the coarse live fallback).
     const provinces = Array.from(new Set(municipalities.map((m) => CITY_PROVINCE[m]).filter(Boolean)));
     // Prefer the agent's fresh, deduped dataset — filtered to the EXACT kommuner.
-    let listings = await readInvestmentDeals({ municipalities, limit: pool });
+    let listings = await readInvestmentDeals({ municipalities, limit: pool, since });
     let servedFrom = "agent";
-    if (!listings || listings.length === 0) {
+    // With `since`, an empty answer from the dataset means "nothing new": no live fallback.
+    if (!listings || (listings.length === 0 && !since)) {
       // Live fallback: Ejendomstorvet's own area params are coarse, so fetch each
       // spanned province (or nationally) and pin every listing to its kommune by zip.
       const batches = provinces.length
@@ -143,9 +147,10 @@ export async function GET(req: Request) {
   }
 
   // Prefer the agent's fresh, deduped dataset; fall back to a live fetch.
-  let listings = await readBoligDeals({ municipalities, zip, type, limit: pool });
+  let listings = await readBoligDeals({ municipalities, zip, type, limit: pool, since });
   let servedFrom = "agent";
-  if (!listings || listings.length === 0) {
+  // With `since`, an empty answer from the dataset means "nothing new": no live fallback.
+    if (!listings || (listings.length === 0 && !since)) {
     // Boligsiden's `municipalities` param takes ONE slug, so fetch each selected
     // kommune and merge (deduped) — this is what makes multi-select work live too.
     const areas = municipalities.length ? municipalities : [undefined];

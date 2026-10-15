@@ -5,7 +5,7 @@ import { appUser, properties } from "@/lib/app/data";
 import { readStore } from "@/lib/app/store";
 import { getDealSnapshot } from "@/lib/deals-snapshot";
 import type { CalEvent } from "@/lib/app/events";
-import type { Agent } from "@/lib/app/agents";
+import { tidyAgent, type Agent } from "@/lib/app/agents";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Overblik" };
@@ -19,7 +19,7 @@ export default async function OverviewPage() {
   const [rows, events, agents, snap] = await Promise.all([
     properties(me.user.id),
     readStore<CalEvent>("events", me.user.id),
-    readStore<Agent>("agents", me.user.id),
+    readStore<Agent>("agents", me.user.id).then((l) => l.map(tidyAgent)),
     getDealSnapshot(null, 4).catch(() => null),
   ]);
   const deals: Opportunity[] = (snap?.top ?? []).slice(0, 4).map((d) => ({

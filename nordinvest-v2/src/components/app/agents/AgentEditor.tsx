@@ -5,19 +5,22 @@ import { Bell, Building2, Hammer, Home, Loader2, Sparkles, Users } from "lucide-
 import { clsx } from "@/lib/clsx";
 import { CityPicker } from "@/components/deals/DealFinder";
 import { NumberInput } from "@/components/ui/NumberInput";
-import { EMPTY_CRITERIA, STRATEGIES, SUBCATS, TYPES, WEEKDAYS, nextRun, searchParams, suggestName, whenLabel, type Agent, type Criteria, type Freq, type Schedule, type Strategy } from "@/lib/app/agents";
+import { EMPTY_CRITERIA, PER_RUN_MAX, STRATEGIES, SUBCATS, TYPES, WEEKDAYS, inArea, muniName, nextRun, searchParams, suggestName, whenLabel, type Agent, type Criteria, type Freq, type Schedule, type Strategy } from "@/lib/app/agents";
+import { kommuneOf, townsIn } from "@/lib/postnumre";
 import { Dialog, Segmented, Toggle, btn, input, label } from "../ui";
 import { PropertyImage } from "../PropertyImage";
 
 /*
  * Create or change a search agent: what to look for (the Deal-motor's own
- * filters), when to look (every day, on weekdays or once a week, at an hour)
- * and whether to send an e-mail. While the member types, the form shows how
- * many listings match right now, so the criteria are never a guess.
+ * filters, kommuner and, if wanted, single towns inside them), when to look
+ * (every hour, every third hour, daily, on weekdays or weekly), how many new
+ * listings at most per run, and whether to send an e-mail. While the member
+ * types, the form shows how many listings in the area match right now.
  */
 
-export type AgentInput = { name: string; criteria: Criteria; schedule: Schedule; email: boolean; strategy?: Strategy; brief?: string };
+export type AgentInput = { name: string; criteria: Criteria; schedule: Schedule; email: boolean; strategy?: Strategy; brief?: string; maxPerRun?: number };
 const HOURS = Array.from({ length: 18 }, (_, i) => 5 + i);
+const FREQS: { id: Freq; label: string }[] = [{ id: "hourly", label: "Hver time" }, { id: "every3", label: "Hver 3. time" }, { id: "daily", label: "Dagligt" }, { id: "weekdays", label: "Hverdage" }, { id: "weekly", label: "Ugentligt" }];
 
 export function AgentEditor({ open, onClose, initial, onSave, title }: {
   open: boolean; onClose: () => void; initial?: Partial<AgentInput> | Agent | null; onSave: (a: AgentInput) => Promise<string | null>; title: string;
@@ -29,6 +32,7 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
   const [parsed, setParsed] = useState<string | null>(null);
   const [s, setS] = useState<Schedule>({ freq: "daily", hour: 7, weekday: 1 });
   const [email, setEmail] = useState(true);
+  const [perRun, setPerRun] = useState(PER_RUN_MAX);
   const [name, setName] = useState("");
   const [nameTouched, setNameTouched] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -37,9 +41,10 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
 
   useEffect(() => {
     if (!open) return;
-    setC({ ...EMPTY_CRITERIA, ...(initial?.criteria ?? {}) });
+    setC({ ...EMPTY_CRITERIA, ...(initial?.criteria ?? {}), zips: initial?.criteria?.zips ?? [] });
     setS({ freq: "daily", hour: 7, weekday: 1, ...(initial?.schedule ?? {}) });
     setEmail(initial?.email ?? true);
+    setPerRun(Math.min(PER_RUN_MAX, (initial as { maxPerRun?: number } | null | undefined)?.maxPerRun ?? PER_RUN_MAX));
     const init = initial as (Partial<AgentInput> & { strategy?: Strategy; brief?: string }) | null | undefined;
     setStrategy(init?.strategy ?? (init?.criteria?.market === "investering" ? "erhverv" : "udlejning"));
     setBrief(init?.brief ?? "");
@@ -64,7 +69,8 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
         const r = await fetch(`/api/deals/search?${searchParams(c).toString()}`);
         const d = await r.json();
         if (n !== seq.current) return;
-        const deals = (Array.isArray(d?.deals) ? d.deals : []).filter((x: { suspect?: boolean }) => !x.suspect);
+        // Only what is inside the chosen kommuner and towns, exactly as the agent will filter.
+        const deals = (Array.isArray(d?.deals) ? d.deals : []).filter((x: { suspect?: boolean; zip?: number; municipality?: string | null }) => !x.suspect && inArea(c, Number(x.zip) || 0, x.municipality ?? null));
         setPreview({ status: d?.ok ? "done" : "error", count: deals.length, top: deals.slice(0, 4).map((x: { id: string; image: string | null; road?: string; title?: string; price: number }) => ({ id: String(x.id), image: x.image, road: x.road || x.title || "", price: x.price })) });
       } catch {
         if (n === seq.current) setPreview({ status: "error", count: 0, top: [] });
@@ -76,7 +82,7 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
   const submit = async () => {
     if (c.priceMin && c.priceMax && c.priceMin > c.priceMax) return setErr("Mindsteprisen er højere end maksprisen.");
     setBusy(true); setErr(null);
-    const e = await onSave({ name: (nameTouched && name.trim()) || autoName, criteria: c, schedule: s, email, strategy, brief: brief.trim() || undefined });
+    const e = await onSave({ name: (nameTouched && name.trim()) || autoName, criteria: c, schedule: s, email, strategy, brief: brief.trim() || undefined, maxPerRun: perRun });
     setBusy(false);
     if (e) setErr(e); else onClose();
   };
@@ -92,11 +98,11 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
   );
 
   return (
-    <Dialog error={err} open={open} onClose={onClose} title={title} sub="Agenten gennemsøger hele markedet på dine tidspunkter og giver besked, når der kommer nye boliger." wide
+    <Dialog error={err} open={open} onClose={onClose} title={title} sub="Agenten gennemsøger markedet på dine tidspunkter og giver kun besked om boliger, der er kommet til siden sidst." wide
       footer={<>
         <span className="mr-auto text-[13px] text-slate-500" aria-live="polite">
           {preview.status === "loading" ? <span className="inline-flex items-center gap-1.5"><Loader2 size={13} className="animate-spin" /> Tæller…</span>
-            : preview.status === "done" ? <><b className="font-semibold text-slate-900">{preview.count === 100 ? "100+" : preview.count}</b> {preview.count === 1 ? "bolig matcher" : "boliger matcher"} lige nu</>
+            : preview.status === "done" ? <><b className="font-semibold text-slate-900">{preview.count >= 100 ? "100+" : preview.count}</b> {preview.count === 1 ? "bolig i området matcher" : "boliger i området matcher"} lige nu</>
             : preview.status === "error" ? "Kunne ikke tælle lige nu" : ""}
         </span>
         <button type="button" className={btn.secondary} onClick={onClose}>Annullér</button>
@@ -142,8 +148,9 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <span className={label}>Område</span>
-              <CityPicker values={c.municipalities} onChange={(municipalities) => set({ municipalities })} />
+              <CityPicker values={c.municipalities} onChange={(municipalities) => set({ municipalities, zips: c.zips.filter((z) => municipalities.includes(kommuneOf(z) ?? "")) })} />
             </div>
+            {c.municipalities.length > 0 && <div className="sm:col-span-2"><TownPicker c={c} onChange={(zips) => set({ zips })} /></div>}
             {c.market === "bolig" ? (
               <div className="sm:col-span-2">
                 <span className={label}>Boligtype</span>
@@ -185,7 +192,13 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
         <section>
           <h3 className="text-[13px] font-semibold uppercase tracking-[0.06em] text-slate-500">Tidspunkt for søgning</h3>
           <div className="mt-3 flex flex-wrap items-end gap-3">
-            <Segmented label="Hvor ofte" value={s.freq} onChange={(freq: Freq) => setS((p) => ({ ...p, freq }))} options={[{ id: "daily", label: "Hver dag" }, { id: "weekdays", label: "Hverdage" }, { id: "weekly", label: "Ugentligt" }]} />
+            <div className="hidden sm:block"><Segmented label="Hvor ofte" value={s.freq} onChange={(freq: Freq) => setS((p) => ({ ...p, freq }))} options={FREQS} /></div>
+            <div className="w-full sm:hidden">
+              <label htmlFor="ag-freq" className="sr-only">Hvor ofte</label>
+              <select id="ag-freq" value={s.freq} onChange={(e) => setS((p) => ({ ...p, freq: e.target.value as Freq }))} className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-[14px]">
+                {FREQS.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}
+              </select>
+            </div>
             {s.freq === "weekly" && (
               <div>
                 <label htmlFor="ag-wd" className="sr-only">Ugedag</label>
@@ -194,14 +207,20 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
                 </select>
               </div>
             )}
-            <div>
+            {(s.freq === "daily" || s.freq === "weekdays" || s.freq === "weekly") && <div>
               <label htmlFor="ag-hour" className="sr-only">Klokkeslæt</label>
               <select id="ag-hour" value={s.hour} onChange={(e) => setS((p) => ({ ...p, hour: Number(e.target.value) }))} className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-[14px] tabular-nums">
                 {HOURS.map((h) => <option key={h} value={h}>kl. {String(h).padStart(2, "0")}.00</option>)}
               </select>
+            </div>}
+            <div>
+              <label htmlFor="ag-per" className="sr-only">Højst nye boliger pr. kørsel</label>
+              <select id="ag-per" value={perRun} onChange={(e) => setPerRun(Number(e.target.value))} className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-[14px] tabular-nums">
+                {Array.from({ length: PER_RUN_MAX }, (_, i) => i + 1).map((n) => <option key={n} value={n}>Højst {n} {n === 1 ? "ny bolig" : "nye boliger"} pr. kørsel</option>)}
+              </select>
             </div>
           </div>
-          <p className="mt-2 text-[13px] text-slate-500">Næste gang: {whenLabel(nextRun(s))}.</p>
+          <p className="mt-2 text-[13px] text-slate-500">{s.freq === "hourly" ? "Kører hver hele time fra kl. 06 til 22. " : s.freq === "every3" ? "Kører kl. 07, 10, 13, 16, 19 og 22. " : ""}Næste gang: {whenLabel(nextRun(s))}. Agenten finder kun boliger, der er kommet på markedet siden sidste kørsel, og viser de {perRun} bedste.</p>
         </section>
 
         {/* Notify + name */}
@@ -228,10 +247,59 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
                 </div>
               ))}
             </div>
-            <p className="mt-2 text-[13px] text-slate-500">Dem, der matcher nu, ser du med det samme. Fremover giver agenten kun besked om nye.</p>
+            <p className="mt-2 text-[13px] text-slate-500">Sådan ser det ud i området i dag. Agenten starter med boliger fra det seneste døgn og giver derefter kun besked om nye.</p>
           </section>
         )}
       </div>
     </Dialog>
+  );
+}
+
+/** Towns inside the chosen kommuner. None picked means the whole kommune. */
+function TownPicker({ c, onChange }: { c: Criteria; onChange: (zips: number[]) => void }) {
+  const towns = townsIn(c.municipalities);
+  const picked = new Set(c.zips);
+  const some = c.zips.length > 0;
+  const toggle = (zips: number[]) => {
+    const on = zips.every((z) => picked.has(z));
+    const next = new Set(picked);
+    zips.forEach((z) => (on ? next.delete(z) : next.add(z)));
+    onChange(Array.from(next));
+  };
+  return (
+    <div className="rounded-xl border border-slate-200 p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className={label}>Byer</span>
+        <div className="flex rounded-lg bg-slate-100 p-0.5 text-[13px] font-semibold">
+          <button type="button" aria-pressed={!some} onClick={() => onChange([])} className={clsx("rounded-md px-2.5 py-1", !some ? "bg-white text-slate-900 shadow-sm" : "text-slate-500")}>Hele kommunen</button>
+          <button type="button" aria-pressed={some} onClick={() => !some && towns[0] && onChange(towns.filter((t) => t.name.toLowerCase().startsWith(muniName(t.kommune).toLowerCase())).flatMap((t) => t.zips).concat(towns.some((t) => t.name.toLowerCase().startsWith(muniName(t.kommune).toLowerCase())) ? [] : towns[0].zips))} className={clsx("rounded-md px-2.5 py-1", some ? "bg-white text-slate-900 shadow-sm" : "text-slate-500")}>Kun valgte byer</button>
+        </div>
+      </div>
+      {some ? (
+        <>
+          <div className="mt-2.5 max-h-56 space-y-3 overflow-y-auto pr-1">
+            {c.municipalities.map((k) => (
+              <div key={k}>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.05em] text-slate-400">{muniName(k)} Kommune</p>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {towns.filter((t) => t.kommune === k).map((t) => {
+                    const on = t.zips.every((z) => picked.has(z));
+                    return (
+                      <button key={`${k}-${t.name}`} type="button" aria-pressed={on} onClick={() => toggle(t.zips)}
+                        className={clsx("min-h-[34px] rounded-full px-3 text-[13px] font-semibold ring-1 transition-colors", on ? "bg-slate-900 text-white ring-slate-900" : "bg-white text-slate-600 ring-slate-200 hover:ring-slate-300")}>
+                        {t.name}{t.zips.length === 1 && !/^\d/.test(t.name) ? <span className={clsx("ml-1 font-normal", on ? "text-white/70" : "text-slate-400")}>{t.zips[0]}</span> : null}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2 text-[12px] text-slate-500">{c.zips.length ? `Agenten søger kun i de valgte byer.` : "Vælg mindst én by."}</p>
+        </>
+      ) : (
+        <p className="mt-1.5 text-[13px] text-slate-500">Agenten søger i alle byer i {c.municipalities.map(muniName).join(", ")}. Vælg &bdquo;Kun valgte byer&ldquo; for fx at udelade Jelling og Give fra Vejle.</p>
+      )}
+    </div>
   );
 }

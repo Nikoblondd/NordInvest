@@ -6,7 +6,7 @@ import { AgentsHome } from "@/components/app/agents/Agents";
 import type { AgentInput } from "@/components/app/agents/AgentEditor";
 import { appUser } from "@/lib/app/data";
 import { readStore } from "@/lib/app/store";
-import { cleanCriteria, type Agent } from "@/lib/app/agents";
+import { cleanCriteria, type Agent, tidyAgent } from "@/lib/app/agents";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Søgeagenter" };
@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Søgeagenter" };
 export default async function AgentsPage({ searchParams }: { searchParams: { ny?: string } }) {
   const me = await appUser();
   if (!me) redirect("/auth/login?next=/app/find/agenter");
-  const agents = await readStore<Agent>("agents", me.user.id);
+  const agents = await readStore<Agent>("agents", me.user.id).then((l) => l.map(tidyAgent));
   const fresh = agents.reduce((n, a) => n + a.hits.filter((h) => h.status === "ny").length, 0);
   // "Gem som søgeagent" from the Deal-motor opens the form with its filters.
   let prefill: Partial<AgentInput> | null = null;

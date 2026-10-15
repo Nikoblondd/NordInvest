@@ -3,31 +3,35 @@ import { GET as searchDeals } from "@/app/api/deals/search/route";
 import { INTERNAL_HEADER, internalToken } from "@/lib/internal";
 import { dealHref, investHref } from "@/lib/deal-links";
 import { PITCH_FROM } from "@/lib/outreach/schedule";
-import { MAX_HITS, criteriaChips, nextRun, scheduleLabel, searchParams, strategyOf, type Agent, type Hit, type Strategy } from "./agents";
+import { MAX_HITS, criteriaChips, inArea, nextRun, perRunOf, scheduleLabel, searchParams, strategyOf, tidyAgent, type Agent, type Hit, type Strategy } from "./agents";
 import { enrich, reviewHits } from "./agent-ai";
 
 /*
  * Server only: runs one search agent. The Deal-motor search is called
  * in-process (with the per-process internal token, so it gets the full,
- * unlocked result), matches already seen are skipped, new ones go to the top
- * of the agent's list, and the member is e-mailed when something new came in.
- * The first run of a new agent only records what is on the market already.
+ * unlocked result) for listings that came on the market since the last run
+ * only, kept strictly inside the agent's kommuner and towns. Listings already
+ * seen are skipped, the best new ones (at most the agent's cap, max 10) go to
+ * the top of the list, and the member is e-mailed about them. A new agent
+ * starts with what came on the market in the last 24 hours.
  */
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordinvest.io";
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
 
-/** Runs the agent's search and returns the scored listings (best first). */
-export async function searchFor(agent: Pick<Agent, "criteria">): Promise<{ ok: boolean; deals: any[] }> {
+/** Runs the agent's search for listings new since `since` and returns them scored (best first). */
+export async function searchFor(agent: Pick<Agent, "criteria">, since?: string): Promise<{ ok: boolean; deals: any[]; servedFrom: string | null }> {
   const q = searchParams(agent.criteria);
+  q.set("limit", "1500");
+  if (since) q.set("since", since);
   const req = new Request(`${SITE}/api/deals/search?${q.toString()}`, { headers: { [INTERNAL_HEADER]: internalToken } });
   try {
     const res = await searchDeals(req);
     const data = await res.json();
-    return { ok: !!data?.ok, deals: Array.isArray(data?.deals) ? data.deals : [] };
+    return { ok: !!data?.ok, deals: Array.isArray(data?.deals) ? data.deals : [], servedFrom: data?.servedFrom ?? null };
   } catch {
-    return { ok: false, deals: [] };
+    return { ok: false, deals: [], servedFrom: null };
   }
 }
 
@@ -68,42 +72,49 @@ function toHit(d: any, market: string, fresh: boolean, at: string, strategy: Str
  * Runs an agent and returns the updated agent plus the new hits. `first`
  * means the agent was just made: what matches now is shown but not mailed.
  */
-export async function runAgent(agent: Agent, opts: { first?: boolean } = {}): Promise<{ agent: Agent; fresh: Hit[]; ok: boolean }> {
+export async function runAgent(input: Agent, opts: { first?: boolean } = {}): Promise<{ agent: Agent; fresh: Hit[]; ok: boolean }> {
+  const agent = tidyAgent(input);
   const now = new Date();
   const at = now.toISOString();
-  const { ok, deals } = await searchFor(agent);
-  const plausible = deals.filter((d) => d?.id && !d.suspect);
-  const seen = new Set(agent.seen);
   const isFirst = opts.first || agent.lastRunAt == null;
-  const newOnes = plausible.filter((d) => !seen.has(String(d.id)));
+  // New since the last run (with ten minutes of overlap), or the last 24 hours for a new agent.
+  const sinceMs = isFirst ? now.getTime() - 24 * 3600 * 1000 : Date.parse(agent.lastRunAt!) - 10 * 60 * 1000;
+  const since = new Date(sinceMs).toISOString();
+  const { ok, deals, servedFrom } = await searchFor(agent, since);
+  const seen = new Set(agent.seen);
+  const isNew = (d: any) => {
+    // From the market dataset: the first-seen time decides. A live fallback has
+    // no such time, so only listings the portal itself dates as new count.
+    if (d.firstSeen) return Date.parse(d.firstSeen) >= sinceMs;
+    return servedFrom === "live" && d.daysOnMarket != null && d.daysOnMarket <= 1;
+  };
+  const matches = deals.filter((d) => d?.id && !d.suspect && inArea(agent.criteria, Number(d.zip) || 0, d.municipality ?? null) && isNew(d));
+  const newOnes = matches.filter((d) => !seen.has(String(d.id)));
   const strategy = strategyOf(agent);
-  const peers = plausible.map((d) => ({ zip: Number(d.zip) || 0, price: Number(d.price) || 0, area: d.area ?? null }));
-  let fresh = enrich(isFirst ? [] : newOnes.map((d) => toHit(d, agent.criteria.market, true, at, strategy)), peers, strategy);
-  let initial = enrich(isFirst ? plausible.map((d) => toHit(d, agent.criteria.market, false, at, strategy)) : [], peers, strategy);
-  // A new agent starts with the best fits on the market today, not just the first rows.
-  initial = initial.sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0)).slice(0, 30);
-  // The AI reads the best new matches (and, for a new agent, the top of today's market).
-  const toReview = [...fresh].sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0)).slice(0, 6).concat(initial.slice(0, isFirst ? 5 : 0));
-  if (toReview.length) {
-    const takes = await reviewHits(toReview, strategy, agent.brief);
-    const put = (h: Hit) => (takes.has(h.id) ? { ...h, ai: takes.get(h.id)!, fit: Math.round(((h.fit ?? 0) + takes.get(h.id)!.fit) / 2) } : h);
-    fresh = fresh.map(put);
-    initial = initial.map(put);
+  const peers = matches.map((d) => ({ zip: Number(d.zip) || 0, price: Number(d.price) || 0, area: d.area ?? null }));
+  // Best fits first, capped per run so a busy market does not flood the member (or the AI bill).
+  let fresh = enrich(newOnes.map((d) => toHit(d, agent.criteria.market, true, at, strategy)), peers, strategy)
+    .sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0) || b.score - a.score)
+    .slice(0, perRunOf(agent));
+  if (fresh.length) {
+    const takes = await reviewHits(fresh, strategy, agent.brief);
+    fresh = fresh.map((h) => (takes.has(h.id) ? { ...h, ai: takes.get(h.id)!, fit: Math.round(((h.fit ?? 0) + takes.get(h.id)!.fit) / 2) } : h));
   }
 
   const known = new Set(agent.hits.map((h) => h.id));
-  const hits = [...fresh, ...initial].filter((h) => !known.has(h.id)).concat(agent.hits).slice(0, MAX_HITS);
-  const allSeen = Array.from(new Set([...plausible.map((d) => String(d.id)), ...agent.seen])).slice(0, 1500);
+  const hits = fresh.filter((h) => !known.has(h.id)).concat(agent.hits).slice(0, MAX_HITS);
+  // Everything new this run counts as seen, also what fell outside the cap.
+  const allSeen = Array.from(new Set([...newOnes.map((d) => String(d.id)), ...agent.seen])).slice(0, 3000);
 
   const next: Agent = {
     ...agent,
     hits,
     seen: ok ? allSeen : agent.seen,
-    lastRunAt: at,
+    lastRunAt: ok ? at : agent.lastRunAt,
     nextRunAt: nextRun(agent.schedule, now),
-    runs: [{ at, matches: plausible.length, fresh: fresh.length, emailed: false, ok }, ...agent.runs].slice(0, 30),
+    runs: [{ at, matches: newOnes.length, fresh: fresh.length, emailed: false, ok }, ...agent.runs].slice(0, 30),
   };
-  return { agent: next, fresh, ok };
+  return { agent: next, fresh: isFirst ? [] : fresh, ok };
 }
 
 /** The e-mail for new matches. */

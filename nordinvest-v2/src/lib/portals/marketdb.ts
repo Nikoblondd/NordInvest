@@ -56,7 +56,10 @@ async function queryAll(params: string, limit: number): Promise<any[] | null> {
   return first.rows.concat(...rest.map((r) => r?.rows ?? []));
 }
 
-const BOLIG_COLS = "id,url,image,address,road,zip,city,price,area,rooms,year_built,energy_label,type,lat,lon,municipality";
+const BOLIG_COLS = "id,url,image,address,road,zip,city,price,area,rooms,year_built,energy_label,type,lat,lon,municipality,first_seen";
+
+/** Only listings the market agent first saw at or after this moment (ISO), for search agents. */
+const sinceFilter = (since?: string) => (since && !Number.isNaN(Date.parse(since)) ? `first_seen=gte.${encodeURIComponent(new Date(since).toISOString())}` : null);
 
 function num(v: any): number | null {
   const n = Number(v);
@@ -76,12 +79,15 @@ export async function readBoligDeals(opts: {
   zip?: string;
   type?: string;
   limit?: number;
+  since?: string;
 }): Promise<DealListing[] | null> {
   const q = ["market=eq.bolig", "status=neq.gone", `select=${BOLIG_COLS}`, "order=updated_at.desc,id.asc"];
   if (opts.type) q.push(`type=eq.${encodeURIComponent(opts.type)}`);
   const mf = muniFilter(opts.municipalities);
   if (mf) q.push(mf);
   if (opts.zip) q.push(`zip=eq.${encodeURIComponent(opts.zip)}`);
+  const sf = sinceFilter(opts.since);
+  if (sf) q.push(sf);
   const rows = await queryAll(q.join("&"), opts.limit ?? 1500);
   if (!rows) return null;
   return rows.map((r) => ({
@@ -106,6 +112,7 @@ export async function readBoligDeals(opts: {
     lat: num(r.lat),
     lon: num(r.lon),
     municipality: r.municipality ?? null,
+    firstSeen: r.first_seen ?? null,
   }));
 }
 
@@ -114,12 +121,15 @@ export async function readInvestmentDeals(opts: {
   municipalities?: string[];
   region?: string;
   limit?: number;
+  since?: string;
 }): Promise<InvestmentListing[] | null> {
   const q = ["market=eq.investering", "status=neq.gone", "select=*", "order=updated_at.desc,id.asc"];
   // exact kommune(r) first; fall back to the coarse province only if none given
   const mf = muniFilter(opts.municipalities);
   if (mf) q.push(mf);
   else if (opts.region) q.push(`region=eq.${encodeURIComponent(opts.region)}`);
+  const sf = sinceFilter(opts.since);
+  if (sf) q.push(sf);
   const rows = await queryAll(q.join("&"), opts.limit ?? 3000);
   if (!rows) return null;
   return rows.map((r) => ({
@@ -141,5 +151,7 @@ export async function readInvestmentDeals(opts: {
     energyLabel: r.energy_label ?? null,
     lat: num(r.lat),
     lon: num(r.lon),
+    municipality: r.municipality ?? null,
+    firstSeen: r.first_seen ?? null,
   }));
 }

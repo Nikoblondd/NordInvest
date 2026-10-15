@@ -6,6 +6,9 @@
 
 export type InvestmentListing = {
   id: string;
+  /** When the market agent first saw the listing (ISO), if it came from the dataset. */
+  firstSeen?: string | null;
+  municipality?: string | null;
   source: string; // "ejendomstorvet.dk"
   url: string; // absolute deep link
   image: string | null;

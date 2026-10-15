@@ -15,6 +15,8 @@ import type { InvestmentListing } from "@/lib/portals/ejendomstorvet";
 
 export type DealListing = {
   id: string;
+  /** When the market agent first saw the listing (ISO), if it came from the dataset. */
+  firstSeen?: string | null;
   source: string; // agent host, e.g. "edc.dk"
   url: string; // deep link to the agent's listing
   image: string | null;

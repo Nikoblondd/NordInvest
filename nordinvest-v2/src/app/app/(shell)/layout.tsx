@@ -4,7 +4,7 @@ import { appUser, properties } from "@/lib/app/data";
 import { EMPTY_MAPPE, type Mappe } from "@/lib/mappe/checklist";
 import { readStore } from "@/lib/app/store";
 import type { CalEvent } from "@/lib/app/events";
-import type { Agent } from "@/lib/app/agents";
+import { tidyAgent, type Agent } from "@/lib/app/agents";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export default async function ShellLayout({ children }: { children: React.ReactN
   // First login: password, name and phone before anything else.
   if (!me.onboarded) redirect("/app/velkommen");
 
-  const [rows, events, agents] = await Promise.all([properties(me.user.id), readStore<CalEvent>("events", me.user.id), readStore<Agent>("agents", me.user.id)]);
+  const [rows, events, agents] = await Promise.all([properties(me.user.id), readStore<CalEvent>("events", me.user.id), readStore<Agent>("agents", me.user.id).then((l) => l.map(tidyAgent))]);
   const mappeOf = (r: (typeof rows)[number]): Mappe => ({ ...EMPTY_MAPPE, ...((r.property_data?.mappe as Mappe | undefined) ?? {}) });
   const live = rows.filter((r) => mappeOf(r).stage !== "droppet");
   // Today's appointments (Danish date) on properties and in the member's own calendar.

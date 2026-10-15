@@ -1,15 +1,17 @@
 import { MUNICIPALITIES } from "@/lib/kommuner";
+import { ZIP_NAME, kommuneOf } from "@/lib/postnumre";
 
 /*
  * Search agents: a member's own standing searches on the whole market. Each
- * agent has criteria (the Deal-motor's own filters), a schedule (every day,
- * on weekdays or once a week, at an hour the member picks, Danish time) and
- * an e-mail switch. When it runs it keeps the listings it has already seen,
- * so only new ones are reported. Shared by the app (client) and the runner.
+ * agent has criteria (the Deal-motor's own filters, kommuner and optionally
+ * single towns), a schedule (every hour, every third hour, every day, on
+ * weekdays or once a week, Danish time), a cap on new listings per run and an
+ * e-mail switch. Each run looks only at listings that came on the market since
+ * the last run. Shared by the app (client) and the runner.
  */
 
 export type Market = "bolig" | "investering";
-export type Freq = "daily" | "weekdays" | "weekly";
+export type Freq = "hourly" | "every3" | "daily" | "weekdays" | "weekly";
 
 export type Criteria = {
   market: Market;
@@ -26,6 +28,8 @@ export type Criteria = {
   minCashflow: number | null;
   /** Investment subcategory, e.g. "Boligudlejning". */
   subcat: string | null;
+  /** Postnumre inside the kommuner; empty means every town in them. */
+  zips: number[];
 };
 
 export type Schedule = { freq: Freq; hour: number; weekday: number };
@@ -91,6 +95,8 @@ export type Agent = {
   criteria: Criteria;
   schedule: Schedule;
   email: boolean;
+  /** At most this many new listings per run (1-10). */
+  maxPerRun?: number;
   createdAt: string;
   updatedAt: string;
   lastRunAt: string | null;
@@ -111,11 +117,16 @@ export const TYPES = [
 ];
 export const SUBCATS = ["Boligudlejning", "Kontor", "Detailhandel & butik", "Lager & produktion", "Hotel & restaurant", "Andre typer", "Grunde"];
 export const WEEKDAYS = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
-export const FREQ_LABEL: Record<Freq, string> = { daily: "Hver dag", weekdays: "Hverdage", weekly: "En gang om ugen" };
+export const FREQ_LABEL: Record<Freq, string> = { hourly: "Hver time", every3: "Hver 3. time", daily: "Hver dag", weekdays: "Hverdage", weekly: "En gang om ugen" };
+/** Hours (Danish time) the frequent schedules run at. */
+const HOURLY = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+const EVERY3 = [7, 10, 13, 16, 19, 22];
+export const PER_RUN_MAX = 10;
+export const perRunOf = (a: Pick<Agent, "maxPerRun">) => Math.min(PER_RUN_MAX, Math.max(1, Math.round(a.maxPerRun ?? PER_RUN_MAX)));
 
 export const EMPTY_CRITERIA: Criteria = {
   market: "bolig", municipalities: [], type: "condo", priceMin: null, priceMax: 3000000, areaMin: null, roomsMin: null,
-  minScore: null, minYield: null, minCashflow: null, subcat: null,
+  minScore: null, minYield: null, minCashflow: null, subcat: null, zips: [],
 };
 
 export const muniName = (slug: string) => MUNICIPALITIES.find((m) => m.slug === slug)?.name ?? slug;
@@ -132,7 +143,7 @@ export function suggestName(c: Criteria): string {
 export function criteriaChips(c: Criteria): string[] {
   const out: string[] = [];
   out.push(c.market === "investering" ? (c.subcat ?? "Erhverv") : (TYPES.find((t) => t.id === c.type)?.label ?? "Bolig"));
-  out.push(c.municipalities.length === 0 ? "Hele landet" : c.municipalities.map(muniName).join(", "));
+  out.push(c.municipalities.length === 0 ? "Hele landet" : (c.zips ?? []).length ? townLabel(c.zips) : c.municipalities.map(muniName).join(", "));
   if (c.priceMin && c.priceMax) out.push(`${mio(c.priceMin)} til ${mio(c.priceMax)} kr.`);
   else if (c.priceMax) out.push(`Under ${mio(c.priceMax)} kr.`);
   else if (c.priceMin) out.push(`Over ${mio(c.priceMin)} kr.`);
@@ -145,6 +156,8 @@ export function criteriaChips(c: Criteria): string[] {
 }
 
 export function scheduleLabel(s: Schedule): string {
+  if (s.freq === "hourly") return "Hver time kl. 06-22";
+  if (s.freq === "every3") return "Hver 3. time kl. 07-22";
   const at = `kl. ${String(s.hour).padStart(2, "0")}.00`;
   return s.freq === "weekly" ? `Hver ${WEEKDAYS[s.weekday]} ${at}` : `${FREQ_LABEL[s.freq]} ${at}`;
 }
@@ -184,9 +197,12 @@ export function nextRun(s: Schedule, now = new Date()): string {
     const wd = day.getUTCDay();
     if (s.freq === "weekdays" && (wd === 0 || wd === 6)) continue;
     if (s.freq === "weekly" && wd !== s.weekday) continue;
-    const guess = Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), s.hour, 0);
-    const at = new Date(guess - cphOffset(new Date(guess)) * 60000);
-    if (at.getTime() > now.getTime() + 60000) return at.toISOString();
+    const hours = s.freq === "hourly" ? HOURLY : s.freq === "every3" ? EVERY3 : [s.hour];
+    for (const hour of hours) {
+      const guess = Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), hour, 0);
+      const at = new Date(guess - cphOffset(new Date(guess)) * 60000);
+      if (at.getTime() > now.getTime() + 60000) return at.toISOString();
+    }
   }
   return new Date(now.getTime() + 86400000).toISOString();
 }
@@ -213,7 +229,7 @@ export function cleanCriteria(raw: unknown): Criteria {
   };
   const slugs = new Set(MUNICIPALITIES.map((m) => m.slug));
   const market: Market = r.market === "investering" ? "investering" : "bolig";
-  return {
+  const out: Criteria = {
     market,
     municipalities: Array.isArray(r.municipalities) ? Array.from(new Set(r.municipalities.filter((s): s is string => typeof s === "string" && slugs.has(s)))).slice(0, 30) : [],
     type: TYPES.some((t) => t.id === r.type) ? String(r.type) : "condo",
@@ -225,15 +241,45 @@ export function cleanCriteria(raw: unknown): Criteria {
     minYield: n(r.minYield, -50, 50),
     minCashflow: n(r.minCashflow, -1e6, 1e6),
     subcat: market === "investering" && typeof r.subcat === "string" && SUBCATS.includes(r.subcat) ? r.subcat : null,
+    zips: [],
   };
+  // Towns only count inside the chosen kommuner.
+  if (out.municipalities.length && Array.isArray(r.zips)) {
+    const munis = new Set(out.municipalities);
+    out.zips = Array.from(new Set(r.zips.map(Number).filter((z) => Number.isInteger(z) && munis.has(kommuneOf(z) ?? "")))).slice(0, 300);
+  }
+  return out;
+}
+
+/** "Vejle, Vejle Øst og Aarhus C": the chosen towns, by name. */
+export function townLabel(zips: number[]): string {
+  const names = Array.from(new Set(zips.map((z) => ZIP_NAME[z] ?? String(z))));
+  return names.length <= 3 ? names.join(", ") : `${names.slice(0, 3).join(", ")} og ${names.length - 3} andre`;
+}
+
+/** Is this listing inside the agent's area? Kommune first, then the chosen towns. */
+export function inArea(c: Pick<Criteria, "municipalities" | "zips">, zip: number, municipality?: string | null): boolean {
+  if (!c.municipalities.length) return true;
+  const k = kommuneOf(zip, municipality);
+  if (!k || !c.municipalities.includes(k)) return false;
+  return !(c.zips ?? []).length || c.zips.includes(Number(zip));
 }
 
 export function cleanSchedule(raw: unknown): Schedule {
   const r = (raw ?? {}) as Record<string, unknown>;
-  const freq: Freq = r.freq === "weekdays" || r.freq === "weekly" ? r.freq : "daily";
+  const freq: Freq = r.freq === "hourly" || r.freq === "every3" || r.freq === "weekdays" || r.freq === "weekly" ? r.freq : "daily";
   const hour = Number.isInteger(r.hour) && (r.hour as number) >= 5 && (r.hour as number) <= 22 ? (r.hour as number) : 7;
   const weekday = Number.isInteger(r.weekday) && (r.weekday as number) >= 0 && (r.weekday as number) <= 6 ? (r.weekday as number) : 1;
   return { freq, hour, weekday };
+}
+
+/**
+ * Drops what earlier versions kept but the agent no longer stands for: the
+ * first scan of listings already on the market, and listings outside the area.
+ */
+export function tidyAgent(a: Agent): Agent {
+  const criteria = { ...EMPTY_CRITERIA, ...a.criteria, zips: a.criteria.zips ?? [] };
+  return { ...a, criteria, hits: a.hits.filter((h) => h.fresh !== false && inArea(criteria, h.zip, null)) };
 }
 
 export const strategyOf = (a: Pick<Agent, "strategy" | "criteria">): Strategy => a.strategy ?? (a.criteria.market === "investering" ? "erhverv" : "udlejning");

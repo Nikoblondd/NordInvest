@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { toolUser } from "@/lib/gate";
 import { readStore, writeStore } from "@/lib/app/store";
 import { runAgent } from "@/lib/app/agent-run";
-import { MAX_AGENTS, cleanCriteria, cleanSchedule, cleanStrategy, nextRun, suggestName, type Agent, type HitStatus } from "@/lib/app/agents";
+import { MAX_AGENTS, PER_RUN_MAX, cleanCriteria, cleanSchedule, cleanStrategy, nextRun, suggestName, tidyAgent, type Agent, type HitStatus } from "@/lib/app/agents";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,8 +11,8 @@ export const maxDuration = 60;
 /*
  * The member's search agents.
  *  GET                         all agents
- *  POST   { name?, criteria, schedule, email }   create (runs once right away)
- *  PATCH  { id, name?, criteria?, schedule?, email?, active? }   change
+ *  POST   { name?, criteria, schedule, email, maxPerRun? }   create (runs once right away)
+ *  PATCH  { id, name?, criteria?, schedule?, email?, active?, maxPerRun? }   change
  *  PATCH  { id, hit: { id, status, savedId? } }   mark a found listing
  *  PATCH  { id, readAll: true }   mark every new listing as seen
  *  DELETE ?id=
@@ -20,11 +20,12 @@ export const maxDuration = 60;
  */
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
 const STATUSES: HitStatus[] = ["ny", "set", "gemt", "afvist"];
+const perRun = (v: unknown) => (Number.isFinite(Number(v)) ? Math.min(PER_RUN_MAX, Math.max(1, Math.round(Number(v)))) : PER_RUN_MAX);
 
 export async function GET() {
   const user = await toolUser();
   if (!user) return json({ ok: false, reason: "no_access" }, 403);
-  return json({ ok: true, agents: await readStore<Agent>("agents", user.id) });
+  return json({ ok: true, agents: (await readStore<Agent>("agents", user.id)).map(tidyAgent) });
 }
 
 export async function POST(req: Request) {
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
   const now = new Date().toISOString();
   const name = typeof b.name === "string" && b.name.trim() ? b.name.trim().slice(0, 80) : suggestName(criteria);
   const fresh: Agent = {
-    id: crypto.randomUUID(), name, active: true, criteria, schedule, email: b.email !== false,
+    id: crypto.randomUUID(), name, active: true, criteria, schedule, email: b.email !== false, maxPerRun: perRun(b.maxPerRun),
     strategy: cleanStrategy(b.strategy) ?? (criteria.market === "investering" ? "erhverv" : "udlejning"),
     brief: typeof b.brief === "string" ? b.brief.trim().slice(0, 600) : undefined,
     createdAt: now, updatedAt: now, lastRunAt: null, nextRunAt: nextRun(schedule), seen: [], runs: [], hits: [],
@@ -55,7 +56,7 @@ export async function PATCH(req: Request) {
   const agents = await readStore<Agent>("agents", user.id);
   const i = agents.findIndex((a) => a.id === b.id);
   if (i < 0) return json({ ok: false, reason: "not_found" }, 404);
-  let a = { ...agents[i] };
+  let a = tidyAgent({ ...agents[i] });
 
   if (b.hit && typeof b.hit === "object") {
     const h = b.hit as Record<string, unknown>;
@@ -64,9 +65,11 @@ export async function PATCH(req: Request) {
   } else if (b.readAll) {
     a.hits = a.hits.map((x) => (x.status === "ny" ? { ...x, status: "set" } : x));
   } else {
-    const criteriaChanged = b.criteria !== undefined;
+    const nextCriteria = b.criteria !== undefined ? cleanCriteria(b.criteria) : null;
+    const criteriaChanged = !!nextCriteria && JSON.stringify(nextCriteria) !== JSON.stringify(a.criteria);
     if (typeof b.name === "string" && b.name.trim()) a.name = b.name.trim().slice(0, 80);
-    if (criteriaChanged) a.criteria = cleanCriteria(b.criteria);
+    if (nextCriteria) a.criteria = nextCriteria;
+    if (b.maxPerRun !== undefined) a.maxPerRun = perRun(b.maxPerRun);
     if (b.schedule !== undefined) a.schedule = cleanSchedule(b.schedule);
     if (typeof b.email === "boolean") a.email = b.email;
     if (typeof b.active === "boolean") a.active = b.active;
