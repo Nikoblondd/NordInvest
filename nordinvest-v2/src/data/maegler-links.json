@@ -744,5 +744,17 @@
    "https://i.ejendomstorvet.dk/db/cf/dbcface8e043b336789a112e76013d48cb7dd40600a5cd4d2408bc27b2443b45.jpg?class=listingimagebannermax",
    "https://i.ejendomstorvet.dk/6d/1d/6d1dadd3b5a84006ae2f97cc637a804bbdaf03dc38676d6a874bf7860cfedd5f.jpg?class=listingimagebannermax"
   ]
+ },
+ "kirkegaardsvej-38-koebenhavn-s": {
+  "url": "https://falcherhverv.dk/kirkegaardsvej-38-kl-tv-2300-koebenhavn-s/",
+  "price": 1350000,
+  "rent": 10350,
+  "subcat": "Hotel & restaurant",
+  "addr": "Kirkegårdsvej 38, kl. tv, 2300 København S",
+  "imgs": [
+   "https://i.ejendomstorvet.dk/cb/ce/cbce0d220d5c9b00b8262e2cfbc8538be4c1a498fbce15331f7bbd54b9829ad2.jpg?class=listingimagebannermax",
+   "https://i.ejendomstorvet.dk/e7/5e/e75ed673ec9c83ac5b0d327b5d4f65f4abbe1328a3f2b5551504cf17ca02c0f6.jpg?class=listingimagebannermax",
+   "https://i.ejendomstorvet.dk/28/57/285754f734d669f600e56fd7cea5154fbc09177bb33781d5f2de945a0f95b793.jpg?class=listingimagebannermax"
+  ]
  }
 }
