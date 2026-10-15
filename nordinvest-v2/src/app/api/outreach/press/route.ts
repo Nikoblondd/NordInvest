@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PITCH_FROM, PITCH_REPLY_TO, REPORT_FROM, REPORT_TO, dkDay, dkTime, pitchesOn } from "@/lib/outreach/schedule";
+import { OUTREACH_PAUSED, PITCH_FROM, PITCH_REPLY_TO, REPORT_FROM, REPORT_TO, dkDay, dkTime, pitchesOn } from "@/lib/outreach/schedule";
 
 /*
  * Press outreach. A Vercel cron calls this at 08:00 Danish time every
@@ -19,6 +19,8 @@ export async function GET(req: Request) {
   if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+  // Stopped: no outreach is sent until deliverability is fixed and it is switched on again by hand.
+  if (OUTREACH_PAUSED) return NextResponse.json({ ok: true, skipped: "outreach paused" });
   const now = new Date();
   const day = dkDay(now);
   const todays = pitchesOn(day);
