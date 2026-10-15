@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { hasToolAccess } from "@/lib/access";
+import { hasToolAccess, isBroker } from "@/lib/access";
 import { generateLink, listAuthUsers } from "@/lib/supabase/admin";
 import { PITCH_FROM } from "@/lib/outreach/schedule";
 
@@ -19,10 +19,11 @@ export async function POST(req: Request) {
   const email = String(body.email ?? "").trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 200) return ok();
   const user = (await listAuthUsers()).find((u) => (u.email ?? "").toLowerCase() === email);
-  if (!user || !hasToolAccess(user)) return ok();
-  const link = await generateLink(email, `${SITE}/app`, undefined, "magiclink");
+  if (!user || !(hasToolAccess(user) || isBroker(user))) return ok();
+  const broker = !hasToolAccess(user);
+  const link = await generateLink(email, `${SITE}${broker ? "/maegler" : "/app"}`, undefined, "magiclink");
   if ("error" in link) return ok();
-  const url = `${SITE}/auth/confirm?token_hash=${encodeURIComponent(link.tokenHash)}&type=${link.type}&next=${encodeURIComponent("/app/konto?skift=adgangskode")}`;
+  const url = `${SITE}/auth/confirm?token_hash=${encodeURIComponent(link.tokenHash)}&type=${link.type}&next=${encodeURIComponent(broker ? "/maegler" : "/app/konto?skift=adgangskode")}`;
   const key = process.env.RESEND_API_KEY;
   if (key) {
     await fetch("https://api.resend.com/emails", {

@@ -17,6 +17,7 @@ const AUTH_PREFIXES = [
   "/rapport",
   "/velkommen",
   "/auth",
+  "/maegler",
 ];
 
 function needsAuth(pathname: string): boolean {

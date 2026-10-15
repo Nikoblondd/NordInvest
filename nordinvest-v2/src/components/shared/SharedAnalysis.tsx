@@ -17,6 +17,8 @@ import { CommercialStory } from "@/components/analyzer/CommercialStory";
 
 export type SharedListing = { url: string; price: number; rent: number; subcat: string | null; addr: string; imgs?: string[] };
 
+/** The site the listing is on, for "Annoncen på …". */
+const sourceOf = (u: string) => { try { const h = new URL(u).hostname.replace(/^www\./, ""); return /ejendomstorvet/.test(h) ? "Ejendomstorvet" : h; } catch { return "mæglerens side"; } };
 const dk = (n: number) => Math.round(n).toLocaleString("da-DK");
 const num = (n: number) => n.toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 2 });
 
@@ -51,7 +53,7 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
         <AppHero
           images={l.imgs ?? []} address={l.addr} score={inv.score} headline={inv.rating === "Stærk" || inv.rating === "Solid" ? `${inv.rating} investering` : inv.rating === "Middel" ? "Marginal investering" : "Svag investering"}
           verdict={verdict} tone={tone} notes={inv.note ? [inv.note] : []} metrics={metrics} probability={null}
-          listingUrl={l.url} sourceLabel="Ejendomstorvet" kindLabel={`Erhverv${l.subcat ? `, ${l.subcat}` : ""}`}
+          listingUrl={/nordinvest\.io/i.test(l.url) ? null : l.url} sourceLabel={sourceOf(l.url)} kindLabel={`Erhverv${l.subcat ? `, ${l.subcat}` : ""}`}
         />
 
         <section id="juster" className="mt-4 scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
@@ -69,7 +71,7 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
           r={r} price={l.price} rate={rate} termYears={30} subcategory={l.subcat} appreciationPct={3} address={null} onAdjust={adjust}
           trust={
             <ul className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-[16px] leading-relaxed text-slate-700 sm:p-6">
-              <li><b className="font-semibold text-slate-900">Pris og afkast:</b> fra sælgers annonce på Ejendomstorvet. Driftsresultatet er beregnet som afkast × købspris.</li>
+              <li><b className="font-semibold text-slate-900">Pris og afkast:</b> fra sælgers annonce. Driftsresultatet er beregnet som afkast × købspris.</li>
               <li><b className="font-semibold text-slate-900">Finansiering:</b> annuitetslån over 30 år med den valgte rente og udbetaling.</li>
               <li><b className="font-semibold text-slate-900">Fremskrivning:</b> 3 % årlig værdistigning, 2 % årlig lejestigning, købsomkostninger på 1,5 % og salgsomkostninger. Før skat.</li>
               <li className="text-[14px] text-slate-500">Analysen er en beregning, ikke rådgivning. Gennemgå lejekontrakter og driftsbudget før bud.</li>

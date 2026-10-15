@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import links from "@/data/maegler-links.json";
+import { getLink, recordView } from "@/lib/broker/links";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { SharedAnalysis, type SharedListing } from "@/components/shared/SharedAnalysis";
+import { SharedAnalysis } from "@/components/shared/SharedAnalysis";
 
 /*
  * Short, readable links to the analysis of one listing, for the brokers we
@@ -12,15 +12,14 @@ import { SharedAnalysis, type SharedListing } from "@/components/shared/SharedAn
  * to anyone with the link (no login), so a broker and their buyers can read it
  * and change the down payment and rate themselves. The numbers are the
  * listing's own (price, the seller's stated yield as net rent), scored the same
- * way as the Deal-motor card. Each visit is logged so we can see who opened it.
+ * way as the Deal-motor card. Links come from the outreach file or from agents
+ * themselves (/maegler); each visit is counted for the agent's dashboard.
  */
-
-const LINKS = links as Record<string, SharedListing>;
 
 export const dynamic = "force-dynamic";
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const l = LINKS[params.slug];
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const l = await getLink(params.slug);
   if (!l) return { robots: { index: false } };
   const street = l.addr.split(",")[0];
   const q = new URLSearchParams({ addr: l.addr, price: String(l.price), rent: String(l.rent), opex: "0", downPaymentPct: "30", interestRate: "5" });
@@ -37,10 +36,13 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function SharedAnalysisPage({ params }: { params: { slug: string } }) {
-  const l = LINKS[params.slug];
+export default async function SharedAnalysisPage({ params }: { params: { slug: string } }) {
+  const l = await getLink(params.slug);
   if (!l) redirect("/deals");
-  console.log(`[maegler-link] ${params.slug} ${headers().get("user-agent")?.slice(0, 80) ?? ""}`);
+  const ua = headers().get("user-agent") ?? "";
+  // Link previews and crawlers are not visitors.
+  if (!/bot|crawl|spider|preview|facebookexternalhit|slack|whatsapp|telegram|linkedin|headless/i.test(ua)) await recordView(params.slug);
+  console.log(`[maegler-link] ${params.slug} ${ua.slice(0, 80)}`);
   return (
     <div className="min-h-[100dvh] overflow-x-clip bg-[#f4f6f9] text-slate-900">
       <Nav />

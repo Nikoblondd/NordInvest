@@ -102,6 +102,19 @@ export function confirmationEmail(r: AccessRequest): { subject: string; html: st
   };
 }
 
+export function brokerInvitationEmail(name: string, link: string): { subject: string; html: string } {
+  const first = esc(name.split(" ")[0] || "der");
+  return {
+    subject: "Jeres adgang til NordInvest for mæglere",
+    html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
+<p>Hej ${first},</p>
+<p>Som aftalt har du nu adgang til NordInvest for mæglere. Her laver du investoranalyser af jeres sager og sætter en NordInvest-knap på sagen på jeres hjemmeside. Det tager et par minutter pr. sag og er gratis.</p>
+<p style="margin:28px 0"><a href="${link}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Åbn mæglerværktøjet</a></p>
+<p style="font-size:13px;color:#64748b">Linket virker én gang og kun i en begrænset periode. Første gang vælger du en adgangskode. Er linket udløbet, så svar på denne mail, så sender jeg et nyt.</p>
+<p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · contact@nordinvest.io</p></div>`,
+  };
+}
+
 export function invitationEmail(name: string, link: string): { subject: string; html: string } {
   const first = esc(name.split(" ")[0] || "der");
   return {

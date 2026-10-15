@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/access";
 import { generateLink, getAuthUser, setAccess } from "@/lib/supabase/admin";
-import { getRequest, invitationEmail, updateRequest, type RequestStatus } from "@/lib/access/requests";
+import { brokerInvitationEmail, getRequest, invitationEmail, updateRequest, type RequestStatus } from "@/lib/access/requests";
 import { PITCH_FROM } from "@/lib/outreach/schedule";
 
 export const runtime = "nodejs";
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 /*
  * POST /api/admin/access: Nikolaj manages who is in.
- *  { action: "invite", email, name, requestId?, requestCreatedAt?, note? }
+ *  { action: "invite", email, name, requestId?, requestCreatedAt?, note?, kind?: "member" | "maegler" }
  *  { action: "revoke" | "restore", userId }
  *  { action: "status", requestId, requestCreatedAt, status, note? }
  *  { action: "role", userId, role: "admin" | "member" }
@@ -31,12 +31,15 @@ export async function POST(req: Request) {
     const email = String(b.email ?? "").trim().toLowerCase();
     const name = String(b.name ?? "").trim().slice(0, 120);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json({ ok: false, reason: "email" }, 422);
-    const link = await generateLink(email, `${SITE}/app/velkommen`, name || undefined);
+    // Estate agents get the broker tools only (investor analyses of their own listings).
+    const broker = b.kind === "maegler";
+    const next = broker ? "/maegler" : "/app/velkommen";
+    const link = await generateLink(email, `${SITE}${next}`, name || undefined);
     if ("error" in link) return json({ ok: false, reason: link.error }, 502);
-    const ok = await setAccess(link.userId, "member", { nordinvest_invited_at: new Date().toISOString(), ...(note ? { nordinvest_note: note } : {}) });
+    const ok = await setAccess(link.userId, broker ? "maegler" : "member", { nordinvest_invited_at: new Date().toISOString(), nordinvest_broker: broker, ...(note ? { nordinvest_note: note } : {}) });
     if (!ok) return json({ ok: false, reason: "access_failed" }, 502);
-    const url = `${SITE}/auth/confirm?token_hash=${encodeURIComponent(link.tokenHash)}&type=${link.type}&next=${encodeURIComponent("/app/velkommen")}`;
-    const mail = invitationEmail(name || email, url);
+    const url = `${SITE}/auth/confirm?token_hash=${encodeURIComponent(link.tokenHash)}&type=${link.type}&next=${encodeURIComponent(next)}`;
+    const mail = broker ? brokerInvitationEmail(name || email, url) : invitationEmail(name || email, url);
     const key = process.env.RESEND_API_KEY;
     const sent = key
       ? await fetch("https://api.resend.com/emails", {
@@ -58,7 +61,7 @@ export async function POST(req: Request) {
     const target = await getAuthUser(b.userId);
     if (!target) return json({ ok: false, reason: "user" }, 404);
     if (isAdmin(target)) return json({ ok: false, reason: "admin" }, 422);
-    const ok = await setAccess(b.userId, b.action === "revoke" ? "revoked" : "member");
+    const ok = await setAccess(b.userId, b.action === "revoke" ? "revoked" : target.app_metadata?.nordinvest_broker ? "maegler" : "member");
     return json({ ok }, ok ? 200 : 502);
   }
 

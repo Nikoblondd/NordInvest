@@ -40,6 +40,16 @@ export function isMember(user: AccessUser): boolean {
   return user?.app_metadata?.nordinvest_access === "member";
 }
 
+/** An estate agent with access to the broker tools only (investor analyses for their own listings). */
+export function isBroker(user: AccessUser): boolean {
+  return user?.app_metadata?.nordinvest_access === "maegler";
+}
+
+/** Can this account use the broker tools? Brokers and admins. */
+export function hasBrokerAccess(user: AccessUser): boolean {
+  return isAdmin(user) || isBroker(user);
+}
+
 /** Can this account use the platform (analyser, Deal-motor, ejendomme)? */
 export function hasToolAccess(user: AccessUser): boolean {
   return isAdmin(user) || isMember(user);
