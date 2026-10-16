@@ -4,6 +4,7 @@ import { isAdmin } from "@/lib/access";
 import { generateLink, getAuthUser, setAccess } from "@/lib/supabase/admin";
 import { brokerInvitationEmail, getRequest, invitationEmail, updateRequest, type RequestStatus } from "@/lib/access/requests";
 import { PITCH_FROM } from "@/lib/outreach/schedule";
+import { INVITE_TEXT_MAX } from "@/lib/access/invite-copy";
 import { FIELD, INVITE_NEXT, linkUrl, newLink, type InviteKind } from "@/lib/access/invite-link";
 
 export const runtime = "nodejs";
@@ -11,7 +12,8 @@ export const dynamic = "force-dynamic";
 
 /*
  * POST /api/admin/access: Nikolaj manages who is in.
- *  { action: "invite", email, name, requestId?, requestCreatedAt?, note?, kind?: "member" | "maegler" | "begge" }
+ *  { action: "invite", email, name, requestId?, requestCreatedAt?, note?, kind?: "member" | "maegler" | "begge", message? }
+ *    message: the text of the mail between the greeting and the button (defaults per kind)
  *  { action: "revoke" | "restore", userId }
  *  { action: "status", requestId, requestCreatedAt, status, note? }
  *  { action: "role", userId, role: "admin" | "member" }
@@ -49,7 +51,8 @@ export async function POST(req: Request) {
     });
     if (!ok) return json({ ok: false, reason: "access_failed" }, 502);
     const url = linkUrl(SITE, link.userId, token);
-    const mail = kind === "maegler" ? brokerInvitationEmail(name || email, url) : invitationEmail(name || email, url, kind === "begge");
+    const text = typeof b.message === "string" && b.message.trim() ? b.message.slice(0, INVITE_TEXT_MAX) : undefined;
+    const mail = kind === "maegler" ? brokerInvitationEmail(name || email, url, text) : invitationEmail(name || email, url, kind === "begge", text);
     const key = process.env.RESEND_API_KEY;
     const sent = key
       ? await fetch("https://api.resend.com/emails", {

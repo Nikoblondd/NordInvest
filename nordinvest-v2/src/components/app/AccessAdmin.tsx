@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Check, Copy, Loader2, Mail, Phone, RotateCcw, Send, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { REQUEST_STATUS, type AccessRequest, type RequestStatus } from "@/lib/access/fields";
+import { DEFAULT_INVITE_TEXT, INVITE_TEXT_MAX, type InviteCopyKind } from "@/lib/access/invite-copy";
 
 /*
  * Admin: access requests from /adgang. One press approves (the person gets
@@ -208,15 +209,21 @@ function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) =
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [note, setNote] = useState("");
-  const [kind, setKind] = useState<"member" | "maegler" | "begge">("member");
+  const [kind, setKind] = useState<InviteCopyKind>("member");
+  // The mail text starts as the default for the chosen access and follows the
+  // choice until Nikolaj edits it; after that his text stays.
+  const [text, setText] = useState(DEFAULT_INVITE_TEXT.member);
+  const [edited, setEdited] = useState(false);
+  const pick = (k: InviteCopyKind) => { setKind(k); if (!edited) setText(DEFAULT_INVITE_TEXT[k]); };
+  const reset = () => { setText(DEFAULT_INVITE_TEXT[kind]); setEdited(false); };
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true); setErr(null);
-    const res = await call({ action: "invite", email, name, note, kind });
+    const res = await call({ action: "invite", email, name, note, kind, message: text });
     setBusy(false);
-    if (res.ok) { onInvited(email, res.link); setName(""); setEmail(""); setNote(""); }
+    if (res.ok) { onInvited(email, res.link); setName(""); setEmail(""); setNote(""); setText(DEFAULT_INVITE_TEXT[kind]); setEdited(false); }
     else setErr(res.reason === "email" ? "Skriv en gyldig e-mail." : "Invitationen mislykkedes. Prøv igen.");
   };
   const input = "mt-1.5 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-[16px] focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100";
@@ -225,7 +232,7 @@ function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) =
       <p className="text-[15px] text-slate-600">Giv adgang uden en anmodning. Personen får en mail med et personligt link, der ikke udløber.</p>
       <div className="mt-4 flex flex-wrap gap-2" role="radiogroup" aria-label="Type adgang">
         {([["member", "Medlem", "Hele platformen"], ["maegler", "Ejendomsmægler", "Kun mæglerværktøjet"], ["begge", "Begge", "Platformen og mæglerværktøjet"]] as const).map(([k, t, d]) => (
-          <button key={k} type="button" role="radio" aria-checked={kind === k} onClick={() => setKind(k)}
+          <button key={k} type="button" role="radio" aria-checked={kind === k} onClick={() => pick(k)}
             className={`min-h-[44px] rounded-lg border px-3.5 py-1.5 text-left text-[14px] ${kind === k ? "border-blue-600 bg-blue-50 text-blue-900" : "border-slate-300 bg-white text-slate-700"}`}>
             <span className="block font-semibold">{t}</span><span className="block text-[12px] text-slate-500">{d}</span>
           </button>
@@ -235,7 +242,16 @@ function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) =
         <div><label htmlFor="inv-name" className="text-[14px] font-medium text-slate-700">Navn</label><input id="inv-name" value={name} onChange={(e) => setName(e.target.value)} className={input} /></div>
         <div><label htmlFor="inv-mail" className="text-[14px] font-medium text-slate-700">E-mail</label><input id="inv-mail" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={input} /></div>
       </div>
-      <div className="mt-4"><label htmlFor="inv-note" className="text-[14px] font-medium text-slate-700">Note (pris, aftale)</label><input id="inv-note" value={note} onChange={(e) => setNote(e.target.value)} className={input} /></div>
+      <div className="mt-4"><label htmlFor="inv-note" className="text-[14px] font-medium text-slate-700">Intern note (pris, aftale)</label><input id="inv-note" value={note} onChange={(e) => setNote(e.target.value)} className={input} /><p className="mt-1 text-[12px] text-slate-500">Kun til dig. Modtageren ser den ikke.</p></div>
+      <div className="mt-4">
+        <div className="flex items-baseline justify-between gap-3">
+          <label htmlFor="inv-text" className="text-[14px] font-medium text-slate-700">Tekst i mailen</label>
+          {edited && <button type="button" onClick={reset} className="text-[13px] font-semibold text-blue-700 hover:underline">Brug standardteksten</button>}
+        </div>
+        <p className="mt-0.5 text-[12px] text-slate-500">Mailen starter med &quot;Hej {name.trim().split(/\s+/)[0] || "fornavn"},&quot; og slutter med knappen, linket og din hilsen. En tom linje giver et nyt afsnit.</p>
+        <textarea id="inv-text" value={text} maxLength={INVITE_TEXT_MAX} rows={11} onChange={(e) => { setText(e.target.value); setEdited(true); }}
+          className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-[16px] leading-relaxed focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" />
+      </div>
       {err && <p role="alert" className="mt-3 text-[14px] font-medium text-rose-600">{err}</p>}
       <button type="submit" disabled={busy} className="mt-5 inline-flex min-h-[46px] items-center gap-2 rounded-lg bg-blue-600 px-5 text-[15px] font-semibold text-white hover:bg-blue-500 disabled:opacity-60">{busy ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />} Send invitation</button>
     </form>

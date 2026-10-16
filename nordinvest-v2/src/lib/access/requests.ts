@@ -7,6 +7,7 @@
 
 export { GOALS, PORTFOLIO, REQUEST_STATUS, validate, type FieldErrors, type RequestStatus } from "./fields";
 import type { AccessRequest } from "./fields";
+import { inviteTextToHtml } from "@/lib/access/invite-copy";
 export type { AccessRequest };
 
 
@@ -102,30 +103,30 @@ export function confirmationEmail(r: AccessRequest): { subject: string; html: st
   };
 }
 
-export function brokerInvitationEmail(name: string, link: string): { subject: string; html: string } {
+export function brokerInvitationEmail(name: string, link: string, text?: string): { subject: string; html: string } {
   const first = esc(name.split(" ")[0] || "der");
   return {
     subject: "Jeres adgang til NordInvest for mæglere",
     html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
 <p>Hej ${first},</p>
-<p>Som aftalt har du nu adgang til NordInvest for mæglere. Her laver du investoranalyser af jeres sager og sætter en NordInvest-knap på sagen på jeres hjemmeside. Det tager et par minutter pr. sag og er gratis.</p>
+${text ? inviteTextToHtml(text) : "<p>Som aftalt har du nu adgang til NordInvest for mæglere. Her laver du investoranalyser af jeres sager og sætter en NordInvest-knap på sagen på jeres hjemmeside. Det tager et par minutter pr. sag og er gratis.</p>"}
 <p style="margin:28px 0"><a href="${link}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Åbn mæglerværktøjet</a></p>
 <p style="font-size:13px;color:#64748b">Linket er personligt og udløber ikke. Første gang vælger du en adgangskode, og derefter logger du ind på nordinvest.io/maegler.</p>
 <p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · contact@nordinvest.io</p></div>`,
   };
 }
 
-export function invitationEmail(name: string, link: string, broker = false): { subject: string; html: string } {
+export function invitationEmail(name: string, link: string, broker = false, text?: string): { subject: string; html: string } {
   const first = esc(name.split(" ")[0] || "der");
   return {
     subject: "Du er godkendt til NordInvest",
     html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
 <p>Hej ${first},</p>
-<p>Din anmodning om adgang til NordInvest er godkendt, og din konto er klar. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode, og bagefter viser en kort guide dig rundt.</p>
+${text ? inviteTextToHtml(text) : `<p>Din anmodning om adgang til NordInvest er godkendt, og din konto er klar. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode, og bagefter viser en kort guide dig rundt.</p>`}
 <p style="margin:28px 0"><a href="${link}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Åbn NordInvest</a></p>
-${broker ? `<p>Du har også adgang til mæglerværktøjet, hvor du laver investoranalyser af dine sager og sætter en NordInvest-knap på dem. Du finder det i menuen under Mæglerværktøj.</p>` : ""}
+${!text && broker ? `<p>Du har også adgang til mæglerværktøjet, hvor du laver investoranalyser af dine sager og sætter en NordInvest-knap på dem. Du finder det i menuen under Mæglerværktøj.</p>` : ""}
 <p style="font-size:13px;color:#64748b">Linket er personligt og udløber ikke. Første gang vælger du en adgangskode, og derefter logger du ind på nordinvest.io.</p>
-<p>Har du spørgsmål undervejs, kan du skrive til os under Kontakt i NordInvest eller svare på denne mail.</p>
+${text ? "" : "<p>Har du spørgsmål undervejs, kan du skrive til os under Kontakt i NordInvest eller svare på denne mail.</p>"}
 <p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · contact@nordinvest.io</p></div>`,
   };
 }
