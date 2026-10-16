@@ -32,7 +32,7 @@ type AnalysisRow = { id: string; user_id: string; created_at: string; saved_to_p
 type WatchRow = { id: string; user_id: string; address: string | null; status: string | null; created_at: string; has_alert: boolean | null };
 type FeedbackRow = { id: string; user_id: string; rating: number | null; comment: string | null; created_at: string };
 
-export type Access = "admin" | "member" | "revoked" | "none";
+export type Access = "admin" | "member" | "broker" | "revoked" | "none";
 
 export type MemberProperty = {
   id: string;
@@ -56,6 +56,8 @@ export type MemberSummary = {
   name: string;
   phone: string;
   access: Access;
+  /** A member who also has the broker tools (invited as "Begge"). */
+  alsoBroker: boolean;
   /** Admin through the allowlist; cannot be changed from the board. */
   ownerAdmin: boolean;
   createdAt: string;
@@ -93,6 +95,7 @@ function accessOf(u: AdminUser): Access {
   const a = u.app_metadata?.nordinvest_access;
   if (a === "revoked") return "revoked";
   if (isAdmin(u)) return "admin";
+  if (a === "maegler") return "broker";
   return a === "member" ? "member" : "none";
 }
 
@@ -135,6 +138,7 @@ function summarise(u: AdminUser, p: ProfileRow | undefined, own: AnalysisRow[], 
     name: p?.full_name || String(meta.full_name ?? "") || "",
     phone: p?.phone ?? "",
     access: accessOf(u),
+    alsoBroker: u.app_metadata?.nordinvest_access === "member" && u.app_metadata?.nordinvest_broker === true,
     ownerAdmin: isAdmin({ ...u, app_metadata: { ...(u.app_metadata ?? {}), nordinvest_role: null } }),
     createdAt: u.created_at,
     invitedAt: (u.app_metadata?.nordinvest_invited_at as string | undefined) ?? null,
@@ -177,7 +181,7 @@ const by = <T extends { user_id: string }>(list: T[], id: string) => list.filter
 export async function listMembers(): Promise<MemberSummary[]> {
   const { users, profiles, analyses, watches, feedback } = await load();
   const now = Date.now();
-  const rank: Record<Access, number> = { admin: 0, member: 0, revoked: 1, none: 2 };
+  const rank: Record<Access, number> = { admin: 0, member: 0, broker: 0, revoked: 1, none: 2 };
   return users
     .map((u) => summarise(u, profiles.find((p) => p.id === u.id), by(analyses, u.id), by(watches, u.id), by(feedback, u.id), now))
     .sort((a, b) => rank[a.access] - rank[b.access] || (b.lastActive ?? "").localeCompare(a.lastActive ?? ""));

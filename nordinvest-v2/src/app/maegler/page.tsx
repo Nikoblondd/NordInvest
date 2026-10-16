@@ -15,7 +15,8 @@ export default async function BrokerPage() {
   const meta = (me.user.user_metadata ?? {}) as Record<string, unknown>;
   const name = String(meta.full_name ?? "");
   // A new agent sets a name and a password once, then lands on the tools.
-  if (!me.admin && !meta.broker_ready) return <BrokerWelcome email={me.user.email ?? ""} initialName={name} />;
+  // Members with both kinds of access already did that in the app (/app/velkommen).
+  if (!me.admin && !meta.broker_ready && !meta.onboarded) return <BrokerWelcome email={me.user.email ?? ""} initialName={name} />;
 
   const h = headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "nordinvest.io";
