@@ -163,7 +163,7 @@ export function MarketFigures({ snap, where }: { snap: DealSnapshot; where: stri
 export function Assumptions({ updated }: { updated: string }) {
   return (
     <p className="mt-3 text-sm text-slate-500">
-      Opdateret {dateDa(updated)}. Beregnet med 20 % udbetaling og 5 % rente (erhverv: 30 % udbetaling). Lejen er et
+      Opdateret {dateDa(updated)}. Beregnet med 20 % udbetaling og 5 % rente (erhverv: 40 % udbetaling). Lejen er et
       estimat ud fra området; åbn analysen for at se og rette tallene.
     </p>
   );

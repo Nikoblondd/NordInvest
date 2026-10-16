@@ -45,7 +45,7 @@ function analyzeFor(
     // it as a bolig and defaults monthlyRent to 15.000 kr on a multi-million
     // warehouse → nonsense score and cashflow.
     q.set("market", "investering");
-    q.set("downPaymentPct", "30");
+    q.set("downPaymentPct", "40");
     q.set("interestRate", "5");
     // Rent param IS the net NOI/12 (analyzer zeroes vacancy/opex when
     // market=investering, so no double-count).

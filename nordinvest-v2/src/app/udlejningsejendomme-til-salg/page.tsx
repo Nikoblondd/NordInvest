@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 const PATH = "/udlejningsejendomme-til-salg";
 const TITLE = "Udlejningsejendomme og erhvervsejendomme til salg nu";
-const DESCRIPTION = "Alle udlejnings- og erhvervsejendomme til salg i Danmark regnet igennem: startafkast pr. ejendomstype, cash flow ved 30 % udbetaling og de bedste lige nu.";
+const DESCRIPTION = "Alle udlejnings- og erhvervsejendomme til salg i Danmark regnet igennem: startafkast pr. ejendomstype, cash flow ved 40 % udbetaling og de bedste lige nu.";
 
 export const metadata: Metadata = {
   title: { absolute: `${TITLE} · NordInvest` },
@@ -27,7 +27,7 @@ const pct = (n: number | null) => (n == null ? "–" : `${n.toLocaleString("da-D
 
 const FAQ = [
   { q: "Hvad er et godt afkast på en udlejningsejendom?", a: "For danske boligudlejningsejendomme ligger et sundt startafkast typisk omkring 4 til 5,5 %. Et afkast langt over niveauet for ejendomstypen betyder oftest, at prisen afspejler en risiko: tomgang, en enkelt lejer, en svag beliggenhed eller et stort vedligeholdelsesbehov." },
-  { q: "Hvordan regner NordInvest ejendommene igennem?", a: "Hver ejendom regnes på det oplyste startafkast og driftsresultat, med 30 % udbetaling og 5 % rente på lånet. Det giver cash flow pr. måned, gældsdækning (DSCR) og en score fra 0 til 100, der også vurderer afkastet mod det normale niveau for ejendomstypen." },
+  { q: "Hvordan regner NordInvest ejendommene igennem?", a: "Hver ejendom regnes på det oplyste startafkast og driftsresultat, med 40 % udbetaling og 5 % rente på lånet, fordi erhvervsejendomme sjældent belånes med mere end 60 %. Det giver cash flow pr. måned, gældsdækning (DSCR) og en score fra 0 til 100, der også vurderer afkastet mod det normale niveau for ejendomstypen." },
   { q: "Hvor kommer ejendommene fra?", a: "Fra Ejendomstorvet, hvor mæglere annoncerer erhvervs- og investeringsejendomme. Listen opdateres hver 6. time." },
   { q: "Kan jeg få en fuld analyse af en bestemt ejendom?", a: "Ja. I NordInvest regner du en ejendom igennem med rentestress, 10-årsfremskrivning og bankrapport, og du kan oprette en søgeagent, der giver besked, når en ny ejendom passer dine krav." },
 ];
@@ -84,7 +84,7 @@ export default async function Page() {
       <section className="mx-auto max-w-[1180px] px-4 pb-10 pt-8 sm:px-6 lg:px-8 lg:pt-12">
         <h1 className="max-w-3xl text-[34px] font-semibold leading-[1.06] tracking-[-0.035em] text-[#0b1b33] [text-wrap:balance] sm:text-[46px]">Udlejningsejendomme og erhvervsejendomme til salg</h1>
         <p className="mt-5 max-w-3xl text-[18px] leading-relaxed text-slate-600">
-          {m ? <>Lige nu er der <b className="text-slate-900">{m.total.toLocaleString("da-DK")} investerings- og erhvervsejendomme</b> til salg i Danmark. Vi har regnet dem alle igennem med 30 % udbetaling og 5 % rente{rentalType?.medianYield != null ? <>, og medianafkastet for boligudlejningsejendomme er <b className="text-slate-900">{pct(rentalType.medianYield)}</b></> : null}.</> : "Markedsdata opdateres. Kig igen om lidt."}
+          {m ? <>Lige nu er der <b className="text-slate-900">{m.total.toLocaleString("da-DK")} investerings- og erhvervsejendomme</b> til salg i Danmark. Vi har regnet dem alle igennem med 40 % udbetaling og 5 % rente{rentalType?.medianYield != null ? <>, og medianafkastet for boligudlejningsejendomme er <b className="text-slate-900">{pct(rentalType.medianYield)}</b></> : null}.</> : "Markedsdata opdateres. Kig igen om lidt."}
         </p>
         {updated && <p className="mt-2 text-[13px] text-slate-500">Opdateret {updated}. Kilde: annoncer på Ejendomstorvet, beregnet af NordInvest.</p>}
       </section>

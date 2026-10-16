@@ -3,7 +3,7 @@ import { searchBoligsiden } from "@/lib/portals/boligsiden";
 import { searchEjendomstorvet } from "@/lib/portals/ejendomstorvet";
 import { readBoligDeals, readInvestmentDeals } from "@/lib/portals/marketdb";
 import { zipToMunicipality } from "@/lib/kommuner";
-import { analyzeDeal, isPlausible, sortDeals, analyzeInvestment, sortInvestments, type AnalyzedDeal, type InvestmentDeal, type DealSort } from "@/lib/deals";
+import { analyzeDeal, isPlausible, sortDeals, analyzeInvestment, sortInvestments, type AnalyzedDeal, type InvestmentDeal, type DealSort, COMMERCIAL_DOWN_PCT } from "@/lib/deals";
 import type { Strategy } from "@/lib/analysis";
 import { dealAccess } from "@/lib/deal-access";
 import { DEAL_ROWS, MAP_LIMIT, type DealAccess } from "@/lib/deal-tiers";
@@ -62,7 +62,7 @@ export async function GET(req: Request) {
   const market = p.get("market") || "bolig";
   const strategy = (p.get("strategy") as Strategy) || "cashflow";
   const sort = (p.get("sort") as DealSort) || "score";
-  const downPaymentPct = num(p.get("downPaymentPct"), market === "investering" ? 30 : 20);
+  const downPaymentPct = num(p.get("downPaymentPct"), market === "investering" ? COMMERCIAL_DOWN_PCT : 20);
   const interestRate = num(p.get("interestRate"), 5);
   // Default 36 for the list; the map view requests many more (with coordinates).
   const limit = Math.min(4000, num(p.get("limit"), 36));

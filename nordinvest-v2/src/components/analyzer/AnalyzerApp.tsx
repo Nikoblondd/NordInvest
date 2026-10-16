@@ -361,7 +361,7 @@ export function AnalyzerApp() {
       ...(Number.isFinite(rent) && rent > 0 ? { monthlyRent: rent } : {}),
       // Down payment: use the card's value; otherwise default 30 % for an
       // investment property, 20 % for a home (mirrors the deal engine).
-      downPaymentPct: Number.isFinite(dp) && dp > 0 ? dp : investment ? 30 : 20,
+      downPaymentPct: Number.isFinite(dp) && dp > 0 ? dp : investment ? 40 : 20,
       ...(Number.isFinite(ir) && ir > 0 ? { interestRate: ir } : {}),
       // For an investment property the passed rent IS the net NOI/12, so zero out
       // the operating buffers — otherwise the analyzer would eat into it a second

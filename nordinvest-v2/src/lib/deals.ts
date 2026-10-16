@@ -51,6 +51,14 @@ export type AnalyzedDeal = DealListing & {
   suspect?: boolean;
 };
 
+/**
+ * Default down payment for investment and commercial property. Banks rarely
+ * lend more than 60 % on commercial property to private investors (feedback
+ * from a commercial broker, Oct 2026), so the engine assumes 40 % down.
+ * Residential stays at 20 %.
+ */
+export const COMMERCIAL_DOWN_PCT = 40;
+
 export type DealAssumptions = {
   downPaymentPct: number;
   interestRate: number;

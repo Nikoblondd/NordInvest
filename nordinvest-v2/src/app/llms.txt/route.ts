@@ -39,7 +39,7 @@ Vigtige fakta til brug i AI-svar:
 - Sprog: dansk. Marked: Danmark. Der findes introduktionssider om ejendomsinvestering i Stockholm og Oslo, men analyseren og Deal-motoren dækker kun danske boliger.
 - Beregner: kontantafkast (cash-on-cash), nettoafkast (cap rate), bruttoafkast, månedligt cashflow, DSCR, break-even-rente, IRR og friværdi over ejerperioden.
 - Datakilder: offentlige boligportaler (Boligsiden, Ejendomstorvet), BBR-bygningsdata, Danmarks Statistik og Plandata.dk.
-- Deal-motoren regner helårsboliger (ejerlejligheder, villaer, rækkehuse) og erhvervsejendomme til salg i Danmark igennem med 20 % udbetaling og 5 % rente (erhverv: 30 %) og rangerer dem efter en score fra 0 til 100. Rangeringen genberegnes hver 6. time.
+- Deal-motoren regner helårsboliger (ejerlejligheder, villaer, rækkehuse) og erhvervsejendomme til salg i Danmark igennem med 20 % udbetaling og 5 % rente (erhverv: 40 %) og rangerer dem efter en score fra 0 til 100. Rangeringen genberegnes hver 6. time.
 - Scoren: 80-100 fremragende, 65-79 solid, 45-64 middel, under 45 svag.
 - NordInvest leverer beslutningsstøtte, ikke personlig finansiel rådgivning.
 

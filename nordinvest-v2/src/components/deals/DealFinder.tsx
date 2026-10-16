@@ -495,7 +495,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
   // The financing assumptions the CARDS were scored with — must mirror the
   // /api/deals/search route defaults exactly (investment 30 % down, bolig 20 %,
   // 5 % interest) so the click-through analysis reproduces the same numbers.
-  const effDp = adv.downPayment !== "" ? adv.downPayment : market === "investering" ? "30" : "20";
+  const effDp = adv.downPayment !== "" ? adv.downPayment : market === "investering" ? "40" : "20";
   const effIr = adv.interest !== "" ? adv.interest : "5";
 
   const run = () => doSearch({ market, cities, type, sort, priceMax });
@@ -609,7 +609,7 @@ export function DealFinder({ initialCity }: { initialCity?: string } = {}) {
               <Adv label="Min. afkast (%)" locked={!paid} onLocked={() => setUpgrade("filters")}><NumberInput value={adv.minYield} decimals={1} onValueChange={(n) => setA("minYield", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
               <Adv label="Min. cashflow (kr/md.)" locked={!paid} onLocked={() => setUpgrade("filters")}><NumberInput value={adv.minCashflow} decimals={0} onValueChange={(n) => setA("minCashflow", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
               <Adv label="Min. score" locked={!paid} onLocked={() => setUpgrade("filters")}><NumberInput value={adv.minScore} decimals={0} group={false} onValueChange={(n) => setA("minScore", n == null ? "" : String(n))} placeholder="—" className={advInput} /></Adv>
-              <Adv label="Udbetaling (%)"><NumberInput value={adv.downPayment} decimals={1} onValueChange={(n) => setA("downPayment", n == null ? "" : String(n))} placeholder={market === "investering" ? "30" : "20"} className={advInput} /></Adv>
+              <Adv label="Udbetaling (%)"><NumberInput value={adv.downPayment} decimals={1} onValueChange={(n) => setA("downPayment", n == null ? "" : String(n))} placeholder={market === "investering" ? "40" : "20"} className={advInput} /></Adv>
               <Adv label="Rente (%)"><NumberInput value={adv.interest} decimals={2} onValueChange={(n) => setA("interest", n == null ? "" : String(n))} placeholder="5" className={advInput} /></Adv>
 
               {market === "bolig" ? (

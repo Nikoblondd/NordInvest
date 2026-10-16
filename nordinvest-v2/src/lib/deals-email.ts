@@ -24,7 +24,7 @@ export function dealsEmail(p: { name: string | null; unsubUrl: string }) {
     html: `<div style="max-width:520px;margin:0 auto;padding:24px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f1f3d;font-size:15px;line-height:1.6;">
       <p style="margin:0 0 20px;font-weight:700;font-size:16px;">NordInvest</p>
       <p>${hi}</p>
-      <p>Deal-motoren har regnet hele markedet igennem igen. Her er ${month}s bedste boliger og erhvervsejendomme, regnet med 20 % udbetaling og 5 % rente (erhverv 30 %). Lejen er et estimat, så regn den efter, før du byder.</p>
+      <p>Deal-motoren har regnet hele markedet igennem igen. Her er ${month}s bedste boliger og erhvervsejendomme, regnet med 20 % udbetaling og 5 % rente (erhverv 40 %). Lejen er et estimat, så regn den efter, før du byder.</p>
       <p style="margin:24px 0 10px;font-weight:700;">Boliger</p>
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${FEATURED_RESIDENTIAL.map(card).join("")}</table>
       <p style="margin:8px 0 10px;font-weight:700;">Erhverv</p>

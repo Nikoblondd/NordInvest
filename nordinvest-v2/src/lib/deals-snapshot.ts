@@ -15,7 +15,7 @@ import { zipToMunicipality } from "@/lib/kommuner";
 
 // Same defaults as /api/deals/search, so the numbers match the Deal-motor.
 const BOLIG = { downPaymentPct: 20, interestRate: 5, rentFactor: 1, strategy: "cashflow" as const };
-const INVEST = { downPaymentPct: 30, interestRate: 5, rentFactor: 1, strategy: "cashflow" as const };
+const INVEST = { downPaymentPct: 40, interestRate: 5, rentFactor: 1, strategy: "cashflow" as const };
 
 export type SnapshotDeal = {
   address: string;

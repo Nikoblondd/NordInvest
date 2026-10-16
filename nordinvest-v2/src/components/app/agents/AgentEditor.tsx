@@ -185,7 +185,7 @@ export function AgentEditor({ open, onClose, initial, onSave, title }: {
             {numField("ag-yield", "Mindst afkast", c.minYield, (v) => set({ minYield: v }), "%", 1)}
             {numField("ag-cf", "Mindst cash flow", c.minCashflow, (v) => set({ minCashflow: v }), "kr./md.")}
           </div>
-          <p className="mt-2 text-[13px] text-slate-500">Tallene regnes med 20 % udbetaling og 5 % rente for boliger (30 % for erhverv), ligesom i Deal-motoren.</p>
+          <p className="mt-2 text-[13px] text-slate-500">Tallene regnes med 20 % udbetaling og 5 % rente for boliger (40 % for erhverv), ligesom i Deal-motoren.</p>
         </section>
 
         {/* When */}

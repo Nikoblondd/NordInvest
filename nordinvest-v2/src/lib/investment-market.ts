@@ -8,12 +8,12 @@ import { listingImage } from "@/lib/image-url";
 /*
  * The investment market in numbers, for the public page on udlejnings- og
  * erhvervsejendomme til salg: every listing from Ejendomstorvet regnet med
- * 30 % udbetaling og 5 % rente, the stated startafkast per property type
+ * 40 % udbetaling og 5 % rente, the stated startafkast per property type
  * against the normal band, where they are, and the best by score.
  * Rebuilt every 6 hours like the Deal-motor.
  */
 
-const INVEST = { downPaymentPct: 30, interestRate: 5, rentFactor: 1, strategy: "cashflow" as const };
+const INVEST = { downPaymentPct: 40, interestRate: 5, rentFactor: 1, strategy: "cashflow" as const };
 const median = (xs: number[]) => { if (!xs.length) return null; const s = [...xs].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 
 export type MarketRow = { title: string; road: string; zip: number; city: string; kommune: string | null; subcategory: string | null; price: number; area: number | null; capRate: number; cashFlow: number; dscr: number; score: number; image: string | null; url: string };

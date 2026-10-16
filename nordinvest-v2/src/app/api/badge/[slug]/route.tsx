@@ -45,7 +45,7 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
 
   let sub = "Afkast, cash flow og renterisiko";
   if (o.tal && link) {
-    const r = analyze({ price: link.price, monthlyRent: link.rent, downPaymentPct: 30, interestRate: 5, monthlyOpex: 0, vacancyPct: 0, maintenancePct: 0 });
+    const r = analyze({ price: link.price, monthlyRent: link.rent, downPaymentPct: 40, interestRate: 5, monthlyOpex: 0, vacancyPct: 0, maintenancePct: 0 });
     sub = r.cashFlow >= 0 ? `${pct(r.capRate)} % afkast · +${kr(r.cashFlow)} kr./md.` : `${pct(r.capRate)} % afkast · se renterisikoen`;
   }
   const logo = `${url.origin}/nordinvest-logo.png`;

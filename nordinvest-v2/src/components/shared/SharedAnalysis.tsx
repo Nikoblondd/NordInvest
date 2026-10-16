@@ -23,7 +23,7 @@ const dk = (n: number) => Math.round(n).toLocaleString("da-DK");
 const num = (n: number) => n.toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 2 });
 
 export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
-  const [dp, setDp] = useState(30);
+  const [dp, setDp] = useState(40);
   const [rate, setRate] = useState(5);
   // The passed rent is the seller's net income (stated yield × price), so no
   // second round of vacancy, maintenance or running costs.
@@ -60,7 +60,7 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
           <p className="text-[16px] font-semibold text-slate-900">Finansiering</p>
           <p className="mt-0.5 text-[14px] text-slate-500">Købspris {dk(l.price)} kr. Driftsresultat {dk(l.rent * 12)} kr. om året ifølge annoncen.</p>
           <div className="mt-5 grid gap-6 sm:grid-cols-2">
-            <Slider label="Udbetaling" value={dp} min={10} max={100} step={5} unit="%" sub={`${dk((l.price * dp) / 100)} kr.`} onChange={setDp} />
+            <Slider label="Udbetaling" value={dp} min={10} max={100} step={5} unit="%" sub={`${dk((l.price * dp) / 100)} kr. Erhverv belånes typisk højst 60 %.`} onChange={setDp} />
             <Slider label="Rente på lånet" value={rate} min={2} max={9} step={0.25} unit="%" sub="Om året" onChange={setRate} />
           </div>
         </section>

@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const l = await getLink(params.slug);
   if (!l) return { robots: { index: false } };
   const street = l.addr.split(",")[0];
-  const q = new URLSearchParams({ addr: l.addr, price: String(l.price), rent: String(l.rent), opex: "0", downPaymentPct: "30", interestRate: "5" });
+  const q = new URLSearchParams({ addr: l.addr, price: String(l.price), rent: String(l.rent), opex: "0", downPaymentPct: "40", interestRate: "5" });
   return {
     title: { absolute: `Analyse af ${street} · NordInvest` },
     description: `Investeringsanalyse af ${l.addr}: overskud efter lånet, afkast, rentestress og 10 år frem.`,
