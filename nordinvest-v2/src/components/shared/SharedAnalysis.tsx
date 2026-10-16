@@ -8,6 +8,7 @@ import { assessInvestment } from "@/lib/deals";
 import { AppHero } from "@/components/analyzer/story/AppHero";
 import type { HeroMetric } from "@/components/analyzer/story/DealHero";
 import { CommercialStory } from "@/components/analyzer/CommercialStory";
+import { BuyerContact } from "@/components/shared/BuyerContact";
 
 /*
  * The analysis behind a shared link, open to anyone who has it. Same verdict
@@ -15,7 +16,7 @@ import { CommercialStory } from "@/components/analyzer/CommercialStory";
  * payment and the rate, and everything recalculates.
  */
 
-export type SharedListing = { url: string; price: number; rent: number; subcat: string | null; addr: string; imgs?: string[] };
+export type SharedListing = { slug?: string; url: string; price: number; rent: number; subcat: string | null; addr: string; imgs?: string[]; ownerId?: string };
 
 /** The site the listing is on, for "Annoncen på …". */
 const sourceOf = (u: string) => { try { const h = new URL(u).hostname.replace(/^www\./, ""); return /ejendomstorvet/.test(h) ? "Ejendomstorvet" : h; } catch { return "mæglerens side"; } };
@@ -79,6 +80,12 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
           }
         />
       </div>
+
+      {l.slug && (
+        <div id="kontakt-maegler" className="mx-auto mt-8 max-w-[1080px] scroll-mt-24 px-4 sm:px-6">
+          <BuyerContact slug={l.slug} street={l.addr.split(",")[0]} viaNordInvest={!l.ownerId} />
+        </div>
+      )}
 
       <div className="mx-auto mt-8 max-w-[1080px] px-4 sm:px-6">
         <div className="flex flex-col gap-5 rounded-2xl bg-slate-900 p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">

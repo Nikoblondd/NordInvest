@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { brokerUser } from "@/lib/broker/gate";
 import { caseFromUrl, listingPhotos } from "@/lib/broker/cases";
 import { createLink, deleteLink, legacyLinks, listLinks, viewCount, type BrokerLink } from "@/lib/broker/links";
+import { listLeads } from "@/lib/broker/leads";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,7 +16,7 @@ export const maxDuration = 30;
  *  DELETE { slug }          removes one of their own links
  */
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
-const withViews = async (ls: BrokerLink[]) => Promise.all(ls.map(async (l) => ({ ...l, views: await viewCount(l.slug) })));
+const withViews = async (ls: BrokerLink[]) => Promise.all(ls.map(async (l) => ({ ...l, views: await viewCount(l.slug), leads: await listLeads(l.slug) })));
 
 export async function GET() {
   const me = await brokerUser();

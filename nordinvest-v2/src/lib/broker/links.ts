@@ -7,6 +7,7 @@ import staticLinks from "@/data/maegler-links.json";
  *   links/<slug>.json      the listing's numbers, read by /e/<slug> and the badge
  *   brokers/<userId>.json  the slugs an agent has created, newest first
  *   views/<slug>.json      a simple visit counter
+ *   leads/<slug>.json      buyers who wrote to the agent from the analysis
  * Only the server (service role) reads or writes the bucket.
  */
 
@@ -33,14 +34,14 @@ const validId = (id: string) => /^[0-9a-f-]{36}$/i.test(id);
 
 const STATIC = staticLinks as Record<string, Omit<BrokerLink, "slug">>;
 
-async function getJson<T>(path: string): Promise<T | null> {
+export async function getJson<T>(path: string): Promise<T | null> {
   if (!configured()) return null;
   const r = await fetch(`${URL_()}/storage/v1/object/${BUCKET}/${path}`, { headers: h(), cache: "no-store" }).catch(() => null);
   if (!r?.ok) return null;
   return (await r.json().catch(() => null)) as T | null;
 }
 
-async function putJson(path: string, data: unknown): Promise<boolean> {
+export async function putJson(path: string, data: unknown): Promise<boolean> {
   if (!configured()) return false;
   const r = await fetch(`${URL_()}/storage/v1/object/${BUCKET}/${path}`, {
     method: "POST",
@@ -115,7 +116,7 @@ export async function deleteLink(userId: string, slug: string, asAdmin = false):
   const owner = l.ownerId ?? userId;
   const slugs = (await getJson<string[]>(`brokers/${owner}.json`)) ?? [];
   await putJson(`brokers/${owner}.json`, slugs.filter((s) => s !== slug));
-  return removeJson([`links/${slug}.json`, `views/${slug}.json`]);
+  return removeJson([`links/${slug}.json`, `views/${slug}.json`, `leads/${slug}.json`]);
 }
 
 export async function viewCount(slug: string): Promise<number> {

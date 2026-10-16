@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowUpRight, Check, Code2, Copy, Eye, Link2, Loader2, MonitorSmartphone, PenLine, Plus, Search, Trash2, X } from "lucide-react";
+import { ArrowUpRight, Check, Code2, Copy, Eye, Link2, Loader2, Mail, MonitorSmartphone, PenLine, Plus, Search, Trash2, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { CORNERS, DEFAULT_BADGE, SIZES, TEXTS, THEMES, badgeHtml, badgeSize, type BadgeOptions } from "@/lib/broker/badge";
 
@@ -12,7 +12,7 @@ import { CORNERS, DEFAULT_BADGE, SIZES, TEXTS, THEMES, badgeHtml, badgeSize, typ
  * sees here is exactly what goes on their site.
  */
 
-export type DashLink = { slug: string; url: string; price: number; rent: number; subcat: string | null; addr: string; imgs?: string[]; createdAt?: string; legacy?: boolean; views?: number };
+export type DashLink = { slug: string; url: string; price: number; rent: number; subcat: string | null; addr: string; imgs?: string[]; createdAt?: string; legacy?: boolean; views?: number; leads?: { id: string; at: string; name: string; email: string; phone: string; message: string }[] };
 type Case = { id: string; url: string; addr: string; price: number; yieldPct: number; subcat: string | null; image: string | null; agency: string | null };
 
 const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
@@ -229,6 +229,7 @@ function LinkCard({ l, origin, open, onToggle, onDelete }: { l: DashLink; origin
           <p className="text-[14px] text-slate-500">{kr(l.price)} · {pct(yieldOf(l))} afkast{l.subcat ? ` · ${l.subcat}` : ""}</p>
           <p className="mt-0.5 flex flex-wrap items-center gap-x-3 text-[13px] text-slate-500">
             <span className="inline-flex items-center gap-1"><Eye size={13} /> {l.views ?? 0} {l.views === 1 ? "visning" : "visninger"}</span>
+            {(l.leads?.length ?? 0) > 0 && <span className="inline-flex items-center gap-1 font-semibold text-emerald-700"><Mail size={13} /> {l.leads!.length} {l.leads!.length === 1 ? "henvendelse" : "henvendelser"}</span>}
             <span className="truncate text-blue-700">{url.replace(/^https?:\/\//, "")}</span>
           </p>
         </div>
@@ -240,6 +241,20 @@ function LinkCard({ l, origin, open, onToggle, onDelete }: { l: DashLink; origin
           </button>
         </div>
       </div>
+      {(l.leads?.length ?? 0) > 0 && (
+        <details className="border-t border-slate-100 px-4 py-3 sm:px-5">
+          <summary className="cursor-pointer text-[14px] font-semibold text-slate-800">Henvendelser fra købere ({l.leads!.length})</summary>
+          <ul className="mt-3 space-y-3">
+            {l.leads!.map((d) => (
+              <li key={d.id} className="rounded-lg bg-slate-50 p-3 text-[14px]">
+                <p className="flex flex-wrap items-baseline justify-between gap-2"><b className="text-slate-900">{d.name}</b><span className="text-[12px] text-slate-500">{new Date(d.at).toLocaleString("da-DK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Copenhagen" })}</span></p>
+                <p className="mt-0.5 text-slate-600"><a href={`mailto:${d.email}`} className="text-blue-700 underline">{d.email}</a>{d.phone ? ` · ${d.phone}` : ""}</p>
+                <p className="mt-1.5 whitespace-pre-line text-slate-700">{d.message}</p>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
       {open && <Builder l={l} origin={origin} />}
       {onDelete && open && (
         <div className="flex items-center justify-end gap-2 border-t border-slate-100 px-5 py-3 text-[14px]">
