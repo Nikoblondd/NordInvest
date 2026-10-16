@@ -208,7 +208,7 @@ function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) =
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [note, setNote] = useState("");
-  const [kind, setKind] = useState<"member" | "maegler">("member");
+  const [kind, setKind] = useState<"member" | "maegler" | "begge">("member");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const submit = async (e: React.FormEvent) => {
@@ -222,9 +222,9 @@ function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) =
   const input = "mt-1.5 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-[16px] focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100";
   return (
     <form onSubmit={submit} className="mt-5 max-w-xl rounded-2xl border border-slate-200 bg-white p-5">
-      <p className="text-[15px] text-slate-600">Giv adgang uden en anmodning. Personen får en mail med et login-link.</p>
+      <p className="text-[15px] text-slate-600">Giv adgang uden en anmodning. Personen får en mail med et personligt link, der ikke udløber.</p>
       <div className="mt-4 flex flex-wrap gap-2" role="radiogroup" aria-label="Type adgang">
-        {([["member", "Medlem", "Hele platformen"], ["maegler", "Ejendomsmægler", "Kun mæglerværktøjet"]] as const).map(([k, t, d]) => (
+        {([["member", "Medlem", "Hele platformen"], ["maegler", "Ejendomsmægler", "Kun mæglerværktøjet"], ["begge", "Begge", "Platformen og mæglerværktøjet"]] as const).map(([k, t, d]) => (
           <button key={k} type="button" role="radio" aria-checked={kind === k} onClick={() => setKind(k)}
             className={`min-h-[44px] rounded-lg border px-3.5 py-1.5 text-left text-[14px] ${kind === k ? "border-blue-600 bg-blue-50 text-blue-900" : "border-slate-300 bg-white text-slate-700"}`}>
             <span className="block font-semibold">{t}</span><span className="block text-[12px] text-slate-500">{d}</span>

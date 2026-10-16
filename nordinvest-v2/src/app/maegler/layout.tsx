@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { geist } from "@/components/home/fonts";
 import { brokerUser } from "@/lib/broker/gate";
 import { createClient } from "@/lib/supabase/server";
+import { hasToolAccess } from "@/lib/access";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -31,7 +32,7 @@ export default async function BrokerLayout({ children }: { children: React.React
             <span className="whitespace-nowrap text-[16px] font-semibold">NordInvest <span className="hidden font-normal text-slate-500 sm:inline">for mæglere</span></span>
           </Link>
           <nav className="ml-auto flex items-center gap-0.5 whitespace-nowrap text-[14px] font-medium sm:gap-1">
-            {me.admin && <Link href="/app" className="hidden rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100 sm:block">Til platformen</Link>}
+            {hasToolAccess(user) && <Link href="/app" className="hidden rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100 sm:block">Til platformen</Link>}
             <Link href="/kontakt?emne=samarbejde" className="rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100">Kontakt</Link>
             <form action="/auth/signout" method="post"><button type="submit" className="rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100">Log ud</button></form>
           </nav>

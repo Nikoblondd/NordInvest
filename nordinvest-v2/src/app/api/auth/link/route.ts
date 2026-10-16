@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { hasToolAccess, isBroker } from "@/lib/access";
-import { generateLink, listAuthUsers } from "@/lib/supabase/admin";
+import { listAuthUsers, updateAppMetadata } from "@/lib/supabase/admin";
+import { FIELD, LOGIN_TTL_MS, linkUrl, newLink } from "@/lib/access/invite-link";
 import { PITCH_FROM } from "@/lib/outreach/schedule";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /*
- * POST /api/auth/link { email }: "Glemt adgangskode?". Sends a one-time
- * sign-in link, only to accounts that have access, and always answers the
+ * POST /api/auth/link { email }: "Glemt adgangskode?". Sends a sign-in link
+ * that works once within 24 hours (see lib/access/invite-link.ts), only to accounts that have access, and always answers the
  * same way so nobody can test which addresses exist. No account is created.
  */
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordinvest.io";
@@ -21,9 +22,9 @@ export async function POST(req: Request) {
   const user = (await listAuthUsers()).find((u) => (u.email ?? "").toLowerCase() === email);
   if (!user || !(hasToolAccess(user) || isBroker(user))) return ok();
   const broker = !hasToolAccess(user);
-  const link = await generateLink(email, `${SITE}${broker ? "/maegler" : "/app"}`, undefined, "magiclink");
-  if ("error" in link) return ok();
-  const url = `${SITE}/auth/confirm?token_hash=${encodeURIComponent(link.tokenHash)}&type=${link.type}&next=${encodeURIComponent(broker ? "/maegler" : "/app/konto?skift=adgangskode")}`;
+  const { token, record } = newLink(broker ? "/maegler" : "/app/konto?skift=adgangskode", undefined, LOGIN_TTL_MS);
+  if (!(await updateAppMetadata(user.id, { [FIELD.login]: record }))) return ok();
+  const url = linkUrl(SITE, user.id, token);
   const key = process.env.RESEND_API_KEY;
   if (key) {
     await fetch("https://api.resend.com/emails", {
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         from: PITCH_FROM, to: [email], reply_to: "contact@nordinvest.io",
         subject: "Dit login-link til NordInvest",
-        html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6"><p>Hej,</p><p>Her er dit login-link til NordInvest. Det virker én gang. Når du er logget ind, kan du vælge en ny adgangskode under Konto.</p><p style="margin:24px 0"><a href="${url}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Log ind</a></p><p style="font-size:13px;color:#64748b">Har du ikke bedt om linket, kan du se bort fra denne mail.</p><p>Nikolaj Blond<br>NordInvest</p></div>`,
+        html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6"><p>Hej,</p><p>Her er dit login-link til NordInvest. Det virker én gang inden for 24 timer. Når du er logget ind, kan du vælge en ny adgangskode under Konto.</p><p style="margin:24px 0"><a href="${url}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Log ind</a></p><p style="font-size:13px;color:#64748b">Har du ikke bedt om linket, kan du se bort fra denne mail.</p><p>Nikolaj Blond<br>NordInvest</p></div>`,
       }),
     }).catch(() => null);
   }

@@ -48,6 +48,15 @@ export async function setAccess(id: string, access: "member" | "revoked" | "maeg
   return !!r?.ok;
 }
 
+/** Merges fields into the account's app_metadata without touching its access. */
+export async function updateAppMetadata(id: string, extra: Record<string, unknown>): Promise<boolean> {
+  if (!adminConfigured()) return false;
+  const cur = await getAuthUser(id);
+  const app_metadata = { ...(cur?.app_metadata ?? {}), ...extra };
+  const r = await fetch(`${URL_()}/auth/v1/admin/users/${encodeURIComponent(id)}`, { method: "PUT", headers: h(), body: JSON.stringify({ app_metadata }) }).catch(() => null);
+  return !!r?.ok;
+}
+
 /**
  * Creates the account if needed and returns a one-time token for our own
  * /auth/confirm link (verified on our server, so the session lands in cookies).

@@ -14,7 +14,7 @@ import { Tour, startTour } from "./Tour";
  * and finds your own, and a tab bar on phones. Every page under /app sits in it.
  */
 
-export type ShellUser = { name: string; email: string; admin: boolean; tour: string | null };
+export type ShellUser = { name: string; email: string; admin: boolean; broker?: boolean; tour: string | null };
 export type ShellProperty = { id: string; address: string };
 
 export const NAV = [
@@ -65,6 +65,12 @@ export function AppShell({ user, props, counts, children }: { user: ShellUser; p
             );
           })}
         </nav>
+        {!user.admin && user.broker && (
+          <div className="mt-6">
+            <p className="px-3 text-[12px] font-semibold text-white/40">For mæglere</p>
+            <Link href="/maegler" className="mt-1.5 flex h-9 items-center gap-3 rounded-lg px-3 text-[14px] text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white"><Code2 size={16} />Mæglerværktøj</Link>
+          </div>
+        )}
         {user.admin && (
           <div className="mt-6">
             <p className="px-3 text-[12px] font-semibold text-white/40">Administration</p>

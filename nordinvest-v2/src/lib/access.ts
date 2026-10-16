@@ -45,9 +45,14 @@ export function isBroker(user: AccessUser): boolean {
   return user?.app_metadata?.nordinvest_access === "maegler";
 }
 
-/** Can this account use the broker tools? Brokers and admins. */
+/** A member who was also given the broker tools (invited as "begge"). */
+export function isMemberBroker(user: AccessUser): boolean {
+  return isMember(user) && user?.app_metadata?.nordinvest_broker === true;
+}
+
+/** Can this account use the broker tools? Brokers, members invited with both, and admins. */
 export function hasBrokerAccess(user: AccessUser): boolean {
-  return isAdmin(user) || isBroker(user);
+  return isAdmin(user) || isBroker(user) || isMemberBroker(user);
 }
 
 /** Can this account use the platform (analyser, Deal-motor, ejendomme)? */

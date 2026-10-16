@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { isAdmin } from "@/lib/access";
+import { hasBrokerAccess, isAdmin } from "@/lib/access";
 import type { CrmRow } from "@/components/dashboard/Crm";
 
 /* Server-side data for the app pages. RLS keeps every query to the member's own rows. */
@@ -23,6 +23,7 @@ export async function appUser() {
     name,
     firstName: name.split(" ")[0] || "",
     admin: isAdmin(user),
+    broker: hasBrokerAccess(user),
     onboarded: !!meta.onboarded || !!profile?.phone,
     tour: (meta.tour as string | undefined) ?? null,
   };

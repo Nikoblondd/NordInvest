@@ -25,7 +25,7 @@ export default async function ShellLayout({ children }: { children: React.ReactN
 
   return (
     <AppShell
-      user={{ name: me.name, email: me.user.email ?? "", admin: me.admin, tour: me.tour }}
+      user={{ name: me.name, email: me.user.email ?? "", admin: me.admin, broker: me.broker, tour: me.tour }}
       props={rows.map((r) => ({ id: r.id, address: (r.property_data?.address as string | undefined) || r.property_url || "Bolig" }))}
       counts={{ properties: live.length, today: todayCount, fresh }}
     >
