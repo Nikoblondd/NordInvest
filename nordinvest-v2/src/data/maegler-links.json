@@ -1,760 +1,1071 @@
 {
- "helligkorsgade-17-kolding": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/kolding/boligudlejning/e1deab9e-c1b7-4318-ade6-6715ade3e793",
-  "price": 3000000,
-  "rent": 13850,
-  "subcat": "Boligudlejning",
-  "addr": "Helligkorsgade 17, 6000 Kolding",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/60/0d/600ddccc685a394386956e4f60e8c1dc8d65d97ae193cb477cce2b85423fb954.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/fb/c0/fbc04903ae09d8fe30d9cabcfb55d2d9c2a8c084628f5fc238243e0c06c7c18a.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/21/f1/21f19c7399501ddc1ea45082c0149674f80df8a6331b6e1eba2edf4bf8bdfde7.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/d4/66/d466f0091f3044d08dd493f5d2bd3c1e2ed878cab5e3041bb7f7e270bf604217.jpg?class=listingimagebannermax"
-  ]
- },
- "fussingsvej-41-horsens": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/a0fecc9a-1d1e-46a3-87c9-baff5a81ceb8",
-  "price": 1395000,
-  "rent": 11462,
-  "subcat": "Boligudlejning",
-  "addr": "Fussingsvej 41, 8700 Horsens",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/6e/b2/6eb2f6c27fb94c31e77e31665195d5238caea34d5e0f9fc50781ffa573b11bbc.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/59/4a/594a551e0cc62aef1488b9e7b2b48cf263cb1959a22c8f1a67b23af3fb4a861f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/b2/6f/b26fa474391be717e7509621c21e50cb72ef42162c8bcbfd8042172e0b167090.jpg?class=listingimagebannermax"
-  ]
- },
- "teglvaenget-65-herning": {
-  "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/andre-typer/3ffb45e6-09af-438c-ba32-66c0ff85c9a2",
-  "price": 1725000,
-  "rent": 10796,
-  "subcat": "Andre typer",
-  "addr": "Teglvænget 65, 7400 Herning",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/a9/52/a95212d7cbff7aa04a25e41b857c6eb4d54635369f304189f8339e9d3b81de18.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/48/9f/489ff8f51ace30e910a5ec1dc59e8845278f0ea0a4daec1dd78e53ac7c7627de.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ef/5d/ef5dacebeb4d0aeb48c23266242a478b786d62a2a7dc8c95ef3856658f817739.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/6f/62/6f6286ffd7c0978dc8aaf98fc7a3b3625adecfdc95fd5e7abc0a0c6fafa7ba20.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/67/6b/676b56809215fcd9b89ba6c11a87a1031cb8fa5cf3725102010b0470d37dccd0.jpg?class=listingimagebannermax"
-  ]
- },
- "noerre-alle-66-aarhus-c": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/aarhus/detailhandel-butik/f1e36560-4b1e-488e-890f-9e89f188e28b",
-  "price": 3500000,
-  "rent": 16362,
-  "subcat": "Detailhandel & butik",
-  "addr": "Nørre Allé 66, st., 8000 Aarhus C",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/e9/2f/e92fdfb3015b8b2de1d03558cbfc06c1a81752ce125dc3872a08aad0f41dec7a.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/5c/93/5c935e400184fb0f8f22b2a1be1bf929a03fd7abc2b03580fc7e920cd948cd33.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/42/3f/423fd18f2a44df5875747b5c076318b9ab04047ec2502b2b087bde529e7d0c6d.jpg?class=listingimagebannermax"
-  ]
- },
- "klokagervej-69-hjoerring": {
-  "url": "https://www.ejendomstorvet.dk/investering/nordjylland/hjoerring/boligudlejning/17e79a10-11e9-495c-b6b9-cd7822d28f2a",
-  "price": 2875000,
-  "rent": 16867,
-  "subcat": "Boligudlejning",
-  "addr": "Klokagervej 69, 9800 Hjørring",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/26/4a/264ab26ae16b178e40ee558f4a07a5e09e440c9563936e82e46fc43dc1d38ff0.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/b7/19/b719ee852883da5843ac2f164e7acc7cc2fa12e6dcb4b30cdf0b4d28ee55508b.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/6e/d4/6ed4a99899764774c1cd366635b59a0159be0689df10bfa84793bbc42aadea01.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/94/13/9413ba3634f7a35a234d621f97896e0c58a86edde489d3ad096327936dd59145.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/87/86/8786488e6d3b8705e74b9d57fb646af4e70b629d9d69783668577f35689b8ce9.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/1e/6c/1e6c47a48221a593a15c9e68b73bee0fc2471625649beabecf257f93549d5b55.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/da/3d/da3df0437cf3319ad931c92f9a0546c52539e77ffb6370b866867570ac43eb52.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/3b/92/3b9209e3ba813a580c8a5917b3dabb1c9ae1822dc372ef322ef69850e2006de1.jpg?class=listingimagebannermax"
-  ]
- },
- "vestergade-13-grindsted": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/billund/detailhandel-butik/b28ff791-b76c-4806-9b57-f327fcfbb718",
-  "price": 3995000,
-  "rent": 21240,
-  "subcat": "Detailhandel & butik",
-  "addr": "Vestergade 13, 7200 Grindsted",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/d5/db/d5db264ba78dcb7ccdb83fa58241e76cfa3dfc34ffa830e2855ee4c3d1ae3289.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/fd/02/fd02bd9a1e5fd695950ef4e957666d6455f18594d84ff69e513985b7107b27ce.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/b3/91/b39158dd84511c7d01394dacc566f45e6170bdfed61bf55f5c2ca7e9a7070b26.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/82/ba/82bafd9425a2e59ba379581038cecd23a84dfaa0cbb04858a8b09b19b74e80dd.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/48/db/48db4da6a627bbf675c267f02a582f325173ab8fffd241c8f6ee864ab031cf2f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/6c/35/6c35173279912e6cfd727b8610ab2f976f054468a7471b1ee65a8d69fb63a0cb.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ff/d6/ffd61e1b0d1ee46bf7e8ee09a539046c58a3a7fc92a08fc9fed12dd2729f39ea.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/de/88/de8822dd49df961a1f44af5f521a7083f4810f7da4a08f57cac8ade1b92c93e0.jpg?class=listingimagebannermax"
-  ]
- },
- "hospitalsgade-6-8-horsens": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/35d45719-f2b2-4275-bd06-8ae67876c0a6",
-  "price": 16095000,
-  "rent": 87181,
-  "subcat": "Boligudlejning",
-  "addr": "Hospitalsgade 6-8, 8700 Horsens",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/20/fe/20fe8a3eb9c52e1c4aa30bc52ab3b2c5e5c21bc89e8b5492c19b7477ec922766.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/43/ed/43ed5841ac372a32ca5e948eb7b74dec15aa8506b93bf8d45c9552b43e8c7e11.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/97/21/9721fc791cfe8b78171c4e97dc9f7752cffec1c9967b88ed3d366f9d147b8ed5.jpg?class=listingimagebannermax"
-  ]
- },
- "ahlgade-59-holbaek": {
-  "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/holbaek/andre-typer/9f10aea7-bbd4-4745-b239-5b34b8a438e0",
-  "price": 8950000,
-  "rent": 51313,
-  "subcat": "Andre typer",
-  "addr": "Ahlgade 59, 4300 Holbæk",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/a9/92/a992d53d1dde0758d6155755c64a946bad94385f7b5b2440fd293f58da116709.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/8f/bb/8fbb28e6284baf9ffb7cf44cdd006a8747e849959d14b5af9c401c618163c37f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/aa/95/aa95e1a846b3d79d218ac623465e90f8c24c0835150fdb99eb0ff4c4f6d0f049.jpg?class=listingimagebannermax"
-  ]
- },
- "foldagervej-16-lille-skensved": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/koege/kontor/8f015b68-36ba-413a-80fb-07ba8187000c",
-  "price": 9500000,
-  "rent": 47817,
-  "subcat": "Kontor",
-  "addr": "Foldagervej 16, 4623 Lille Skensved",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/96/fe/96feb950ee83caf312037e62d59628ca6d603af0f4f55dd7080fa606d952d859.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/48/88/488866b687796f0329ceca44f6e844b0adb976ce480c3ba7878805205ee8b7a3.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/a8/95/a895cd406f002b3ce62052fb3ab2471db2a88fe68b9138526f0673760d678019.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/54/98/54986230fbf8c837c22af9e224c84cdbe0e3dd1b3fd854470ab06611c25ba7d8.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/33/7a/337a6841c6a86b21d96bb75accef5b39f1ee7ac6043391f4431e877786f46346.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/70/06/7006d6bd476217eb611c0f097ea2b35e1cb7fd0d2fabf115012763e5a126d002.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/81/5a/815a68d438c828bdf13523458475aab22ccd20f9d6f6ee9def7b29a5cef67f4d.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/dd/0d/dd0dc96f33aad24e7c9729900d8ab38a4bc27341442ad5d2e6b59451f4c5afb6.jpg?class=listingimagebannermax"
-  ]
- },
- "helligkorsvej-12-roskilde": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/detailhandel-butik/858e3f61-35d5-40b9-8a40-f6f30ed15038",
-  "price": 9495000,
-  "rent": 52064,
-  "subcat": "Detailhandel & butik",
-  "addr": "Helligkorsvej 12, 4000 Roskilde",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/8f/97/8f9723709ae5f5268b70dae4bcaa36ca5fa618d9f4591125c0ece264822fd6b1.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/80/ae/80ae48b74e47a9bb13089f691754c2fece26347227e152e36da9ef7ea5a67124.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/a3/74/a374f89f334d6715a5dd880eb2794fdff3e1e3e1963ab137160406b6f677f22b.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/6b/27/6b27df97f5a42b3c07f8cd9c566a10c740bdf5269d9cb621fe0d03fac5b95479.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/2f/4e/2f4eb8136217b8c1db56876be3cd085ad8a82acd844f4a469d2810f489ebe76c.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/73/ae/73ae9ffd399428ce7e6acea199b825b33745bf2049dd957616007f9ed3dfa1aa.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/5e/70/5e70a54ac83d4459cc8524d45b802b4b1aa8017a5afd45b9bc1bb99ca0ba6359.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/34/75/3475619f6234b7a7bf7accf350efd8b2f8e4b79dd64e5f2b1345b196e0431f1c.jpg?class=listingimagebannermax"
-  ]
- },
- "storegade-3-grenaa": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/norddjurs/andre-typer/24c0f874-5862-49c6-96a6-c3613152caf4",
-  "price": 2850000,
-  "rent": 19095,
-  "subcat": "Andre typer",
-  "addr": "Storegade 3, 8500 Grenaa",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/38/bf/38bf95b59b3dcb7ceaacb50b9fe0bca5babe5eb428473d84f6e13b2074640c78.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/6e/55/6e55294ad8a3878c3cf707c4ec865a8c8ceee937d5f8a4b5d47f18b7e4f243ae.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/79/2e/792eaab69685ebebeb6573ff0f612778cf22d183bb29a2b2922691847eeb0aa0.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/5e/40/5e40a3c5697f1038635aa0e6b1ede2514d1e614af1c0f698f1bbfda3b5f1431c.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/31/9a/319a3d20486d1783bbc21c11a67d993868cc758f6528432ada1e92e9394d8f2c.jpg?class=listingimagebannermax"
-  ]
- },
- "strandlodsvej-15a-d-koebenhavn-s": {
-  "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/koebenhavn/hotel-restaurant/8cdf7f68-c79c-4597-93be-1b0c1231bdc7",
-  "price": 10695000,
-  "rent": 56149,
-  "subcat": "Hotel & restaurant",
-  "addr": "Strandlodsvej 15A-D, 2300 København S",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/06/0d/060da8ade00e660e9e406315feccaaede05bd2fd6a5f99ef4ebcac26bbe51827.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/0a/04/0a04dcd5e0b491bf2ebfb72c8f84ac4f8b1a4412fa15d44adefefcc031c2208e.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ba/c8/bac83f50fef3fd5a14594fa55f975f22cbe8e0d636ab35797a5e7666f44a5970.jpg?class=listingimagebannermax"
-  ]
- },
- "moellevej-13-dragoer": {
-  "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/dragoer/boligudlejning/21c6e43f-109b-4d40-8ee6-e04603e9290e",
-  "price": 34500000,
-  "rent": 106662,
-  "subcat": "Boligudlejning",
-  "addr": "Møllevej 13, 2791 Dragør",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/b2/9d/b29d0f6eac350d19cdf8ba7d3a5b5d02c67c129d0508f51ef23e277df10cc1c1.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/72/72/72720689e4facf2ae9a3fdc1869d2dd49242a6e6821af7dd7c2ef44fa907d263.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ae/0d/ae0d2e8858affc90a689956f8b8aefbf9961a48a06ab50e3f9469fd5a6e23695.jpg?class=listingimagebannermax"
-  ]
- },
- "sallvej-22-hammel": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/boligudlejning/90575260-b8a7-426b-ad7a-88b8a8e28ed0",
-  "price": 1495000,
-  "rent": 8659,
-  "subcat": "Boligudlejning",
-  "addr": "Sallvej 22, 8450 Hammel",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/70/52/7052ab2f34af52e77984d6ada76f9838fb266614d26f19fa8b64ed96eb91d0e7.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/8e/8a/8e8a370e063d52f7664360f446bb8f8bb28aaef5bc540a4a8e3ff492c703f898.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/85/43/854377fa42d8b0bc32c37a5bb3c8c6c406a7c51b3239f770f6d57a18360fb99e.jpg?class=listingimagebannermax"
-  ]
- },
- "haarup-oestervej-6-silkeborg": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/silkeborg/kontor/0b033a49-3c2d-4092-98e3-53083fd38246",
-  "price": 9995000,
-  "rent": 62136,
-  "subcat": "Kontor",
-  "addr": "Hårup Østervej 6, 8600 Silkeborg",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/6b/1f/6b1fe4e64189a886cee6570a771fd35cead5ed9a1d7769ecdfde018d8fcaccdf.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/81/91/819184409e9755853f17062b880c49ef07451a5d53687ba3c0d9b4ab5595feed.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/6c/2f/6c2f734994fcb603a06f110e1693b48be7d7acc1562e401b7209ffc97119c4b4.jpg?class=listingimagebannermax"
-  ]
- },
- "falstersgade-3-fredericia": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/fredericia/boligudlejning/e374a301-6069-4086-8199-51ede790a1cc",
-  "price": 3700000,
-  "rent": 17729,
-  "subcat": "Boligudlejning",
-  "addr": "Falstersgade 3, 7000 Fredericia",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/67/2d/672de612c9c1cd408d66273b3bbc7882e8f638607397c61ed1a0434f8af6a016.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ca/a5/caa5dc51e8362b2a00d93e04ac5829d4774210c0a2919479132f0264f640f66f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/45/6d/456df67a4bf124946c74d84a1fdf97b36d0b53326816f09742557d91a4cbbc39.jpg?class=listingimagebannermax"
-  ]
- },
- "n-toerrings-vej-10-odense-soe": {
-  "url": "https://www.ejendomstorvet.dk/investering/fyn/odense/boligudlejning/fb67ddc5-7c2a-4ab5-aa73-d287db38b171",
-  "price": 3800000,
-  "rent": 30653,
-  "subcat": "Boligudlejning",
-  "addr": "N. Tørrings Vej 10, 5220 Odense SØ",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/9b/e5/9be5c7e74f92e85d05655a5e35b7839f7f4224921cb2055b57f9e40152af090f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/8f/79/8f79eb7f5df7e58e7d14aec695c3e703d6f8e1a352ef476527f9006f5d2a2d85.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/97/dd/97dd3b2fac7b341759528468a1dfbbdc2bf743b69fa89a8dc81529fe761157a2.jpg?class=listingimagebannermax"
-  ]
- },
- "byleddet-6-roskilde": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/boligudlejning/973bf4cb-1187-4d84-b03e-73c80095e9a7",
-  "price": 9500000,
-  "rent": 51538,
-  "subcat": "Boligudlejning",
-  "addr": "Byleddet 6, 4000 Roskilde",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/53/61/536155442649237aad702318b37d6c2229e9deec05512742b51d9727d04dcb4d.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/78/36/7836cda21ff1dbcdee4e7e3576c565e13897f7a3cce8c2609bd05f408c91e291.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/21/a4/21a450679661aeb9a0979b7b6f88912ef598e7430c2891db0493bc018a26670e.jpg?class=listingimagebannermax"
-  ]
- },
- "hoejvang-5-frederikssund": {
-  "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/frederikssund/detailhandel-butik/2d9ab104-275c-46ab-b86a-f432c75eaa02",
-  "price": 6000000,
-  "rent": 35400,
-  "subcat": "Detailhandel & butik",
-  "addr": "Højvang 5, 3600 Frederikssund",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/3d/96/3d96809f1ec40a7e5956673991cf8987587eda245f048192af9cfd236cfaac17.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/2b/1d/2b1d8e0cc527101ab74bc477ec630b388154b5a6e6973db99c03df1b4f1edbdb.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/62/18/621838c5aa69b8a39779c6c4246fc2116db2531f42e75d551757bc8b6b0fce4f.jpg?class=listingimagebannermax"
-  ]
- },
- "askov-kirkevej-17-vejen": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejen/boligudlejning/e1474d73-570c-4658-8234-71eb2caa51f9",
-  "price": 22850000,
-  "rent": 110061,
-  "subcat": "Boligudlejning",
-  "addr": "Askov Kirkevej 17, 6600 Vejen",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/e1/36/e136c9370b443ceecb9c65fa6316cbe875883c4c575dd1ded1e3f0659dc6353d.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ce/01/ce013dd21105ee1733cf0b12244555e2d38217e0d2519811686a1fae63738404.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/f4/22/f42218451c30515e5326a00ff8303d20ce16194e9cbe295b01d76e646625bc6d.jpg?class=listingimagebannermax"
-  ]
- },
- "ulvevej-25-havdrup": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/solroed/lager-produktion/950bd6b5-dcb2-4aba-832f-d7c7fd1ea541",
-  "price": 23995000,
-  "rent": 153368,
-  "subcat": "Lager & produktion",
-  "addr": "Ulvevej 25, 4622 Havdrup",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/7d/85/7d85507e771ccb2ecbf9a6d1774fc3860946e98a28578b5c8e184e9b51457bdb.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/7a/03/7a03f5eb9ceb3f60adaccc1b84e08b5102810869c84606afde696d66858b400f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/50/4c/504cec99319ab346ad828000f2c0a8333321c90518ba24feb821656d84d72564.jpg?class=listingimagebannermax"
-  ]
- },
- "industriparken-6-bredsten": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejle/lager-produktion/589e00b5-bc6b-45d0-bb9f-64d2486c1384",
-  "price": 4495000,
-  "rent": 28731,
-  "subcat": "Lager & produktion",
-  "addr": "Industriparken 6, 7182 Bredsten",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/a1/a9/a1a9af26e313031958210f4fd79ffcda1ec90d769a507728f3386ac01e51f3a9.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/e9/c9/e9c99caeb7d1347ff6d2f0eb3a3b48f5b7244c3c47e71e1dbf2714985afe9e9b.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/e7/d0/e7d03749b8d77039ea709478a18f3691a87855ca5d70861480a08805cb86e656.jpg?class=listingimagebannermax"
-  ]
- },
- "storegade-181-esbjerg": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/esbjerg/andre-typer/9139502c-9c4e-4a2f-bce3-8db6b22c1188",
-  "price": 3700000,
-  "rent": 22508,
-  "subcat": "Andre typer",
-  "addr": "Storegade 181, 6705 Esbjerg Ø",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/f2/cc/f2ccd80dbbd1d511db56baa387b2035c9319f8fba7003b4d08d065d005534954.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/4f/9e/4f9ecee8bffbcf171932c2aa69db38ad9106a78e3136ad050f24393f9749072e.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/2a/dd/2addb74e6b6fc42834a561c4452d14e579c2c4394003505ac84dc58fb42510fe.jpg?class=listingimagebannermax"
-  ]
- },
- "bredgade-26-videbaek": {
-  "url": "https://www.ejendomstorvet.dk/investering/vestjylland/ringkoebing-skjern/andre-typer/cdf1d8e0-e428-4b56-9128-833608a976fc",
-  "price": 1995000,
-  "rent": 12319,
-  "subcat": "Andre typer",
-  "addr": "Bredgade 26, 6920 Videbæk",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/80/1f/801f5b68ad0a27c3e93d8cf0a953f8331e30e7b3c56bf4f8e5dbbce4ce3fef84.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ff/e8/ffe814d19b4a8ecae72d2c19855adbd0260267bdf31120aeab02f527c4d46510.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/f7/04/f704b2bfbf0addb24cd5090acc736a8bd065ef2b403c9b11eae017a5a9304937.jpg?class=listingimagebannermax"
-  ]
- },
- "dronningensvej-13-nyborg": {
-  "url": "https://www.ejendomstorvet.dk/investering/fyn/nyborg/andre-typer/710c253b-2a05-4488-906b-8fc40287dc82",
-  "price": 1750000,
-  "rent": 10908,
-  "subcat": "Andre typer",
-  "addr": "Dronningensvej 13, 5800 Nyborg",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/2f/20/2f20b22467effedcaeda07735feca9463750162f574633de1c6a228ea9529643.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/4c/bb/4cbb3f36ed4812040cea54d902e6038f9742e498c8d20f0e0d9f4f05eaee0ae3.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/5a/de/5adef3b3282ffaec3801348a14e98b5219d0a74d5e9af74116f23f927740b534.jpg?class=listingimagebannermax"
-  ]
- },
- "strandgade-10a-frederiksvaerk": {
-  "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/halsnaes/andre-typer/5bad110c-f29b-4131-8f7b-8d052c3b9365",
-  "price": 5995000,
-  "rent": 36819,
-  "subcat": "Andre typer",
-  "addr": "Strandgade 10A, 3300 Frederiksværk",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/b5/b4/b5b4a38b0826283464da52dc218bbbdb45cfef81036bc49f819df7c377ce4c3f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/c7/ad/c7ad135e0b4c83e756e0bc5137ed69bd5bdb089ae17f828aa1f1a975e35cca6c.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/14/3d/143db855a4228156ed01939fbf5b4ca76874bf9560b637100bf204c40f724276.jpg?class=listingimagebannermax"
-  ]
- },
- "lyoevej-10-haderslev": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/haderslev/detailhandel-butik/dc39b29e-28d6-4dcf-85fa-786cc4ce5c02",
-  "price": 8600000,
-  "rent": 60128,
-  "subcat": "Detailhandel & butik",
-  "addr": "Lyøvej 10, 6100 Haderslev",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/10/e6/10e60af84fdb6600b62c47206e437b3ef360e611282efee8a0704013f2cb54cd.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/c0/f8/c0f87fbcfe75829b5035d41bd65b244bed464a527f7c929d4051a5dcf6bebd58.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ba/67/ba6759607fbae3577a7353e7a3149067cf9386dca7a7d654e164a6d90a17abb4.jpg?class=listingimagebannermax"
-  ]
- },
- "oestergade-2a-c-grenaa": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/norddjurs/andre-typer/2463a97f-2323-403f-ad3f-a98120dc7633",
-  "price": 9000000,
-  "rent": 60825,
-  "subcat": "Andre typer",
-  "addr": "Østergade 2A-C, 8500 Grenaa",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/c1/c8/c1c88bf3bdb6911524c106dfa3de5b7b1b75de4b51ea8149f52abf2ad22be42b.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/61/5c/615c8436f42d83bad516ba331dfe79f075690956ef2e577af62972e89894ed24.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/56/1d/561dc46cce5b6755239220ff0df5aa94b92e921f82ee40e44c2b47b371870c91.jpg?class=listingimagebannermax"
-  ]
- },
- "soendergade-21-23-tranekaer": {
-  "url": "https://www.ejendomstorvet.dk/investering/fyn/langeland/hotel-restaurant/e2d5dafc-e020-49b8-bc7b-6f877719e905",
-  "price": 5000000,
-  "rent": 37500,
-  "subcat": "Hotel & restaurant",
-  "addr": "Søndergade 21 + 23, 5953 Tranekær",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/83/b6/83b6d9e4e935df62594a2b98e57b7d8161dee1d95434b66414bf484f3cc66843.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ae/67/ae67b5374e4e20cf267b8e1588c7a6990d71d8e92727172ab8959c57c734f201.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/d4/16/d416195e5e459e4df707b566d1d33db3dfd6a0c596903e66b332b018a585bebb.jpg?class=listingimagebannermax"
-  ]
- },
- "torvet-1-ringe": {
-  "url": "https://www.ejendomstorvet.dk/investering/fyn/faaborg-midtfyn/detailhandel-butik/a4e984e2-38e9-4e6c-b2e3-72f1bac4646e",
-  "price": 6900000,
-  "rent": 46058,
-  "subcat": "Detailhandel & butik",
-  "addr": "Torvet 1, 5750 Ringe",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/6b/52/6b524c664c3a6906c5994c762bee975db1334c440e9b3e41a7719b9dae844587.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/f1/2e/f12e4b08f8e0e0b076a1eef051446d18490a1c1a5d07f03c0a1675349dd7fd73.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ca/00/ca00a5e303f0b58c119dffddaa481d5c292595064ec5b0d5e62216cd37492fbd.jpg?class=listingimagebannermax"
-  ]
- },
- "oestergade-2-noerre-aaby": {
-  "url": "https://www.ejendomstorvet.dk/investering/fyn/middelfart/andre-typer/5f814468-b243-4e4c-bf5a-95647f115817",
-  "price": 1695000,
-  "rent": 11145,
-  "subcat": "Andre typer",
-  "addr": "Østergade 2, 5580 Nørre Aaby",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/89/cb/89cb4bef1d1f93c99ef2c267fae835c4df608cbfbb17714b60f12bf09af77ece.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/0e/c4/0ec402b04fdae3b92b9251d3a0e7a419bc1065f0af0243b1d78d8a03f3d042da.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/83/33/833398b3b14a34b3145dba9c72fa9c78f39e8b216185834c873ca7ff3d4bc172.jpg?class=listingimagebannermax"
-  ]
- },
- "haderslevvej-90-kolding": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/kolding/andre-typer/452a9bed-a3a9-4bbd-8bda-54086a9350f3",
-  "price": 2575000,
-  "rent": 16630,
-  "subcat": "Andre typer",
-  "addr": "Haderslevvej 90, 6000 Kolding",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/6e/d8/6ed855efce1d38a86cbf5be66f13e82108a815d0d224bf23347a5f13172ac119.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/c6/da/c6da59f18e3dae4bdceb6ed6c1d03505261672dfa00f5c180489ff2ea9559ef6.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ff/c1/ffc174ce2b6151c8e279c8017a03dad6f166f62c6d7d96943c702937f370e2d4.jpg?class=listingimagebannermax"
-  ]
- },
- "egevej-3-hadsten": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/andre-typer/619f9b82-fa3e-4fb4-b094-0c4a1d1e4bc2",
-  "price": 3500000,
-  "rent": 23713,
-  "subcat": "Andre typer",
-  "addr": "Egevej 3, 8370 Hadsten",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/6a/3e/6a3e6af3f4adceff8e1db06a8061388c4794a76856b600394b731a7b3ab7e382.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/11/7d/117de14711c25435017d42a314192d5f86bd1347347c44628de1575800d3e7fc.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/a4/1e/a41ed823fb0112d0f098a5396b0cec605e6aed9f24dfa721cfaa8559882228cf.jpg?class=listingimagebannermax"
-  ]
- },
- "langgade-32-nykoebing": {
-  "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/guldborgsund/andre-typer/09b6bb8d-f56d-4993-bf56-c1ded79ad3ed",
-  "price": 9995000,
-  "rent": 64634,
-  "subcat": "Andre typer",
-  "addr": "Langgade 32, 4800 Nykøbing F",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/b8/25/b825fb9a156406612e5b5df371b65fc3dc747ce8092af0da6c237ecdfae6c162.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/d6/aa/d6aa2c0d34e24cba206f63e6124718dfe4890a75ce1c1aaf1a5a5d0ab8d5cf2d.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/7f/85/7f85c23b13975be82334a6ef35b9181295b0c7841b27b9c06f76c1c60db530a4.jpg?class=listingimagebannermax"
-  ]
- },
- "ringvejen-2-hadsund": {
-  "url": "https://www.ejendomstorvet.dk/investering/nordjylland/mariagerfjord/lager-produktion/3c5aaa32-fff0-4915-a651-66321223f23e",
-  "price": 11000000,
-  "rent": 83508,
-  "subcat": "Lager & produktion",
-  "addr": "Ringvejen 2, 9560 Hadsund",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/5a/08/5a0860ae41141844b64995f30cbd3de1c96065e18c854bc76205792517d81a98.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/01/c8/01c8edfad17125d6312cb2662aa35767b626b736034be088459e5bbca89b1bd1.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/df/8c/df8c48f3b7aa1712e59e20833ba10219f9fa8496fd43ae128e35f7d462cb170d.jpg?class=listingimagebannermax"
-  ]
- },
- "hadsundvej-96-aalborg": {
-  "url": "https://www.ejendomstorvet.dk/investering/nordjylland/aalborg/detailhandel-butik/9f11bbaf-1ebd-4452-835b-25e6d44ab9ca",
-  "price": 3100000,
-  "rent": 17902,
-  "subcat": "Detailhandel & butik",
-  "addr": "Hadsundvej 96, 9000 Aalborg",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/dd/64/dd64eebf972b0a722e3d640dfc20edc7a7ca250d0e0ff6d84dda31e3c7fd7fee.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/37/72/377283b9e4eabc8ddce5de1f410759e9fb2448d8c3f5e3097538e25bc4a57f53.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/7e/47/7e47febf7752e0a6ae7b643237f7dd8953d7932f596390a37083aef6fc397d21.jpg?class=listingimagebannermax"
-  ]
- },
- "soendergade-14-hadsten": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/andre-typer/adcab248-ef33-48d4-bf57-3c996d99f778",
-  "price": 5675000,
-  "rent": 32253,
-  "subcat": "Andre typer",
-  "addr": "Søndergade 14, 8370 Hadsten",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/87/4a/874a47a6baa1f4726f994e6a6fd2a03d0fd1eb6b3fb0fcae6bddbe16a4eaacef.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/08/30/0830697f67828228ea679127e423fd4928ac285ba7a122038c0ea1c3b266485e.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/62/53/62532dbf9012faa53d97ee5fb000fc8cdc6278d55d16c4984e5bea6ffbf13cf1.jpg?class=listingimagebannermax"
-  ]
- },
- "islevdalvej-98-roedovre": {
-  "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/roedovre/lager-produktion/c7d54454-a519-4a4f-971b-28437e968df3",
-  "price": 41600000,
-  "rent": 225333,
-  "subcat": "Lager & produktion",
-  "addr": "Islevdalvej 98, 2610 Rødovre",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/5a/82/5a82d08085486dfb71cc4ff9a8346b14126c28f932a9d4d8869a76db89dfa7b9.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/5b/d6/5bd60c134646266fdb4edd30ac872423d2d82c1614110dcf52190393fb93af9d.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/c1/8b/c18b0be9436b7c994f3001b76ddce43131ff0aa90088b075a87aea6cd3a27505.jpg?class=listingimagebannermax"
-  ]
- },
- "noerregade-1-holstebro": {
-  "url": "https://www.ejendomstorvet.dk/investering/vestjylland/holstebro/andre-typer/7ca602da-0fb2-410d-9e15-f51dc64f9e44",
-  "price": 11900000,
-  "rent": 64161,
-  "subcat": "Andre typer",
-  "addr": "Nørregade 1, 7500 Holstebro",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/2f/35/2f356116e84f76cba831fd63f5930df6f2fc09886e36fe9fe87047e926208406.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/24/56/24564c68afa857ed24f48cd2ef7533b7bf9c6872e6d7767ffb4d4a5b88ba37d1.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/0d/af/0daf753c2c82c1f19d8b5a43cecaeb0a68fd8873b6494d7393a7346a1fca298a.jpg?class=listingimagebannermax"
-  ]
- },
- "groefthoejparken-154a-viby": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/aarhus/andre-typer/88fa6850-9759-4537-b36d-1cd302e20eab",
-  "price": 1600000,
-  "rent": 8600,
-  "subcat": "Andre typer",
-  "addr": "Grøfthøjparken 154A, 8260 Viby J",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/ec/6e/ec6e21655eb8e3d7b281275c001b3ea74080055b412299b983bfb34c3893e46b.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/99/8c/998c87df20581912ead75737ee7fc4749604fc7e6700df827d3330829c38ffc0.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/2c/b5/2cb505149c845b8545ecf6bb3747c3dae7d4a364430971f9cc68c5b76271299e.jpg?class=listingimagebannermax"
-  ]
- },
- "soeborg-hovedgade-96a-soeborg": {
-  "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/gladsaxe/detailhandel-butik/5f54ed4c-5a34-4e5f-a06a-2e55f3ab737b",
-  "price": 18400000,
-  "rent": 103500,
-  "subcat": "Detailhandel & butik",
-  "addr": "Søborg Hovedgade 96A, 2860 Søborg",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/f1/b9/f1b966d8e91a71beaebf9a380b389611d65536254d9a6e3cd32a611bc4c349b8.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/fe/2a/fe2aace1aca07c7f0d6c36265dbcb482ea18d66a5f9cfa7a652b0aad365f9ba8.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/7e/af/7eaf9ddc0f9200892cd9d7c365a7662246dacf94efffb09d1fad79ab82848779.jpg?class=listingimagebannermax"
-  ]
- },
- "soeborg-hovedgade-72a-soeborg": {
-  "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/gladsaxe/detailhandel-butik/6ee4228a-15a4-407d-a34f-acdb0a911f8b",
-  "price": 4500000,
-  "rent": 28125,
-  "subcat": "Detailhandel & butik",
-  "addr": "Søborg Hovedgade 72A, st, 2860 Søborg",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/ff/49/ff4940db8d166fd8759e7d22a7bb0f487c0a593b9b46849d064da58a8933c372.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ab/9f/ab9fbd9a269f7f98cfc8682a6da593b6806b71dcbe478780571397afdaf846c1.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/11/ce/11ce1cb5842425e6f9c0069dc8634bd0a3a71b492e8768b4c6df1db854284511.jpg?class=listingimagebannermax"
-  ]
- },
- "soendergade-48-horsens": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/detailhandel-butik/00de1395-d4e8-40ae-8b5e-1a5e23730bca",
-  "price": 19900000,
-  "rent": 120561,
-  "subcat": "Detailhandel & butik",
-  "addr": "Søndergade 48, 8700 Horsens",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/71/02/7102f825d086429841f37f68cd76567f4ebe7e253d5a151f60127190e13a3cbb.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/c3/ae/c3aee771065415952427394796b761c52bed7c33db2c9cd5f4b1c76c744ed5ed.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/52/e4/52e42f8375a85777ab331705ca2aaa2d7951121e925dc747ae64c631e6fd5c99.jpg?class=listingimagebannermax"
-  ]
- },
- "bredgade-17-toerring": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/hedensted/detailhandel-butik/c45ae5ec-0124-439b-832a-9e774281b39e",
-  "price": 3500000,
-  "rent": 22167,
-  "subcat": "Detailhandel & butik",
-  "addr": "Bredgade 17, 7160 Tørring",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/53/93/5393aa659caebdec3a8ad53038c9e5e71c29046c24163efdf8ea977c51403ca8.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/f9/58/f95838f047330ff5108949b246ac15982c2e3f5cade63c0db788f2efc4385e5d.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/cf/ee/cfeed662bea76522cbce59bc9e1091dfe34f1ea02e2b993c118656be418d8c50.jpg?class=listingimagebannermax"
-  ]
- },
- "sct-laurentii-vej-47a-skagen": {
-  "url": "https://www.ejendomstorvet.dk/investering/nordjylland/frederikshavn/detailhandel-butik/de28978d-640b-4502-a01e-96b6824fdbc0",
-  "price": 3500000,
-  "rent": 18550,
-  "subcat": "Detailhandel & butik",
-  "addr": "Sct. Laurentii Vej 47A, 9990 Skagen",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/1c/b0/1cb07d624ce15e56d8c0be8ec91bf8db15e7456a030e9b278d77c4edbff587f0.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/7e/f2/7ef2b8603930bce86a1db6f3087f92801c9078642ad33e5114243cd7cc30feb3.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/d2/2d/d22d3a1066d454bc81aa0ec14495141460d33bb0894e9135f09a226583f8b704.jpg?class=listingimagebannermax"
-  ]
- },
- "alleroed-stationsvej-2c-alleroed": {
-  "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/alleroed/kontor/fe45791c-e043-4d13-99bd-20261dfb8102",
-  "price": 1775000,
-  "rent": 9260,
-  "subcat": "Kontor",
-  "addr": "Allerød Stationsvej 2C, ST TV, 3450 Allerød",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/58/9f/589ff713f619076fd8b653e1fda8f6a577d554476d359c33f6e406de3a7c0d51.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/8b/da/8bda176aaee0aed1760839d88ac4bc29f09935b21a1b7696b69a9d2663d27476.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ed/b1/edb177d72972719ce9d8242951db046900a8e63eaaf8ab09eefd77f8546bdde1.jpg?class=listingimagebannermax"
-  ]
- },
- "hulgade-6-svendborg": {
-  "url": "https://www.ejendomstorvet.dk/investering/fyn/svendborg/andre-typer/fe75f8a7-2424-447d-afa2-6eec5405a552",
-  "price": 7900000,
-  "rent": 41409,
-  "subcat": "Andre typer",
-  "addr": "Hulgade 6, 5700 Svendborg",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/fc/3b/fc3bd6c34211b6a4ba3631ae2eb647c877ddfa4ceadf567c0f00a3ce6a6842ce.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/85/ff/85ff058edd8c34c88d5e56f2ed3d626e90bb5a754f34963ad70fd8d9acb2a980.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/90/62/90627893e1093a701d9c0111866cf8f5f9be943e392309e32e2a2c1a7418463e.jpg?class=listingimagebannermax"
-  ]
- },
- "noerretorv-7-vejle": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejle/detailhandel-butik/db1f0afe-3e6d-46a7-b189-cc4ff718955e",
-  "price": 7445000,
-  "rent": 43739,
-  "subcat": "Detailhandel & butik",
-  "addr": "Nørretorv 7, 7100 Vejle",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/51/08/5108317155aa342c792edec13ac5af83d36c5cc2d29b03f3923c042c6998de22.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/04/1d/041d3d177ae90a150761aac236a18af8d8fddd3bb1efa0e225d5ea1389bc808a.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/78/88/78883e00ef36d22c0a7c660ffe13cea74de74f4913ded7b6386b062046e3fc07.jpg?class=listingimagebannermax"
-  ]
- },
- "ordrupvej-94-charlottenlund": {
-  "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/gentofte/detailhandel-butik/26448d23-1feb-4624-9d39-8b7a550e072b",
-  "price": 1200000,
-  "rent": 5650,
-  "subcat": "Detailhandel & butik",
-  "addr": "Ordrupvej 94, st 4, 2920 Charlottenlund",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/b8/67/b867963831f1a5b966a56b7c00459c7b74daca38a79212427c110c68be3e2a35.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/cb/66/cb6636a95eac6bf2dbae2966dea83761e220a34c8ffe2b634293f8a1476156ed.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/5c/86/5c86782e5eff4a77226f9124980b4eb8eb8c4bc3bbbc75bdb970abe1d22dc6d1.jpg?class=listingimagebannermax"
-  ]
- },
- "ubberudvej-121-blommenslyst": {
-  "url": "https://www.ejendomstorvet.dk/investering/fyn/odense/detailhandel-butik/8160ee73-ed6e-45e5-997d-15cb09d8b0d5",
-  "price": 9495000,
-  "rent": 55546,
-  "subcat": "Detailhandel & butik",
-  "addr": "Ubberudvej 121, 5491 Blommenslyst",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/6d/f2/6df2d5104b4859e3d3d85bca2d1b6084d567d075e606a450ab5af9e2f54104ac.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/d4/54/d454f0186f22c3d5c3a0fa058513d4f0384067393c6d0a13ffaab2601ff527a0.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/4b/d9/4bd95e09f9df90716ae91d1a0d0067ca3b9ceb8d8eedf35966ae4d1fe308a8eb.jpg?class=listingimagebannermax"
-  ]
- },
- "noerregade-12b-ringsted": {
-  "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/ringsted/boligudlejning/9e428919-4417-4977-bb52-c27b16ee2b1c",
-  "price": 3795000,
-  "rent": 19576,
-  "subcat": "Boligudlejning",
-  "addr": "Nørregade 12B, 4100 Ringsted",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/1f/50/1f50de4072067847f9a91f24aa1e838d958df630aa4e85d9a4ae39dabaca2da8.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/e6/82/e682bf9c6daa9e20c9a16fc2db7f96b44dab649bb58d4c217b65a86517c4811c.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/f6/a7/f6a75d2cf50f5a4232dc109d2c0dfce6b08d64d110f4c8819398a00b7337df5d.jpg?class=listingimagebannermax"
-  ]
- },
- "niels-bohrs-vej-14-laasby": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestjylland/skanderborg/lager-produktion/1c4a6869-ee04-4fb3-948e-c29638384c4a",
-  "price": 44500000,
-  "rent": 268854,
-  "subcat": "Lager & produktion",
-  "addr": "Niels Bohrs Vej 14, 8670 Låsby",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/ad/b0/adb03ab1ba96704e24b26f294a94f3483c9edb8bad9d0a5854b31a4f5d14ba77.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/71/2f/712fe85588fe755fe227803216455d0dd2211443c5fd0bcea89eba310894b431.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/e5/ec/e5ec1cc349f45bd77edc12c7d51b6b8f253757dd1546a1d46f482aebfe8eecc8.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/3e/06/3e069dc058e7471b5d608dfb7e8d2090346027bde4ebf185e1315a106922cf75.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/9b/34/9b343390e770ad911779f009ef0e1a19f001a1ec2f9c6be638e5801c1fcddbc4.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/b1/bd/b1bd1dd4e30f7e74796abd16865043b76767f9af29f223d55a42d4b9e9df9a50.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/c9/b7/c9b75b5ce09c37099f42476cbbd5cfc320628ece7c64e1422e993f934e921920.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/5a/4d/5a4d6466381060f61bb031b703d948cb4ae667a7837e087da2e12ae040804225.jpg?class=listingimagebannermax"
-  ]
- },
- "vordingborgvej-78c-herfoelge": {
-  "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/koege/detailhandel-butik/b632c6af-8e0f-4b82-bc37-6185855c80f4",
-  "price": 38300000,
-  "rent": 207458,
-  "subcat": "Detailhandel & butik",
-  "addr": "Vordingborgvej 78C, 4681 Herfølge",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/cc/11/cc1139b1fdc667f8ebb430910d5971a18115ec28151e835f79ea76dbb2219c3d.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/e8/81/e881b15d77b365d4771ec079d81b300565503b9a0e3868e4997e5ca1c0f139d8.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/7e/33/7e3327600e7acca472936d6162496d86ed07ac1af5f777d909af5fe775a27ce1.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/8f/85/8f856aa32eba037c3a93a1de5a1343a908c623510f7e3e0aa095e69eedd7a0c5.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/7c/67/7c67e0494ea1cef7580fbec9bd2a76899e1478c7c50402371b3f86ab6496f88c.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/66/7e/667e07631040272decfd58a35adeaa1d79e7a9b4c913e4fa2bc9fa3848d2698d.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/da/ea/daea1c4c42edd52725570ca3d1d1a7507900430ba98f93ae2f911c69e7fb3433.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/06/6a/066a6f71a258805fb2cbd94a509560e144ead3e029ebcb023a3f0d05ca03b8d0.jpg?class=listingimagebannermax"
-  ]
- },
- "fiskene-20-aalborg": {
-  "url": "https://www.ejendomstorvet.dk/investering/nordjylland/aalborg/detailhandel-butik/7b2ad39e-567c-484f-8843-acad8a063986",
-  "price": 42100000,
-  "rent": 254354,
-  "subcat": "Detailhandel & butik",
-  "addr": "Fiskene 20, 9200 Aalborg SV",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/b1/37/b137b2a9edbe5ed617b02a019bc52f06c0a77067f7572bae18b17e51c83655d4.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/4b/82/4b8279d2a5b98a395f0354bbbd914a3a7b0e608c3ee4c7a688f69e3ebbc8de33.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/f4/0f/f40f8a0994aaa469f15cafc73bcce54603c6ec274ebeb3599f252601e5e8ad5b.jpg?class=listingimagebannermax"
-  ]
- },
- "roedovrevej-210a-roedovre": {
-  "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/roedovre/detailhandel-butik/1405f112-81b9-4765-9387-bc09e7d57582",
-  "price": 18900000,
-  "rent": 109305,
-  "subcat": "Detailhandel & butik",
-  "addr": "Rødovrevej 210A, 2610 Rødovre",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/37/a5/37a564736c004dbf5e4061a434600c930be1b1b12bb4452163af3fce0ef07005.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/8a/f1/8af18aa55031b3d41a011c2ee7f98d5f938abc94e92ca4d420e19362a6508e5f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/52/b5/52b561252d78320ca6e79d1bc4f83b1112511f3601a7330d682949cb550da72e.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/55/3a/553af2c3192a6bb9cbd5b36f7aaa60a39110afa0c1f9a5f0328429a797aa8f18.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/8b/c6/8bc6405dfe9827885c998e4480318783a7db3103afc431cd572b813e0b4e1905.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/f8/4b/f84bcd7271232d109d46d677cd5dfc82255822d71529fe2f5563cd277f850a61.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/c5/b0/c5b08d43149164f181355eb3e88baf13ad3fcf8289841d3f030490634f2f5ef8.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/74/84/748405752ad14b7d6c625b4df70c0a994fb725789d54949c35407de5764e340a.jpg?class=listingimagebannermax"
-  ]
- },
- "stormgade-155-esbjerg": {
-  "url": "https://www.ejendomstorvet.dk/investering/sydjylland/esbjerg/hotel-restaurant/9d80c6a2-0dd9-4e2e-a633-e6cda43c3d1a",
-  "price": 28700000,
-  "rent": 149479,
-  "subcat": "Hotel & restaurant",
-  "addr": "Stormgade 155, st. 1., 6715 Esbjerg N",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/56/4d/564d254336bbab9dcf1d5c8f336bf3f85592f3a33da09f6a06204a1422ec1a9e.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/54/e2/54e26659facd4fcca71ccba45c5c5eccdb3653506746f74e695604607b2f07c5.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/45/38/45384c08702f267a61eb04139e4e7f79448acbc0b22e1fa3dad3f61946ca6806.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/51/cd/51cdae70cb6cc311991863099a9b7617da68deb05aa6c1a251d100ab29828888.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/06/bb/06bb936154a886be5b20d100377f9fb20fd4373701b3704c0f86aa1dafc9ce74.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/42/7d/427d13b767941474183430c6cfbf7a3188de88c6b0af7394d4b85257b1af284b.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/ee/94/ee94f5da7910d9419a8ff491cb4ff2f028a81d28ea73ddcdae5370015df9172f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/3c/7a/3c7ab2fd50e2afbe676d1462a610fbc15d506e2323576c5d02cd3847c8383bd5.jpg?class=listingimagebannermax"
-  ]
- },
- "dalgas-plads-6-herning": {
-  "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/kontor/55fedd20-6fbd-4cf4-a924-c9e00a958671",
-  "price": 18500000,
-  "rent": 93425,
-  "subcat": "Kontor",
-  "addr": "Dalgas Plads 6, 7400 Herning",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/f9/58/f958131eb5964952c2bda783c0e041af46f3fbb2bd67e620683e3a39f104c170.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/7a/2d/7a2d835bd9943d0d4b99b62699392049ee40e176abc0094f6f8760daf1e9456b.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/20/3a/203ac1fbbafcd5b656e28c1dd00991901008410e4a2ea0850c79e0fab9e99964.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/79/e2/79e220ac00cf1243686b7dfca6bed0a5b021ef21a2053e5137aff9a7ebef879f.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/55/1e/551ea9e07ea397ca7a34156e42e89bd63ccff0e09a48338f8a92254ffac98433.jpg?class=listingimagebannermax"
-  ]
- },
- "moerupvej-9-herning": {
-  "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/lager-produktion/fc7f7e13-57cf-47f9-82d9-9d9b211ec34f",
-  "price": 35300000,
-  "rent": 250042,
-  "subcat": "Lager & produktion",
-  "addr": "Mørupvej 9, 7400 Herning",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/6d/31/6d318fc23aee9ceab1933f665206d0945283aca16b2207cf6cc171d24d5cedc1.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/57/ee/57eed39ba492bec10bdd7a31d63acc8230a5cdf9fa875a924f6bfd52174bfd18.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/04/ae/04aed2e5d386ec54a85efe8a01ddf6e8241cb3dfa0ebd0eb147dd9695ef83218.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/c3/12/c312c7e52b350f310322368c9c77edc3c5f5ceb28e3674d42ff8416adad69a55.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/db/cf/dbcface8e043b336789a112e76013d48cb7dd40600a5cd4d2408bc27b2443b45.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/6d/1d/6d1dadd3b5a84006ae2f97cc637a804bbdaf03dc38676d6a874bf7860cfedd5f.jpg?class=listingimagebannermax"
-  ]
- },
- "kirkegaardsvej-38-koebenhavn-s": {
-  "url": "https://falcherhverv.dk/kirkegaardsvej-38-kl-tv-2300-koebenhavn-s/",
-  "price": 1350000,
-  "rent": 10350,
-  "subcat": "Hotel & restaurant",
-  "addr": "Kirkegårdsvej 38, kl. tv, 2300 København S",
-  "imgs": [
-   "https://i.ejendomstorvet.dk/cb/ce/cbce0d220d5c9b00b8262e2cfbc8538be4c1a498fbce15331f7bbd54b9829ad2.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/e7/5e/e75ed673ec9c83ac5b0d327b5d4f65f4abbe1328a3f2b5551504cf17ca02c0f6.jpg?class=listingimagebannermax",
-   "https://i.ejendomstorvet.dk/28/57/285754f734d669f600e56fd7cea5154fbc09177bb33781d5f2de945a0f95b793.jpg?class=listingimagebannermax"
-  ]
- }
+  "helligkorsgade-17-kolding": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/kolding/boligudlejning/e1deab9e-c1b7-4318-ade6-6715ade3e793",
+    "price": 3000000,
+    "rent": 13850,
+    "subcat": "Boligudlejning",
+    "addr": "Helligkorsgade 17, 6000 Kolding",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/60/0d/600ddccc685a394386956e4f60e8c1dc8d65d97ae193cb477cce2b85423fb954.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/fb/c0/fbc04903ae09d8fe30d9cabcfb55d2d9c2a8c084628f5fc238243e0c06c7c18a.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/21/f1/21f19c7399501ddc1ea45082c0149674f80df8a6331b6e1eba2edf4bf8bdfde7.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/d4/66/d466f0091f3044d08dd493f5d2bd3c1e2ed878cab5e3041bb7f7e270bf604217.jpg?class=listingimagebannermax"
+    ]
+  },
+  "fussingsvej-41-horsens": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/a0fecc9a-1d1e-46a3-87c9-baff5a81ceb8",
+    "price": 1395000,
+    "rent": 11462,
+    "subcat": "Boligudlejning",
+    "addr": "Fussingsvej 41, 8700 Horsens",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/6e/b2/6eb2f6c27fb94c31e77e31665195d5238caea34d5e0f9fc50781ffa573b11bbc.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/59/4a/594a551e0cc62aef1488b9e7b2b48cf263cb1959a22c8f1a67b23af3fb4a861f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/b2/6f/b26fa474391be717e7509621c21e50cb72ef42162c8bcbfd8042172e0b167090.jpg?class=listingimagebannermax"
+    ]
+  },
+  "teglvaenget-65-herning": {
+    "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/andre-typer/3ffb45e6-09af-438c-ba32-66c0ff85c9a2",
+    "price": 1725000,
+    "rent": 10796,
+    "subcat": "Andre typer",
+    "addr": "Teglvænget 65, 7400 Herning",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/a9/52/a95212d7cbff7aa04a25e41b857c6eb4d54635369f304189f8339e9d3b81de18.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/48/9f/489ff8f51ace30e910a5ec1dc59e8845278f0ea0a4daec1dd78e53ac7c7627de.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ef/5d/ef5dacebeb4d0aeb48c23266242a478b786d62a2a7dc8c95ef3856658f817739.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/6f/62/6f6286ffd7c0978dc8aaf98fc7a3b3625adecfdc95fd5e7abc0a0c6fafa7ba20.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/67/6b/676b56809215fcd9b89ba6c11a87a1031cb8fa5cf3725102010b0470d37dccd0.jpg?class=listingimagebannermax"
+    ]
+  },
+  "noerre-alle-66-aarhus-c": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/aarhus/detailhandel-butik/f1e36560-4b1e-488e-890f-9e89f188e28b",
+    "price": 3500000,
+    "rent": 16362,
+    "subcat": "Detailhandel & butik",
+    "addr": "Nørre Allé 66, st., 8000 Aarhus C",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/e9/2f/e92fdfb3015b8b2de1d03558cbfc06c1a81752ce125dc3872a08aad0f41dec7a.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5c/93/5c935e400184fb0f8f22b2a1be1bf929a03fd7abc2b03580fc7e920cd948cd33.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/42/3f/423fd18f2a44df5875747b5c076318b9ab04047ec2502b2b087bde529e7d0c6d.jpg?class=listingimagebannermax"
+    ]
+  },
+  "klokagervej-69-hjoerring": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordjylland/hjoerring/boligudlejning/17e79a10-11e9-495c-b6b9-cd7822d28f2a",
+    "price": 2875000,
+    "rent": 16867,
+    "subcat": "Boligudlejning",
+    "addr": "Klokagervej 69, 9800 Hjørring",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/26/4a/264ab26ae16b178e40ee558f4a07a5e09e440c9563936e82e46fc43dc1d38ff0.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/b7/19/b719ee852883da5843ac2f164e7acc7cc2fa12e6dcb4b30cdf0b4d28ee55508b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/6e/d4/6ed4a99899764774c1cd366635b59a0159be0689df10bfa84793bbc42aadea01.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/94/13/9413ba3634f7a35a234d621f97896e0c58a86edde489d3ad096327936dd59145.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/87/86/8786488e6d3b8705e74b9d57fb646af4e70b629d9d69783668577f35689b8ce9.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/1e/6c/1e6c47a48221a593a15c9e68b73bee0fc2471625649beabecf257f93549d5b55.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/da/3d/da3df0437cf3319ad931c92f9a0546c52539e77ffb6370b866867570ac43eb52.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/3b/92/3b9209e3ba813a580c8a5917b3dabb1c9ae1822dc372ef322ef69850e2006de1.jpg?class=listingimagebannermax"
+    ]
+  },
+  "vestergade-13-grindsted": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/billund/detailhandel-butik/b28ff791-b76c-4806-9b57-f327fcfbb718",
+    "price": 3995000,
+    "rent": 21240,
+    "subcat": "Detailhandel & butik",
+    "addr": "Vestergade 13, 7200 Grindsted",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/d5/db/d5db264ba78dcb7ccdb83fa58241e76cfa3dfc34ffa830e2855ee4c3d1ae3289.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/fd/02/fd02bd9a1e5fd695950ef4e957666d6455f18594d84ff69e513985b7107b27ce.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/b3/91/b39158dd84511c7d01394dacc566f45e6170bdfed61bf55f5c2ca7e9a7070b26.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/82/ba/82bafd9425a2e59ba379581038cecd23a84dfaa0cbb04858a8b09b19b74e80dd.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/48/db/48db4da6a627bbf675c267f02a582f325173ab8fffd241c8f6ee864ab031cf2f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/6c/35/6c35173279912e6cfd727b8610ab2f976f054468a7471b1ee65a8d69fb63a0cb.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ff/d6/ffd61e1b0d1ee46bf7e8ee09a539046c58a3a7fc92a08fc9fed12dd2729f39ea.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/de/88/de8822dd49df961a1f44af5f521a7083f4810f7da4a08f57cac8ade1b92c93e0.jpg?class=listingimagebannermax"
+    ]
+  },
+  "hospitalsgade-6-8-horsens": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/35d45719-f2b2-4275-bd06-8ae67876c0a6",
+    "price": 16095000,
+    "rent": 87181,
+    "subcat": "Boligudlejning",
+    "addr": "Hospitalsgade 6-8, 8700 Horsens",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/20/fe/20fe8a3eb9c52e1c4aa30bc52ab3b2c5e5c21bc89e8b5492c19b7477ec922766.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/43/ed/43ed5841ac372a32ca5e948eb7b74dec15aa8506b93bf8d45c9552b43e8c7e11.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/97/21/9721fc791cfe8b78171c4e97dc9f7752cffec1c9967b88ed3d366f9d147b8ed5.jpg?class=listingimagebannermax"
+    ]
+  },
+  "ahlgade-59-holbaek": {
+    "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/holbaek/andre-typer/9f10aea7-bbd4-4745-b239-5b34b8a438e0",
+    "price": 8950000,
+    "rent": 51313,
+    "subcat": "Andre typer",
+    "addr": "Ahlgade 59, 4300 Holbæk",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/a9/92/a992d53d1dde0758d6155755c64a946bad94385f7b5b2440fd293f58da116709.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/8f/bb/8fbb28e6284baf9ffb7cf44cdd006a8747e849959d14b5af9c401c618163c37f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/aa/95/aa95e1a846b3d79d218ac623465e90f8c24c0835150fdb99eb0ff4c4f6d0f049.jpg?class=listingimagebannermax"
+    ]
+  },
+  "foldagervej-16-lille-skensved": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/koege/kontor/8f015b68-36ba-413a-80fb-07ba8187000c",
+    "price": 9500000,
+    "rent": 47817,
+    "subcat": "Kontor",
+    "addr": "Foldagervej 16, 4623 Lille Skensved",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/96/fe/96feb950ee83caf312037e62d59628ca6d603af0f4f55dd7080fa606d952d859.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/48/88/488866b687796f0329ceca44f6e844b0adb976ce480c3ba7878805205ee8b7a3.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/a8/95/a895cd406f002b3ce62052fb3ab2471db2a88fe68b9138526f0673760d678019.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/54/98/54986230fbf8c837c22af9e224c84cdbe0e3dd1b3fd854470ab06611c25ba7d8.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/33/7a/337a6841c6a86b21d96bb75accef5b39f1ee7ac6043391f4431e877786f46346.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/70/06/7006d6bd476217eb611c0f097ea2b35e1cb7fd0d2fabf115012763e5a126d002.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/81/5a/815a68d438c828bdf13523458475aab22ccd20f9d6f6ee9def7b29a5cef67f4d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/dd/0d/dd0dc96f33aad24e7c9729900d8ab38a4bc27341442ad5d2e6b59451f4c5afb6.jpg?class=listingimagebannermax"
+    ]
+  },
+  "helligkorsvej-12-roskilde": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/detailhandel-butik/858e3f61-35d5-40b9-8a40-f6f30ed15038",
+    "price": 9495000,
+    "rent": 52064,
+    "subcat": "Detailhandel & butik",
+    "addr": "Helligkorsvej 12, 4000 Roskilde",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/8f/97/8f9723709ae5f5268b70dae4bcaa36ca5fa618d9f4591125c0ece264822fd6b1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/80/ae/80ae48b74e47a9bb13089f691754c2fece26347227e152e36da9ef7ea5a67124.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/a3/74/a374f89f334d6715a5dd880eb2794fdff3e1e3e1963ab137160406b6f677f22b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/6b/27/6b27df97f5a42b3c07f8cd9c566a10c740bdf5269d9cb621fe0d03fac5b95479.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2f/4e/2f4eb8136217b8c1db56876be3cd085ad8a82acd844f4a469d2810f489ebe76c.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/73/ae/73ae9ffd399428ce7e6acea199b825b33745bf2049dd957616007f9ed3dfa1aa.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5e/70/5e70a54ac83d4459cc8524d45b802b4b1aa8017a5afd45b9bc1bb99ca0ba6359.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/34/75/3475619f6234b7a7bf7accf350efd8b2f8e4b79dd64e5f2b1345b196e0431f1c.jpg?class=listingimagebannermax"
+    ]
+  },
+  "storegade-3-grenaa": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/norddjurs/andre-typer/24c0f874-5862-49c6-96a6-c3613152caf4",
+    "price": 2850000,
+    "rent": 19095,
+    "subcat": "Andre typer",
+    "addr": "Storegade 3, 8500 Grenaa",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/38/bf/38bf95b59b3dcb7ceaacb50b9fe0bca5babe5eb428473d84f6e13b2074640c78.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/6e/55/6e55294ad8a3878c3cf707c4ec865a8c8ceee937d5f8a4b5d47f18b7e4f243ae.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/79/2e/792eaab69685ebebeb6573ff0f612778cf22d183bb29a2b2922691847eeb0aa0.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5e/40/5e40a3c5697f1038635aa0e6b1ede2514d1e614af1c0f698f1bbfda3b5f1431c.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/31/9a/319a3d20486d1783bbc21c11a67d993868cc758f6528432ada1e92e9394d8f2c.jpg?class=listingimagebannermax"
+    ]
+  },
+  "strandlodsvej-15a-d-koebenhavn-s": {
+    "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/koebenhavn/hotel-restaurant/8cdf7f68-c79c-4597-93be-1b0c1231bdc7",
+    "price": 10695000,
+    "rent": 56149,
+    "subcat": "Hotel & restaurant",
+    "addr": "Strandlodsvej 15A-D, 2300 København S",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/06/0d/060da8ade00e660e9e406315feccaaede05bd2fd6a5f99ef4ebcac26bbe51827.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/0a/04/0a04dcd5e0b491bf2ebfb72c8f84ac4f8b1a4412fa15d44adefefcc031c2208e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ba/c8/bac83f50fef3fd5a14594fa55f975f22cbe8e0d636ab35797a5e7666f44a5970.jpg?class=listingimagebannermax"
+    ]
+  },
+  "moellevej-13-dragoer": {
+    "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/dragoer/boligudlejning/21c6e43f-109b-4d40-8ee6-e04603e9290e",
+    "price": 34500000,
+    "rent": 106662,
+    "subcat": "Boligudlejning",
+    "addr": "Møllevej 13, 2791 Dragør",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/b2/9d/b29d0f6eac350d19cdf8ba7d3a5b5d02c67c129d0508f51ef23e277df10cc1c1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/72/72/72720689e4facf2ae9a3fdc1869d2dd49242a6e6821af7dd7c2ef44fa907d263.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ae/0d/ae0d2e8858affc90a689956f8b8aefbf9961a48a06ab50e3f9469fd5a6e23695.jpg?class=listingimagebannermax"
+    ]
+  },
+  "sallvej-22-hammel": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/boligudlejning/90575260-b8a7-426b-ad7a-88b8a8e28ed0",
+    "price": 1495000,
+    "rent": 8659,
+    "subcat": "Boligudlejning",
+    "addr": "Sallvej 22, 8450 Hammel",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/70/52/7052ab2f34af52e77984d6ada76f9838fb266614d26f19fa8b64ed96eb91d0e7.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/8e/8a/8e8a370e063d52f7664360f446bb8f8bb28aaef5bc540a4a8e3ff492c703f898.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/85/43/854377fa42d8b0bc32c37a5bb3c8c6c406a7c51b3239f770f6d57a18360fb99e.jpg?class=listingimagebannermax"
+    ]
+  },
+  "haarup-oestervej-6-silkeborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/silkeborg/kontor/0b033a49-3c2d-4092-98e3-53083fd38246",
+    "price": 9995000,
+    "rent": 62136,
+    "subcat": "Kontor",
+    "addr": "Hårup Østervej 6, 8600 Silkeborg",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/6b/1f/6b1fe4e64189a886cee6570a771fd35cead5ed9a1d7769ecdfde018d8fcaccdf.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/81/91/819184409e9755853f17062b880c49ef07451a5d53687ba3c0d9b4ab5595feed.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/6c/2f/6c2f734994fcb603a06f110e1693b48be7d7acc1562e401b7209ffc97119c4b4.jpg?class=listingimagebannermax"
+    ]
+  },
+  "falstersgade-3-fredericia": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/fredericia/boligudlejning/e374a301-6069-4086-8199-51ede790a1cc",
+    "price": 3700000,
+    "rent": 17729,
+    "subcat": "Boligudlejning",
+    "addr": "Falstersgade 3, 7000 Fredericia",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/67/2d/672de612c9c1cd408d66273b3bbc7882e8f638607397c61ed1a0434f8af6a016.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ca/a5/caa5dc51e8362b2a00d93e04ac5829d4774210c0a2919479132f0264f640f66f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/45/6d/456df67a4bf124946c74d84a1fdf97b36d0b53326816f09742557d91a4cbbc39.jpg?class=listingimagebannermax"
+    ]
+  },
+  "n-toerrings-vej-10-odense-soe": {
+    "url": "https://www.ejendomstorvet.dk/investering/fyn/odense/boligudlejning/fb67ddc5-7c2a-4ab5-aa73-d287db38b171",
+    "price": 3800000,
+    "rent": 30653,
+    "subcat": "Boligudlejning",
+    "addr": "N. Tørrings Vej 10, 5220 Odense SØ",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/9b/e5/9be5c7e74f92e85d05655a5e35b7839f7f4224921cb2055b57f9e40152af090f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/8f/79/8f79eb7f5df7e58e7d14aec695c3e703d6f8e1a352ef476527f9006f5d2a2d85.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/97/dd/97dd3b2fac7b341759528468a1dfbbdc2bf743b69fa89a8dc81529fe761157a2.jpg?class=listingimagebannermax"
+    ]
+  },
+  "byleddet-6-roskilde": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/boligudlejning/973bf4cb-1187-4d84-b03e-73c80095e9a7",
+    "price": 9500000,
+    "rent": 51538,
+    "subcat": "Boligudlejning",
+    "addr": "Byleddet 6, 4000 Roskilde",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/53/61/536155442649237aad702318b37d6c2229e9deec05512742b51d9727d04dcb4d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/78/36/7836cda21ff1dbcdee4e7e3576c565e13897f7a3cce8c2609bd05f408c91e291.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/21/a4/21a450679661aeb9a0979b7b6f88912ef598e7430c2891db0493bc018a26670e.jpg?class=listingimagebannermax"
+    ]
+  },
+  "hoejvang-5-frederikssund": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/frederikssund/detailhandel-butik/2d9ab104-275c-46ab-b86a-f432c75eaa02",
+    "price": 6000000,
+    "rent": 35400,
+    "subcat": "Detailhandel & butik",
+    "addr": "Højvang 5, 3600 Frederikssund",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/3d/96/3d96809f1ec40a7e5956673991cf8987587eda245f048192af9cfd236cfaac17.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2b/1d/2b1d8e0cc527101ab74bc477ec630b388154b5a6e6973db99c03df1b4f1edbdb.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/62/18/621838c5aa69b8a39779c6c4246fc2116db2531f42e75d551757bc8b6b0fce4f.jpg?class=listingimagebannermax"
+    ]
+  },
+  "askov-kirkevej-17-vejen": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejen/boligudlejning/e1474d73-570c-4658-8234-71eb2caa51f9",
+    "price": 22850000,
+    "rent": 110061,
+    "subcat": "Boligudlejning",
+    "addr": "Askov Kirkevej 17, 6600 Vejen",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/e1/36/e136c9370b443ceecb9c65fa6316cbe875883c4c575dd1ded1e3f0659dc6353d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ce/01/ce013dd21105ee1733cf0b12244555e2d38217e0d2519811686a1fae63738404.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/f4/22/f42218451c30515e5326a00ff8303d20ce16194e9cbe295b01d76e646625bc6d.jpg?class=listingimagebannermax"
+    ]
+  },
+  "ulvevej-25-havdrup": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/solroed/lager-produktion/950bd6b5-dcb2-4aba-832f-d7c7fd1ea541",
+    "price": 23995000,
+    "rent": 153368,
+    "subcat": "Lager & produktion",
+    "addr": "Ulvevej 25, 4622 Havdrup",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/7d/85/7d85507e771ccb2ecbf9a6d1774fc3860946e98a28578b5c8e184e9b51457bdb.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/7a/03/7a03f5eb9ceb3f60adaccc1b84e08b5102810869c84606afde696d66858b400f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/50/4c/504cec99319ab346ad828000f2c0a8333321c90518ba24feb821656d84d72564.jpg?class=listingimagebannermax"
+    ]
+  },
+  "industriparken-6-bredsten": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejle/lager-produktion/589e00b5-bc6b-45d0-bb9f-64d2486c1384",
+    "price": 4495000,
+    "rent": 28731,
+    "subcat": "Lager & produktion",
+    "addr": "Industriparken 6, 7182 Bredsten",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/a1/a9/a1a9af26e313031958210f4fd79ffcda1ec90d769a507728f3386ac01e51f3a9.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e9/c9/e9c99caeb7d1347ff6d2f0eb3a3b48f5b7244c3c47e71e1dbf2714985afe9e9b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e7/d0/e7d03749b8d77039ea709478a18f3691a87855ca5d70861480a08805cb86e656.jpg?class=listingimagebannermax"
+    ]
+  },
+  "storegade-181-esbjerg": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/esbjerg/andre-typer/9139502c-9c4e-4a2f-bce3-8db6b22c1188",
+    "price": 3700000,
+    "rent": 22508,
+    "subcat": "Andre typer",
+    "addr": "Storegade 181, 6705 Esbjerg Ø",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/f2/cc/f2ccd80dbbd1d511db56baa387b2035c9319f8fba7003b4d08d065d005534954.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/4f/9e/4f9ecee8bffbcf171932c2aa69db38ad9106a78e3136ad050f24393f9749072e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2a/dd/2addb74e6b6fc42834a561c4452d14e579c2c4394003505ac84dc58fb42510fe.jpg?class=listingimagebannermax"
+    ]
+  },
+  "bredgade-26-videbaek": {
+    "url": "https://www.ejendomstorvet.dk/investering/vestjylland/ringkoebing-skjern/andre-typer/cdf1d8e0-e428-4b56-9128-833608a976fc",
+    "price": 1995000,
+    "rent": 12319,
+    "subcat": "Andre typer",
+    "addr": "Bredgade 26, 6920 Videbæk",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/80/1f/801f5b68ad0a27c3e93d8cf0a953f8331e30e7b3c56bf4f8e5dbbce4ce3fef84.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ff/e8/ffe814d19b4a8ecae72d2c19855adbd0260267bdf31120aeab02f527c4d46510.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/f7/04/f704b2bfbf0addb24cd5090acc736a8bd065ef2b403c9b11eae017a5a9304937.jpg?class=listingimagebannermax"
+    ]
+  },
+  "dronningensvej-13-nyborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/fyn/nyborg/andre-typer/710c253b-2a05-4488-906b-8fc40287dc82",
+    "price": 1750000,
+    "rent": 10908,
+    "subcat": "Andre typer",
+    "addr": "Dronningensvej 13, 5800 Nyborg",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/2f/20/2f20b22467effedcaeda07735feca9463750162f574633de1c6a228ea9529643.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/4c/bb/4cbb3f36ed4812040cea54d902e6038f9742e498c8d20f0e0d9f4f05eaee0ae3.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5a/de/5adef3b3282ffaec3801348a14e98b5219d0a74d5e9af74116f23f927740b534.jpg?class=listingimagebannermax"
+    ]
+  },
+  "strandgade-10a-frederiksvaerk": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/halsnaes/andre-typer/5bad110c-f29b-4131-8f7b-8d052c3b9365",
+    "price": 5995000,
+    "rent": 36819,
+    "subcat": "Andre typer",
+    "addr": "Strandgade 10A, 3300 Frederiksværk",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/b5/b4/b5b4a38b0826283464da52dc218bbbdb45cfef81036bc49f819df7c377ce4c3f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/c7/ad/c7ad135e0b4c83e756e0bc5137ed69bd5bdb089ae17f828aa1f1a975e35cca6c.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/14/3d/143db855a4228156ed01939fbf5b4ca76874bf9560b637100bf204c40f724276.jpg?class=listingimagebannermax"
+    ]
+  },
+  "lyoevej-10-haderslev": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/haderslev/detailhandel-butik/dc39b29e-28d6-4dcf-85fa-786cc4ce5c02",
+    "price": 8600000,
+    "rent": 60128,
+    "subcat": "Detailhandel & butik",
+    "addr": "Lyøvej 10, 6100 Haderslev",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/10/e6/10e60af84fdb6600b62c47206e437b3ef360e611282efee8a0704013f2cb54cd.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/c0/f8/c0f87fbcfe75829b5035d41bd65b244bed464a527f7c929d4051a5dcf6bebd58.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ba/67/ba6759607fbae3577a7353e7a3149067cf9386dca7a7d654e164a6d90a17abb4.jpg?class=listingimagebannermax"
+    ]
+  },
+  "oestergade-2a-c-grenaa": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/norddjurs/andre-typer/2463a97f-2323-403f-ad3f-a98120dc7633",
+    "price": 9000000,
+    "rent": 60825,
+    "subcat": "Andre typer",
+    "addr": "Østergade 2A-C, 8500 Grenaa",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/c1/c8/c1c88bf3bdb6911524c106dfa3de5b7b1b75de4b51ea8149f52abf2ad22be42b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/61/5c/615c8436f42d83bad516ba331dfe79f075690956ef2e577af62972e89894ed24.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/56/1d/561dc46cce5b6755239220ff0df5aa94b92e921f82ee40e44c2b47b371870c91.jpg?class=listingimagebannermax"
+    ]
+  },
+  "soendergade-21-23-tranekaer": {
+    "url": "https://www.ejendomstorvet.dk/investering/fyn/langeland/hotel-restaurant/e2d5dafc-e020-49b8-bc7b-6f877719e905",
+    "price": 5000000,
+    "rent": 37500,
+    "subcat": "Hotel & restaurant",
+    "addr": "Søndergade 21 + 23, 5953 Tranekær",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/83/b6/83b6d9e4e935df62594a2b98e57b7d8161dee1d95434b66414bf484f3cc66843.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ae/67/ae67b5374e4e20cf267b8e1588c7a6990d71d8e92727172ab8959c57c734f201.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/d4/16/d416195e5e459e4df707b566d1d33db3dfd6a0c596903e66b332b018a585bebb.jpg?class=listingimagebannermax"
+    ]
+  },
+  "torvet-1-ringe": {
+    "url": "https://www.ejendomstorvet.dk/investering/fyn/faaborg-midtfyn/detailhandel-butik/a4e984e2-38e9-4e6c-b2e3-72f1bac4646e",
+    "price": 6900000,
+    "rent": 46058,
+    "subcat": "Detailhandel & butik",
+    "addr": "Torvet 1, 5750 Ringe",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/6b/52/6b524c664c3a6906c5994c762bee975db1334c440e9b3e41a7719b9dae844587.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/f1/2e/f12e4b08f8e0e0b076a1eef051446d18490a1c1a5d07f03c0a1675349dd7fd73.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ca/00/ca00a5e303f0b58c119dffddaa481d5c292595064ec5b0d5e62216cd37492fbd.jpg?class=listingimagebannermax"
+    ]
+  },
+  "oestergade-2-noerre-aaby": {
+    "url": "https://www.ejendomstorvet.dk/investering/fyn/middelfart/andre-typer/5f814468-b243-4e4c-bf5a-95647f115817",
+    "price": 1695000,
+    "rent": 11145,
+    "subcat": "Andre typer",
+    "addr": "Østergade 2, 5580 Nørre Aaby",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/89/cb/89cb4bef1d1f93c99ef2c267fae835c4df608cbfbb17714b60f12bf09af77ece.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/0e/c4/0ec402b04fdae3b92b9251d3a0e7a419bc1065f0af0243b1d78d8a03f3d042da.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/83/33/833398b3b14a34b3145dba9c72fa9c78f39e8b216185834c873ca7ff3d4bc172.jpg?class=listingimagebannermax"
+    ]
+  },
+  "haderslevvej-90-kolding": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/kolding/andre-typer/452a9bed-a3a9-4bbd-8bda-54086a9350f3",
+    "price": 2575000,
+    "rent": 16630,
+    "subcat": "Andre typer",
+    "addr": "Haderslevvej 90, 6000 Kolding",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/6e/d8/6ed855efce1d38a86cbf5be66f13e82108a815d0d224bf23347a5f13172ac119.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/c6/da/c6da59f18e3dae4bdceb6ed6c1d03505261672dfa00f5c180489ff2ea9559ef6.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ff/c1/ffc174ce2b6151c8e279c8017a03dad6f166f62c6d7d96943c702937f370e2d4.jpg?class=listingimagebannermax"
+    ]
+  },
+  "egevej-3-hadsten": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/andre-typer/619f9b82-fa3e-4fb4-b094-0c4a1d1e4bc2",
+    "price": 3500000,
+    "rent": 23713,
+    "subcat": "Andre typer",
+    "addr": "Egevej 3, 8370 Hadsten",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/6a/3e/6a3e6af3f4adceff8e1db06a8061388c4794a76856b600394b731a7b3ab7e382.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/11/7d/117de14711c25435017d42a314192d5f86bd1347347c44628de1575800d3e7fc.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/a4/1e/a41ed823fb0112d0f098a5396b0cec605e6aed9f24dfa721cfaa8559882228cf.jpg?class=listingimagebannermax"
+    ]
+  },
+  "langgade-32-nykoebing": {
+    "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/guldborgsund/andre-typer/09b6bb8d-f56d-4993-bf56-c1ded79ad3ed",
+    "price": 9995000,
+    "rent": 64634,
+    "subcat": "Andre typer",
+    "addr": "Langgade 32, 4800 Nykøbing F",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/b8/25/b825fb9a156406612e5b5df371b65fc3dc747ce8092af0da6c237ecdfae6c162.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/d6/aa/d6aa2c0d34e24cba206f63e6124718dfe4890a75ce1c1aaf1a5a5d0ab8d5cf2d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/7f/85/7f85c23b13975be82334a6ef35b9181295b0c7841b27b9c06f76c1c60db530a4.jpg?class=listingimagebannermax"
+    ]
+  },
+  "ringvejen-2-hadsund": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordjylland/mariagerfjord/lager-produktion/3c5aaa32-fff0-4915-a651-66321223f23e",
+    "price": 11000000,
+    "rent": 83508,
+    "subcat": "Lager & produktion",
+    "addr": "Ringvejen 2, 9560 Hadsund",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/5a/08/5a0860ae41141844b64995f30cbd3de1c96065e18c854bc76205792517d81a98.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/01/c8/01c8edfad17125d6312cb2662aa35767b626b736034be088459e5bbca89b1bd1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/df/8c/df8c48f3b7aa1712e59e20833ba10219f9fa8496fd43ae128e35f7d462cb170d.jpg?class=listingimagebannermax"
+    ]
+  },
+  "hadsundvej-96-aalborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordjylland/aalborg/detailhandel-butik/9f11bbaf-1ebd-4452-835b-25e6d44ab9ca",
+    "price": 3100000,
+    "rent": 17902,
+    "subcat": "Detailhandel & butik",
+    "addr": "Hadsundvej 96, 9000 Aalborg",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/dd/64/dd64eebf972b0a722e3d640dfc20edc7a7ca250d0e0ff6d84dda31e3c7fd7fee.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/37/72/377283b9e4eabc8ddce5de1f410759e9fb2448d8c3f5e3097538e25bc4a57f53.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/7e/47/7e47febf7752e0a6ae7b643237f7dd8953d7932f596390a37083aef6fc397d21.jpg?class=listingimagebannermax"
+    ]
+  },
+  "soendergade-14-hadsten": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/andre-typer/adcab248-ef33-48d4-bf57-3c996d99f778",
+    "price": 5675000,
+    "rent": 32253,
+    "subcat": "Andre typer",
+    "addr": "Søndergade 14, 8370 Hadsten",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/87/4a/874a47a6baa1f4726f994e6a6fd2a03d0fd1eb6b3fb0fcae6bddbe16a4eaacef.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/08/30/0830697f67828228ea679127e423fd4928ac285ba7a122038c0ea1c3b266485e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/62/53/62532dbf9012faa53d97ee5fb000fc8cdc6278d55d16c4984e5bea6ffbf13cf1.jpg?class=listingimagebannermax"
+    ]
+  },
+  "islevdalvej-98-roedovre": {
+    "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/roedovre/lager-produktion/c7d54454-a519-4a4f-971b-28437e968df3",
+    "price": 41600000,
+    "rent": 225333,
+    "subcat": "Lager & produktion",
+    "addr": "Islevdalvej 98, 2610 Rødovre",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/5a/82/5a82d08085486dfb71cc4ff9a8346b14126c28f932a9d4d8869a76db89dfa7b9.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5b/d6/5bd60c134646266fdb4edd30ac872423d2d82c1614110dcf52190393fb93af9d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/c1/8b/c18b0be9436b7c994f3001b76ddce43131ff0aa90088b075a87aea6cd3a27505.jpg?class=listingimagebannermax"
+    ]
+  },
+  "noerregade-1-holstebro": {
+    "url": "https://www.ejendomstorvet.dk/investering/vestjylland/holstebro/andre-typer/7ca602da-0fb2-410d-9e15-f51dc64f9e44",
+    "price": 11900000,
+    "rent": 64161,
+    "subcat": "Andre typer",
+    "addr": "Nørregade 1, 7500 Holstebro",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/2f/35/2f356116e84f76cba831fd63f5930df6f2fc09886e36fe9fe87047e926208406.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/24/56/24564c68afa857ed24f48cd2ef7533b7bf9c6872e6d7767ffb4d4a5b88ba37d1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/0d/af/0daf753c2c82c1f19d8b5a43cecaeb0a68fd8873b6494d7393a7346a1fca298a.jpg?class=listingimagebannermax"
+    ]
+  },
+  "groefthoejparken-154a-viby": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/aarhus/andre-typer/88fa6850-9759-4537-b36d-1cd302e20eab",
+    "price": 1600000,
+    "rent": 8600,
+    "subcat": "Andre typer",
+    "addr": "Grøfthøjparken 154A, 8260 Viby J",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/ec/6e/ec6e21655eb8e3d7b281275c001b3ea74080055b412299b983bfb34c3893e46b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/99/8c/998c87df20581912ead75737ee7fc4749604fc7e6700df827d3330829c38ffc0.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2c/b5/2cb505149c845b8545ecf6bb3747c3dae7d4a364430971f9cc68c5b76271299e.jpg?class=listingimagebannermax"
+    ]
+  },
+  "soeborg-hovedgade-96a-soeborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/gladsaxe/detailhandel-butik/5f54ed4c-5a34-4e5f-a06a-2e55f3ab737b",
+    "price": 18400000,
+    "rent": 103500,
+    "subcat": "Detailhandel & butik",
+    "addr": "Søborg Hovedgade 96A, 2860 Søborg",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/f1/b9/f1b966d8e91a71beaebf9a380b389611d65536254d9a6e3cd32a611bc4c349b8.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/fe/2a/fe2aace1aca07c7f0d6c36265dbcb482ea18d66a5f9cfa7a652b0aad365f9ba8.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/7e/af/7eaf9ddc0f9200892cd9d7c365a7662246dacf94efffb09d1fad79ab82848779.jpg?class=listingimagebannermax"
+    ]
+  },
+  "soeborg-hovedgade-72a-soeborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/gladsaxe/detailhandel-butik/6ee4228a-15a4-407d-a34f-acdb0a911f8b",
+    "price": 4500000,
+    "rent": 28125,
+    "subcat": "Detailhandel & butik",
+    "addr": "Søborg Hovedgade 72A, st, 2860 Søborg",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/ff/49/ff4940db8d166fd8759e7d22a7bb0f487c0a593b9b46849d064da58a8933c372.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ab/9f/ab9fbd9a269f7f98cfc8682a6da593b6806b71dcbe478780571397afdaf846c1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/11/ce/11ce1cb5842425e6f9c0069dc8634bd0a3a71b492e8768b4c6df1db854284511.jpg?class=listingimagebannermax"
+    ]
+  },
+  "soendergade-48-horsens": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/detailhandel-butik/00de1395-d4e8-40ae-8b5e-1a5e23730bca",
+    "price": 19900000,
+    "rent": 120561,
+    "subcat": "Detailhandel & butik",
+    "addr": "Søndergade 48, 8700 Horsens",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/71/02/7102f825d086429841f37f68cd76567f4ebe7e253d5a151f60127190e13a3cbb.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/c3/ae/c3aee771065415952427394796b761c52bed7c33db2c9cd5f4b1c76c744ed5ed.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/52/e4/52e42f8375a85777ab331705ca2aaa2d7951121e925dc747ae64c631e6fd5c99.jpg?class=listingimagebannermax"
+    ]
+  },
+  "bredgade-17-toerring": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/hedensted/detailhandel-butik/c45ae5ec-0124-439b-832a-9e774281b39e",
+    "price": 3500000,
+    "rent": 22167,
+    "subcat": "Detailhandel & butik",
+    "addr": "Bredgade 17, 7160 Tørring",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/53/93/5393aa659caebdec3a8ad53038c9e5e71c29046c24163efdf8ea977c51403ca8.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/f9/58/f95838f047330ff5108949b246ac15982c2e3f5cade63c0db788f2efc4385e5d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/cf/ee/cfeed662bea76522cbce59bc9e1091dfe34f1ea02e2b993c118656be418d8c50.jpg?class=listingimagebannermax"
+    ]
+  },
+  "sct-laurentii-vej-47a-skagen": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordjylland/frederikshavn/detailhandel-butik/de28978d-640b-4502-a01e-96b6824fdbc0",
+    "price": 3500000,
+    "rent": 18550,
+    "subcat": "Detailhandel & butik",
+    "addr": "Sct. Laurentii Vej 47A, 9990 Skagen",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/1c/b0/1cb07d624ce15e56d8c0be8ec91bf8db15e7456a030e9b278d77c4edbff587f0.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/7e/f2/7ef2b8603930bce86a1db6f3087f92801c9078642ad33e5114243cd7cc30feb3.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/d2/2d/d22d3a1066d454bc81aa0ec14495141460d33bb0894e9135f09a226583f8b704.jpg?class=listingimagebannermax"
+    ]
+  },
+  "alleroed-stationsvej-2c-alleroed": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/alleroed/kontor/fe45791c-e043-4d13-99bd-20261dfb8102",
+    "price": 1775000,
+    "rent": 9260,
+    "subcat": "Kontor",
+    "addr": "Allerød Stationsvej 2C, ST TV, 3450 Allerød",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/58/9f/589ff713f619076fd8b653e1fda8f6a577d554476d359c33f6e406de3a7c0d51.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/8b/da/8bda176aaee0aed1760839d88ac4bc29f09935b21a1b7696b69a9d2663d27476.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ed/b1/edb177d72972719ce9d8242951db046900a8e63eaaf8ab09eefd77f8546bdde1.jpg?class=listingimagebannermax"
+    ]
+  },
+  "hulgade-6-svendborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/fyn/svendborg/andre-typer/fe75f8a7-2424-447d-afa2-6eec5405a552",
+    "price": 7900000,
+    "rent": 41409,
+    "subcat": "Andre typer",
+    "addr": "Hulgade 6, 5700 Svendborg",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/fc/3b/fc3bd6c34211b6a4ba3631ae2eb647c877ddfa4ceadf567c0f00a3ce6a6842ce.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/85/ff/85ff058edd8c34c88d5e56f2ed3d626e90bb5a754f34963ad70fd8d9acb2a980.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/90/62/90627893e1093a701d9c0111866cf8f5f9be943e392309e32e2a2c1a7418463e.jpg?class=listingimagebannermax"
+    ]
+  },
+  "noerretorv-7-vejle": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejle/detailhandel-butik/db1f0afe-3e6d-46a7-b189-cc4ff718955e",
+    "price": 7445000,
+    "rent": 43739,
+    "subcat": "Detailhandel & butik",
+    "addr": "Nørretorv 7, 7100 Vejle",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/51/08/5108317155aa342c792edec13ac5af83d36c5cc2d29b03f3923c042c6998de22.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/04/1d/041d3d177ae90a150761aac236a18af8d8fddd3bb1efa0e225d5ea1389bc808a.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/78/88/78883e00ef36d22c0a7c660ffe13cea74de74f4913ded7b6386b062046e3fc07.jpg?class=listingimagebannermax"
+    ]
+  },
+  "ordrupvej-94-charlottenlund": {
+    "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/gentofte/detailhandel-butik/26448d23-1feb-4624-9d39-8b7a550e072b",
+    "price": 1200000,
+    "rent": 5650,
+    "subcat": "Detailhandel & butik",
+    "addr": "Ordrupvej 94, st 4, 2920 Charlottenlund",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/b8/67/b867963831f1a5b966a56b7c00459c7b74daca38a79212427c110c68be3e2a35.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/cb/66/cb6636a95eac6bf2dbae2966dea83761e220a34c8ffe2b634293f8a1476156ed.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5c/86/5c86782e5eff4a77226f9124980b4eb8eb8c4bc3bbbc75bdb970abe1d22dc6d1.jpg?class=listingimagebannermax"
+    ]
+  },
+  "ubberudvej-121-blommenslyst": {
+    "url": "https://www.ejendomstorvet.dk/investering/fyn/odense/detailhandel-butik/8160ee73-ed6e-45e5-997d-15cb09d8b0d5",
+    "price": 9495000,
+    "rent": 55546,
+    "subcat": "Detailhandel & butik",
+    "addr": "Ubberudvej 121, 5491 Blommenslyst",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/6d/f2/6df2d5104b4859e3d3d85bca2d1b6084d567d075e606a450ab5af9e2f54104ac.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/d4/54/d454f0186f22c3d5c3a0fa058513d4f0384067393c6d0a13ffaab2601ff527a0.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/4b/d9/4bd95e09f9df90716ae91d1a0d0067ca3b9ceb8d8eedf35966ae4d1fe308a8eb.jpg?class=listingimagebannermax"
+    ]
+  },
+  "noerregade-12b-ringsted": {
+    "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/ringsted/boligudlejning/9e428919-4417-4977-bb52-c27b16ee2b1c",
+    "price": 3795000,
+    "rent": 19576,
+    "subcat": "Boligudlejning",
+    "addr": "Nørregade 12B, 4100 Ringsted",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/1f/50/1f50de4072067847f9a91f24aa1e838d958df630aa4e85d9a4ae39dabaca2da8.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e6/82/e682bf9c6daa9e20c9a16fc2db7f96b44dab649bb58d4c217b65a86517c4811c.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/f6/a7/f6a75d2cf50f5a4232dc109d2c0dfce6b08d64d110f4c8819398a00b7337df5d.jpg?class=listingimagebannermax"
+    ]
+  },
+  "niels-bohrs-vej-14-laasby": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/skanderborg/lager-produktion/1c4a6869-ee04-4fb3-948e-c29638384c4a",
+    "price": 44500000,
+    "rent": 268854,
+    "subcat": "Lager & produktion",
+    "addr": "Niels Bohrs Vej 14, 8670 Låsby",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/ad/b0/adb03ab1ba96704e24b26f294a94f3483c9edb8bad9d0a5854b31a4f5d14ba77.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/71/2f/712fe85588fe755fe227803216455d0dd2211443c5fd0bcea89eba310894b431.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e5/ec/e5ec1cc349f45bd77edc12c7d51b6b8f253757dd1546a1d46f482aebfe8eecc8.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/3e/06/3e069dc058e7471b5d608dfb7e8d2090346027bde4ebf185e1315a106922cf75.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/9b/34/9b343390e770ad911779f009ef0e1a19f001a1ec2f9c6be638e5801c1fcddbc4.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/b1/bd/b1bd1dd4e30f7e74796abd16865043b76767f9af29f223d55a42d4b9e9df9a50.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/c9/b7/c9b75b5ce09c37099f42476cbbd5cfc320628ece7c64e1422e993f934e921920.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5a/4d/5a4d6466381060f61bb031b703d948cb4ae667a7837e087da2e12ae040804225.jpg?class=listingimagebannermax"
+    ]
+  },
+  "vordingborgvej-78c-herfoelge": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/koege/detailhandel-butik/b632c6af-8e0f-4b82-bc37-6185855c80f4",
+    "price": 38300000,
+    "rent": 207458,
+    "subcat": "Detailhandel & butik",
+    "addr": "Vordingborgvej 78C, 4681 Herfølge",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/cc/11/cc1139b1fdc667f8ebb430910d5971a18115ec28151e835f79ea76dbb2219c3d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e8/81/e881b15d77b365d4771ec079d81b300565503b9a0e3868e4997e5ca1c0f139d8.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/7e/33/7e3327600e7acca472936d6162496d86ed07ac1af5f777d909af5fe775a27ce1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/8f/85/8f856aa32eba037c3a93a1de5a1343a908c623510f7e3e0aa095e69eedd7a0c5.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/7c/67/7c67e0494ea1cef7580fbec9bd2a76899e1478c7c50402371b3f86ab6496f88c.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/66/7e/667e07631040272decfd58a35adeaa1d79e7a9b4c913e4fa2bc9fa3848d2698d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/da/ea/daea1c4c42edd52725570ca3d1d1a7507900430ba98f93ae2f911c69e7fb3433.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/06/6a/066a6f71a258805fb2cbd94a509560e144ead3e029ebcb023a3f0d05ca03b8d0.jpg?class=listingimagebannermax"
+    ]
+  },
+  "fiskene-20-aalborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordjylland/aalborg/detailhandel-butik/7b2ad39e-567c-484f-8843-acad8a063986",
+    "price": 42100000,
+    "rent": 254354,
+    "subcat": "Detailhandel & butik",
+    "addr": "Fiskene 20, 9200 Aalborg SV",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/b1/37/b137b2a9edbe5ed617b02a019bc52f06c0a77067f7572bae18b17e51c83655d4.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/4b/82/4b8279d2a5b98a395f0354bbbd914a3a7b0e608c3ee4c7a688f69e3ebbc8de33.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/f4/0f/f40f8a0994aaa469f15cafc73bcce54603c6ec274ebeb3599f252601e5e8ad5b.jpg?class=listingimagebannermax"
+    ]
+  },
+  "roedovrevej-210a-roedovre": {
+    "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/roedovre/detailhandel-butik/1405f112-81b9-4765-9387-bc09e7d57582",
+    "price": 18900000,
+    "rent": 109305,
+    "subcat": "Detailhandel & butik",
+    "addr": "Rødovrevej 210A, 2610 Rødovre",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/37/a5/37a564736c004dbf5e4061a434600c930be1b1b12bb4452163af3fce0ef07005.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/8a/f1/8af18aa55031b3d41a011c2ee7f98d5f938abc94e92ca4d420e19362a6508e5f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/52/b5/52b561252d78320ca6e79d1bc4f83b1112511f3601a7330d682949cb550da72e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/55/3a/553af2c3192a6bb9cbd5b36f7aaa60a39110afa0c1f9a5f0328429a797aa8f18.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/8b/c6/8bc6405dfe9827885c998e4480318783a7db3103afc431cd572b813e0b4e1905.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/f8/4b/f84bcd7271232d109d46d677cd5dfc82255822d71529fe2f5563cd277f850a61.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/c5/b0/c5b08d43149164f181355eb3e88baf13ad3fcf8289841d3f030490634f2f5ef8.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/74/84/748405752ad14b7d6c625b4df70c0a994fb725789d54949c35407de5764e340a.jpg?class=listingimagebannermax"
+    ]
+  },
+  "stormgade-155-esbjerg": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/esbjerg/hotel-restaurant/9d80c6a2-0dd9-4e2e-a633-e6cda43c3d1a",
+    "price": 28700000,
+    "rent": 149479,
+    "subcat": "Hotel & restaurant",
+    "addr": "Stormgade 155, st. 1., 6715 Esbjerg N",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/56/4d/564d254336bbab9dcf1d5c8f336bf3f85592f3a33da09f6a06204a1422ec1a9e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/54/e2/54e26659facd4fcca71ccba45c5c5eccdb3653506746f74e695604607b2f07c5.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/45/38/45384c08702f267a61eb04139e4e7f79448acbc0b22e1fa3dad3f61946ca6806.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/51/cd/51cdae70cb6cc311991863099a9b7617da68deb05aa6c1a251d100ab29828888.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/06/bb/06bb936154a886be5b20d100377f9fb20fd4373701b3704c0f86aa1dafc9ce74.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/42/7d/427d13b767941474183430c6cfbf7a3188de88c6b0af7394d4b85257b1af284b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ee/94/ee94f5da7910d9419a8ff491cb4ff2f028a81d28ea73ddcdae5370015df9172f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/3c/7a/3c7ab2fd50e2afbe676d1462a610fbc15d506e2323576c5d02cd3847c8383bd5.jpg?class=listingimagebannermax"
+    ]
+  },
+  "dalgas-plads-6-herning": {
+    "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/kontor/55fedd20-6fbd-4cf4-a924-c9e00a958671",
+    "price": 18500000,
+    "rent": 93425,
+    "subcat": "Kontor",
+    "addr": "Dalgas Plads 6, 7400 Herning",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/f9/58/f958131eb5964952c2bda783c0e041af46f3fbb2bd67e620683e3a39f104c170.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/7a/2d/7a2d835bd9943d0d4b99b62699392049ee40e176abc0094f6f8760daf1e9456b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/20/3a/203ac1fbbafcd5b656e28c1dd00991901008410e4a2ea0850c79e0fab9e99964.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/79/e2/79e220ac00cf1243686b7dfca6bed0a5b021ef21a2053e5137aff9a7ebef879f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/55/1e/551ea9e07ea397ca7a34156e42e89bd63ccff0e09a48338f8a92254ffac98433.jpg?class=listingimagebannermax"
+    ]
+  },
+  "moerupvej-9-herning": {
+    "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/lager-produktion/fc7f7e13-57cf-47f9-82d9-9d9b211ec34f",
+    "price": 35300000,
+    "rent": 250042,
+    "subcat": "Lager & produktion",
+    "addr": "Mørupvej 9, 7400 Herning",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/6d/31/6d318fc23aee9ceab1933f665206d0945283aca16b2207cf6cc171d24d5cedc1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/57/ee/57eed39ba492bec10bdd7a31d63acc8230a5cdf9fa875a924f6bfd52174bfd18.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/04/ae/04aed2e5d386ec54a85efe8a01ddf6e8241cb3dfa0ebd0eb147dd9695ef83218.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/c3/12/c312c7e52b350f310322368c9c77edc3c5f5ceb28e3674d42ff8416adad69a55.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/db/cf/dbcface8e043b336789a112e76013d48cb7dd40600a5cd4d2408bc27b2443b45.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/6d/1d/6d1dadd3b5a84006ae2f97cc637a804bbdaf03dc38676d6a874bf7860cfedd5f.jpg?class=listingimagebannermax"
+    ]
+  },
+  "kirkegaardsvej-38-koebenhavn-s": {
+    "url": "https://falcherhverv.dk/kirkegaardsvej-38-kl-tv-2300-koebenhavn-s/",
+    "price": 1350000,
+    "rent": 10350,
+    "subcat": "Hotel & restaurant",
+    "addr": "Kirkegårdsvej 38, kl. tv, 2300 København S",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/cb/ce/cbce0d220d5c9b00b8262e2cfbc8538be4c1a498fbce15331f7bbd54b9829ad2.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e7/5e/e75ed673ec9c83ac5b0d327b5d4f65f4abbe1328a3f2b5551504cf17ca02c0f6.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/28/57/285754f734d669f600e56fd7cea5154fbc09177bb33781d5f2de945a0f95b793.jpg?class=listingimagebannermax"
+    ]
+  },
+  "hallandsgade-2-4-amagerbrogade-38-koebenhavn": {
+    "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/koebenhavn/boligudlejning/e5d2bd16-449f-4759-b9a0-45d22a4f7a9e",
+    "price": 33000000,
+    "rent": 110000,
+    "subcat": "Boligudlejning",
+    "addr": "Hallandsgade 2-4/Amagerbrogade 38, 2300 København S",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/10/d8/10d8afcd42da128781d18ea13fd44276781a2ecb638d79d6eebcb49efdc44bb1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/61/16/61169748f3832a4d6656203099f14b9f97a427b63e60fe25121274a383ba9565.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/58/94/5894672c5efa30e90f974ec97262c8f209c5259a48c9da048fce7fde54fca2ab.jpg?class=listingimagebannermax"
+    ],
+    "contact": "khc@cpherhverv.dk"
+  },
+  "oestergade-11-hjoerring": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordjylland/hjoerring/detailhandel-butik/0be2a4a2-75c4-4f58-971b-06455bc23e50",
+    "price": 15382769,
+    "rent": 83323,
+    "subcat": "Detailhandel & butik",
+    "addr": "Østergade 11, 9800 Hjørring",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/af/99/af99be2d99859f99f75999d0f38269cb72b194ba38b49a1bcf62afe036e73de1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/70/f8/70f88e3d902cfd9428d3e034fa8f5ae7eddc4f7d515dc3ef09b551e3027a6e56.jpg?class=listingimagebannermax"
+    ],
+    "contact": "mk@mkcapital.dk"
+  },
+  "perlegade-68-soenderborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/soenderborg/andre-typer/6b254c62-00fe-456d-96ff-a713ffa87e80",
+    "price": 2400000,
+    "rent": 14404,
+    "subcat": "Andre typer",
+    "addr": "Perlegade 68, 6400 Sønderborg",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/44/a0/44a0c6a666a0b94eae0f2a0633b2068ef9b9559d66ab830bb13b5eae6396de5f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/16/21/1621a74c5120626b3ace3e2acf43421a15324a3179bcc5c93dadbdac178ce34c.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/85/78/8578694523ad1dcd9e950b87cc471f106c5a4dac468bdf6b4c87f318eb959fc1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/fb/b7/fbb7ef4d3cfd06b0f2acb242ae215e2ebd331b2aeececdead8a93f0f8fa54a0d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/fc/76/fc7681515f10bbfea51c4bbb71b8c3aab110bb1b4c00eccfeab0c2410808714a.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/cb/28/cb2881cb5002e23187e450c2646c309d19a5b84a6024be7e7436ef366f33da6e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/6a/db/6adb759c811fdb91d15b8cf1ce20578f11c965d1d359cc9f46ed4262c5273bf9.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/3b/81/3b8190332f18738274b54341f7667da958dd75f5d8772fc2105ccdc5e69be5a4.jpg?class=listingimagebannermax"
+    ],
+    "contact": "kia@1abolig.dk"
+  },
+  "sct-laurentii-vej-61a-skagen": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordjylland/frederikshavn/detailhandel-butik/d7a0545d-f77d-4f92-93fa-a14a3bcf5c1b",
+    "price": 6000000,
+    "rent": 34045,
+    "subcat": "Detailhandel & butik",
+    "addr": "Sct. Laurentii Vej 61A, 9990 Skagen",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/c7/80/c7809b73bb11b85e9345e6af05b1efa5ad5d2c1c8df5fa4b6e1e364d40b04199.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/f9/f3/f9f335d8a208d7973666085b5e37b81d426d1d5092d286a47638a04019148a7b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/36/a0/36a06b8ad3ee7d8d1767de71ec78a74467c56ecff8d1f3dfa1adabf356e05f34.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/3c/bd/3cbda50a9a37f2ddf7f8b613b870b07d33801bc187e51333daf24c0840b8d55b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2c/38/2c3838460565b2b25d5bcecbfedbc0f4f33e172bff261968cbef505b73221604.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/3a/f7/3af7d7672c08764ad705bee9bba24d55d9b841344ef7cb4b895a614809565ac3.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/f7/7b/f77bf749dd9828e908482e97ac643451c2815878ab36619bfa107dbb8c04bdd4.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/d1/8a/d18a79c1e771be935b4eb577c201283ce8a2836561dbe156dfa2c376c5bfe8c4.jpg?class=listingimagebannermax"
+    ],
+    "contact": "jjc@calundan.dk"
+  },
+  "jyllandsgade-29-fredericia": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/fredericia/boligudlejning/e91c96ea-1db9-43cb-a478-ee1cba4ceba2",
+    "price": 4875000,
+    "rent": 25106,
+    "subcat": "Boligudlejning",
+    "addr": "Jyllandsgade 29, 7000 Fredericia",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/f9/12/f91254e6db12046d86662cb5e35cbea9d72563032ca12b49f9fd0b5a12f578e6.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/b1/a6/b1a6e748f2a2c0686d4f7d034a2386ff6b0ccf1fc0326e92fc9652a974319ebf.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/16/f3/16f344a5a34455f839acd3c01a29dc64397eda41b07612e84a8c10c818a4f313.jpg?class=listingimagebannermax"
+    ],
+    "contact": "lars-bo@fm7000.dk"
+  },
+  "ellekaer-14-herlev": {
+    "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/herlev/lager-produktion/f673127b-9f42-4a94-b3f0-079a45e23096",
+    "price": 31000000,
+    "rent": 206667,
+    "subcat": "Lager & produktion",
+    "addr": "Ellekær 14, 2730 Herlev",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/45/76/4576b353d563d2cc39d5c006e893e875a1233027bb25eae807fd9e335e44d28f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/cd/71/cd7139e6360be171d728dc5eb89e93e2bef43ee7017aa33b97ad44fc3699a78e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/82/c3/82c3d6267e431b522a1f00468ae571b3b0faec30a0db43b34b9d2f1d4e7b666e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/1d/03/1d030c0198d8a49616904ce00dd75948ef598af1c2fee409ad4b0148e41a8b79.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/a7/f7/a7f754c377c32821ddff3acd34ff82d60cb08d68beb88ddf9907f6a95587e495.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/b5/15/b515839b7c75029dcc87deafcddb16f75e3c0b74dde292c72071bdec6590b215.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/3e/0d/3e0d241ef882738fd263c0f47d3db1b6732b925ba7db3a30cfc4c9d9c7c0ff9c.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e0/70/e0701cf2beabafe2cc549b1372ff728143be095596d525fe52aeac0005c9c923.jpg?class=listingimagebannermax"
+    ],
+    "contact": "mikkel@truemarketvalue.dk"
+  },
+  "jernbanegade-5a-c-fredensborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/fredensborg/boligudlejning/1e32a749-793c-40a8-834b-b3bdcd095d88",
+    "price": 35500000,
+    "rent": 136083,
+    "subcat": "Boligudlejning",
+    "addr": "Jernbanegade 5A-C, 3480 Fredensborg",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/b2/1f/b21f98f0ddba7fa5e33bc0dff8615d47aa141e85aa9dee097857671335d07393.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/43/1d/431d6d5dec71448c5965ac250b2ca1a5ddaf6fb802e970a50ec354c1544190cc.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/7c/cb/7ccbc8c92be9da2c4dc641dd34d782aeb163eb9a5043ceadb8aae169e4466b73.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/06/b3/06b3a4e2bc40f032d2e7fb8fad8e09e29fdf6be52cac245fac3875dc166549b9.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2c/29/2c2946815c1125f35410c834524f3ac4a6b282ded9fc3b6b6706202799086896.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/53/03/53035c6d6f03a1909771a6bdc8a5475582480c02100bc73cfb464551ebdbcf0e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/c6/7d/c67dd8bda8869994ec09ef84f5802fe6734f5d866e8ded01632cfc74b2b32f02.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ae/cc/aecc23e92a26c2cb128c417d73c5ce28b0167f5bd200f237246d5752c38349f6.jpg?class=listingimagebannermax"
+    ],
+    "contact": "cs@kraer.dk"
+  },
+  "oestergade-20b-horsens": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/48b66212-3ffa-4964-b060-9e10ba5b9735",
+    "price": 2170000,
+    "rent": 9041,
+    "subcat": "Boligudlejning",
+    "addr": "Østergade 20B, 8700 Horsens",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/a4/96/a4967f6591c9d72c8e18405395b472026ca64c4bc28fcc662bc11c873a8965fe.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/a3/96/a396b213c73e771ba81964467ef0e16b739d351b9d5d2f9cf7a89aeede05e112.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/54/e8/54e8f4fb6939b49310da5adeb0063fdc5151b76bcf2feedd011940ce67c1d323.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/d8/0d/d80dbf8333053e35dec3fb5c904cdec45f155def8a48a56e6123fda5b1df27ca.jpg?class=listingimagebannermax"
+    ],
+    "contact": "kent@kmerhverv.dk"
+  },
+  "svinget-2-jelling": {
+    "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejle/lager-produktion/eeb02257-37b0-4de0-a025-534373925b52",
+    "price": 3750000,
+    "rent": 28416,
+    "subcat": "Lager & produktion",
+    "addr": "Svinget 2, 7300 Jelling",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/63/ba/63ba87d322e0e3e8c69d8dcb53a490d0ab9838f642e84d5208c4aab8f9804d7a.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/33/f0/33f0582b36bdf2fae9c00c408f6c238570aba65e2d2142741563c8abc390b82b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/0d/fd/0dfd1081b293284b24415545cd967471e6f9c38d226a086086dfc76a338ea8a3.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/99/c2/99c27b3f896151ac874b0c21cc11990181f8e7af3dfdc93aae2246002bdb37ba.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/23/02/23020c9d13d575fff855e3a138c1720e3941058087ed88cf9de16d6c107810f3.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/fa/d5/fad550892fa2640f8601e4e60f44aa4166eca35338a73e24e94ca5d630358ac2.jpg?class=listingimagebannermax"
+    ],
+    "contact": "hesel@hesel.dk"
+  },
+  "kongevejen-40-helsingoer": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/helsingoer/boligudlejning/a0ecaa30-8348-4709-9bc9-b991f07f532f",
+    "price": 10995000,
+    "rent": 42782,
+    "subcat": "Boligudlejning",
+    "addr": "Kongevejen 40, 3000 Helsingør",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/1d/b2/1db2623cd14e4308e521ddc6817231cc266df0bbc4930f6ecc6febc1f49f9334.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/df/4c/df4c22e62a36734eb3e308d634b82a2949ef2899c6adb8c7e06025b2fd6b70b2.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/90/3a/903ad1744564709f09b063d1aecce283c4b796b6be2dcc636262a84b4967aa10.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/04/c2/04c2c4b4e99864f4a4d7a167ce06aaf925a1e3dd5d97b5c73b1eab7068bb1cad.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2c/05/2c0583b3673083baa7f7e9f7d222387a13bbb2ebfb5c1addfc2504a0621afa53.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2f/2e/2f2e4a35b3297fad44839c3d78bec683ce95cd94da27dc66ec8e07131b3522dd.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/3a/8b/3a8babedbfd6101f4315457b5b5ae818fd7ef1774a5c31cf0e299df2a1c342cd.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/22/2c/222cbfd1422e260c9a982a144168ebd81d11351c1acf43ebf0114a4e68f7464a.jpg?class=listingimagebannermax"
+    ],
+    "contact": "jrn@mailreal.dk"
+  },
+  "sleipnersvej-14-ringsted": {
+    "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/ringsted/lager-produktion/06ad95ea-b91c-4837-b36b-f820863f3de1",
+    "price": 8500000,
+    "rent": 52288,
+    "subcat": "Lager & produktion",
+    "addr": "Sleipnersvej 14, 4100 Ringsted",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/06/31/06310732758f29a9289f7df7ae48a388e13e4142486442f53ccc638d4f1c9e90.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/80/71/80715b6255e524873a726e628c21be729c551a85c43963aa93545d131b821e6f.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/25/15/251592364ef5a2faab0b8460624c0bf3255cfc6e8efbb985c5a6d5fbfdbab4d6.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/66/3b/663bbf72c3c9dbff6d189ceb49ffb7e78f5ac9e84c4568d996f9069159d40f44.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/6d/9d/6d9dde2708cf317aaa164bf0a80cb8e8f2d0ed3c1216e72ea6131a5fdd9ea72c.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ae/a0/aea060ecf93f9a861fc07134a9794b01bd1d318bc06912390198b38492491aaf.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/36/b3/36b32f45f007539d07daee283666a57bba99844aed857a7ebb3777d81da5c166.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ea/e7/eae7ce99846da494bb753034db3669522177fc83ace547822977d1c1f83a1d68.jpg?class=listingimagebannermax"
+    ],
+    "contact": "4700@nordicals.dk"
+  },
+  "hvidkaervej-44-odense": {
+    "url": "https://www.ejendomstorvet.dk/investering/fyn/odense/lager-produktion/9ad1ea9b-3e08-4e7e-bf0a-20b75e168bf9",
+    "price": 3775000,
+    "rent": 20511,
+    "subcat": "Lager & produktion",
+    "addr": "Hvidkærvej 44, 5250 Odense SV",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/01/b4/01b4bf978e01e9adf13b8e6d9c26a3594463f9ef224026e0f58c56cf7a7e1040.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/43/be/43bec9c3369674e242814eca54c4a2415623ddd5462e91e6192cda4f3b705ac4.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/8b/dc/8bdcff1df32cc2f5b3f60ba183aeb60ed155f8c8704410613760c9767ea2c8f2.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/26/25/2625c46d8a28753379de22903034d4ae5753b3e9de5efde04873c9503f2169cb.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/96/c8/96c87f572cf639c2b15e643ed25aa34aff10cbc9fdb5c63039e81837cd8a8b39.jpg?class=listingimagebannermax"
+    ],
+    "contact": "restato@restato.dk"
+  },
+  "aeroevej-24-viborg": {
+    "url": "https://www.ejendomstorvet.dk/investering/vestjylland/viborg/lager-produktion/3ed884c5-1b21-4b65-a73e-f82508adf2a0",
+    "price": 3575000,
+    "rent": 21033,
+    "subcat": "Lager & produktion",
+    "addr": "Ærøvej 24, 8800 Viborg",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/cf/e3/cfe346d204d976bca783cdf0ad7bd757c24d158602fb297083c7387b406e4b32.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/62/b6/62b65173256871cdba4dce5dc605cda349882f9d776d08949b811844ba880f93.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/37/c7/37c7391bea7bfb8d29707efba7e40431b18f33e24ca566c96712c20bc3e69865.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2d/cd/2dcd1a37cc8d8564d90467a4aeb6c0177084e19ae323aef7075829bbedbd713b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5b/a6/5ba680e51127550b4e94ed8a37bca5360ddf0f3e53119ea34dc954ada1d31909.jpg?class=listingimagebannermax"
+    ],
+    "contact": "mail@wulffpartnere.dk"
+  },
+  "schaldemosevej-3-ringsted": {
+    "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/ringsted/boligudlejning/ad734244-9704-4aec-a221-e3da662cdab7",
+    "price": 5500000,
+    "rent": 24383,
+    "subcat": "Boligudlejning",
+    "addr": "Schaldemosevej 3, 4100 Ringsted",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/38/b3/38b30904a09b46b3a644887ac5bf3015d5486b6ef67ed4810665d24c7fd0732a.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/71/5a/715a6d9bb7660ea70085eeb92ab287c2dff1886e1e246d6159df293834bfffed.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ee/64/ee6449b08c2cf8cbbf14c4adf0fe02dd273e3bd8936078b65901b005e68e6b1b.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/dd/81/dd813ed679f8cad78a6a2fcb50472030d2b1a93b04ccfb738d1e62e88498de57.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/ad/4a/ad4a99941f5eea85256563f98c2ddb36c47e07867a3582ebdeff383072e2175f.jpg?class=listingimagebannermax"
+    ],
+    "contact": "info@ekmanbolig.dk"
+  },
+  "stjernegade-5c-helsingoer": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/helsingoer/detailhandel-butik/436bf83f-a124-47b5-b824-76614ebafe26",
+    "price": 1050000,
+    "rent": 4723,
+    "subcat": "Detailhandel & butik",
+    "addr": "Stjernegade 5C, 3000 Helsingør",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/56/4e/564e88ea8bf3acbb2b8307f02dcaa9d5b6d9a9bb3f9be12cfd341f039b9eb941.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/cc/dc/ccdc8ad6bbbc442c86945b0cdad1c65d587c3b086b0beadfec8df0da32222687.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/0b/5c/0b5cc0a692e85b2a53a418d0ba449b37f355e738e64869521d4db4408ea780d3.jpg?class=listingimagebannermax"
+    ],
+    "contact": "info@boldsenerhverv.dk"
+  },
+  "hovedgaden-24-birkeroed": {
+    "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/rudersdal/detailhandel-butik/200d48ef-79bf-4839-84f3-9f764d590bfc",
+    "price": 8750000,
+    "rent": 56466,
+    "subcat": "Detailhandel & butik",
+    "addr": "Hovedgaden 24, st., 3460 Birkerød",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/e2/5a/e25a7335d2388d894d9f22d3ff226a30de9df59142fdcf82ac36c959cac9326e.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/a8/c2/a8c2d652f95e9018742e5ee399f51f5fe6d7d345780632a4705688001ea74a55.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/9c/05/9c05e4c8383f6eaef86e319d661bd675ccffe897f00bb2994433f617c6786fc4.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/4c/0d/4c0dc60dae0076585035d9f61026f2da0d9b0b798dd550c9f761e40d14f7bcb7.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/56/89/56892581c3245a288c7452b7c682aa44128053ecdd157943c6fd7261565cfb49.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5c/69/5c69f66579a0c603cd1a4c4d6bb974af0523f3a7344db44623039c5edb0a2b99.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/dc/41/dc41626ded665b0b008689c266462847d427def8b1c3bee7fa9f69240ecbea21.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/5e/c0/5ec0ac5058cbb58d83fbbed7cc59e0a9614a085f0968fa45c2e7c66927d691bf.jpg?class=listingimagebannermax"
+    ],
+    "contact": "info@2-c.dk"
+  },
+  "jernbanegade-5-nykoebing": {
+    "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/guldborgsund/andre-typer/4a2c9b15-c9a9-4690-b5fe-fc7ca5022b98",
+    "price": 3595000,
+    "rent": 24354,
+    "subcat": "Andre typer",
+    "addr": "Jernbanegade 5, 4800 Nykøbing F",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/95/59/9559e5406aa431238a69d6686aa798d7f33ae7ecaca0feeafa073caa83a6a497.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/15/f7/15f732e1c04b18bbde275b09019fa0bf29878cb99bc407356db53f9b30640fa2.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/38/98/3898b6392662e8c8a6d1affddae6a014afea83904960d396f46a346c3e9ce5bb.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e3/99/e3991ffec63b9992b667c639ecc04f54048e499f9013b231ff12f42198c5d4c0.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/51/01/5101c05bccb61ab0d10e0b4ca91700d691b80aa0182bf8826cee5809251c87a1.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/05/2b/052b0a93810cd2dbedac33fd1b630ddbcc0b34394dedf7dfcd74ee52d64fb6c3.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/65/ee/65eef2acc9d132a40d7f59756826beda04efe027e13d50ce667990643e7e2dd8.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e7/4d/e74d62807717bbe5e54ce989d91dd8808e3c43f343d4df9c25e2d9817ca79a25.jpg?class=listingimagebannermax"
+    ],
+    "contact": "post@john-ole.dk"
+  },
+  "maroegelhoej-9-lystrup": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestjylland/aarhus/lager-produktion/dcf372da-cab8-46b8-be88-7d7b757ab0be",
+    "price": 12000000,
+    "rent": 65700,
+    "subcat": "Lager & produktion",
+    "addr": "Marøgelhøj 9, 8520 Lystrup",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/80/40/804009dfbd8d9c5203a414f4f513b2e886814cb8dbdf8ab2b0a2e7f52d5f9c54.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/e2/5b/e25b9bd9f6d573e569dd7541e338cb8462e2da17e9847bbf361accae6aa51509.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/a4/4c/a44cd4cdbd8508112ae89d26845abe330a8f3cd3887d8aa501e02b659d0c10ce.jpg?class=listingimagebannermax"
+    ],
+    "contact": "info@tk-erhverv.dk"
+  },
+  "oestergade-3-rudkoebing": {
+    "url": "https://www.ejendomstorvet.dk/investering/fyn/langeland/andre-typer/9161f9fe-3d44-42b3-a903-d2878c3668a2",
+    "price": 1395000,
+    "rent": 8300,
+    "subcat": "Andre typer",
+    "addr": "Østergade 3, 5900 Rudkøbing",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/03/38/0338bc4e149732b54054523f966a7f0b3d082eaab2217adccea3216d2655149a.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/34/f1/34f1fb8f657ca6f74c9f53daff1f721c7a7bcb19c174aa94d324b97bfb4eb849.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/24/63/24631c6c9e416b7733c4a8872c14d1650ea55550333abe8572807324da9207b3.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/4b/f8/4bf8082dd580fda541b124aa43243ba95b0c2dec6a89d2f80f9957ecd8e27b9a.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/19/c9/19c947d8c4fa64cf34458752e4992885016eab6a0ca67504764aaf008f217724.jpg?class=listingimagebannermax"
+    ],
+    "contact": "info@mengbolig.dk"
+  },
+  "skomagergade-36a-roskilde": {
+    "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/andre-typer/cbf8c749-7095-498f-885c-e7fc4168dc16",
+    "price": 19495000,
+    "rent": 97475,
+    "subcat": "Andre typer",
+    "addr": "Skomagergade 36A, 1.th., B & C, 4000 Roskilde",
+    "imgs": [
+      "https://i.ejendomstorvet.dk/49/3a/493a1622daa54b8d3ffcd8d1a0759f2a8bc8380e17c283d13c6b789bfdcfff1d.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/2d/5b/2d5b342317795979ea63e364b9e300cf14c1a0954412138ed449afb7c2287f92.jpg?class=listingimagebannermax",
+      "https://i.ejendomstorvet.dk/08/b6/08b6ce5bb8d142a9bcf580a96655dcab2a724f81a1c92a376a4d472243869833.jpg?class=listingimagebannermax"
+    ],
+    "contact": "info@heidebyestate.com"
+  }
 }

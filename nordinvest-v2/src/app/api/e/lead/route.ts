@@ -47,7 +47,8 @@ export async function POST(req: Request) {
   if (!stored.ok) return json({ ok: false, reason: stored.duplicate ? "duplicate" : "busy" }, stored.duplicate ? 409 : 429);
 
   const owner = link.ownerId ? await getAuthUser(link.ownerId) : null;
-  const agentEmail = owner?.email ?? null;
+  // A broker with an account gets it in the tool too; a hand-made outreach link has the listing agent's address.
+  const agentEmail = owner?.email ?? link.contact ?? null;
   const to = agentEmail ?? "contact@nordinvest.io";
   const street = link.addr.split(",")[0];
   const page = `${SITE}/e/${slug}`;
@@ -59,7 +60,7 @@ ${lead.phone ? `<tr><td style="padding:4px 12px 4px 0;color:#64748b">Telefon</td
 <p style="white-space:pre-line;background:#f1f5f9;border-radius:8px;padding:12px 14px">${esc(lead.message)}</p>`;
 
   const toAgent = agentEmail
-    ? wrap(`<p>Hej,</p><p>En køber har læst investoranalysen af <b>${esc(link.addr)}</b> og skrevet til dig:</p>${details}<p>Svar direkte på denne mail, så går dit svar til køberen.</p><p style="font-size:13px;color:#64748b">Analysen: <a href="${page}">${page.replace(/^https?:\/\//, "")}</a>. Du kan se alle henvendelser i <a href="${SITE}/maegler">mæglerværktøjet</a>.</p><p>Venlig hilsen<br>NordInvest</p>`)
+    ? wrap(`<p>Hej,</p><p>En køber har læst investoranalysen af <b>${esc(link.addr)}</b> og skrevet til dig:</p>${details}<p>Svar direkte på denne mail, så går dit svar til køberen.</p><p style="font-size:13px;color:#64748b">Analysen: <a href="${page}">${page.replace(/^https?:\/\//, "")}</a>. ${owner ? `Du kan se alle henvendelser i <a href="${SITE}/maegler">mæglerværktøjet</a>.` : "Analysen er lavet af NordInvest ud fra jeres annonce. Vil du lave sider som denne til jeres andre sager, så skriv til contact@nordinvest.io."}</p><p>Venlig hilsen<br>NordInvest</p>`)
     : wrap(`<p>Ny henvendelse fra en køber på en delt analyse, der ikke har en mægler-konto. Send den videre til mægleren på sagen.</p><p><b>${esc(link.addr)}</b><br><a href="${link.url}">${esc(link.url)}</a></p>${details}<p style="font-size:13px;color:#64748b">Analysen: ${page}</p>`);
   const sentAgent = await send(to, `Ny henvendelse om ${street} via NordInvest`, toAgent, lead.email);
   // If the agent's mail bounces at Resend, NordInvest gets it instead and forwards it by hand.

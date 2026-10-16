@@ -22,6 +22,7 @@ export type BrokerLink = {
   ownerId?: string;
   createdAt?: string;
   legacy?: boolean; // one of the hand-made links in maegler-links.json
+  contact?: string; // hand-made links: the listing agent's e-mail, where buyer messages go (never sent to the browser)
 };
 
 const BUCKET = "member-data";

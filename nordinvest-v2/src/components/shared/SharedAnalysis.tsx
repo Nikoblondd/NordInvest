@@ -16,7 +16,7 @@ import { BuyerContact } from "@/components/shared/BuyerContact";
  * payment and the rate, and everything recalculates.
  */
 
-export type SharedListing = { slug?: string; url: string; price: number; rent: number; subcat: string | null; addr: string; imgs?: string[]; ownerId?: string };
+export type SharedListing = { slug?: string; url: string; price: number; rent: number; subcat: string | null; addr: string; imgs?: string[]; direct?: boolean };
 
 /** The site the listing is on, for "Annoncen på …". */
 const sourceOf = (u: string) => { try { const h = new URL(u).hostname.replace(/^www\./, ""); return /ejendomstorvet/.test(h) ? "Ejendomstorvet" : h; } catch { return "mæglerens side"; } };
@@ -83,7 +83,7 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
 
       {l.slug && (
         <div id="kontakt-maegler" className="mx-auto mt-8 max-w-[1080px] scroll-mt-24 px-4 sm:px-6">
-          <BuyerContact slug={l.slug} street={l.addr.split(",")[0]} viaNordInvest={!l.ownerId} />
+          <BuyerContact slug={l.slug} street={l.addr.split(",")[0]} viaNordInvest={!l.direct} />
         </div>
       )}
 
