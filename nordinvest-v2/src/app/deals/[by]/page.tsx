@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 // Worded the way people search: "investeringsejendomme <by>", "udlejningsejendom <by>".
-const title = (c: { in: string }) => `Investeringsejendomme ${c.in} til salg: de bedste nu`;
+const title = (c: { in: string }) => { const base = `Investeringsejendomme ${c.in} til salg`; return base.length <= 46 ? `${base}: de bedste nu` : base; };
 const description = (c: { name: string; in: string }) =>
   `Investeringsejendomme og udlejningsboliger til salg ${c.in}, rangeret efter cashflow og afkast. Se hvilke der giver plus. Opdateres hver 6. time.`;
 

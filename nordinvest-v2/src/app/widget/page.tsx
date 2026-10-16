@@ -6,7 +6,7 @@ import { WidgetBuilder } from "@/components/widget/WidgetBuilder";
 import { ALL_DEAL_CITIES } from "@/lib/deal-cities";
 
 export const metadata: Metadata = {
-  title: { absolute: "Gratis boligwidget til lokale medier: månedens bedste køb · NordInvest" },
+  title: { absolute: "Gratis boligwidget til lokale medier · NordInvest" },
   description:
     "Vis jeres læsere de boliger i jeres kommune, der regner bedst som udlejning. Gratis widget med live data fra NordInvests Deal-motor, opdateret hver 6. time.",
   alternates: { canonical: "/widget" },

@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 export const metadata: Metadata = {
-  title: { absolute: "Beregn afkast på ejendom: afkastberegner med formler · NordInvest" },
+  title: { absolute: "Beregn afkast på ejendom: afkastberegner · NordInvest" },
   description:
     "Beregn bruttoafkast, nettoafkast (afkastningsgrad), kontantafkast og cash flow på en udlejningsbolig. Med formlerne, så du også kan regne det i Excel.",
   alternates: { canonical: "/beregn-afkast" },

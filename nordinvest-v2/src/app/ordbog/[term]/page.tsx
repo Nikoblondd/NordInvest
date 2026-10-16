@@ -17,7 +17,7 @@ export function generateMetadata({ params }: { params: { term: string } }): Meta
   const desc = t.definition.length > 158 ? t.definition.slice(0, 155).replace(/\s+\S*$/, "") + "…" : t.definition;
   return {
     // Keep the search title under ~60 characters: long questions use the term instead.
-    title: t.question.length <= 34 ? `${t.question.replace(/\?$/, "")}: forklaring og eksempel` : `${t.term}: hvad det er, formel og eksempel`,
+    title: [`${t.question.replace(/\?$/, "")}: forklaring og eksempel`, `${t.question.replace(/\?$/, "")}? Forklaring`, `${t.term}: forklaring og eksempel`, `${t.term}: hvad er det?`].find((x) => x.length <= 47) ?? t.term,
     description: desc,
     alternates: { canonical: `/ordbog/${t.slug}` },
   };

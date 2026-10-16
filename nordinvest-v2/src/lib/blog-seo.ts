@@ -6,6 +6,10 @@
  */
 
 export const BLOG_SEO: Record<string, { title?: string; description?: string }> = {
+  "hus-eller-lejlighed-udlejning": {
+    title: "Hus eller lejlighed som udlejning? Tal for 16.353 boliger",
+    description: "12,5 % af husene til salg giver plus som udlejning, mod 4,2 % af ejerlejlighederne. Se tallene opdelt på pris, boligtype og kommune.",
+  },
   "godt-afkast-udlejningsejendom": {
     title: "Godt afkast på en udlejningsejendom? Tal for 2026",
     description: "Et godt nettoafkast på en udlejningsejendom ligger på 5-7,5 %. Medianen er 6,1 % for 1.213 ejendomme til salg. Se tal efter type, pris og kommune.",

@@ -6,7 +6,7 @@ import { TERMS } from "@/lib/terms";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Ordbog om ejendomsinvestering: begreberne forklaret",
+  title: "Ordbog om ejendomsinvestering: begreber forklaret",
   description:
     "Cash flow, afkastningsgrad, kontantafkast, markedsleje og omkostningsbestemt leje forklaret med formel og eksempel. Ordbog for ejendomsinvestorer.",
   alternates: { canonical: "/ordbog" },

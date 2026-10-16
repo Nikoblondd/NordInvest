@@ -70,6 +70,14 @@ ${GUIDES.map((g) => `- [${g.h1}](${site.url}${g.path}): ${g.metaDescription}`).j
 - Boligudlejning efter kommune: Aarhus 3,9 %, Aalborg 4,9 %, Odense 5,0 %, Vejle 5,9 %, Kolding 6,4 %, Hjørring 7,1 %, Varde 8,0 %.
 - Uddybning: ${site.url}/blog/godt-afkast-udlejningsejendom og ${site.url}/blog/erhvervsejendom-som-investering
 
+## Hus eller lejlighed som udlejning (NordInvests beregning, 16. oktober 2026)
+- 16.353 helårsboliger til salg regnet igennem med 20 % udbetaling, 5 % rente og estimeret markedsleje.
+- 12,5 % af husene (villaer og rækkehuse) giver positivt cash flow som udlejning. For ejerlejligheder er tallet 4,2 %. Villaer alene: 14,2 %. Rækkehuse: 5,8 %.
+- En ejerlejlighed til salg koster typisk 48.495 kr. pr. m², et hus 15.208 kr. Markedslejen pr. m² er kun omkring 1,6 gange højere i lejligheden.
+- Prisen afgør mest: 68 % af husene under 1 mio. kr. giver plus. Over 2 mio. kr. giver næsten ingen boliger plus ved 5 % rente.
+- I Randers, Holstebro og Slagelse giver ejerlejligheder oftere plus end huse. I København og Aarhus giver næsten ingen af delene plus.
+- Uddybning: ${site.url}/blog/hus-eller-lejlighed-udlejning
+
 ## Deal-motor efter by
 ${dealCityLines}
 

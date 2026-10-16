@@ -11,7 +11,7 @@ import { site } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 const PATH = "/udlejningsejendomme-til-salg";
-const TITLE = "Udlejningsejendomme og erhvervsejendomme til salg nu";
+const TITLE = "Udlejnings- og erhvervsejendomme til salg nu";
 const DESCRIPTION = "Alle udlejnings- og erhvervsejendomme til salg i Danmark regnet igennem: startafkast pr. ejendomstype, cash flow ved 40 % udbetaling og de bedste lige nu.";
 
 export const metadata: Metadata = {
