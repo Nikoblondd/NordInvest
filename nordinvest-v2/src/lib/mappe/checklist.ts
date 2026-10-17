@@ -129,6 +129,8 @@ export type Mappe = {
   maxBid?: number | null;
   /** The listing agent (or seller) for this property. */
   contact?: Contact | null;
+  /** Running the property once it is bought (lib/drift). */
+  drift?: import("@/lib/drift").Drift;
   updatedAt?: string;
 };
 

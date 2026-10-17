@@ -16,6 +16,7 @@ import { ItemRow } from "./Calendar";
 import { PropertyImage } from "./PropertyImage";
 import { Toast, btn } from "./ui";
 import { useCalendar } from "./useCalendar";
+import { EMPTY_DRIFT, actualCashFlow, balance, estimatedValue, expectedRent } from "@/lib/drift";
 
 /*
  * Overblik: the member's day, the way an operations tool opens. Today's plan
@@ -63,6 +64,12 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
   const totalStage = byStage.reduce((a, b) => a + b.n, 0);
   const recent = [...live].sort((a, b) => (mappeOf(b).updatedAt ?? b.created_at).localeCompare(mappeOf(a).updatedAt ?? a.created_at)).slice(0, 4);
   const homes = live.map((r) => ({ id: r.id, address: addrOf(r) }));
+  // Bought properties: the portfolio in running numbers.
+  const owned = live.filter((r) => mappeOf(r).stage === "koebt").map((r) => ({ r, d: mappeOf(r).drift ?? EMPTY_DRIFT }));
+  const port = owned.reduce((a, { d }) => {
+    const act = actualCashFlow(d), debt = d.loan ? balance(d.loan) : 0, val = estimatedValue(d);
+    return { rent: a.rent + expectedRent(d), cf: a.cf + (act?.avg ?? 0), hasCf: a.hasCf || !!act, equity: a.equity + (val != null ? val - debt : 0), hasEq: a.hasEq || val != null };
+  }, { rent: 0, cf: 0, hasCf: false, equity: 0, hasEq: false });
 
   const start = [
     { done: agents.length > 0, t: "Opret en søgeagent", d: "Den holder øje med markedet og giver besked om nye boliger.", href: "/app/find/agenter" },
@@ -113,6 +120,23 @@ export function Overview({ firstName, initial, events, agents: initialAgents, de
         <Kpi label="Bud ude" value={bids.length} sub={bids[0] ? `${street(addrOf(bids[0].r))}, ${OFFER_STATUS[bids[0].o.status].toLowerCase()}` : "ingen lige nu"} href="/app/ejendomme" />
         <Kpi label="Nye fra agenter" value={fresh.length} sub={agents.length ? `${agents.filter((a) => a.active).length} ${agents.filter((a) => a.active).length === 1 ? "agent kører" : "agenter kører"}` : "ingen agenter endnu"} href="/app/find/agenter" tone={fresh.length ? "new" : undefined} />
       </div>
+
+      {owned.length > 0 && (
+        <section aria-labelledby="port-h" className="mt-6 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="port-h" className="text-[16px] font-semibold">Din portefølje</h2>
+            <span className="text-[13px] font-medium text-slate-500">{owned.length} {owned.length === 1 ? "ejendom" : "ejendomme"}</span>
+          </div>
+          <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div><dt className="text-[13px] text-slate-500">Husleje pr. md.</dt><dd className="text-[22px] font-semibold tabular-nums">{Math.round(port.rent).toLocaleString("da-DK")} kr.</dd></div>
+            <div><dt className="text-[13px] text-slate-500">Faktisk cash flow pr. md.</dt><dd className={clsx("text-[22px] font-semibold tabular-nums", port.hasCf && (port.cf >= 0 ? "text-emerald-700" : "text-rose-600"))}>{port.hasCf ? `${port.cf >= 0 ? "+" : "−"}${Math.round(Math.abs(port.cf)).toLocaleString("da-DK")} kr.` : "–"}</dd></div>
+            <div><dt className="text-[13px] text-slate-500">Friværdi (skøn)</dt><dd className="text-[22px] font-semibold tabular-nums">{port.hasEq ? `${Math.round(port.equity).toLocaleString("da-DK")} kr.` : "–"}</dd></div>
+          </dl>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {owned.map(({ r }) => <li key={r.id}><Link href={`/app/ejendomme/${r.id}?fane=drift`} className="inline-flex min-h-[36px] items-center gap-1 rounded-full bg-white px-3 text-[13px] font-semibold text-slate-700 ring-1 ring-slate-200 hover:ring-slate-300">{street(addrOf(r))} <ArrowRight size={13} /></Link></li>)}
+          </ul>
+        </section>
+      )}
 
       <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         {/* Today */}

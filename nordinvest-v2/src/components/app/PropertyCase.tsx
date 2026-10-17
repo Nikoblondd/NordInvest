@@ -14,6 +14,8 @@ import { OfferDialog, applyOffer, offersOf, OFFER_TONE } from "./OfferDialog";
 import { ItemRow } from "./Calendar";
 import { btn } from "./ui";
 import { PropertyImage } from "./PropertyImage";
+import { Drift } from "./Drift";
+import { EMPTY_DRIFT, driftFromCase } from "@/lib/drift";
 import type { Draft } from "./useCalendar";
 
 /*
@@ -24,9 +26,10 @@ import type { Draft } from "./useCalendar";
  * (property_data.mappe), so nothing is typed twice.
  */
 
-type Tab = "overblik" | "aftaler" | "bud" | "papirer" | "tjekliste" | "kontakt" | "noter";
+type Tab = "overblik" | "drift" | "aftaler" | "bud" | "papirer" | "tjekliste" | "kontakt" | "noter";
 const TABS: { id: Tab; label: string }[] = [
   { id: "overblik", label: "Overblik" },
+  { id: "drift", label: "Drift" },
   { id: "aftaler", label: "Aftaler" },
   { id: "bud", label: "Bud" },
   { id: "papirer", label: "Papirer" },
@@ -46,7 +49,8 @@ const when = (iso: string) => new Date(iso).toLocaleString("da-DK", { day: "nume
 export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: string }) {
   const pd = useMemo(() => row.property_data ?? {}, [row.property_data]);
   const [m, setM] = useState<MappeData>({ ...EMPTY_MAPPE, ...(pd.mappe ?? {}) });
-  const startTab = initialTab ? ALIAS[initialTab] ?? initialTab : "overblik";
+  // A bought property opens on its running numbers.
+  const startTab = initialTab ? ALIAS[initialTab] ?? initialTab : m.stage === "koebt" ? "drift" : "overblik";
   const [tab, setTab] = useState<Tab>(TABS.some((t) => t.id === startTab) ? (startTab as Tab) : "overblik");
   const [saving, setSaving] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [view, setView] = useState<Stage>(m.stage === "droppet" ? "screening" : m.stage);
@@ -95,8 +99,11 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
 
   const setStage = (s: Stage | "droppet") => {
     if (s === mRef.current.stage) return;
-    persist((c) => withLog({ ...c, stage: s }, `Flyttet til ${STAGE_LABEL[s]}`, "fase"));
+    // Bought: the case becomes a property in the portfolio, starting from the price paid and the analysis' loan.
+    const accepted = offersOf(mRef.current).find((o) => o.status === "accepteret")?.amount ?? null;
+    persist((c) => withLog({ ...c, stage: s, ...(s === "koebt" && !c.drift ? { drift: driftFromCase(pd as Record<string, unknown>, accepted) } : {}) }, `Flyttet til ${STAGE_LABEL[s]}`, "fase"));
     if (s !== "droppet") setView(s);
+    if (s === "koebt") pick("drift");
   };
   const done = (id: string, auto?: string) => !!m.checks[id] || auto === "analysis";
   const progress = useMemo(() => {
@@ -199,7 +206,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
 
       {/* Tabs */}
       <div role="tablist" aria-label="Sagen" className="-mx-4 mt-5 flex gap-1 overflow-x-auto border-b border-slate-200 px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
-        {TABS.map((t) => {
+        {TABS.filter((t) => t.id !== "drift" || m.stage === "koebt").map((t) => {
           const n = t.id === "papirer" ? m.docs.length : t.id === "aftaler" ? upcoming.length + late.length : t.id === "tjekliste" ? progress.total - progress.done : t.id === "bud" ? offers.length : 0;
           return (
             <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => pick(t.id)}
@@ -298,6 +305,13 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
             </div>
           </div>
         )}
+
+        {tab === "drift" && m.stage === "koebt" && (
+          <Drift drift={m.drift ?? EMPTY_DRIFT} expected={ar.cashFlow ?? null}
+            onChange={(drift, log) => persist((c) => (log ? withLog({ ...c, drift }, log, "note") : { ...c, drift }))}
+            onTask={(task, log) => persist((c) => withLog({ ...c, tasks: [...(c.tasks ?? []), task] }, log, "aftale"))} />
+        )}
+        {tab === "drift" && m.stage !== "koebt" && <p className="text-[15px] text-slate-500">Drift åbner, når sagen er flyttet til Købt.</p>}
 
         {tab === "aftaler" && (
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
