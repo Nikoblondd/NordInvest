@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/access";
 import { generateLink, getAuthUser, setAccess } from "@/lib/supabase/admin";
 import { brokerInvitationEmail, getRequest, invitationEmail, updateRequest, type RequestStatus } from "@/lib/access/requests";
-import { PITCH_FROM } from "@/lib/outreach/schedule";
+import { REPORT_FROM, REPORT_TO } from "@/lib/outreach/schedule";
+import { mailStatus, sendMail } from "@/lib/mail/send";
 import { INVITE_TEXT_MAX } from "@/lib/access/invite-copy";
 import { FIELD, INVITE_NEXT, linkUrl, newLink, type InviteKind } from "@/lib/access/invite-link";
 
@@ -53,20 +54,17 @@ export async function POST(req: Request) {
     const url = linkUrl(SITE, link.userId, token);
     const text = typeof b.message === "string" && b.message.trim() ? b.message.slice(0, INVITE_TEXT_MAX) : undefined;
     const mail = kind === "maegler" ? brokerInvitationEmail(name || email, url, text) : invitationEmail(name || email, url, kind === "begge", text);
-    const key = process.env.RESEND_API_KEY;
-    const sent = key
-      ? await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ from: PITCH_FROM, to: [email], reply_to: "contact@nordinvest.io", subject: mail.subject, html: mail.html }),
-        }).then((r) => r.ok).catch(() => false)
-      : false;
+    const res = await sendMail({ to: email, subject: mail.subject, html: mail.html, idempotencyKey: `invite-${link.userId}-${token.slice(0, 16)}` });
+    if (!res.ok) {
+      // Never lose an approval silently: Nikolaj gets the link in his own inbox to send by hand.
+      await sendMail({ from: REPORT_FROM, to: REPORT_TO, subject: `Godkendelsesmailen til ${email} blev ikke sendt`, html: `<p>${name || email} er godkendt, men mailen kunne ikke sendes (${res.error ?? "ukendt fejl"}).</p><p>Send dette personlige link selv:<br><a href="${url}">${url}</a></p>` });
+    }
     if (b.requestId && b.requestCreatedAt) {
       const r = await getRequest(b.requestId, b.requestCreatedAt);
-      if (r) await updateRequest({ ...r, status: "inviteret", invitedUserId: link.userId, ...(note ? { adminNote: note } : {}) });
+      if (r) await updateRequest({ ...r, status: "inviteret", invitedUserId: link.userId, ...(res.id ? { inviteMailId: res.id } : {}), ...(note ? { adminNote: note } : {}) });
     }
-    // If the mail could not be sent, hand the link back so it can be sent by hand.
-    return json({ ok: true, userId: link.userId, sent, ...(sent ? {} : { link: url }) });
+    // The link always comes back, so it can be copied if the mail does not arrive.
+    return json({ ok: true, userId: link.userId, sent: res.ok, mailId: res.id ?? null, link: url, error: res.ok ? undefined : res.error });
   }
 
   if (b.action === "revoke" || b.action === "restore") {
@@ -97,6 +95,21 @@ export async function POST(req: Request) {
     if (!r) return json({ ok: false, reason: "not_found" }, 404);
     const ok = await updateRequest({ ...r, status, ...(note !== undefined ? { adminNote: note } : {}) });
     return json({ ok }, ok ? 200 : 502);
+  }
+
+  // Delivery status of a sent mail (from Resend), so an approval can be checked right away.
+  if (b.action === "mailstatus") {
+    if (!b.mailId) return json({ ok: false, reason: "bad" }, 422);
+    return json({ ok: true, ...(await mailStatus(String(b.mailId))) });
+  }
+
+  // The approval mail exactly as an applicant gets it, to any address, without creating an account (spam tests).
+  if (b.action === "testmail") {
+    const email = String(b.email ?? "").trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json({ ok: false, reason: "email" }, 422);
+    const mail = invitationEmail(String(b.name ?? "").trim().slice(0, 120) || "Test", `${SITE}/invitation/test`);
+    const res = await sendMail({ to: email, subject: mail.subject, html: mail.html });
+    return json({ ok: res.ok, mailId: res.id ?? null, error: res.error });
   }
 
   return json({ ok: false, reason: "action" }, 400);

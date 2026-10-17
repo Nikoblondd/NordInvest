@@ -16,7 +16,7 @@ import { DEFAULT_INVITE_TEXT, INVITE_TEXT_MAX, type InviteCopyKind } from "@/lib
 
 const TONE: Record<RequestStatus, string> = { ny: "bg-amber-50 text-amber-900 ring-amber-200", kontaktet: "bg-sky-50 text-sky-900 ring-sky-200", inviteret: "bg-emerald-50 text-emerald-800 ring-emerald-200", afvist: "bg-slate-100 text-slate-600 ring-slate-200" };
 type Focus = { id: string; action: "godkend" | "afvis" } | null;
-type Result = { ok: boolean; reason?: string; link?: string; sent?: boolean; userId?: string };
+type Result = { ok: boolean; reason?: string; link?: string; sent?: boolean; userId?: string; mailId?: string | null; error?: string; status?: string };
 type Filter = "afventer" | "godkendt" | "afvist" | "alle";
 
 async function call(body: Record<string, unknown>): Promise<Result> {
@@ -41,6 +41,26 @@ export function AccessAdmin({ requests: initial, focus }: { requests: AccessRequ
   const replace = (next: AccessRequest) => setRequests((all) => all.map((x) => (x.id === next.id ? next : x)));
   const say = (text: string, link?: string, tone: "ok" | "info" = "ok") => { setToast({ text, link, tone }); if (!link) setTimeout(() => setToast(null), 5000); };
 
+  // After an approval: follow the mail at Resend until the recipient's mail server has taken it (or refused it).
+  const poll = useRef(0);
+  const report = async (res: { sent?: boolean; mailId?: string | null; link?: string; error?: string }, who: string, email: string) => {
+    const run = ++poll.current;
+    if (!res.sent || !res.mailId) {
+      say(`${who} er godkendt, men mailen kunne ikke sendes${res.error ? ` (${res.error})` : ""}. Linket er også sendt til din egen mail. Send det selv:`, res.link, "info");
+      return;
+    }
+    say(`${who} er godkendt. Mailen med login er sendt til ${email}. Venter på bekræftelse fra modtagerens mailserver …`, res.link);
+    for (let i = 0; i < 20 && run === poll.current; i++) {
+      await new Promise((ok) => setTimeout(ok, 3000));
+      if (run !== poll.current) return;
+      const st = await call({ action: "mailstatus", mailId: res.mailId });
+      if (st.status === "leveret") return say(`${who} er godkendt, og mailen med login er leveret til ${email}.`, res.link);
+      if (st.status === "afvist") return say(`Mailen til ${email} kom ikke frem: adressen afviste den. Tjek stavningen, eller send linket selv:`, res.link, "info");
+      if (st.status === "spam") return say(`${email} har markeret mailen som spam. Send linket selv, fx på sms:`, res.link, "info");
+    }
+    if (run === poll.current) say(`${who} er godkendt, og mailen er sendt til ${email}, men modtagerens mailserver har ikke bekræftet den endnu. Hører de ikke noget, så send linket:`, res.link, "info");
+  };
+
   // A request opened from the e-mail that was already handled: say so.
   useEffect(() => {
     if (focus && !focused) say("Anmodningen fra mailen findes ikke længere.", undefined, "info");
@@ -52,8 +72,8 @@ export function AccessAdmin({ requests: initial, focus }: { requests: AccessRequ
   const approve = async (r: AccessRequest): Promise<boolean> => {
     const res = await call({ action: "invite", email: r.email, name: r.name, requestId: r.id, requestCreatedAt: r.createdAt });
     if (!res.ok) { say(res.reason === "email" ? "E-mailen i anmodningen er ugyldig." : "Godkendelsen mislykkedes. Prøv igen.", undefined, "info"); return false; }
-    replace({ ...r, status: "inviteret", invitedUserId: res.userId });
-    say(res.link ? `${r.name} er godkendt, men mailen kunne ikke sendes. Send linket selv:` : `${r.name} er godkendt og har fået en mail med sit login.`, res.link);
+    replace({ ...r, status: "inviteret", invitedUserId: res.userId, inviteMailId: res.mailId ?? undefined });
+    void report(res, r.name, r.email);
     return true;
   };
   const setStatus = async (r: AccessRequest, status: RequestStatus): Promise<boolean> => {
@@ -108,7 +128,7 @@ export function AccessAdmin({ requests: initial, focus }: { requests: AccessRequ
         </>
       )}
 
-      {tab === "inviter" && <InviteForm onInvited={(email, link) => say(link ? "Adgangen er givet, men mailen kunne ikke sendes. Send linket selv:" : `Invitation sendt til ${email}.`, link)} />}
+      {tab === "inviter" && <><InviteForm onInvited={(email, res) => void report(res, email, email)} /><TestMail /></>}
 
       {confirm && (
         <ConfirmDialog r={confirm.r} action={confirm.action} onClose={() => setConfirm(null)}
@@ -205,7 +225,7 @@ function ConfirmDialog({ r, action, onClose, onConfirm }: { r: AccessRequest; ac
   );
 }
 
-function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) => void }) {
+function InviteForm({ onInvited }: { onInvited: (email: string, res: { sent?: boolean; mailId?: string | null; link?: string; error?: string }) => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [note, setNote] = useState("");
@@ -223,7 +243,7 @@ function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) =
     setBusy(true); setErr(null);
     const res = await call({ action: "invite", email, name, note, kind, message: text });
     setBusy(false);
-    if (res.ok) { onInvited(email, res.link); setName(""); setEmail(""); setNote(""); setText(DEFAULT_INVITE_TEXT[kind]); setEdited(false); }
+    if (res.ok) { onInvited(email, res); setName(""); setEmail(""); setNote(""); setText(DEFAULT_INVITE_TEXT[kind]); setEdited(false); }
     else setErr(res.reason === "email" ? "Skriv en gyldig e-mail." : "Invitationen mislykkedes. Prøv igen.");
   };
   const input = "mt-1.5 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-[16px] focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100";
@@ -254,6 +274,38 @@ function InviteForm({ onInvited }: { onInvited: (email: string, link?: string) =
       </div>
       {err && <p role="alert" className="mt-3 text-[14px] font-medium text-rose-600">{err}</p>}
       <button type="submit" disabled={busy} className="mt-5 inline-flex min-h-[46px] items-center gap-2 rounded-lg bg-blue-600 px-5 text-[15px] font-semibold text-white hover:bg-blue-500 disabled:opacity-60">{busy ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />} Send invitation</button>
+    </form>
+  );
+}
+
+/** Sends the approval mail exactly as applicants get it, without creating an account, and follows its delivery. */
+function TestMail() {
+  const [email, setEmail] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const send = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true); setMsg("Sender …");
+    const res = await call({ action: "testmail", email });
+    if (!res.ok || !res.mailId) { setBusy(false); return setMsg(`Testmailen kunne ikke sendes${res.error ? ` (${res.error})` : ""}.`); }
+    setMsg("Sendt. Venter på modtagerens mailserver …");
+    for (let i = 0; i < 20; i++) {
+      await new Promise((ok) => setTimeout(ok, 3000));
+      const st = await call({ action: "mailstatus", mailId: res.mailId });
+      if (st.status && st.status !== "sendt") { setBusy(false); return setMsg(st.status === "leveret" ? "Leveret. Tjek, om den ligger i indbakken eller i spam." : `Status: ${st.status}.`); }
+    }
+    setBusy(false); setMsg("Sendt, men endnu ikke bekræftet af modtagerens mailserver.");
+  };
+  return (
+    <form onSubmit={send} className="mt-5 max-w-xl rounded-2xl border border-slate-200 bg-white p-5">
+      <p className="text-[15px] font-semibold text-slate-900">Test godkendelsesmailen</p>
+      <p className="mt-1 text-[14px] text-slate-600">Sender mailen præcis, som en ansøger får den, uden at oprette en konto. Brug fx din egen Gmail eller en adresse fra mail-tester.com.</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <label htmlFor="test-mail" className="sr-only">E-mail til testmailen</label>
+        <input id="test-mail" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="din@mail.dk" className="h-11 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-[16px] focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" />
+        <button type="submit" disabled={busy} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-[15px] font-semibold text-slate-800 hover:bg-slate-50 disabled:opacity-60">{busy ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />} Send testmail</button>
+      </div>
+      {msg && <p role="status" className="mt-2 text-[14px] text-slate-700">{msg}</p>}
     </form>
   );
 }

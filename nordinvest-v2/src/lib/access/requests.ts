@@ -97,6 +97,7 @@ export function confirmationEmail(r: AccessRequest): { subject: string; html: st
     html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
 <p>Hej ${first},</p>
 <p>Tak for din anmodning om adgang til NordInvest. Du hører fra os inden for en arbejdsdag, så vi kan aftale en kort samtale om, hvordan du investerer, og hvad du har brug for.</p>
+<p>Når du er godkendt, får du en mail fra adgang@nordinvest.io med dit login. Gem gerne adressen i dine kontakter, så mailen ikke havner i spam.</p>
 <p>Har du spørgsmål inden da, kan du svare på denne mail.</p>
 <p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · contact@nordinvest.io</p>
 <p style="font-size:12px;color:#94a3b8">Du får denne mail, fordi du har anmodet om adgang på nordinvest.io. Vi bruger kun dine oplysninger til at kontakte dig om adgang.</p></div>`,

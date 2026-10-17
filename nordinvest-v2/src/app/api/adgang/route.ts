@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ACCESS_INBOX, confirmationEmail, notifyEmail, storeRequest, validate, type AccessRequest } from "@/lib/access/requests";
-import { PITCH_FROM, REPORT_FROM } from "@/lib/outreach/schedule";
+import { REPORT_FROM } from "@/lib/outreach/schedule";
+import { ACCOUNT_FROM, sendMail } from "@/lib/mail/send";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,16 +33,10 @@ export async function POST(req: Request) {
 
   // The confirmation is a courtesy; a failure here does not fail the request.
   const c = confirmationEmail(r);
-  await send(PITCH_FROM, r.email, c.subject, c.html, ACCESS_INBOX);
+  await send(ACCOUNT_FROM, r.email, c.subject, c.html, ACCESS_INBOX);
   return NextResponse.json({ ok: true });
 }
 
 async function send(from: string, to: string, subject: string, html: string, replyTo: string): Promise<boolean> {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) return false;
-  return fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to: [to], reply_to: replyTo, subject, html }),
-  }).then((r) => r.ok).catch(() => false);
+  return (await sendMail({ from, to, subject, html, replyTo })).ok;
 }

@@ -18,6 +18,8 @@ export type AccessRequest = {
   adminNote?: string;
   updatedAt?: string;
   invitedUserId?: string;
+  /** Resend id of the approval mail, to check its delivery. */
+  inviteMailId?: string;
 };
 
 export type RequestStatus = "ny" | "kontaktet" | "inviteret" | "afvist";
