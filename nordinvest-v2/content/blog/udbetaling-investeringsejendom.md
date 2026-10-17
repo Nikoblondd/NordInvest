@@ -92,6 +92,8 @@ Har du 350.000 kr., ikke 550.000 kr.? Fire justeringer:
 - **Køb en ejendom du bor i først** — reglerne for førstegangs egen bolig er lempeligere (5 % LTV via kombinationslån). Efter 12 måneder kan du udleje og købe ny
 - **Byg opsparingen op 12-18 måneder** — den mest kedelige, men den, der giver bedst deal-margin
 
+Hvor stor udbetaling der skal til, før boligen også giver plus hver måned, har vi regnet ud for hele markedet: [udbetaling og cash flow for 14.019 boliger](/blog/udbetaling-udlejningsbolig).
+
 ## Beregn dit præcise kontantbehov
 
 Før du starter research på handler, kør din indkomst og gæld gennem en rådighedsberegning hos dit realkreditinstitut. Så ved du præcis, hvad du kan bære — og du undgår at forelske dig i en handel du ikke kan finansiere.

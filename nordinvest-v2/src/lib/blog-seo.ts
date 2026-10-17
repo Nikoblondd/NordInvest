@@ -6,6 +6,10 @@
  */
 
 export const BLOG_SEO: Record<string, { title?: string; description?: string }> = {
+  "udbetaling-udlejningsbolig": {
+    title: "Udbetaling på udlejningsbolig: hvad skal der til for plus?",
+    description: "Den typiske udlejningsbolig kræver 70 % udbetaling for at give plus ved 5 % rente. Kun 10,3 % giver plus med 20 %. Tal for 14.019 boliger efter pris og kommune.",
+  },
   "hus-eller-lejlighed-udlejning": {
     title: "Hus eller lejlighed som udlejning? Tal for 16.353 boliger",
     description: "12,5 % af husene til salg giver plus som udlejning, mod 4,2 % af ejerlejlighederne. Se tallene opdelt på pris, boligtype og kommune.",

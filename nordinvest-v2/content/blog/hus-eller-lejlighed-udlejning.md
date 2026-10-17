@@ -88,7 +88,7 @@ Et hus og en lejlighed er ikke den samme investering, selv om cash flowet ligner
 
 ## Sådan bruger du tallene
 
-1. **Bestem dit prisniveau først.** Ved 5 % rente og 20 % udbetaling ligger næsten alle boliger med plus under 1-1,5 mio. kr.
+1. **Bestem dit prisniveau først.** Ved 5 % rente og 20 % udbetaling ligger næsten alle boliger med plus under 1-1,5 mio. kr. Se også [hvor stor udbetaling der skal til, før en bolig giver plus](/blog/udbetaling-udlejningsbolig).
 2. **Sammenlign boligtyper i din egen kommune.** I nogle byer er lejligheden det bedste køb, i andre huset.
 3. **Regn den konkrete bolig igennem** med de faktiske fællesudgifter, din egen rente og din egen udbetaling. Det gør [boliganalysen](/funktioner/boliganalyse) ud fra et link til annoncen, og [huslejeberegneren](/beregn-husleje) viser markedslejen for en bolig.
 4. **Tjek driftsbudgettet.** Se guiden om [driftsbudget for en udlejningsbolig](/blog/driftsbudget-udlejningsbolig), og læs hvad [cash flow](/ordbog/cash-flow) dækker over.

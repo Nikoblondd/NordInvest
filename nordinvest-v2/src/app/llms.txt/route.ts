@@ -78,6 +78,14 @@ ${GUIDES.map((g) => `- [${g.h1}](${site.url}${g.path}): ${g.metaDescription}`).j
 - I Randers, Holstebro og Slagelse giver ejerlejligheder oftere plus end huse. I København og Aarhus giver næsten ingen af delene plus.
 - Uddybning: ${site.url}/blog/hus-eller-lejlighed-udlejning
 
+## Udbetaling og positivt cash flow (NordInvests beregning, 17. oktober 2026)
+- 14.019 villaer og ejerlejligheder til salg regnet igennem med udbetaling fra 0 til 100 %, 5 % rente over 30 år og estimeret markedsleje.
+- Den typiske bolig (median) kræver 70 % udbetaling for at give positivt cash flow, omkring 2 mio. kr. Villaer: 70 %. Ejerlejligheder: 80 %.
+- Med 20 % udbetaling giver 10,3 % af boligerne plus. Med 50 % udbetaling 25,9 %.
+- Under 1 mio. kr. giver 60 % af boligerne plus med 20 % udbetaling. Mellem 1 og 2 mio. kr. kræves typisk 60 % udbetaling, over 2 mio. kr. 80-90 %.
+- Laveste nødvendige udbetaling: Randers (40 %), Varde og Hjørring (50 %). København og Frederiksberg: 80 %, Gentofte 90 %.
+- Uddybning: ${site.url}/blog/udbetaling-udlejningsbolig
+
 ## Deal-motor efter by
 ${dealCityLines}
 
