@@ -36,6 +36,8 @@ export function investHref(d: InvestmentDeal, dp: string, ir: string): string {
   if (d.area) q.set("area", String(d.area));
   q.set("rent", String(Math.round(d.noi / 12))); // NOI/md as the (net) rent baseline
   q.set("opex", "0"); // NOI is already net — don't double-count operating costs
+  // The seller's stated operating costs, so the analysis can show rent and costs separately.
+  if (d.operatingCost && d.operatingCost > 0) q.set("sellerOpex", String(Math.round(d.operatingCost)));
   // Same financing assumptions the card was scored with (investment defaults to
   // 30 % down) so the full analysis matches the card exactly.
   q.set("downPaymentPct", dp);

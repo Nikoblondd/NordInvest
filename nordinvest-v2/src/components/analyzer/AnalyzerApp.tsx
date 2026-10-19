@@ -58,6 +58,7 @@ import { captureEvent } from "@/lib/analytics-events";
 import { buildProvenance, rentRegulationRule } from "@/lib/provenance";
 import type { PriceBenchmark } from "@/lib/reference";
 import { CommercialStory } from "@/components/analyzer/CommercialStory";
+import type { Dossier } from "@/lib/dossier";
 
 // The hero and the cash-flow waterfall open the result, so they're part of the
 // bundle: loading them late pushed the whole result down as they arrived (CLS).
@@ -562,6 +563,16 @@ export function AnalyzerApp() {
   // formula applied to a commercial deal.
   const isInvestment = searchParams.get("market") === "investering";
   const subcatParam = searchParams.get("subcat");
+  // The public record of an investment property (BBR, valuation, land tax), fetched once per address.
+  const [dossier, setDossier] = useState<Dossier | null>(null);
+  useEffect(() => {
+    if (!isInvestment || !address || address.length < 5) { setDossier(null); return; }
+    let live = true;
+    fetch(`/api/property/dossier?address=${encodeURIComponent(address)}`).then((x) => x.json()).then((j) => { if (live) setDossier(j?.ok ? j.dossier : null); }).catch(() => {});
+    return () => { live = false; };
+  }, [isInvestment, address]);
+  const sellerOpex = Number(searchParams.get("sellerOpex")) || null;
+  const areaParam = Number(searchParams.get("area")) || null;
   const inv = useMemo(
     () => (isInvestment ? assessInvestment(r.capRate, r.dscr, r.cashOnCash, subcatParam) : null),
     [isInvestment, subcatParam, r.capRate, r.dscr, r.cashOnCash],
@@ -1335,6 +1346,15 @@ export function AnalyzerApp() {
               appreciationPct={inputs.appreciationPct ?? 2}
               address={address}
               onAdjust={() => setSheetOpen(true)}
+              dossier={dossier}
+              facts={{
+                price: inputs.price, noi: r.noi, opex: sellerOpex,
+                area: areaParam ?? dossier?.building?.area ?? null,
+                builtYear: dossier?.building?.builtYear ?? null, renovatedYear: dossier?.building?.renovatedYear ?? null,
+                subcat: subcatParam,
+                mix: dossier?.units ? { residentialArea: dossier.units.residentialArea, commercialArea: dossier.units.commercialArea } : null,
+                sources: { opex: "annonce", area: areaParam ? "annonce" : "bbr", builtYear: "bbr" },
+              }}
               trust={<DataProvenance rows={provenanceRows} rentRule={rentRule} showRentCaveat={false} />}
             />
                   </div>
