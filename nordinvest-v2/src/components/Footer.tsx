@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { Logo } from "./Logo";
 import { CookieSettingsButton } from "./analytics/CookieSettingsButton";
 import { CITIES } from "@/lib/cities";
 import { site } from "@/lib/site";
+import { Fold } from "./ui/Fold";
 
 const columns = [
   {
@@ -58,6 +60,16 @@ const columns = [
   },
 ];
 
+const QUICK = [
+  { href: "/adgang", label: "Anmod om adgang" },
+  { href: "/funktioner", label: "Funktioner" },
+  { href: "/spil", label: "Ejendomsspillet" },
+  { href: "/deals", label: "Bedste boliger lige nu" },
+  { href: "/blog", label: "Blog & guides" },
+  { href: "/om", label: "Om os" },
+  { href: "/kontakt", label: "Kontakt" },
+];
+
 const b = site.business;
 const businessLine = [
   b.legalName,
@@ -66,36 +78,57 @@ const businessLine = [
   b.country,
 ].filter(Boolean).join(" · ");
 
-/*
- * Hallmark Ft4 · colophon (design.md): one dense block like the last page of a
- * printed analysis. Who publishes it, where the data comes from, then an index
- * of every page as inline lists (kept for navigation and internal links).
- * No logo column, no social row, no copyright tail.
- */
 export function Footer() {
   return (
-    <footer className="border-t-2 border-[var(--color-ink)] bg-[var(--color-paper)] px-4 py-10 sm:px-8 sm:py-14">
-      <div className="mx-auto max-w-[1120px]">
-        <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16">
-          <div className="min-w-0 font-[family-name:var(--font-mono)] text-[12.5px] leading-[1.7] text-[var(--color-ink-2)] [overflow-wrap:anywhere]">
-            <p><span className="font-[family-name:var(--font-display)] text-[17px] font-semibold text-[var(--color-ink)]">NordInvest</span></p>
-            <p className="mt-2">Udgivet af {businessLine}. Kontakt {site.email}, {site.phone}.</p>
-            <p className="mt-3">Data: Boligsiden, Ejendomstorvet, BBR og Ejendomsvurderingen via Datafordeler, Danmarks Statistik, Danmarks Nationalbank og Plandata.dk. Beregninger, ikke rådgivning.</p>
-            <p className="mt-3"><CookieSettingsButton className="underline underline-offset-4 hover:text-[var(--color-ink)]" /></p>
+    <footer className="border-t border-slate-200 bg-white px-6 py-10 sm:py-14">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
+          <div className="col-span-2 md:col-span-1">
+            <Logo size={24} />
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-500">
+              Ét system for danske ejendomsinvestorer: find, regn, gennemgå og byd. Adgang efter en
+              personlig samtale.
+            </p>
           </div>
-          <nav aria-label="Indeks" className="space-y-3 text-[14px] leading-[1.75] text-[var(--color-ink-2)]">
-            {columns.map((col) => (
-              <p key={col.title}>
-                <span className="mr-2 font-semibold text-[var(--color-ink)]">{col.title}.</span>
-                {col.links.map((l, i) => (
-                  <span key={l.href}>
-                    <Link href={l.href} className="hover:text-[var(--color-ink)] hover:underline hover:decoration-[var(--color-accent)] hover:underline-offset-4">{l.label}</Link>
-                    {i < col.links.length - 1 && <span aria-hidden className="mx-1.5 text-[var(--color-rule)]">/</span>}{" "}
-                  </span>
-                ))}
-              </p>
+          {/* Phones: the six links people actually use, the rest one tap away. */}
+          <ul className="col-span-2 grid grid-cols-2 gap-x-4 gap-y-1 sm:hidden">
+            {QUICK.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className="flex min-h-[44px] items-center text-[15px] font-medium text-slate-700 hover:text-blue-600">{l.label}</Link>
+              </li>
             ))}
-          </nav>
+          </ul>
+          <Fold label="Alle links" labelOpen="Skjul links" className="col-span-2 md:col-span-4">
+          <div className="fold-body grid grid-cols-2 gap-8 md:grid-cols-4">
+          {columns.map((col) => (
+            <div key={col.title}>
+              <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                {col.title}
+              </div>
+              <ul className="mt-3 space-y-0.5">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="inline-block py-1.5 text-sm text-slate-600 transition-colors hover:text-blue-600">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+                {col.title === "NordInvest" && (
+                  <li>
+                    <CookieSettingsButton className="inline-block py-1.5 text-left text-sm text-slate-600 transition-colors hover:text-blue-600" />
+                  </li>
+                )}
+              </ul>
+            </div>
+          ))}
+          </div>
+          </Fold>
+        </div>
+        <div className="mt-10 border-t sm:mt-12 border-slate-100 pt-6 text-sm text-slate-500">
+          <div>{businessLine}</div>
+          <div className="mt-1 text-slate-400">
+            © {new Date().getFullYear()} {site.name}. Alle rettigheder forbeholdes.
+          </div>
         </div>
       </div>
     </footer>

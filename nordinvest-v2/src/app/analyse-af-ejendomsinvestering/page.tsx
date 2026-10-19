@@ -160,7 +160,7 @@ export default function AnalyseGuidePage() {
   };
 
   return (
-    <div className={`${serif.variable} ${geist.variable} min-h-screen overflow-x-clip bg-[#f6f4ef] font-geist text-slate-900`}>
+    <div className={`${serif.variable} ${geist.variable} min-h-screen overflow-x-clip bg-[#ffffff] font-geist text-slate-900`}>
       <Nav />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 

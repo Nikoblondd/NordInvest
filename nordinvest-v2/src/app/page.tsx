@@ -1,11 +1,15 @@
 import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight, Phone } from "lucide-react";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { TryButton } from "@/components/landing/TryModal";
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
+import { Faq } from "@/components/landing/Faq";
 import { getDealSnapshot, type SnapshotDeal } from "@/lib/deals-snapshot";
+import { getLink } from "@/lib/broker/links";
+import { budget, findings, type Finding } from "@/lib/investment-ops";
 import { site } from "@/lib/site";
 import { HaveAccount } from "@/components/auth/HaveAccount";
 
@@ -22,201 +26,218 @@ export const metadata: Metadata = {
 };
 
 /*
- * Hallmark · genre: editorial · macrostructure: Long Document (investeringsnotat)
- * theme: paper/ink/brick (design.md) · enrichment: none (typography + one real table)
- * nav: N9 edge-aligned · footer: Ft4 colophon · reveal: none
- *
- * The page reads like an analysis note: dated, one column at reading measure,
- * a worked example on today's real top property with footnoted sources, the
- * method in prose, and a signature. No hero/feature/CTA template rhythm.
+ * Landing page (Oct 2026). White, modern and plain: one strong headline, a
+ * real analysis card on today's top property, the data sources, what an
+ * analysis contains, a real example with its public-record checks, the person
+ * behind it, FAQ. Every number on the page is live or taken from a real case.
  */
 
-const P = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <p className={`text-[18px] leading-[1.7] text-[var(--color-ink-2)] ${className ?? ""}`}>{children}</p>
+const Section = ({ children, className }: { children: ReactNode; className?: string }) => (
+  <section className={className}><div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8 sm:py-24">{children}</div></section>
 );
-const H2 = ({ children, id }: { children: ReactNode; id?: string }) => (
-  <h2 id={id} className="mt-16 scroll-mt-20 text-[28px] font-semibold leading-[1.2] text-[var(--color-ink)] sm:text-[32px]">{children}</h2>
+const H2 = ({ children, className }: { children: ReactNode; className?: string }) => (
+  <h2 className={`text-[32px] font-semibold leading-[1.15] tracking-[-0.025em] text-slate-900 [text-wrap:balance] sm:text-[40px] ${className ?? ""}`}>{children}</h2>
 );
-const A = ({ href, children }: { href: string; children: ReactNode }) => (
-  <Link href={href} className="font-medium text-[var(--color-ink)] underline decoration-[var(--color-accent)] decoration-1 underline-offset-[5px] hover:decoration-2">{children}</Link>
+const Lead = ({ children, className }: { children: ReactNode; className?: string }) => (
+  <p className={`mt-4 max-w-[38rem] text-[18px] leading-relaxed text-slate-600 ${className ?? ""}`}>{children}</p>
 );
-const Fn = ({ n }: { n: number }) => <sup className="ml-0.5 font-[family-name:var(--font-mono)] text-[11px] font-medium text-[var(--color-accent)]">{n}</sup>;
+const Primary = ({ href = "/adgang", children }: { href?: string; children: ReactNode }) => (
+  <Link href={href} className="inline-flex min-h-[48px] items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-slate-900 px-5 text-[16px] font-semibold text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-300 max-sm:w-full">{children}</Link>
+);
 
 const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
 const signed = (n: number) => `${n >= 0 ? "+" : "−"}${Math.round(Math.abs(n)).toLocaleString("da-DK")} kr.`;
 const pct = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 1 })} %`;
+const Tag = ({ children }: { children: ReactNode }) => <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-[11px] font-medium text-slate-500">{children}</span>;
 
-const FAQ: [string, string][] = [
-  ["Hvad er NordInvest?", "Et dansk analyseværktøj og system til private ejendomsinvestorer og erhvervsmæglere, bygget af Nikolaj Blond (CVR 44701898). Det regner boliger og udlejningsejendomme igennem med sælgers tal og offentlige data og samler fremvisninger, bank og bud på hver bolig. NordInvest har ingen forbindelse til Nordnet, NORD.investments, Nord-Invest ApS eller Nordinvest AB."],
-  ["Hvor præcise er tallene?", "Så præcise som det, de bygger på, og det står ved hvert tal. Sælgers driftsbudget vises, som det er. NordInvests egne skøn står for sig, og fremtiden vises som tre scenarier, ikke som én prognose. Lejeliste, regnskab og en teknisk gennemgang erstatter analysen ikke, og det står i den."],
-  ["Hvad koster det?", "Prisen aftaler vi efter samtalen, ud fra hvor meget du køber, og hvad du skal bruge. Der er ingen binding."],
-  ["Hvorfor skal man anmode om adgang?", "Fordi analysen bliver bedre, når den er sat op efter dit område, din strategi og din finansiering. Det gør vi i samtalen, og bagefter har du en, du kan ringe til."],
-  ["Er det rådgivning?", "Nej. NordInvest giver beregninger og overblik. Beslutningen er din, og ved køb anbefaler vi altid en købers rådgiver."],
+const FAQ = [
+  { q: "Hvad er NordInvest?", a: "Et dansk analyseværktøj og system til private ejendomsinvestorer og erhvervsmæglere, bygget af Nikolaj Blond (CVR 44701898). Det regner boliger og udlejningsejendomme igennem med sælgers tal og offentlige data og samler fremvisninger, bank og bud på hver bolig. NordInvest har ingen forbindelse til Nordnet, NORD.investments, Nord-Invest ApS eller Nordinvest AB." },
+  { q: "Hvor præcise er tallene?", a: "Så præcise som det, de bygger på, og det står ved hvert tal. Sælgers driftsbudget vises, som det er. NordInvests egne skøn står for sig, og fremtiden vises som tre scenarier, ikke som én prognose. Lejeliste, regnskab og en teknisk gennemgang erstatter analysen ikke, og det står i den." },
+  { q: "Hvad koster det?", a: "Prisen aftaler vi efter samtalen, ud fra hvor meget du køber, og hvad du skal bruge. Der er ingen binding." },
+  { q: "Hvorfor skal man anmode om adgang?", a: "Fordi analysen bliver bedre, når den er sat op efter dit område, din strategi og din finansiering. Det gør vi i samtalen, og bagefter har du en, du kan ringe til." },
+  { q: "Er det rådgivning?", a: "Nej. NordInvest giver beregninger og overblik. Beslutningen er din, og ved køb anbefaler vi altid en købers rådgiver." },
 ];
 
-/** Today's top-ranked home, written out as the first page of a note. */
-function Example({ d }: { d: SnapshotDeal }) {
+const CONTENTS: [string, string][] = [
+  ["Sælgers tal, som de er", "Lejeindtægt, driftsudgifter og driftsresultat fra annoncen, hver med sin kilde. Har du lejeliste og regnskab, skriver du de faktiske tal ind, og alt regnes om."],
+  ["Et forsigtigt år 1", "Ekstra vedligehold efter bygningens alder i BBR og et tillæg for lejetab, synligt og til at rette."],
+  ["Hvad driften kan tåle", "Hvor meget driftsresultatet kan falde, før cash flow er nul, og hvad der sker, hvis lejen falder, udgifterne stiger eller renten går op."],
+  ["Tjek mod registrene", "Sælgers leje mod markedslejen for hver bolig i BBR, driftsudgifterne mod kommunens grundskyld og prisen mod den offentlige vurdering."],
+  ["Ti år som tre scenarier", "Forsigtig, middel og positiv, hvor udgifterne stiger mindst lige så hurtigt som lejen. Ikke en prognose."],
+];
+
+/** Today's top-ranked home as a compact analysis card. */
+function PreviewCard({ d, updated }: { d: SnapshotDeal; updated: string }) {
   const rent = (d.grossYield * d.price) / 1200;
   const noi = (d.capRate * d.price) / 1200;
-  const costs = rent - noi;
-  const loan = noi - d.cashFlow;
-  const street = d.address.split(",")[0];
-  const rows: [string, string, number][] = [
-    ["Udbudspris", kr(d.price), 1],
-    ["Markedsleje pr. måned", kr(rent), 2],
-    ["Ejerudgift, drift og vedligehold", signed(-costs), 3],
-    ["Ydelse på lån, 80 % af prisen", signed(-loan), 4],
-  ];
+  const at = new Date(updated).toLocaleDateString("da-DK", { day: "numeric", month: "long", timeZone: "Europe/Copenhagen" });
   return (
-    <figure className="mt-8">
-      <table className="w-full border-t-2 border-[var(--color-ink)] text-[16px]">
-        <caption className="pb-3 text-left text-[15px] text-[var(--color-muted)]">
-          <Link href={d.href} className="font-semibold text-[var(--color-ink)] underline decoration-[var(--color-accent)] underline-offset-4">{street}, {d.zip} {d.city}</Link>
-          {[d.area ? `${d.area} m²` : "", d.rooms ? `${d.rooms} værelser` : ""].filter(Boolean).map((x) => `, ${x}`).join("")}. Beløb pr. måned
-        </caption>
-        <tbody className="tabular-nums">
-          {rows.map(([k, v, n]) => (
-            <tr key={k} className="border-b border-[var(--color-rule)]">
-              <th scope="row" className="py-2.5 pr-4 text-left font-normal text-[var(--color-ink-2)]">{k}<Fn n={n} /></th>
-              <td className="py-2.5 text-right text-[var(--color-ink)]">{v}</td>
-            </tr>
-          ))}
-          <tr className="border-b-2 border-[var(--color-ink)]">
-            <th scope="row" className="py-3 pr-4 text-left font-semibold text-[var(--color-ink)]">Cash flow</th>
-            <td className={`py-3 text-right text-[18px] font-semibold ${d.cashFlow >= 0 ? "text-emerald-800" : "text-rose-700"}`}>{signed(d.cashFlow)}</td>
-          </tr>
-        </tbody>
-      </table>
-      <figcaption className="mt-3 font-[family-name:var(--font-mono)] text-[12.5px] leading-relaxed text-[var(--color-muted)]">
-        <span className="text-[var(--color-accent)]">1</span> Boligsiden, annoncen. <span className="text-[var(--color-accent)]">2</span> NordInvests skøn ud fra postnummer og størrelse. <span className="text-[var(--color-accent)]">3</span> Ejerudgift fra annoncen, vedligehold 8 % og tomgang 4 % af lejen. <span className="text-[var(--color-accent)]">4</span> 20 % udbetaling, 5 % rente, 30 år. Nettoafkast {pct(d.capRate)}.
-      </figcaption>
-    </figure>
+    <Link href={d.href} className="group block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04),0_24px_48px_-24px_rgba(16,24,40,0.22)] transition-shadow hover:shadow-[0_1px_2px_rgba(16,24,40,0.05),0_28px_56px_-24px_rgba(16,24,40,0.28)]">
+      {d.image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={d.image} alt={`${d.address}, øverst i Deal-motoren`} className="aspect-[16/9] w-full object-cover" fetchPriority="high" />
+      )}
+      <div className="p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-[18px] font-semibold text-slate-900">{d.address.split(",")[0]}</p>
+            <p className="text-[14px] text-slate-500">{d.zip} {d.city}{d.area ? ` · ${d.area} m²` : ""}</p>
+          </div>
+          <span className="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-[12px] font-medium text-slate-600">Nr. 1 i dag, {at}</span>
+        </div>
+        <dl className="mt-4 divide-y divide-slate-100 text-[15px] tabular-nums">
+          <div className="flex justify-between gap-3 py-2"><dt className="text-slate-600">Udbudspris<Tag>annonce</Tag></dt><dd className="text-slate-900">{kr(d.price)}</dd></div>
+          <div className="flex justify-between gap-3 py-2"><dt className="text-slate-600">Markedsleje pr. md.<Tag>skøn</Tag></dt><dd className="text-slate-900">{kr(rent)}</dd></div>
+          <div className="flex justify-between gap-3 py-2"><dt className="text-slate-600">Drift og vedligehold<Tag>skøn</Tag></dt><dd className="text-slate-900">{signed(-(rent - noi))}</dd></div>
+          <div className="flex justify-between gap-3 py-2"><dt className="text-slate-600">Ydelse, 80 % lån<Tag>5 %</Tag></dt><dd className="text-slate-900">{signed(-(noi - d.cashFlow))}</dd></div>
+          <div className="flex items-baseline justify-between gap-3 pt-3"><dt className="font-semibold text-slate-900">Cash flow pr. md.</dt><dd className={`text-[20px] font-semibold ${d.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{signed(d.cashFlow)}</dd></div>
+        </dl>
+        <p className="mt-3 flex items-center justify-between text-[14px]">
+          <span className="text-slate-500">Nettoafkast {pct(d.capRate)}</span>
+          <span className="inline-flex items-center gap-1 font-semibold text-slate-900 group-hover:underline">Hele analysen <ArrowRight size={15} /></span>
+        </p>
+      </div>
+    </Link>
   );
 }
 
+const DOT: Record<Finding["tone"], string> = { good: "bg-emerald-500", info: "bg-slate-400", warn: "bg-amber-500", bad: "bg-rose-500" };
+
 export default async function Home() {
-  const snap = await getDealSnapshot(null, 4).catch(() => null);
+  const [snap, example] = await Promise.all([getDealSnapshot(null, 4).catch(() => null), getLink("schaldemosevej-3-ringsted").catch(() => null)]);
   const top = snap?.top?.[0] ?? null;
-  const when = snap
-    ? new Date(snap.updated).toLocaleString("da-DK", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Copenhagen" })
-    : null;
+  const exFacts = example ? { price: example.price, noi: example.rent * 12, opex: example.opex ?? null, area: example.area ?? null, builtYear: example.builtYear ?? null, subcat: example.subcat } : null;
+  const exFindings = example?.dossier && exFacts ? findings(exFacts, budget(exFacts), example.dossier) : [];
 
   return (
-    <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)] antialiased">
+    <div className="min-h-screen bg-white text-slate-900 antialiased">
       <LandingNav />
 
-      <main className="mx-auto max-w-[1120px] px-4 sm:px-8">
-        <article className="mx-auto max-w-[680px] pb-24 pt-14 sm:pt-20">
-          {when && snap && (
-            <p className="font-[family-name:var(--font-mono)] text-[13px] text-[var(--color-muted)]">
-              {when.charAt(0).toUpperCase() + when.slice(1)}. {snap.scanned.toLocaleString("da-DK")} boliger til salg er regnet igennem i dag.
-            </p>
-          )}
-          <h1 className="mt-5 text-[36px] font-semibold leading-[1.12] text-[var(--color-ink)] [overflow-wrap:anywhere] sm:text-[48px]">
-            Ejendomsanalyse med kilde på hvert tal.
-          </h1>
-          <P className="mt-6 text-[19px]">
-            NordInvest regner udlejningsboliger og udlejningsejendomme igennem med sælgers driftsbudget, BBR, den offentlige vurdering og dagens realkreditrente. Du ser, hvad ejendommen giver efter lånet, hvad driften kan tåle, og hvad du mangler at få styr på, før du byder.
-          </P>
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link href="/adgang" className="inline-flex min-h-[48px] items-center whitespace-nowrap rounded-lg bg-[var(--color-ink)] px-5 text-[16px] font-semibold text-white transition-colors hover:bg-[var(--color-ink-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2">Anmod om adgang</Link>
-            <TryButton className="inline-flex min-h-[44px] items-center whitespace-nowrap text-[16px] font-medium text-[var(--color-ink)] underline decoration-[var(--color-accent)] underline-offset-[5px] hover:decoration-2">Prøv en beregning uden login</TryButton>
-          </div>
-          <Suspense><HaveAccount className="mt-4" /></Suspense>
-
-          {top && (
-            <>
-              <H2 id="eksempel">Et eksempel fra i dag</H2>
-              <P className="mt-4">
-                Øverst i Deal-motoren står i dag {top.address.split(",")[0]} i {top.city}. Sådan ser regnestykket ud på første side af analysen. Tallet nederst er det, der er tilbage hver måned, når lånet er betalt.
-              </P>
-              <Example d={top} />
-            </>
-          )}
-
-          <H2 id="analysen">Hvad en analyse indeholder</H2>
-          <P className="mt-4">
-            <b className="font-semibold text-[var(--color-ink)]">Sælgers tal, som de er.</b> Lejeindtægt, driftsudgifter og driftsresultat fra annoncen, hver med sin kilde. Har du lejeliste og regnskab, skriver du de faktiske tal ind, og alt regnes om.
-          </P>
-          <P className="mt-4">
-            <b className="font-semibold text-[var(--color-ink)]">Et forsigtigt år 1.</b> Ekstra vedligehold efter bygningens alder i BBR og et tillæg for lejetab. Begge står synligt og kan rettes.
-          </P>
-          <P className="mt-4">
-            <b className="font-semibold text-[var(--color-ink)]">Hvad driften kan tåle.</b> Hvor meget driftsresultatet kan falde, før cash flow er nul, og hvad der sker, hvis lejen falder, udgifterne stiger eller renten går op. Målt på i dag, uden at fremskrive noget.
-          </P>
-          <P className="mt-4">
-            <b className="font-semibold text-[var(--color-ink)]">Tjek mod registrene.</b> Sælgers leje holdt op mod markedslejen for hver bolig i BBR, driftsudgifterne mod kommunens grundskyld og prisen mod den offentlige vurdering. Asbest i taget, oliefyr og gas bliver markeret.
-          </P>
-          <P className="mt-4">
-            <b className="font-semibold text-[var(--color-ink)]">Ti år som tre scenarier.</b> Forsigtig, middel og positiv, med åbne forudsætninger, hvor udgifterne stiger mindst lige så hurtigt som lejen. Ikke en prognose.
-          </P>
-          <P className="mt-6">
-            Se en hel analyse af en rigtig sag: <A href="/e/schaldemosevej-3-ringsted">Schaldemosevej 3, Ringsted →</A>
-          </P>
-
-          <H2 id="kilder">Hvor tallene kommer fra</H2>
-          <dl className="mt-6 divide-y divide-[var(--color-rule)] border-y border-[var(--color-rule)] text-[16px]">
-            {[
-              ["Boligsiden og Ejendomstorvet", "Pris, areal, ejerudgift, sælgers afkast og driftsudgifter."],
-              ["BBR, via Datafordeler", "Hver bolig og erhvervsenhed med areal, byggeår, tag, facade og varme."],
-              ["Ejendomsvurderingen", "Ejendomsværdi og grundværdi."],
-              ["Danmarks Statistik", "Grundskyldspromille for alle 98 kommuner, prisindeks og huslejeindeks."],
-              ["Danmarks Nationalbank", "Renten inklusive bidrag på nye realkreditlån, hver måned."],
-              ["Plandata.dk", "Lokalplaner, forslag og kloakoplande."],
-            ].map(([k, v]) => (
-              <div key={k} className="grid gap-1 py-3 sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] sm:gap-6">
-                <dt className="font-semibold text-[var(--color-ink)]">{k}</dt>
-                <dd className="text-[var(--color-ink-2)]">{v}</dd>
-              </div>
-            ))}
-          </dl>
-          <P className="mt-5 text-[16px]">
-            Antagelser og ændringer i modellen står i <A href="/methodology#investeringsejendomme">metodebeskrivelsen og versionsloggen</A>.
-          </P>
-
-          <H2 id="systemet">Når der er flere boliger i spil</H2>
-          <P className="mt-4">
-            Hver bolig, du gemmer, bliver en sag med analyse, papirer, fremvisninger, bank og bud samlet ét sted. Søgeagenter holder øje med markedet efter dine krav, og du får en mail dagen før en fremvisning. Når du har købt, følger lejere, husleje og faktisk cash flow med på samme sag. Læs mere om <A href="/funktioner">funktionerne</A>, eller se <A href="/deals">dagens bedste boliger</A>.
-          </P>
-
-          <H2 id="bag">Hvem står bag</H2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,160px)_minmax(0,1fr)] sm:items-start">
-            <figure>
-              <Image src="/founder.jpg" alt={`${site.founder.name}, stifter af NordInvest`} width={320} height={400} className="aspect-[4/5] w-[140px] rounded-md object-cover sm:w-full" />
-            </figure>
-            <div>
-              <P>Jeg hedder {site.founder.name.split(" ")[0]} og har bygget NordInvest, beregningsmodellen og dataintegrationerne. Jeg står selv for tallene. Finder du en fejl, så ring til mig, og så retter jeg den.</P>
-              <P className="mt-4">I oktober 2026 fortalte en erhvervsmægler, at bankerne sjældent låner mere end 60 % til private købere af erhverv. Nu regner analysen med 40 % udbetaling. En professionel investor pegede på, at en fremskrivning af en ældre udlejningsejendom er for usikker. Nu vises tre scenarier med forsigtige tillæg.</P>
-              <p className="mt-6 font-[family-name:var(--font-display)] text-[22px] font-semibold text-[var(--color-ink)]">{site.founder.name}</p>
-              <p className="mt-1 text-[15px] text-[var(--color-ink-2)]">
-                <a href={site.phoneHref} className="font-medium text-[var(--color-ink)] underline decoration-[var(--color-accent)] underline-offset-4">{site.phone}</a>
-                <span className="mx-2 text-[var(--color-rule)]" aria-hidden>|</span>
-                <span className="select-all">{site.email}</span>
+      {/* Hero */}
+      <section>
+        <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-4 pb-16 pt-12 sm:px-8 sm:pt-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16 lg:pb-24">
+          <div className="min-w-0">
+            <p className="text-[15px] font-medium text-slate-500">Til private investorer og erhvervsmæglere</p>
+            <h1 className="mt-4 text-[40px] font-bold leading-[1.06] tracking-[-0.03em] text-slate-900 [hyphens:auto] [text-wrap:balance] sm:text-[56px]">
+              Ejendomsanalyse med kilde på hvert tal
+            </h1>
+            <Lead className="mt-6 text-[19px]">
+              NordInvest regner udlejningsboliger og udlejningsejendomme igennem med sælgers driftsbudget, BBR, den offentlige vurdering og dagens realkreditrente. Du ser, hvad ejendommen giver efter lånet, hvad driften kan tåle, og hvad du mangler at få styr på, før du byder.
+            </Lead>
+            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
+              <Primary>Anmod om adgang <ArrowRight size={17} /></Primary>
+              <TryButton className="inline-flex min-h-[48px] items-center justify-center whitespace-nowrap rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-900 hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-200">Prøv en beregning</TryButton>
+            </div>
+            <Suspense><HaveAccount className="mt-4" /></Suspense>
+            {snap && (
+              <p className="mt-10 text-[14px] text-slate-500">
+                <b className="font-semibold text-slate-900">{snap.scanned.toLocaleString("da-DK")}</b> boliger til salg regnet igennem i dag · <b className="font-semibold text-slate-900">{snap.positive.toLocaleString("da-DK")}</b> af dem betaler sig selv
               </p>
-            </div>
+            )}
           </div>
+          <div className="mx-auto w-full max-w-[460px] lg:mx-0 lg:justify-self-end">
+            {top && snap ? <PreviewCard d={top} updated={snap.updated} /> : null}
+          </div>
+        </div>
+      </section>
 
-          <H2 id="spoergsmaal">Spørgsmål</H2>
-          <div className="mt-2">
-            {FAQ.map(([q, a]) => (
-              <div key={q} className="mt-6">
-                <h3 className="text-[19px] font-semibold text-[var(--color-ink)]">{q}</h3>
-                <P className="mt-1.5 text-[17px]">{a}</P>
-              </div>
+      {/* Data sources */}
+      <section className="border-y border-slate-200 bg-slate-50">
+        <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-4 py-8 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+          <p className="shrink-0 text-[14px] font-medium text-slate-500">Analysen bygger på data fra</p>
+          <ul className="flex flex-wrap gap-x-8 gap-y-2 text-[15px] font-semibold text-slate-700">
+            {["BBR", "Ejendomsvurderingen", "Danmarks Statistik", "Danmarks Nationalbank", "Plandata.dk", "Boligsiden", "Ejendomstorvet"].map((s) => <li key={s}>{s}</li>)}
+          </ul>
+        </div>
+      </section>
+
+      {/* What an analysis contains */}
+      <Section>
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
+          <div>
+            <H2>Hvad en analyse indeholder</H2>
+            <Lead>Analysen skiller sælgers tal, offentlige registre og NordInvests egne skøn ad, så du kan se, hvad der er dokumenteret, og hvad der er antaget.</Lead>
+            <Link href="/methodology#investeringsejendomme" className="mt-6 inline-flex items-center gap-1.5 text-[16px] font-semibold text-slate-900 hover:underline">Metode og versionslog <ArrowRight size={16} /></Link>
+          </div>
+          <ol className="divide-y divide-slate-200 border-y border-slate-200">
+            {CONTENTS.map(([t, d], i) => (
+              <li key={t} className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 py-5">
+                <span className="pt-0.5 text-[15px] font-semibold tabular-nums text-slate-400">{String(i + 1).padStart(2, "0")}</span>
+                <div><p className="text-[18px] font-semibold text-slate-900">{t}</p><p className="mt-1 text-[16px] leading-relaxed text-slate-600">{d}</p></div>
+              </li>
             ))}
-          </div>
+          </ol>
+        </div>
+      </Section>
 
-          <div className="mt-16 border-t-2 border-[var(--color-ink)] pt-8">
-            <P>Adgang gives efter en samtale på 20 minutter om, hvad du ejer, og hvad du vil købe. Passer NordInvest ikke til dig, siger jeg det.</P>
-            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
-              <Link href="/adgang" className="inline-flex min-h-[48px] items-center whitespace-nowrap rounded-lg bg-[var(--color-ink)] px-5 text-[16px] font-semibold text-white transition-colors hover:bg-[var(--color-ink-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2">Anmod om adgang</Link>
-              <A href="/kontakt">Skriv til os</A>
+      {/* A real example */}
+      {example && exFindings.length > 0 && (
+        <Section className="bg-slate-50">
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-20">
+            <div>
+              <H2>Et rigtigt eksempel</H2>
+              <Lead>Schaldemosevej 3 i Ringsted: fem lejligheder, bygget 1912 og til salg for {kr(example.price)} Sådan ser tjekket mod de offentlige registre ud.</Lead>
+              <div className="mt-8"><Primary href="/e/schaldemosevej-3-ringsted">Se hele analysen <ArrowRight size={17} /></Primary></div>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04),0_16px_32px_-20px_rgba(16,24,40,0.18)]">
+              <p className="border-b border-slate-100 px-5 py-4 text-[15px] font-semibold text-slate-900 sm:px-6">Tjek mod offentlige registre</p>
+              <ul className="divide-y divide-slate-100">
+                {exFindings.slice(0, 4).map((f) => (
+                  <li key={f.title} className="flex gap-3 px-5 py-4 sm:px-6">
+                    <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${DOT[f.tone]}`} aria-hidden />
+                    <div className="min-w-0"><p className="text-[15px] font-semibold text-slate-900">{f.title}</p><p className="mt-0.5 text-[14px] leading-relaxed text-slate-600">{f.note}</p></div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-        </article>
-      </main>
+        </Section>
+      )}
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: FAQ.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) }) }} />
+      {/* Person */}
+      <Section>
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,1.4fr)] lg:gap-16">
+          <Image src="/founder.jpg" alt={`${site.founder.name}, stifter af NordInvest`} width={480} height={600} className="aspect-[4/5] w-full max-w-[300px] rounded-2xl object-cover" />
+          <div>
+            <H2>Jeg står selv for tallene</H2>
+            <Lead>Jeg hedder {site.founder.name.split(" ")[0]} og har bygget NordInvest, beregningsmodellen og dataintegrationerne. Finder du en fejl, så ring til mig, og så retter jeg den.</Lead>
+            <Lead>I oktober fortalte en erhvervsmægler, at bankerne sjældent låner mere end 60 % til private købere af erhverv. Nu regner analysen med 40 % udbetaling. En professionel investor pegede på, at en fremskrivning af en ældre udlejningsejendom er for usikker. Nu vises tre scenarier med forsigtige tillæg.</Lead>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[16px]">
+              <a href={site.phoneHref} className="inline-flex min-h-[44px] items-center gap-2 font-semibold text-slate-900 hover:underline"><Phone size={17} /> {site.phone}</a>
+              <span className="select-all text-slate-600">{site.email}</span>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* FAQ */}
+      <Section className="border-t border-slate-200">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-20">
+          <div>
+            <H2>Spørgsmål</H2>
+            <Lead>Er dit spørgsmål ikke her? <Link href="/kontakt?emne=spoergsmaal" className="font-semibold text-slate-900 underline underline-offset-4">Skriv til os</Link>.</Lead>
+          </div>
+          <Faq items={FAQ} />
+        </div>
+      </Section>
+
+      {/* Call to action */}
+      <section className="pb-20">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-8">
+          <div className="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <h2 className="text-[28px] font-semibold leading-tight tracking-[-0.02em] text-slate-900 sm:text-[34px]">Tag en samtale om dine ejendomme</h2>
+              <p className="mt-3 text-[17px] leading-relaxed text-slate-600">20 minutter om, hvad du ejer, og hvad du vil købe. Passer NordInvest ikke til dig, siger jeg det.</p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Primary>Anmod om adgang <ArrowRight size={17} /></Primary>
+              <Link href="/kontakt" className="inline-flex min-h-[48px] items-center justify-center whitespace-nowrap rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-900 hover:border-slate-400 max-sm:w-full">Kontakt os</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }) }} />
 
       <Footer />
     </div>

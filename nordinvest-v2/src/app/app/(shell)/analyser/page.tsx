@@ -22,7 +22,7 @@ export default function AnalysePage({ searchParams }: { searchParams: Record<str
   return (
     <div style={geistScope} className="font-geist">
       {!analyzing && (
-        <div className="mx-auto max-w-[1080px] px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8">
+        <div className="mx-auto max-w-[800px] px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8">
           <PageHeader title="Analysér" sub="Cash flow, afkast, rentefølsomhed og fremskrivning over 10 år. Gemte analyser lander i din pipeline." />
           <div className="mt-6"><AnalyseStart /></div>
           <h2 className="mt-10 text-[18px] font-semibold">Intet link? Regn selv</h2>

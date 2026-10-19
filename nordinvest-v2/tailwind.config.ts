@@ -18,10 +18,10 @@ const config: Config = {
           500: "#4a5c82", 600: "#25345a", 700: "#1d2a4b", 800: "#18233f", 900: "#141d34", 950: "#0c1222",
         },
         slate: {
-          50: "#f8f7f4", 100: "#f1efea", 200: "#e4e0d8", 300: "#cfc9be", 400: "#a09a90",
-          500: "#6f6c68", 600: "#555661", 700: "#3c4153", 800: "#272e42", 900: "#17213a", 950: "#0d1426",
+          50: "#f7f8fa", 100: "#f0f2f5", 200: "#e4e7ec", 300: "#cfd4dc", 400: "#9aa2af",
+          500: "#6b7280", 600: "#4b5262", 700: "#343c4f", 800: "#232b40", 900: "#17213a", 950: "#0d1426",
         },
-        paper: "#f6f4ef",
+        paper: "#ffffff",
         // The one accent (design.md): Danish red brick. Footnote marks and links only, < 5 % of a view.
         brick: { 600: "#9a3b26", 700: "#7e2f1e" },
         navy: {
@@ -35,13 +35,13 @@ const config: Config = {
           600: "#1d2a4b", // hover
         },
         cream: {
-          50: "#f6f4ef", // paper — page background
-          100: "#efece5",
+          50: "#ffffff", // page background
+          100: "#f5f6f8",
         },
         stone: {
-          200: "#e4e0d8", // borders
-          400: "#a09a90", // muted
-          600: "#555661", // secondary text
+          200: "#e4e7ec", // borders
+          400: "#9aa2af", // muted
+          600: "#4b5262", // secondary text
           900: "#17213a", // body text
         },
         data: {
@@ -54,7 +54,7 @@ const config: Config = {
         // All roles map to Inter — single bold grotesque brand voice.
         sans: ["var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
         serif: ["var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
-        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
         display: ["var(--font-display)", "var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
         // Landing page only (see components/home/fonts.ts).
         thesis: ["var(--font-serif-display)", "Georgia", "Times New Roman", "serif"],

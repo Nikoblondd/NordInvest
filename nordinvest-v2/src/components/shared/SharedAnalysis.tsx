@@ -83,7 +83,7 @@ export function SharedAnalysis({ listing: l, rates }: { listing: SharedListing; 
         {/* Report head (design.md): date line, address, verdict in words, one photo, key figures as a table row. */}
         <header className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] lg:gap-12">
           <div className="min-w-0">
-            <p className="font-[family-name:var(--font-mono)] text-[13px] text-[var(--color-muted)]">
+            <p className="text-[13px] text-[var(--color-muted)]">
               Investeringsanalyse · {new Date().toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric" })} · {`Erhverv${l.subcat ? `, ${l.subcat.toLowerCase()}` : ""}`}
             </p>
             <h1 className="mt-4 text-[34px] font-semibold leading-[1.1] text-[var(--color-ink)] [overflow-wrap:anywhere] sm:text-[44px]">{l.addr.split(",")[0]}</h1>
@@ -101,15 +101,15 @@ export function SharedAnalysis({ listing: l, rates }: { listing: SharedListing; 
             <figure className="min-w-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={l.imgs[0]} alt={`${l.addr}, foto fra annoncen`} className="aspect-[4/3] w-full rounded-md border border-[var(--color-rule)] object-cover" fetchPriority="high" />
-              <figcaption className="mt-1.5 font-[family-name:var(--font-mono)] text-[11.5px] text-[var(--color-muted)]">Foto fra annoncen{l.imgs.length > 1 ? ` (1 af ${l.imgs.length})` : ""}</figcaption>
+              <figcaption className="mt-1.5 text-[11.5px] text-[var(--color-muted)]">Foto fra annoncen{l.imgs.length > 1 ? ` (1 af ${l.imgs.length})` : ""}</figcaption>
             </figure>
           )}
         </header>
-        <dl className="mt-8 grid grid-cols-2 border-y-2 border-[var(--color-ink)] sm:grid-cols-4">
+        <dl className="mt-8 grid grid-cols-2 overflow-hidden rounded-xl border border-slate-200 bg-white sm:grid-cols-4">
           {metrics.map((m, i) => (
-            <div key={m.label} className={`py-3 ${i % 2 ? "pl-4" : "pr-4"} sm:px-4 ${i > 0 ? "sm:border-l sm:border-[var(--color-rule)]" : "sm:pl-0"} ${i > 1 ? "border-t border-[var(--color-rule)] sm:border-t-0" : ""}`}>
+            <div key={m.label} className={`px-4 py-3.5 ${i % 2 ? "border-l border-slate-200" : ""} ${i > 0 && i % 2 === 0 ? "sm:border-l sm:border-slate-200" : ""} ${i > 1 ? "border-t border-slate-200 sm:border-t-0" : ""}`}>
               <dt className="text-[13px] text-[var(--color-muted)]">{m.label}</dt>
-              <dd className={`mt-0.5 font-[family-name:var(--font-display)] text-[24px] font-semibold ${m.tone === "good" ? "text-emerald-800" : m.tone === "bad" ? "text-rose-700" : m.tone === "warn" ? "text-amber-800" : "text-[var(--color-ink)]"}`}>{m.value}{m.unit ? <span className="ml-1 text-[14px] font-normal text-[var(--color-muted)]">{m.unit}</span> : null}</dd>
+              <dd className={`mt-0.5 text-[24px] font-semibold tracking-[-0.02em] ${m.tone === "good" ? "text-emerald-800" : m.tone === "bad" ? "text-rose-700" : m.tone === "warn" ? "text-amber-800" : "text-[var(--color-ink)]"}`}>{m.value}{m.unit ? <span className="ml-1 text-[14px] font-normal text-[var(--color-muted)]">{m.unit}</span> : null}</dd>
             </div>
           ))}
         </dl>
@@ -173,7 +173,7 @@ export function SharedAnalysis({ listing: l, rates }: { listing: SharedListing; 
       )}
 
       <div className="mx-auto mt-10 max-w-[1080px] px-4 sm:px-6">
-        <p className="max-w-[70ch] border-t-2 border-[var(--color-ink)] pt-6 text-[16px] leading-relaxed text-[var(--color-ink-2)]">
+        <p className="max-w-[70ch] border-t border-slate-200 pt-6 text-[16px] leading-relaxed text-[var(--color-ink-2)]">
           Analysen er lavet med NordInvest, et analyseværktøj til danske ejendomsinvestorer og mæglere.{" "}
           <Link href="/adgang?kilde=delt-analyse" className="font-semibold text-[var(--color-ink)] underline decoration-[var(--color-accent)] underline-offset-4">Anmod om adgang</Link>{" "}
           eller <Link href="/" className="font-medium text-[var(--color-ink)] underline decoration-[var(--color-accent)] underline-offset-4">læs, hvordan tallene bliver regnet</Link>.

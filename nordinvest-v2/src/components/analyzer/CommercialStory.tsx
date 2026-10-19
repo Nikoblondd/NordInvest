@@ -26,7 +26,7 @@ const mio = (n: number) => `${(n / 1e6).toLocaleString("da-DK", { minimumFractio
 
 const SOURCE: Record<Source, string> = { annonce: "annonce", beregnet: "beregnet", bbr: "BBR", indtastet: "indtastet", skøn: "skøn" };
 /** The source of a figure, set like a reference note in a printed report. Estimates in brick. */
-const Src = ({ s }: { s: Source }) => <span className={`ml-2 font-[family-name:var(--font-mono)] text-[11.5px] ${s === "skøn" ? "text-[var(--color-accent)]" : "text-[var(--color-muted)]"}`}>[{SOURCE[s]}]</span>;
+const Src = ({ s }: { s: Source }) => <span className={`ml-2 text-[11.5px] ${s === "skøn" ? "text-[var(--color-accent)]" : "text-[var(--color-muted)]"}`}>[{SOURCE[s]}]</span>;
 
 type Check = { title: string; why: string };
 const COMMON: Check[] = [
@@ -51,7 +51,7 @@ function Part({ id, tint, q, a, tone, children }: { id: string; tint?: boolean; 
   const col = tone === "good" ? "text-emerald-700" : tone === "warn" ? "text-amber-700" : tone === "bad" ? "text-rose-600" : "text-slate-600";
   return (
     <section id={id} data-tint={tint ? "1" : undefined} className="scroll-mt-24 bg-[var(--color-paper)] px-4 py-10 sm:px-6 sm:py-12">
-      <div className="mx-auto max-w-[1080px] border-t-2 border-[var(--color-ink)] pt-6">
+      <div className="mx-auto max-w-[1080px] border-t border-slate-200 pt-8">
         <h2 className="text-[26px] font-semibold leading-[1.15] text-[var(--color-ink)] [text-wrap:balance] sm:text-[30px]">{q}</h2>
         <p className={`mt-2 max-w-[70ch] text-[17px] leading-relaxed ${col}`}>{a}</p>
         <div className="mt-7">{children}</div>

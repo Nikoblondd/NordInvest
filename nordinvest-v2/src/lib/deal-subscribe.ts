@@ -55,7 +55,7 @@ export const validEmail = (e: string) => /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,2
 export const notice = (title: string, body: string, status = 200) =>
   new Response(
     `<!doctype html><html lang="da"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} · NordInvest</title><meta name="robots" content="noindex"></head>
-    <body style="margin:0;background:#f6f4ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f1f3d;">
+    <body style="margin:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f1f3d;">
     <main style="max-width:480px;margin:12vh auto 0;padding:32px 24px;background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.06),0 12px 32px -16px rgba(15,23,42,.2);">
     <p style="margin:0 0 16px;font-weight:700;">NordInvest</p><h1 style="margin:0 0 8px;font-size:22px;">${title}</h1>
     <p style="margin:0;line-height:1.6;color:#475569;">${body}</p>

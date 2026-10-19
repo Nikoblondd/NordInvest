@@ -207,7 +207,7 @@ export function QuestionsDemo() {
               <div
                 role="img"
                 aria-label={q.alt}
-                className="relative mt-5 aspect-square overflow-hidden rounded-xl bg-[#f6f4ef] p-3 ring-1 ring-inset ring-slate-200/70 sm:aspect-[16/9] sm:p-4"
+                className="relative mt-5 aspect-square overflow-hidden rounded-xl bg-[#ffffff] p-3 ring-1 ring-inset ring-slate-200/70 sm:aspect-[16/9] sm:p-4"
               >
                 <q.visual />
               </div>

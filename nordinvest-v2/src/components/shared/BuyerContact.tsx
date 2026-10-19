@@ -34,7 +34,7 @@ export function BuyerContact({ slug, street, viaNordInvest }: { slug: string; st
 
   if (state === "sent") {
     return (
-      <div className="border-t-2 border-emerald-700 pt-6">
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8">
         <p className="flex items-center gap-2 text-[18px] font-semibold text-emerald-900"><Check size={20} /> Din besked er sendt</p>
         <p className="mt-1.5 text-[15px] text-emerald-900/80">{viaNordInvest ? "Vi sender den videre til mægleren på sagen, som svarer dig på mail." : "Mægleren på sagen har fået den og svarer dig på mail."} Du har også fået en kopi.</p>
       </div>
@@ -42,7 +42,7 @@ export function BuyerContact({ slug, street, viaNordInvest }: { slug: string; st
   }
 
   return (
-    <form onSubmit={submit} className="relative border-t-2 border-[var(--color-ink)] pt-6" noValidate>
+    <form onSubmit={submit} className="relative rounded-2xl border border-slate-200 bg-white p-6 sm:p-8" noValidate>
       <h2 className="text-[22px] font-semibold tracking-[-0.01em]">Skriv til mægleren om {street}</h2>
       <p className="mt-1.5 max-w-[60ch] text-[15px] text-slate-600">{viaNordInvest ? "Vi sender din besked videre til mægleren, der har sagen." : "Beskeden går direkte til mægleren, der har sagen."} Du får svar på mail.</p>
       <div className="mt-5 grid gap-4 sm:grid-cols-2">

@@ -50,12 +50,12 @@
   h2,
   h3 {
     @apply font-semibold;
-    font-family: var(--font-display), Georgia, "Times New Roman", serif;
+    font-family: var(--font-display), var(--font-inter), -apple-system, system-ui, sans-serif;
     font-style: normal;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
-  h1 { letter-spacing: -0.015em; }
+  h1 { letter-spacing: -0.025em; }
   /* Considered focus ring: a single subtle offset ring, not the default browser
      halo or the ubiquitous blue-500 double-ring you see on every AI site. */
   :focus-visible {
@@ -178,7 +178,7 @@
    a whisper of navy, fading out towards the bottom so it never reads as a
    pattern fill. */
 .drafting-paper {
-  background-color: #f6f4ef;
+  background-color: #ffffff;
   background-image:
     linear-gradient(rgba(11, 27, 51, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(11, 27, 51, 0.045) 1px, transparent 1px);
@@ -274,7 +274,7 @@
 .feature-prose blockquote.note {
   margin: 2rem 0;
   border-radius: 16px;
-  background: #f6f4ef;
+  background: #ffffff;
   padding: 1.25rem 1.5rem;
   font-size: 17px;
   color: #334155;
@@ -432,12 +432,12 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
  * design-system: design.md · designed-as-app · nav: N9 · footer: Ft4
  * Tokens for the Oct 2026 redesign. Components reference these by name. */
 :root {
-  --color-paper: oklch(97% 0.008 85);    /* #f6f4ef */
-  --color-paper-2: oklch(99.2% 0.003 85);
+  --color-paper: #ffffff;
+  --color-paper-2: #f7f8fa;
   --color-ink: oklch(24% 0.035 262);     /* #17213a */
-  --color-ink-2: oklch(38% 0.025 262);   /* #3c4153 */
-  --color-muted: oklch(50% 0.015 262);   /* #555661 */
-  --color-rule: oklch(89% 0.012 85);     /* #e4e0d8 */
+  --color-ink-2: #3d4454;
+  --color-muted: #5f6675;
+  --color-rule: #e4e7ec;
   --color-accent: oklch(45% 0.13 35);    /* brick #9a3b26 */
   --color-focus: oklch(45% 0.13 35);
   --color-ink-hover: oklch(31% 0.045 262); /* #25345a */
