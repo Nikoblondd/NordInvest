@@ -14,8 +14,9 @@ import type { Tone } from "./tone";
  * Everything deeper sits in the tabs below it.
  */
 
-const BAR: Record<Tone, string> = { good: "bg-emerald-600", warn: "bg-amber-500", bad: "bg-rose-500", neutral: "bg-slate-400" };
+const RING: Record<Tone, string> = { good: "stroke-emerald-500", warn: "stroke-amber-500", bad: "stroke-rose-500", neutral: "stroke-slate-400" };
 const TEXT: Record<Tone, string> = { good: "text-emerald-700", warn: "text-amber-700", bad: "text-rose-600", neutral: "text-slate-900" };
+const CHIP: Record<Tone, string> = { good: "bg-emerald-50 text-emerald-800 ring-emerald-200", warn: "bg-amber-50 text-amber-900 ring-amber-200", bad: "bg-rose-50 text-rose-700 ring-rose-200", neutral: "bg-slate-100 text-slate-700 ring-slate-200" };
 
 export function AppHero({ images: all, address, score, headline, verdict, tone, notes, metrics, probability, listingUrl, sourceLabel, kindLabel }: {
   images: string[]; address: string | null; score: number; headline: string; verdict: string; tone: Tone; notes: string[];
@@ -26,6 +27,7 @@ export function AppHero({ images: all, address, score, headline, verdict, tone, 
   const images = all.filter((s) => !failed.includes(s));
   const photo = images[0];
   const [street, ...rest] = (address ?? "Din analyse").split(",");
+  const c = 2 * Math.PI * 30;
 
   return (
     <section id="overblik" className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
@@ -49,16 +51,16 @@ export function AppHero({ images: all, address, score, headline, verdict, tone, 
           </div>
           <h1 className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.02em] text-slate-900 [text-wrap:balance] sm:text-[26px]">{street}</h1>
           {rest.length > 0 && <p className="text-[14px] text-slate-500">{rest.join(",").trim()}</p>}
-          {/* Verdict: the words first, the score as a plain bar beneath (no gauge ring). */}
-          <div className="mt-5 rounded-xl bg-slate-50 p-4">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-              <p className="text-[19px] font-semibold leading-tight text-slate-900">{headline}</p>
-              <p className="text-[14px] text-slate-500"><b className="font-semibold tabular-nums text-slate-900">{score}</b> af 100</p>
+          <div className="mt-4 flex items-start gap-4">
+            <svg width="72" height="72" viewBox="0 0 72 72" className="shrink-0" aria-label={`Score ${score} af 100`}>
+              <circle cx="36" cy="36" r="30" fill="none" className="stroke-slate-100" strokeWidth="6" />
+              <circle cx="36" cy="36" r="30" fill="none" className={RING[tone]} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${(c * Math.max(0, Math.min(100, score))) / 100} ${c}`} transform="rotate(-90 36 36)" />
+              <text x="36" y="40" textAnchor="middle" fontSize="20" fontWeight="700" className="fill-slate-900">{score}</text>
+            </svg>
+            <div className="min-w-0">
+              <p className={clsx("text-[20px] font-semibold leading-tight tracking-[-0.01em]", TEXT[tone])}>{headline}</p>
+              <p className="mt-1 text-[15px] leading-relaxed text-slate-600">{verdict}</p>
             </div>
-            <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-slate-200" aria-hidden>
-              <div className={clsx("h-full rounded-full", BAR[tone])} style={{ width: `${Math.max(2, Math.min(100, score))}%` }} />
-            </div>
-            <p className="mt-3 text-[15px] leading-relaxed text-slate-600">{verdict}</p>
           </div>
           {notes.length > 0 && (
             <ul className="mt-3 space-y-1">
@@ -78,7 +80,7 @@ export function AppHero({ images: all, address, score, headline, verdict, tone, 
       </div>
       {probability && (
         <p className="border-t border-slate-100 px-5 py-3 text-[13px] text-slate-600">
-          <b className={clsx("mr-1 font-semibold tabular-nums", TEXT[probability.pct >= 60 ? "good" : probability.pct >= 35 ? "warn" : "bad"])}>{probability.pct} %</b>
+          <span className={clsx("mr-1.5 rounded-md px-1.5 py-0.5 font-semibold ring-1", CHIP[probability.pct >= 60 ? "good" : probability.pct >= 35 ? "warn" : "bad"])}>{probability.pct} %</span>
           sandsynlighed for positivt cash flow, regnet på {probability.runs.toLocaleString("da-DK")} scenarier med forskellig leje, rente og tomgang.
         </p>
       )}

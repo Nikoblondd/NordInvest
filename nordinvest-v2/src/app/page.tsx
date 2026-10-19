@@ -1,239 +1,323 @@
 import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Phone } from "lucide-react";
+import { ArrowRight, Bell, CalendarClock, Calculator, Check, FileSearch, FileText, Gamepad2, KanbanSquare, LineChart, Mail, Search, ShieldCheck, Users } from "lucide-react";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { TryButton } from "@/components/landing/TryModal";
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
+import { geist } from "@/components/home/fonts";
+import { BankScreen, CalendarScreen, Notice, OverviewScreen, PHOTO, PipelineScreen } from "@/components/landing/screens";
+import { Walkthrough } from "@/components/landing/Walkthrough";
+import { QuickTest } from "@/components/landing/QuickTest";
 import { Faq } from "@/components/landing/Faq";
-import { getDealSnapshot, type SnapshotDeal } from "@/lib/deals-snapshot";
-import { getLink } from "@/lib/broker/links";
-import { budget, findings, type Finding } from "@/lib/investment-ops";
+import { CountUp, Reveal } from "@/components/landing/motion";
+import { getDealSnapshot } from "@/lib/deals-snapshot";
 import { site } from "@/lib/site";
 import { HaveAccount } from "@/components/auth/HaveAccount";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: { absolute: "NordInvest · Ejendomsanalyse til danske investorer" },
-  description: "Regn udlejningsejendomme igennem med sælgers driftsbudget, BBR, den offentlige vurdering og dagens realkreditrente. Kilde på hvert tal. Adgang efter en personlig samtale.",
+  title: { absolute: "NordInvest · Systemet til danske ejendomsinvestorer" },
+  description: "Analysér investeringsboliger og hold styr på hele købet: søgeagenter, pipeline, kalender, bud og AI, der læser papirerne. Adgang efter personlig samtale.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "NordInvest · Ejendomsanalyse til danske investorer",
-    description: "Sælgers tal, BBR, vurdering og dagens rente i ét regnestykke. Kilde på hvert tal.",
+    title: "NordInvest · Systemet til danske ejendomsinvestorer",
+    description: "Find, regn, gennemgå og byd i ét system. Adgang efter en personlig samtale.",
     url: "https://nordinvest.io",
   },
 };
 
-/*
- * Landing page (Oct 2026). White, modern and plain: one strong headline, a
- * real analysis card on today's top property, the data sources, what an
- * analysis contains, a real example with its public-record checks, the person
- * behind it, FAQ. Every number on the page is live or taken from a real case.
- */
-
-const Section = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <section className={className}><div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-8 sm:py-24">{children}</div></section>
-);
-const H2 = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <h2 className={`text-[32px] font-semibold leading-[1.15] tracking-[-0.025em] text-slate-900 [text-wrap:balance] sm:text-[40px] ${className ?? ""}`}>{children}</h2>
-);
-const Lead = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <p className={`mt-4 max-w-[38rem] text-[18px] leading-relaxed text-slate-600 ${className ?? ""}`}>{children}</p>
-);
-const Primary = ({ href = "/adgang", children }: { href?: string; children: ReactNode }) => (
-  <Link href={href} className="inline-flex min-h-[48px] items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-slate-900 px-5 text-[16px] font-semibold text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-300 max-sm:w-full">{children}</Link>
-);
-
-const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
-const signed = (n: number) => `${n >= 0 ? "+" : "−"}${Math.round(Math.abs(n)).toLocaleString("da-DK")} kr.`;
-const pct = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 1 })} %`;
-const Tag = ({ children }: { children: ReactNode }) => <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-[11px] font-medium text-slate-500">{children}</span>;
-
-const FAQ = [
-  { q: "Hvad er NordInvest?", a: "Et dansk analyseværktøj og system til private ejendomsinvestorer og erhvervsmæglere, bygget af Nikolaj Blond (CVR 44701898). Det regner boliger og udlejningsejendomme igennem med sælgers tal og offentlige data og samler fremvisninger, bank og bud på hver bolig. NordInvest har ingen forbindelse til Nordnet, NORD.investments, Nord-Invest ApS eller Nordinvest AB." },
-  { q: "Hvor præcise er tallene?", a: "Så præcise som det, de bygger på, og det står ved hvert tal. Sælgers driftsbudget vises, som det er. NordInvests egne skøn står for sig, og fremtiden vises som tre scenarier, ikke som én prognose. Lejeliste, regnskab og en teknisk gennemgang erstatter analysen ikke, og det står i den." },
-  { q: "Hvad koster det?", a: "Prisen aftaler vi efter samtalen, ud fra hvor meget du køber, og hvad du skal bruge. Der er ingen binding." },
-  { q: "Hvorfor skal man anmode om adgang?", a: "Fordi analysen bliver bedre, når den er sat op efter dit område, din strategi og din finansiering. Det gør vi i samtalen, og bagefter har du en, du kan ringe til." },
-  { q: "Er det rådgivning?", a: "Nej. NordInvest giver beregninger og overblik. Beslutningen er din, og ved køb anbefaler vi altid en købers rådgiver." },
-];
-
-const CONTENTS: [string, string][] = [
-  ["Sælgers tal, som de er", "Lejeindtægt, driftsudgifter og driftsresultat fra annoncen, hver med sin kilde. Har du lejeliste og regnskab, skriver du de faktiske tal ind, og alt regnes om."],
-  ["Et forsigtigt år 1", "Ekstra vedligehold efter bygningens alder i BBR og et tillæg for lejetab, synligt og til at rette."],
-  ["Hvad driften kan tåle", "Hvor meget driftsresultatet kan falde, før cash flow er nul, og hvad der sker, hvis lejen falder, udgifterne stiger eller renten går op."],
-  ["Tjek mod registrene", "Sælgers leje mod markedslejen for hver bolig i BBR, driftsudgifterne mod kommunens grundskyld og prisen mod den offentlige vurdering."],
-  ["Ti år som tre scenarier", "Forsigtig, middel og positiv, hvor udgifterne stiger mindst lige så hurtigt som lejen. Ikke en prognose."],
-];
-
-/** Today's top-ranked home as a compact analysis card. */
-function PreviewCard({ d, updated }: { d: SnapshotDeal; updated: string }) {
-  const rent = (d.grossYield * d.price) / 1200;
-  const noi = (d.capRate * d.price) / 1200;
-  const at = new Date(updated).toLocaleDateString("da-DK", { day: "numeric", month: "long", timeZone: "Europe/Copenhagen" });
+/* Shared type: one sans family, tight tracking, the second phrase in blue. */
+function H2({ children, accent, dark, className }: { children: ReactNode; accent?: ReactNode; dark?: boolean; className?: string }) {
   return (
-    <Link href={d.href} className="group block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04),0_24px_48px_-24px_rgba(16,24,40,0.22)] transition-shadow hover:shadow-[0_1px_2px_rgba(16,24,40,0.05),0_28px_56px_-24px_rgba(16,24,40,0.28)]">
-      {d.image && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={d.image} alt={`${d.address}, øverst i Deal-motoren`} className="aspect-[16/9] w-full object-cover" fetchPriority="high" />
-      )}
-      <div className="p-5 sm:p-6">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-[18px] font-semibold text-slate-900">{d.address.split(",")[0]}</p>
-            <p className="text-[14px] text-slate-500">{d.zip} {d.city}{d.area ? ` · ${d.area} m²` : ""}</p>
-          </div>
-          <span className="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-[12px] font-medium text-slate-600">Nr. 1 i dag, {at}</span>
-        </div>
-        <dl className="mt-4 divide-y divide-slate-100 text-[15px] tabular-nums">
-          <div className="flex justify-between gap-3 py-2"><dt className="text-slate-600">Udbudspris<Tag>annonce</Tag></dt><dd className="text-slate-900">{kr(d.price)}</dd></div>
-          <div className="flex justify-between gap-3 py-2"><dt className="text-slate-600">Markedsleje pr. md.<Tag>skøn</Tag></dt><dd className="text-slate-900">{kr(rent)}</dd></div>
-          <div className="flex justify-between gap-3 py-2"><dt className="text-slate-600">Drift og vedligehold<Tag>skøn</Tag></dt><dd className="text-slate-900">{signed(-(rent - noi))}</dd></div>
-          <div className="flex justify-between gap-3 py-2"><dt className="text-slate-600">Ydelse, 80 % lån<Tag>5 %</Tag></dt><dd className="text-slate-900">{signed(-(noi - d.cashFlow))}</dd></div>
-          <div className="flex items-baseline justify-between gap-3 pt-3"><dt className="font-semibold text-slate-900">Cash flow pr. md.</dt><dd className={`text-[20px] font-semibold ${d.cashFlow >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{signed(d.cashFlow)}</dd></div>
-        </dl>
-        <p className="mt-3 flex items-center justify-between text-[14px]">
-          <span className="text-slate-500">Nettoafkast {pct(d.capRate)}</span>
-          <span className="inline-flex items-center gap-1 font-semibold text-slate-900 group-hover:underline">Hele analysen <ArrowRight size={15} /></span>
-        </p>
-      </div>
-    </Link>
+    <h2 className={`text-[34px] font-semibold leading-[1.06] tracking-[-0.035em] [text-wrap:balance] sm:text-[48px] ${dark ? "text-white" : "text-[#0b1b33]"} ${className ?? ""}`}>
+      {children}{accent && <> <span className={dark ? "text-blue-400" : "text-blue-600"}>{accent}</span></>}
+    </h2>
   );
 }
+const Lead = ({ children, dark, className }: { children: ReactNode; dark?: boolean; className?: string }) => (
+  <p className={`mt-5 max-w-[34rem] text-[18px] leading-relaxed ${dark ? "text-white/65" : "text-slate-600"} ${className ?? ""}`}>{children}</p>
+);
+const Cta = ({ dark, label = "Anmod om adgang" }: { dark?: boolean; label?: string }) => (
+  <Link href="/adgang" className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg px-5 max-sm:w-full text-[16px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 active:translate-y-px ${dark ? "bg-white text-[#0b1b33] hover:bg-slate-100 focus-visible:ring-white/40" : "bg-blue-600 text-white hover:bg-blue-500 focus-visible:ring-blue-200"}`}>{label} <ArrowRight size={17} /></Link>
+);
 
-const DOT: Record<Finding["tone"], string> = { good: "bg-emerald-500", info: "bg-slate-400", warn: "bg-amber-500", bad: "bg-rose-500" };
+const FLOW = [
+  { Icon: Search, t: "Find", d: "Boligen dukker op" },
+  { Icon: Calculator, t: "Regn", d: "Tallene på et minut" },
+  { Icon: FileSearch, t: "Gennemgå", d: "Papirerne læst for dig" },
+  { Icon: KanbanSquare, t: "Byd", d: "Med en klar grænse" },
+];
+
+const FAQ = [
+  { q: "Hvad er NordInvest?", a: "NordInvest (nordinvest.io) er et dansk system til private ejendomsinvestorer, bygget af Nikolaj Blond (CVR 44701898). Det finder udlejningsboliger, regner dem igennem med data fra BBR og Danmarks Statistik, læser salgsopstilling og referater og samler fremvisninger, bank og bud på hver bolig. NordInvest har ingen forbindelse til Nordnet, NORD.investments, Nord-Invest ApS eller Nordinvest AB." },
+  { q: "Hvad koster det?", a: "Prisen aftaler vi efter samtalen, ud fra hvor meget du køber, og hvad du skal bruge. Der er ingen binding, og du kan stoppe, når du vil." },
+  { q: "Hvorfor skal man anmode om adgang?", a: "Fordi du får mest ud af NordInvest, når det er sat op efter din strategi og dit område. Det gør vi sammen i samtalen, og du får en, du kan ringe til." },
+  { q: "Forpligter samtalen mig til noget?", a: "Nej. Samtalen handler om, hvordan du investerer i dag, og hvad du har brug for. Først når vi begge mener, at NordInvest passer til dig, aftaler vi pris. Beregningen på forsiden kan du bruge med det samme." },
+  { q: "Hvem er NordInvest til?", a: "Private investorer i Danmark, der ejer eller vil købe udlejningsboliger, rækkehuse, villaer eller mindre erhverv, og som selv finder boligerne og selv beslutter." },
+  { q: "Hvor kommer tallene fra?", a: "Fra BBR og matrikel via Datafordeler, Danmarks Statistik, Plandata og aktive boligannoncer. Kilden står ved hvert tal i analysen." },
+  { q: "Er det rådgivning?", a: "Nej. NordInvest giver dig beregninger og overblik. Beslutningen er din, og ved køb anbefaler vi altid en købers rådgiver." },
+  { q: "Jeg har allerede en konto. Hvad nu?", a: "Du logger ind som før. Dine gemte boliger og analyser er der stadig." },
+];
 
 export default async function Home() {
-  const [snap, example] = await Promise.all([getDealSnapshot(null, 4).catch(() => null), getLink("schaldemosevej-3-ringsted").catch(() => null)]);
-  const top = snap?.top?.[0] ?? null;
-  const exFacts = example ? { price: example.price, noi: example.rent * 12, opex: example.opex ?? null, area: example.area ?? null, builtYear: example.builtYear ?? null, subcat: example.subcat } : null;
-  const exFindings = example?.dossier && exFacts ? findings(exFacts, budget(exFacts), example.dossier) : [];
+  const snap = await getDealSnapshot(null, 4).catch(() => null);
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 antialiased">
+    <div className={`${geist.variable} min-h-screen bg-white font-[family-name:var(--font-geist)] text-slate-900 antialiased`}>
       <LandingNav />
 
-      {/* Hero */}
-      <section>
-        <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-4 pb-16 pt-12 sm:px-8 sm:pt-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16 lg:pb-24">
-          <div className="min-w-0">
-            <p className="text-[15px] font-medium text-slate-500">Til private investorer og erhvervsmæglere</p>
-            <h1 className="mt-4 text-[40px] font-bold leading-[1.06] tracking-[-0.03em] text-slate-900 [hyphens:auto] [text-wrap:balance] sm:text-[56px]">
-              Ejendomsanalyse med kilde på hvert tal
-            </h1>
-            <Lead className="mt-6 text-[19px]">
-              NordInvest regner udlejningsboliger og udlejningsejendomme igennem med sælgers driftsbudget, BBR, den offentlige vurdering og dagens realkreditrente. Du ser, hvad ejendommen giver efter lånet, hvad driften kan tåle, og hvad du mangler at få styr på, før du byder.
-            </Lead>
-            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
-              <Primary>Anmod om adgang <ArrowRight size={17} /></Primary>
-              <TryButton className="inline-flex min-h-[48px] items-center justify-center whitespace-nowrap rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-900 hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-200">Prøv en beregning</TryButton>
-            </div>
-            <Suspense><HaveAccount className="mt-4" /></Suspense>
-            {snap && (
-              <p className="mt-10 text-[14px] text-slate-500">
-                <b className="font-semibold text-slate-900">{snap.scanned.toLocaleString("da-DK")}</b> boliger til salg regnet igennem i dag · <b className="font-semibold text-slate-900">{snap.positive.toLocaleString("da-DK")}</b> af dem betaler sig selv
-              </p>
-            )}
-          </div>
-          <div className="mx-auto w-full max-w-[460px] lg:mx-0 lg:justify-self-end">
-            {top && snap ? <PreviewCard d={top} updated={snap.updated} /> : null}
-          </div>
-        </div>
-      </section>
-
-      {/* Data sources */}
-      <section className="border-y border-slate-200 bg-slate-50">
-        <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-4 py-8 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
-          <p className="shrink-0 text-[14px] font-medium text-slate-500">Analysen bygger på data fra</p>
-          <ul className="flex flex-wrap gap-x-8 gap-y-2 text-[15px] font-semibold text-slate-700">
-            {["BBR", "Ejendomsvurderingen", "Danmarks Statistik", "Danmarks Nationalbank", "Plandata.dk", "Boligsiden", "Ejendomstorvet"].map((s) => <li key={s}>{s}</li>)}
-          </ul>
-        </div>
-      </section>
-
-      {/* What an analysis contains */}
-      <Section>
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
+      {/* Hero: fills the screen on desktop */}
+      <section className="relative overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(900px 520px at 78% 30%, rgba(37,99,235,0.10), transparent 70%), linear-gradient(#f8fafc, #fff)" }} />
+        <div className="relative mx-auto grid max-w-[1320px] items-center gap-12 px-4 py-12 sm:px-8 lg:min-h-[calc(100dvh-64px)] lg:grid-cols-[0.82fr_1.18fr] lg:gap-14 lg:py-10">
           <div>
-            <H2>Hvad en analyse indeholder</H2>
-            <Lead>Analysen skiller sælgers tal, offentlige registre og NordInvests egne skøn ad, så du kan se, hvad der er dokumenteret, og hvad der er antaget.</Lead>
-            <Link href="/methodology#investeringsejendomme" className="mt-6 inline-flex items-center gap-1.5 text-[16px] font-semibold text-slate-900 hover:underline">Metode og versionslog <ArrowRight size={16} /></Link>
+            <p className="hero-rise inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[13px] font-medium text-slate-600"><ShieldCheck size={14} className="text-blue-600" /> For danske ejendomsinvestorer</p>
+            <h1 style={{ ["--d" as string]: "80ms" }} className="hero-rise mt-5 text-[42px] font-semibold leading-[1.02] tracking-[-0.04em] text-[#0b1b33] [text-wrap:balance] sm:text-[56px] min-[1400px]:text-[68px]">
+              Køb bedre ejendomme, <span className="text-blue-600">uden regneark og gætteri.</span>
+            </h1>
+            <p style={{ ["--d" as string]: "180ms" }} className="hero-rise mt-5 max-w-[33rem] text-[18px] leading-relaxed text-slate-600 sm:text-[19px]">
+              NordInvest finder boligerne, regner dem igennem, læser papirerne og holder styr på dine bud. Ét system, med adgang efter en personlig samtale.
+            </p>
+            <div style={{ ["--d" as string]: "280ms" }} className="hero-rise mt-8 grid gap-3 sm:flex sm:flex-wrap">
+              <Cta />
+              <TryButton className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-800 hover:border-slate-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-100">Prøv en beregning</TryButton>
+            </div>
+            <Suspense><HaveAccount className="hero-rise mt-4" /></Suspense>
+            <div style={{ ["--d" as string]: "380ms" }} className="hero-rise mt-8 hidden flex-wrap gap-2 sm:flex">
+              {[[Search, "Deal-motor"], [LineChart, "Analyse"], [FileText, "Papirgennemgang"], [KanbanSquare, "Pipeline"]].map(([Icon, l]) => {
+                const I = Icon as typeof Search;
+                return <span key={l as string} className="inline-flex h-8 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700"><I size={14} className="text-blue-600" />{l as string}</span>;
+              })}
+            </div>
           </div>
-          <ol className="divide-y divide-slate-200 border-y border-slate-200">
-            {CONTENTS.map(([t, d], i) => (
-              <li key={t} className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 py-5">
-                <span className="pt-0.5 text-[15px] font-semibold tabular-nums text-slate-400">{String(i + 1).padStart(2, "0")}</span>
-                <div><p className="text-[18px] font-semibold text-slate-900">{t}</p><p className="mt-1 text-[16px] leading-relaxed text-slate-600">{d}</p></div>
+          <div className="relative lg:pl-4">
+            <div className="hero-screen relative max-sm:max-h-[430px] max-sm:overflow-hidden"><OverviewScreen /><div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white to-transparent sm:hidden" /></div>
+            <Notice className="hero-pop absolute -top-6 right-2 hidden sm:block lg:-right-6" label="Lige nu" title="Ny bolig matcher dig" text="Algade 9, Holstebro. 1.150.000 kr. og +2.120 kr./md." action="Se boligen" />
+            <Notice dark tone="green" className="hero-pop absolute -bottom-8 -left-6 hidden sm:block lg:-left-12 [--d:1200ms]" label="I går kl. 21.04" title="Referatet er læst" text="2 ting at spørge mægleren om, side 4 og 11." />
+          </div>
+        </div>
+      </section>
+
+      {/* Flow band */}
+      <section className="bg-[#0b1b33] text-white" style={{ background: "radial-gradient(1000px 420px at 50% 0%, #17305a 0%, #0b1b33 70%)" }}>
+        <div className="mx-auto max-w-[1320px] px-4 py-14 text-center sm:px-8 sm:py-24">
+          <Reveal>
+            <H2 dark accent="i ét system." className="mx-auto max-w-3xl">Fra fundet bolig til købsaftale,</H2>
+            <p className="mx-auto mt-5 max-w-xl text-[18px] leading-relaxed text-white/65">Hvad du finder, regner og læser, bliver på boligen. Du starter aldrig forfra i et nyt værktøj.</p>
+          </Reveal>
+          <Reveal y={0} className="relative mx-auto mt-14 max-w-4xl">
+          <ol className="relative grid grid-cols-2 gap-y-10 sm:grid-cols-4">
+            <span aria-hidden className="draw-x absolute left-[12.5%] right-[12.5%] top-7 hidden h-px bg-gradient-to-r from-blue-500/20 via-blue-400/60 to-blue-500/20 sm:block" />
+            {FLOW.map(({ Icon, t, d }, i) => (
+              <li key={t} className="relative">
+                <Reveal delay={150 + i * 140} className="flex flex-col items-center">
+                <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#13284a] text-blue-300 ring-1 ring-white/10"><Icon size={24} /><span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[12px] font-semibold text-white">{i + 1}</span></span>
+                <p className="mt-4 text-[17px] font-semibold">{t}</p>
+                <p className="mt-1 text-[14px] text-white/55">{d}</p>
+                </Reveal>
               </li>
             ))}
           </ol>
+          </Reveal>
         </div>
-      </Section>
+      </section>
 
-      {/* A real example */}
-      {example && exFindings.length > 0 && (
-        <Section className="bg-slate-50">
-          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-20">
-            <div>
-              <H2>Et rigtigt eksempel</H2>
-              <Lead>Schaldemosevej 3 i Ringsted: fem lejligheder, bygget 1912 og til salg for {kr(example.price)} Sådan ser tjekket mod de offentlige registre ud.</Lead>
-              <div className="mt-8"><Primary href="/e/schaldemosevej-3-ringsted">Se hele analysen <ArrowRight size={17} /></Primary></div>
+      {/* Interactive walkthrough */}
+      <section className="bg-slate-50" style={{ backgroundImage: "radial-gradient(rgba(11,27,51,0.07) 1px, transparent 1px)", backgroundSize: "22px 22px" }}>
+        <div className="mx-auto max-w-[1320px] px-4 py-20 sm:px-8 sm:py-28">
+          <Reveal className="mx-auto max-w-3xl text-center">
+            <H2 accent="hele vejen.">Følg én bolig,</H2>
+            <p className="mx-auto mt-5 max-w-xl text-[18px] leading-relaxed text-slate-600">Tryk dig igennem, hvordan Algade 9 i Holstebro går fra fund til accepteret bud.</p>
+          </Reveal>
+          <div className="mt-12 lg:mt-6"><Walkthrough /></div>
+        </div>
+      </section>
+
+      {/* Free test */}
+      <section className="bg-white">
+        <div className="mx-auto grid max-w-[1320px] items-center gap-12 px-4 py-20 sm:px-8 sm:py-28 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          <Reveal>
+            <p className="text-[14px] font-semibold text-blue-600">Gratis, uden login</p>
+            <H2 className="mt-3" accent="du kigger på.">Prøv det på en bolig,</H2>
+            <Lead>Tre tal er nok til at se, om boligen kan betale sig selv. Det er den samme beregning, som ligger under hele systemet.</Lead>
+            <div className="mt-8 hidden max-w-md grid-cols-3 gap-3 sm:grid">
+              {[[PHOTO(2), "Rækkehus"], [PHOTO(1), "Lejlighed"], [PHOTO(5), "Villa"]].map(([src, l], i) => (
+                <div key={l} className={`parallax overflow-hidden rounded-xl ring-1 ring-slate-200 ${["[--a:18px]", "[--a:-26px]", "[--a:34px]"][i]}`}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt={`${l}, eksempel`} className="aspect-square w-full object-cover" />
+                  <p className="bg-white px-2 py-1.5 text-center text-[13px] font-medium text-slate-700">{l}</p>
+                </div>
+              ))}
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04),0_16px_32px_-20px_rgba(16,24,40,0.18)]">
-              <p className="border-b border-slate-100 px-5 py-4 text-[15px] font-semibold text-slate-900 sm:px-6">Tjek mod offentlige registre</p>
-              <ul className="divide-y divide-slate-100">
-                {exFindings.slice(0, 4).map((f) => (
-                  <li key={f.title} className="flex gap-3 px-5 py-4 sm:px-6">
-                    <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${DOT[f.tone]}`} aria-hidden />
-                    <div className="min-w-0"><p className="text-[15px] font-semibold text-slate-900">{f.title}</p><p className="mt-0.5 text-[14px] leading-relaxed text-slate-600">{f.note}</p></div>
-                  </li>
-                ))}
-              </ul>
+          </Reveal>
+          <Reveal delay={140} className="mx-auto w-full max-w-[640px]"><QuickTest autoplay /></Reveal>
+        </div>
+      </section>
+
+      {/* The system, dark */}
+      <section className="bg-[#0b1b33] text-white" style={{ background: "linear-gradient(#0b1b33, #0d2140)" }}>
+        <div className="mx-auto max-w-[1320px] px-4 py-20 sm:px-8 sm:py-28">
+          <Reveal className="max-w-3xl">
+            <H2 dark accent="helt styr på dine handler.">Ét arbejdsområde, der giver dig</H2>
+            <Lead dark>Når du har flere boliger i spil på én gang, er det overblikket, der afgør, hvem der byder først.</Lead>
+          </Reveal>
+
+          {[
+            {
+              n: 1, more: { href: "/funktioner/pipeline", label: "Om pipelinen" }, title: "Alle dine boliger på én tavle", text: "Hver bolig er en sag, der flytter sig fra screening til bud. Du ser med det samme, hvor meget du har i spil, og hvad der mangler.",
+              points: [[KanbanSquare, "Tavle eller liste", "Træk en bolig videre, når du er klar"], [LineChart, "Tallene følger med", "Overskud og afkast står på hvert kort"], [Users, "Mægler og noter", "Navn, nummer og dine noter fra fremvisningen"]],
+              screen: <PipelineScreen />, notice: { tone: "green" as const, label: "Flyttet til Bud", title: "Torvet 2, Viborg", text: "1,5 mio. kr. · +2.780 kr./md." },
+            },
+            {
+              n: 2, more: { href: "/funktioner/pipeline", label: "Om kalenderen" }, title: "Aldrig en glemt fremvisning", text: "Opgaver med dato på hver bolig, samlet i én uge. Du får en mail dagen før, så intet glipper, mens du har travlt.",
+              points: [[CalendarClock, "Hele ugen samlet", "Fremvisninger, bankmøder og frister"], [Bell, "Besked dagen før", "På mail, uden at du skal huske det"], [Check, "Afkryds og videre", "Klarede opgaver forsvinder fra listen"]],
+              screen: <CalendarScreen />, notice: { tone: "blue" as const, label: "I morgen kl. 16.00", title: "Fremvisning, Algade 9", text: "Husk spørgsmålene om taget fra referatet." },
+            },
+            {
+              n: 3, more: { href: "/funktioner/boliganalyse", label: "Om analysen og bankrapporten" }, title: "Klar til banken med ét tryk", text: "Banken vil se, at lejen betaler lånet. Du sender et budget med kilder, i stedet for et hjemmelavet regneark.",
+              points: [[FileText, "Budget som PDF", "Udbetaling, lån, leje og overskud"], [ShieldCheck, "Kilder ved tallene", "BBR, Danmarks Statistik og solgte boliger"], [LineChart, "Rentestress med", "Hvor højt renten kan gå"]],
+              screen: <BankScreen />, notice: { tone: "green" as const, label: "Sendt til banken", title: "Budget for Algade 9", text: "Overskud +2.120 kr./md. ved 4,5 % rente." },
+            },
+          ].map((f, i) => (
+            <div key={f.n} className={`mt-20 grid items-center gap-12 lg:mt-28 lg:gap-16 ${i % 2 ? "lg:grid-cols-[1.3fr_0.7fr]" : "lg:grid-cols-[0.7fr_1.3fr]"}`}>
+              <Reveal className={i % 2 ? "lg:order-2" : ""}>
+                <p className="flex items-center gap-3 text-[15px] font-semibold text-blue-300"><span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-[14px] text-white">{f.n}</span></p>
+                <h3 className="mt-4 text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] sm:text-[36px]">{f.title}</h3>
+                <p className="mt-4 max-w-md text-[17px] leading-relaxed text-white/65">{f.text}</p>
+                <ul className="mt-8 space-y-5">
+                  {f.points.map(([Icon, t, d]) => {
+                    const I = Icon as typeof Search;
+                    return (
+                      <li key={t as string} className="flex gap-4">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/[0.07] text-blue-300 ring-1 ring-white/10"><I size={18} /></span>
+                        <span><span className="block text-[16px] font-semibold">{t as string}</span><span className="block text-[15px] text-white/55">{d as string}</span></span>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"><Cta dark /><Link href={f.more.href} className="inline-flex min-h-[48px] items-center justify-center gap-1.5 px-2 text-[15px] font-semibold text-blue-300 hover:text-blue-200">{f.more.label} <ArrowRight size={15} /></Link></div>
+              </Reveal>
+              <div className={`relative ${i % 2 ? "lg:order-1" : ""}`}>
+                <div className="settle rounded-[22px] bg-white/[0.04] p-2 ring-1 ring-white/10 sm:p-3">{f.screen}</div>
+                <Notice {...f.notice} className={`drift absolute -bottom-8 hidden sm:block ${i % 2 ? "-right-4 lg:-right-8" : "-left-4 lg:-left-8"}`} />
+              </div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Live numbers from the Deal-motor */}
+      {snap && (
+        <section className="bg-white">
+          <div className="mx-auto max-w-[1320px] px-4 py-16 sm:px-8 sm:py-20">
+            <div className="grid gap-px overflow-hidden rounded-2xl bg-slate-200 ring-1 ring-slate-200 sm:grid-cols-3">
+              {[
+                [snap.scanned, "boliger til salg regnet igennem i dag"],
+                [snap.positive, "af dem betaler sig selv med 20 % udbetaling og 5 % rente"],
+                [snap.investmentsScanned, "investerings- og erhvervsejendomme regnet med"],
+              ].map(([v, l], i) => (
+                <Reveal key={l as string} delay={i * 120} y={16} className="bg-white p-6 sm:p-8">
+                  <p className="text-[40px] font-semibold leading-none tracking-[-0.04em] text-[#0b1b33] sm:text-[52px]"><CountUp value={v as number} duration={1700 + i * 200} /></p>
+                  <p className="mt-3 max-w-[16rem] text-[15px] leading-snug text-slate-600">{l as string}</p>
+                </Reveal>
+              ))}
+            </div>
+            <p className="mt-3 text-[13px] text-slate-500">Tal fra Deal-motoren, opdateret hver 6. time.</p>
           </div>
-        </Section>
+        </section>
       )}
 
-      {/* Person */}
-      <Section>
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,1.4fr)] lg:gap-16">
-          <Image src="/founder.jpg" alt={`${site.founder.name}, stifter af NordInvest`} width={480} height={600} className="aspect-[4/5] w-full max-w-[300px] rounded-2xl object-cover" />
-          <div>
-            <H2>Jeg står selv for tallene</H2>
-            <Lead>Jeg hedder {site.founder.name.split(" ")[0]} og har bygget NordInvest, beregningsmodellen og dataintegrationerne. Finder du en fejl, så ring til mig, og så retter jeg den.</Lead>
-            <Lead>I oktober fortalte en erhvervsmægler, at bankerne sjældent låner mere end 60 % til private købere af erhverv. Nu regner analysen med 40 % udbetaling. En professionel investor pegede på, at en fremskrivning af en ældre udlejningsejendom er for usikker. Nu vises tre scenarier med forsigtige tillæg.</Lead>
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[16px]">
-              <a href={site.phoneHref} className="inline-flex min-h-[44px] items-center gap-2 font-semibold text-slate-900 hover:underline"><Phone size={17} /> {site.phone}</a>
-              <span className="select-all text-slate-600">{site.email}</span>
+      {/* Getting started + founder */}
+      <section className="bg-slate-50">
+        <div className="mx-auto grid max-w-[1320px] gap-14 px-4 py-20 sm:px-8 sm:py-28 lg:grid-cols-2 lg:gap-20">
+          <Reveal>
+            <H2 accent="fra første dag.">Vi sætter det op sammen,</H2>
+            <Lead>Du bliver ikke sendt rundt i en manual. Vi starter med en samtale om dine boliger, og du kan altid skrive til os, når du har spørgsmål.</Lead>
+            <div className="mt-10 flex items-center gap-5 rounded-2xl bg-white p-5 ring-1 ring-slate-200">
+              <Image src="/founder.jpg" alt="Nikolaj Blond, stifter af NordInvest" width={80} height={80} className="h-20 w-20 shrink-0 rounded-xl object-cover" priority />
+              <div className="min-w-0">
+                <p className="text-[17px] font-semibold">{site.founder.name}</p>
+                <p className="text-[14px] text-slate-500">Stifter af NordInvest</p>
+                <div className="mt-1 flex flex-wrap gap-x-4 text-[14px] font-medium">
+                  <Link href="/kontakt" className="inline-flex min-h-[40px] items-center text-blue-700 hover:underline">Kontakt os</Link>
+                </div>
+              </div>
             </div>
-          </div>
+          </Reveal>
+          <ol className="relative space-y-10 lg:pt-4">
+            <span aria-hidden className="absolute bottom-6 left-[19px] top-6 w-px border-l-2 border-dashed border-slate-300" />
+            {[
+              ["En samtale om dit behov", "20 minutter i telefonen om, hvordan du investerer i dag, og hvor NordInvest kan gøre det lettere for dig."],
+              ["Personlig opsætning", "Dit område, din strategi og dit krav til overskud bliver lagt ind, så Deal-vagten finder de rigtige boliger fra dag ét."],
+              ["Du er i gang", "Du får en personlig invitation til dit eget arbejdsområde. Har du spørgsmål, ringer du direkte til mig."],
+              ["Hvis du stopper", "Ingen binding. Du kan stoppe, når du vil, og dine data er dine."],
+            ].map(([t, d], i) => (
+              <li key={t} className="relative"><Reveal delay={i * 130} className="flex gap-5">
+                <span className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[15px] font-semibold ${i === 3 ? "border-2 border-dashed border-slate-300 bg-slate-50 text-slate-500" : "bg-[#0b1b33] text-white"}`}>{i + 1}</span>
+                <span className="pt-1.5"><span className="block text-[19px] font-semibold tracking-[-0.01em]">{t}</span><span className="mt-1.5 block max-w-md text-[16px] leading-relaxed text-slate-600">{d}</span></span>
+              </Reveal></li>
+            ))}
+          </ol>
         </div>
-      </Section>
+      </section>
+
+      {/* Game */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1320px] px-4 py-14 sm:px-8">
+          <Reveal><Link href="/spil" className="group grid items-center gap-6 overflow-hidden rounded-2xl bg-gradient-to-r from-blue-50 to-white p-6 ring-1 ring-blue-100 transition-shadow hover:shadow-lg sm:grid-cols-[auto_1fr_auto] sm:p-8">
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white"><Gamepad2 size={26} /></span>
+            <span>
+              <span className="block text-[22px] font-semibold tracking-[-0.02em] text-[#0b1b33]">Ny som investor? Øv dig i Ejendomsspillet.</span>
+              <span className="mt-1 block text-[16px] text-slate-600">Køb, lej ud og byg en portefølje i en dansk by. Gratis og åbent for alle.</span>
+            </span>
+            <span className="inline-flex min-h-[46px] items-center gap-2 rounded-lg bg-white px-4 text-[15px] font-semibold text-blue-700 ring-1 ring-blue-200">Spil nu <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" /></span>
+          </Link></Reveal>
+        </div>
+      </section>
 
       {/* FAQ */}
-      <Section className="border-t border-slate-200">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-20">
-          <div>
-            <H2>Spørgsmål</H2>
-            <Lead>Er dit spørgsmål ikke her? <Link href="/kontakt?emne=spoergsmaal" className="font-semibold text-slate-900 underline underline-offset-4">Skriv til os</Link>.</Lead>
-          </div>
-          <Faq items={FAQ} />
+      <section className="bg-white">
+        <div className="mx-auto grid max-w-[1320px] gap-10 px-4 pb-24 pt-10 sm:px-8 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
+          <Reveal>
+            <H2>Det spørger investorer om</H2>
+            <p className="mt-5 text-[17px] text-slate-600">Er dit spørgsmål ikke her? <Link href="/kontakt?emne=spoergsmaal" className="font-semibold text-blue-700">Skriv til os</Link>.</p>
+          </Reveal>
+          <Reveal delay={120}><Faq items={FAQ} /></Reveal>
         </div>
-      </Section>
+      </section>
 
-      {/* Call to action */}
-      <section className="pb-20">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-8">
-          <div className="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-2xl">
-              <h2 className="text-[28px] font-semibold leading-tight tracking-[-0.02em] text-slate-900 sm:text-[34px]">Tag en samtale om dine ejendomme</h2>
-              <p className="mt-3 text-[17px] leading-relaxed text-slate-600">20 minutter om, hvad du ejer, og hvad du vil købe. Passer NordInvest ikke til dig, siger jeg det.</p>
+      {/* Final call to action */}
+      <section className="text-white" style={{ background: "radial-gradient(1100px 520px at 15% 0%, #1a3a6b 0%, #0b1b33 62%)" }}>
+        <div className="mx-auto grid max-w-[1320px] items-center gap-12 px-4 py-20 sm:px-8 sm:py-28 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+          <Reveal>
+            <H2 dark accent="om det passer til dig.">Lad os finde ud af,</H2>
+            <Lead dark>En samtale på 20 minutter om, hvordan du investerer, og hvad du har brug for. Passer NordInvest ikke til dig, siger jeg det.</Lead>
+            <ol className="mt-10 space-y-6">
+              {[["Send en anmodning", "Det tager 2 minutter. Du hører fra os inden for en arbejdsdag."], ["Vi afdækker dit behov", "Hvad du ejer, hvad du vil købe, og hvor det i dag tager for lang tid eller føles usikkert."], ["Du får et ærligt svar", "Passer NordInvest til dig, aftaler vi pris og sætter det op sammen. Ellers siger jeg det."]].map(([t, d], i) => (
+                <li key={t} className="flex gap-4">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500 text-[14px] font-semibold">{i + 1}</span>
+                  <span><span className="block text-[17px] font-semibold">{t}</span><span className="mt-0.5 block text-[15px] leading-relaxed text-white/60">{d}</span></span>
+                </li>
+              ))}
+            </ol>
+            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+              <Cta dark />
+              <Link href="/kontakt" className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-white/25 max-sm:w-full px-5 text-[16px] font-semibold text-white hover:border-white/50"><Mail size={17} /> Kontakt os</Link>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Primary>Anmod om adgang <ArrowRight size={17} /></Primary>
-              <Link href="/kontakt" className="inline-flex min-h-[48px] items-center justify-center whitespace-nowrap rounded-lg border border-slate-300 bg-white px-5 text-[16px] font-semibold text-slate-900 hover:border-slate-400 max-sm:w-full">Kontakt os</Link>
+            <Suspense><HaveAccount dark className="mt-5" /></Suspense>
+          </Reveal>
+          <Reveal delay={150} y={32} className="relative mx-auto hidden w-full max-w-md sm:block">
+            <div className="absolute -left-3 -top-3 h-full w-full rounded-2xl bg-blue-600" />
+            <div className="relative rounded-2xl bg-white p-6 text-slate-900">
+              <p className="flex items-center justify-between text-[16px] font-semibold">Det taler vi om <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">20 min.</span></p>
+              {["Hvad du ejer i dag", "Hvad du vil købe, og hvor", "Hvor det går langsomt eller føles usikkert", "Om NordInvest kan hjælpe dig"].map((l) => (
+                <div key={l} className="mt-4 border-b border-dashed border-slate-300 pb-2"><p className="text-[13px] text-slate-500">{l}</p></div>
+              ))}
+              <p className="mt-4 text-right text-[13px] text-slate-400">Ingen forberedelse nødvendig</p>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 

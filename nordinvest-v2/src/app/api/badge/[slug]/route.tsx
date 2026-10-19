@@ -13,8 +13,8 @@ export const runtime = "nodejs";
  */
 
 const PAL = {
-  lys: { bg: "#ffffff", border: "#d9e1ec", fg: "#17213a", sub: "#5b6b82", accent: "#2155d6", tile: "#f1f5fb" },
-  moerk: { bg: "#17213a", border: "#17213a", fg: "#ffffff", sub: "#a9b8cf", accent: "#8fb0ff", tile: "#ffffff" },
+  lys: { bg: "#ffffff", border: "#d9e1ec", fg: "#0b1b33", sub: "#5b6b82", accent: "#2155d6", tile: "#f1f5fb" },
+  moerk: { bg: "#0b1b33", border: "#0b1b33", fg: "#ffffff", sub: "#a9b8cf", accent: "#8fb0ff", tile: "#ffffff" },
   blaa: { bg: "#2155d6", border: "#2155d6", fg: "#ffffff", sub: "#d4e0ff", accent: "#ffffff", tile: "#ffffff" },
 } as const;
 

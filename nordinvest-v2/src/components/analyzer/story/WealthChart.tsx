@@ -147,7 +147,7 @@ export function WealthChart({ data, selected, onSelect }: { data: WealthYear[]; 
         {/* end pills */}
         <span
           aria-hidden
-          className="absolute -translate-x-full whitespace-nowrap rounded-full bg-blue-600 px-3 py-1 text-[13px] font-semibold tabular-nums text-white shadow-[0_6px_16px_-6px_rgba(37, 52, 90,0.6)]"
+          className="absolute -translate-x-full whitespace-nowrap rounded-full bg-blue-600 px-3 py-1 text-[13px] font-semibold tabular-nums text-white shadow-[0_6px_16px_-6px_rgba(37,99,235,0.6)]"
           style={{ left: `calc(${colX(data.length - 1)}% + 18px)`, top: `calc(${y(equity(last))}% - 36px)` }}
         >
           {dk(lastEquity)} kr.

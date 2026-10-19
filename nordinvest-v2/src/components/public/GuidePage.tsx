@@ -40,7 +40,7 @@ export function GuidePage({ g, tool, toolAfter }: { g: Guide; tool?: ReactNode; 
       <JsonLd data={ld} />
       <article className="mx-auto max-w-[1180px] px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pt-12">
         <header className="max-w-3xl">
-          <h1 className="text-[34px] font-semibold leading-[1.08] tracking-[-0.035em] text-[#17213a] [text-wrap:balance] sm:text-[46px]">{g.h1}</h1>
+          <h1 className="text-[34px] font-semibold leading-[1.08] tracking-[-0.035em] text-[#0b1b33] [text-wrap:balance] sm:text-[46px]">{g.h1}</h1>
           <p className="mt-5 text-[19px] leading-relaxed text-slate-600">{g.lead}</p>
           <div className="mt-6 flex items-center gap-3 text-[14px] text-slate-500">
             <Image src="/founder.jpg" alt={site.founder.name} width={40} height={40} className="h-10 w-10 rounded-full object-cover" />
@@ -51,7 +51,7 @@ export function GuidePage({ g, tool, toolAfter }: { g: Guide; tool?: ReactNode; 
           <div className="min-w-0 max-w-3xl space-y-12">
             {g.sections.map((sec) => (
               <section key={sec.id} id={sec.id} className="scroll-mt-24">
-                <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-[#17213a] sm:text-[30px]">{sec.h2}</h2>
+                <h2 className="text-[26px] font-semibold leading-tight tracking-[-0.02em] text-[#0b1b33] sm:text-[30px]">{sec.h2}</h2>
                 <div className="mt-4 space-y-4 text-[17px] leading-relaxed text-slate-700">{sec.body.map((p) => <p key={p.slice(0, 40)}>{p}</p>)}</div>
                 {sec.list && <ul className="mt-4 space-y-2.5 text-[17px] leading-relaxed text-slate-700">{sec.list.map((l) => <li key={l} className="flex gap-3"><span aria-hidden className="mt-[11px] h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />{l}</li>)}</ul>}
                 {sec.table && (
@@ -66,7 +66,7 @@ export function GuidePage({ g, tool, toolAfter }: { g: Guide; tool?: ReactNode; 
               </section>
             ))}
             <section>
-              <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-[#17213a] sm:text-[30px]">Spørgsmål og svar</h2>
+              <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-[#0b1b33] sm:text-[30px]">Spørgsmål og svar</h2>
               <div className="mt-5"><Faq items={g.faq} /></div>
             </section>
             <section className="border-t border-slate-200 pt-6">
@@ -80,7 +80,7 @@ export function GuidePage({ g, tool, toolAfter }: { g: Guide; tool?: ReactNode; 
               <p className="text-[13px] font-semibold uppercase tracking-[0.06em] text-slate-500">Indhold</p>
               <ol className="mt-3 space-y-2 text-[15px]">{g.sections.map((s) => <li key={s.id}><a href={`#${s.id}`} className="text-slate-700 hover:text-blue-700">{s.h2.split(":")[0]}</a></li>)}</ol>
             </nav>
-            <div className="rounded-2xl bg-[#17213a] p-5 text-white">
+            <div className="rounded-2xl bg-[#0b1b33] p-5 text-white">
               <p className="text-[16px] font-semibold">{g.feature.label}</p>
               <p className="mt-1.5 text-[14px] leading-relaxed text-white/70">{g.feature.text}</p>
               <Link href={g.feature.href} className="mt-4 inline-flex items-center gap-1.5 text-[14px] font-semibold text-blue-300 hover:underline">Se hvordan <ArrowRight size={14} /></Link>

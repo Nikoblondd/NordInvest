@@ -110,7 +110,7 @@ export function PaywallGate({
               onClick={() => setPeriod(p)}
               className={clsx(
                 "flex min-h-11 items-center justify-center gap-2 rounded-full px-3 text-[15px] font-semibold transition-[background-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-                period === p ? "bg-blue-600 text-white shadow-[0_6px_16px_-8px_rgba(37, 52, 90,0.7)]" : "text-slate-700 hover:text-slate-900",
+                period === p ? "bg-blue-600 text-white shadow-[0_6px_16px_-8px_rgba(37,99,235,0.7)]" : "text-slate-700 hover:text-slate-900",
               )}
             >
               {p === "year" ? "Årligt" : "Månedligt"}
@@ -141,7 +141,7 @@ export function PaywallGate({
         aria-disabled={!ready}
         onClick={() => onClick("paywall")}
         className={clsx(
-          "mt-8 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 text-[16px] font-semibold text-white shadow-[0_12px_28px_-12px_rgba(37, 52, 90,0.8)] transition-[background-color,transform] hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:scale-[0.98]",
+          "mt-8 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 text-[16px] font-semibold text-white shadow-[0_12px_28px_-12px_rgba(37,99,235,0.8)] transition-[background-color,transform] hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:scale-[0.98]",
           !ready && "pointer-events-none opacity-70",
         )}
       >

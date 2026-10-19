@@ -82,7 +82,7 @@ const FIGURES = [
 
 function WhatYouGet() {
   return (
-    <section aria-labelledby="what-h" className="bg-[#ffffff] px-4 py-16 sm:px-6 sm:py-20">
+    <section aria-labelledby="what-h" className="bg-[#f4f6f9] px-4 py-16 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-[1080px]">
         <h2 id="what-h" className="max-w-2xl text-[28px] font-semibold leading-[1.1] tracking-[-0.03em] [text-wrap:balance] sm:text-[40px]">
           Det får du i analysen.

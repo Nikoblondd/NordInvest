@@ -47,7 +47,7 @@ export function Welcome({ initialName, initialPhone, email, needsPassword }: { i
 
   const input = (bad?: string) => `mt-1.5 h-12 w-full rounded-lg border bg-white px-3.5 text-[16px] focus:outline-none focus:ring-2 ${bad ? "border-rose-400 focus:ring-rose-100" : "border-slate-300 focus:border-blue-600 focus:ring-blue-100"}`;
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-slate-50 px-4 py-10" style={{ background: "radial-gradient(900px 500px at 20% 0%, rgba(37, 52, 90,0.08), transparent 70%), #f8fafc" }}>
+    <div className="flex min-h-[100dvh] items-center justify-center bg-slate-50 px-4 py-10" style={{ background: "radial-gradient(900px 500px at 20% 0%, rgba(37,99,235,0.08), transparent 70%), #f8fafc" }}>
       <div className="w-full max-w-[460px]">
         <div className="mb-6 flex items-center gap-2.5">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-slate-200/60"><Image src="/nordinvest-logo.png" alt="" width={40} height={40} className="h-[78%] w-[78%] object-contain" /></span>

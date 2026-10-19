@@ -155,11 +155,11 @@ export function Tour({ name, initial }: { name: string; initial: string | null }
 
   if (phase === "prompt") {
     return (
-      <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-[#17213a]/55 p-3 backdrop-blur-[2px] sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="tour-welcome">
+      <div className="fixed inset-0 z-[1000] flex items-end justify-center bg-[#0b1b33]/55 p-3 backdrop-blur-[2px] sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="tour-welcome">
         <div ref={card} tabIndex={-1} className="tour-pop relative w-full max-w-[460px] overflow-hidden rounded-2xl bg-white shadow-2xl outline-none">
-          <div className="relative h-40 overflow-hidden bg-[#17213a] sm:h-44">
+          <div className="relative h-40 overflow-hidden bg-[#0b1b33] sm:h-44">
             <Image src="/app/nordhavn.jpg" alt="Nordhavn i København set fra luften" fill priority sizes="460px" className="tour-photo object-cover" />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#17213a]/55 via-transparent to-transparent" />
+            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0b1b33]/55 via-transparent to-transparent" />
             <span className="absolute bottom-3 left-4 rounded-md bg-black/30 px-2 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur-sm">Nordhavn, København</span>
           </div>
           <div className="p-6 sm:p-7">
@@ -204,7 +204,7 @@ export function Tour({ name, initial }: { name: string; initial: string | null }
       {rect ? (
         <div aria-hidden className="tour-spot pointer-events-none fixed rounded-xl" style={{ top: rect.top, left: rect.left, width: rect.width, height: rect.height }} />
       ) : (
-        <div aria-hidden className="fixed inset-0 bg-[#17213a]/60" />
+        <div aria-hidden className="fixed inset-0 bg-[#0b1b33]/60" />
       )}
       <div ref={card} tabIndex={-1} key={i}
         className={`tour-pop fixed rounded-2xl bg-white p-5 shadow-2xl outline-none ring-1 ring-slate-900/5 ${phone ? "" : ""}`}

@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// NordInvest brand = paper + ink navy (see the blue/slate remap below).
+// NordInvest brand = light + blue (slate/blue/indigo/emerald).
 // Legacy token names (navy/gold/cream/stone) are remapped to the new palette so
 // every existing page adopts the rebrand without per-file rewrites.
 const config: Config = {
@@ -8,41 +8,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Oct 2026 redesign: Tailwind's default blue and cool slate read as
-        // "AI-generated SaaS". Blue becomes NordInvest's ink navy (buttons,
-        // links, focus) and slate a warm neutral that darkens into the same
-        // ink, on a paper canvas. Green, amber and rose keep their meaning
-        // (good / watch / bad) and are never used as decoration.
-        blue: {
-          50: "#f1f3f7", 100: "#e2e6ee", 200: "#c6cedd", 300: "#9eabc4", 400: "#6f80a3",
-          500: "#4a5c82", 600: "#25345a", 700: "#1d2a4b", 800: "#18233f", 900: "#141d34", 950: "#0c1222",
-        },
-        slate: {
-          50: "#f7f8fa", 100: "#f0f2f5", 200: "#e4e7ec", 300: "#cfd4dc", 400: "#9aa2af",
-          500: "#6b7280", 600: "#4b5262", 700: "#343c4f", 800: "#232b40", 900: "#17213a", 950: "#0d1426",
-        },
-        paper: "#ffffff",
-        // The one accent (design.md): Danish red brick. Footnote marks and links only, < 5 % of a view.
-        brick: { 600: "#9a3b26", 700: "#7e2f1e" },
         navy: {
-          900: "#17213a", // ink — dark surfaces, featured card
-          800: "#272e42",
-          700: "#3c4153",
+          900: "#0f172a", // slate-900 — dark surfaces, featured card
+          800: "#1e293b", // slate-800
+          700: "#334155", // slate-700
         },
         gold: {
-          400: "#6f80a3",
-          500: "#25345a", // ink — primary accent
-          600: "#1d2a4b", // hover
+          400: "#60a5fa", // blue-400
+          500: "#2563eb", // blue-600 — primary accent
+          600: "#1d4ed8", // blue-700 — hover
         },
         cream: {
-          50: "#ffffff", // page background
-          100: "#f5f6f8",
+          50: "#f8fafc", // slate-50 — page background
+          100: "#f1f5f9", // slate-100
         },
         stone: {
-          200: "#e4e7ec", // borders
-          400: "#9aa2af", // muted
-          600: "#4b5262", // secondary text
-          900: "#17213a", // body text
+          200: "#e2e8f0", // slate-200 — borders
+          400: "#94a3b8", // slate-400 — muted
+          600: "#475569", // slate-600 — secondary text
+          900: "#0f172a", // slate-900 — body text
         },
         data: {
           pos: "#10b981", // emerald-500
@@ -54,7 +38,7 @@ const config: Config = {
         // All roles map to Inter — single bold grotesque brand voice.
         sans: ["var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
         serif: ["var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        mono: ["var(--font-inter)", "ui-monospace", "monospace"],
         display: ["var(--font-display)", "var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
         // Landing page only (see components/home/fonts.ts).
         thesis: ["var(--font-serif-display)", "Georgia", "Times New Roman", "serif"],

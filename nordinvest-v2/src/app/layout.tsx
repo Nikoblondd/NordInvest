@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Albert_Sans, Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { AuthCodeHandler } from "@/components/auth/AuthCodeHandler";
@@ -10,7 +10,6 @@ import { LangScript } from "@/components/i18n/LangScript";
 import { I18nRuntime } from "@/components/i18n/I18nRuntime";
 import { NavProgress } from "@/components/NavProgress";
 
-// Body face: Inter, plain and modern.
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -26,12 +25,12 @@ const inter = Inter({
 // Display face for big numbers and chapter headings — gives the analyzer a
 // voice of its own instead of Inter-everywhere. Not preloaded: it's used below
 // the fold on most pages, so it shouldn't compete with the LCP font.
-// Headings: Albert Sans, a clean Scandinavian sans.
-const outfit = Albert_Sans({
+const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
-  weight: ["500", "600", "700"],
+  weight: ["500", "600", "700", "800"],
+  preload: false,
   fallback: ["-apple-system", "system-ui", "sans-serif"],
 });
 

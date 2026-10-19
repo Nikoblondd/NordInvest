@@ -15,10 +15,10 @@ const NAV = [LayoutGrid, Building2, Search, Calculator, ListChecks, CalendarDays
 /** The app window: dark rail, top bar, content. */
 export function AppFrame({ active = 0, children, className }: { active?: number; children: ReactNode; className?: string }) {
   return (
-    <div className={cx("overflow-hidden rounded-[18px] border border-[#17213a]/10 bg-white text-slate-900 shadow-[0_40px_100px_-40px_rgba(11,27,51,0.55),0_0_0_1px_rgba(11,27,51,0.03)]", className)}>
+    <div className={cx("overflow-hidden rounded-[18px] border border-[#0b1b33]/10 bg-white text-slate-900 shadow-[0_40px_100px_-40px_rgba(11,27,51,0.55),0_0_0_1px_rgba(11,27,51,0.03)]", className)}>
       <div className="flex">
-        <aside className="hidden w-[52px] shrink-0 flex-col items-center gap-1.5 bg-[#17213a] py-3 sm:flex">
-          <span className="mb-2 flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[12px] font-bold text-[#17213a]">N</span>
+        <aside className="hidden w-[52px] shrink-0 flex-col items-center gap-1.5 bg-[#0b1b33] py-3 sm:flex">
+          <span className="mb-2 flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[12px] font-bold text-[#0b1b33]">N</span>
           {NAV.map((Icon, i) => (
             <span key={i} className={cx("flex h-8 w-8 items-center justify-center rounded-lg", i === active ? "bg-white/15 text-white" : "text-white/45")}><Icon size={15} /></span>
           ))}
@@ -41,7 +41,7 @@ export function Notice({ tone = "blue", label, title, text, action, dark, classN
   const bar = tone === "green" ? "bg-emerald-500" : tone === "amber" ? "bg-amber-400" : "bg-blue-500";
   const dot = tone === "green" ? "bg-emerald-400" : tone === "amber" ? "bg-amber-400" : "bg-blue-500";
   return (
-    <div className={cx("w-[248px] overflow-hidden rounded-xl shadow-[0_20px_50px_-15px_rgba(11,27,51,0.45)]", dark ? "bg-[#17213a] text-white ring-1 ring-white/10" : "bg-white text-slate-900 ring-1 ring-slate-200", className)}>
+    <div className={cx("w-[248px] overflow-hidden rounded-xl shadow-[0_20px_50px_-15px_rgba(11,27,51,0.45)]", dark ? "bg-[#0b1b33] text-white ring-1 ring-white/10" : "bg-white text-slate-900 ring-1 ring-slate-200", className)}>
       <div className={cx("h-[3px]", bar)} />
       <div className="p-3.5">
         <p className={cx("flex items-center gap-1.5 text-[12px] font-medium", dark ? "text-white/60" : "text-slate-500")}><span className={cx("h-1.5 w-1.5 rounded-full", dot)} />{label}</p>
@@ -64,7 +64,7 @@ function Ring({ v }: { v: number }) {
   return (
     <svg width="34" height="34" viewBox="0 0 34 34" className="shrink-0" aria-hidden>
       <circle cx="17" cy="17" r="13" fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
-      <circle cx="17" cy="17" r="13" fill="none" stroke={v >= 70 ? "#059669" : "#25345a"} strokeWidth="3.5" strokeDasharray={`${(v / 100) * c} ${c}`} strokeLinecap="round" transform="rotate(-90 17 17)" />
+      <circle cx="17" cy="17" r="13" fill="none" stroke={v >= 70 ? "#059669" : "#2563eb"} strokeWidth="3.5" strokeDasharray={`${(v / 100) * c} ${c}`} strokeLinecap="round" transform="rotate(-90 17 17)" />
       <text x="17" y="21" textAnchor="middle" fontSize="11" fontWeight="600" fill="#0f172a">{v}</text>
     </svg>
   );
@@ -230,7 +230,7 @@ export function OfferScreen() {
         <div className="flex justify-between text-[10px] text-slate-500"><span>Dit bud</span><span>Udbudspris</span></div>
         <div className="relative mt-2 h-2 rounded-full bg-slate-200">
           <span className="absolute inset-y-0 left-0 rounded-full bg-emerald-500" style={{ width: "62%" }} />
-          <span className="absolute -top-1 h-4 w-1 rounded bg-[#17213a]" style={{ left: "78%" }} />
+          <span className="absolute -top-1 h-4 w-1 rounded bg-[#0b1b33]" style={{ left: "78%" }} />
         </div>
         <div className="mt-1.5 flex justify-between text-[10px] tabular-nums"><span className="font-semibold text-emerald-700">1.090.000</span><span className="font-semibold">Dit maks: 1.120.000</span><span>1.150.000</span></div>
         <p className="mt-1.5 text-[10px] text-slate-500">Ved dit maks er overskuddet stadig 1.500 kr./md.</p>

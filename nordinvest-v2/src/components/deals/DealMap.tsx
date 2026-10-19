@@ -20,7 +20,7 @@ export type MapPoint = {
 };
 
 const dk = (n: number) => (Number.isFinite(n) ? Math.round(n).toLocaleString("da-DK") : "–");
-const scoreColor = (s: number) => (s >= 78 ? "#059669" : s >= 62 ? "#25345a" : s >= 45 ? "#f59e0b" : "#e11d48");
+const scoreColor = (s: number) => (s >= 78 ? "#059669" : s >= 62 ? "#2563eb" : s >= 45 ? "#f59e0b" : "#e11d48");
 
 function popupHtml(p: MapPoint): string {
   const cfColor = p.cashFlow >= 0 ? "#059669" : "#e11d48";

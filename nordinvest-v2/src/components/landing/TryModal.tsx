@@ -20,7 +20,7 @@ export function TryButton({ className, children }: { className?: string; childre
       <button type="button" onClick={() => setOpen(true)} className={className}>{children}</button>
       <dialog ref={ref} onClose={() => { setOpen(false); document.body.style.overflow = ""; }} onClick={(e) => { if (e.target === ref.current) setOpen(false); }}
         aria-label="Prøv en beregning"
-        className="m-auto w-[min(640px,calc(100vw-24px))] max-h-[calc(100dvh-24px)] overflow-y-auto rounded-2xl bg-transparent p-0 backdrop:bg-[#17213a]/60 backdrop:backdrop-blur-sm">
+        className="m-auto w-[min(640px,calc(100vw-24px))] max-h-[calc(100dvh-24px)] overflow-y-auto rounded-2xl bg-transparent p-0 backdrop:bg-[#0b1b33]/60 backdrop:backdrop-blur-sm">
         {open && (
           <div className="relative">
             <button type="button" aria-label="Luk" onClick={() => setOpen(false)} className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200"><X size={18} /></button>

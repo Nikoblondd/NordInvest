@@ -132,7 +132,7 @@ export function FeaturedDeals() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col items-start text-left sm:mb-10 sm:items-center sm:text-center">
           <p className="mb-4 text-sm font-medium text-blue-700">Deal-motoren, {FEATURED_MONTH_LABEL.toLowerCase()}</p>
-          <h2 className="max-w-3xl font-thesis text-[2.5rem] font-normal leading-[1.06] tracking-[0.005em] text-[#17213a] [text-wrap:balance] sm:text-[3.4rem] sm:leading-[1.02] sm:tracking-[-0.01em]">
+          <h2 className="max-w-3xl font-thesis text-[2.5rem] font-normal leading-[1.06] tracking-[0.005em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.4rem] sm:leading-[1.02] sm:tracking-[-0.01em]">
             Månedens bedste handler
           </h2>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">

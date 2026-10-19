@@ -10,8 +10,8 @@ import { site } from "@/lib/site";
  */
 export function FounderNote({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="flex flex-col gap-4 border-t border-[var(--color-rule)] pt-6 sm:flex-row sm:items-start">
-      <Image src={site.founder.photo} alt={`${site.founder.name}, stifter af NordInvest`} width={72} height={72} className="h-[88px] w-[72px] shrink-0 rounded-md object-cover" />
+    <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-18px_rgba(15,23,42,0.18)] sm:flex-row sm:items-center sm:p-6">
+      <Image src={site.founder.photo} alt={`${site.founder.name}, stifter af NordInvest`} width={72} height={72} className="h-[72px] w-[72px] shrink-0 rounded-full object-cover ring-1 ring-slate-200" />
       <div className="min-w-0 flex-1">
         <p className="text-[17px] font-semibold text-slate-900">{site.founder.name}, stifter af NordInvest</p>
         <p className="mt-1 text-[15px] leading-relaxed text-slate-600">

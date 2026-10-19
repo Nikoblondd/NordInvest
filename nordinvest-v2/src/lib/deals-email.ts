@@ -29,7 +29,7 @@ export function dealsEmail(p: { name: string | null; unsubUrl: string }) {
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${FEATURED_RESIDENTIAL.map(card).join("")}</table>
       <p style="margin:8px 0 10px;font-weight:700;">Erhverv</p>
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${FEATURED_COMMERCIAL.map(card).join("")}</table>
-      <a href="${SITE}/deals" style="display:inline-block;margin:8px 0 4px;padding:12px 20px;border-radius:10px;background:#25345a;color:#fff;text-decoration:none;font-weight:600;">Se hele Deal-motoren</a>
+      <a href="${SITE}/deals" style="display:inline-block;margin:8px 0 4px;padding:12px 20px;border-radius:10px;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;">Se hele Deal-motoren</a>
       <p style="margin:32px 0 0;padding-top:16px;border-top:1px solid #eef2f7;color:#94a3b8;font-size:12px;line-height:1.5;">
         Du får denne mail, fordi du har bedt om månedens deals fra NordInvest (NordInvest v/ Nikolaj Blond, CVR 44701898).
         <a href="${p.unsubUrl}" style="color:#94a3b8;">Afmeld månedens deals</a>.
@@ -51,7 +51,7 @@ export function cityConfirmEmail(p: { cityName: string; cityIn: string; confirmU
     html: wrap(
       `<p>Hej,</p>
       <p>Tryk på knappen for at få månedens bedste køb ${p.cityIn} på mail. Det er højst én mail om måneden med de boliger, Deal-motoren regner bedst på som udlejning.</p>
-      <a href="${p.confirmUrl}" style="display:inline-block;margin:12px 0 4px;padding:12px 20px;border-radius:10px;background:#25345a;color:#fff;text-decoration:none;font-weight:600;">Ja, send mig månedens bedste køb</a>
+      <a href="${p.confirmUrl}" style="display:inline-block;margin:12px 0 4px;padding:12px 20px;border-radius:10px;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;">Ja, send mig månedens bedste køb</a>
       <p style="color:#64748b;font-size:14px;">Har du ikke bedt om det, så ignorér bare denne mail. Så hører du ikke mere fra os.</p>`,
       `NordInvest v/ Nikolaj Blond, CVR 44701898.`,
     ),
@@ -76,7 +76,7 @@ export function cityDealsEmail(p: { cityName: string; cityIn: string; slug: stri
       <p>Deal-motoren har regnet ${p.scanned.toLocaleString("da-DK")} helårsboliger til salg ${p.cityIn} igennem. ${p.positive.toLocaleString("da-DK")} af dem giver plus som udlejning med 20 % udbetaling og 5 % rente. Her er de bedste lige nu:</p>
       <table role="presentation" width="100%" cellspacing="0" cellpadding="0">${p.deals.map(row).join("")}</table>
       <p style="color:#64748b;font-size:14px;">Lejen er et estimat. Åbn boligen for at rette leje, udbetaling og rente og se tallene ændre sig.</p>
-      <a href="${SITE}/deals/${p.slug}" style="display:inline-block;margin:8px 0 4px;padding:12px 20px;border-radius:10px;background:#25345a;color:#fff;text-decoration:none;font-weight:600;">Se hele listen for ${p.cityName}</a>`,
+      <a href="${SITE}/deals/${p.slug}" style="display:inline-block;margin:8px 0 4px;padding:12px 20px;border-radius:10px;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;">Se hele listen for ${p.cityName}</a>`,
       `Du får denne mail, fordi du har bedt om månedens bedste køb ${p.cityIn} fra NordInvest (NordInvest v/ Nikolaj Blond, CVR 44701898). <a href="${p.unsubUrl}" style="color:#94a3b8;">Afmeld</a>.`,
     ),
   };

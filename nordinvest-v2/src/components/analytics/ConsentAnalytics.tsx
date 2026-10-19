@@ -147,9 +147,9 @@ export function ConsentAnalytics() {
       role="region"
       aria-label="Cookies"
       data-consent
-      className={`fixed inset-x-0 bottom-0 z-[60] border-t border-[var(--color-ink)] bg-[var(--color-paper)] pb-[max(0rem,env(safe-area-inset-bottom))] ${inApp ? "max-lg:bottom-[62px]" : ""}`}
+      className={`fixed inset-x-0 bottom-0 z-[60] px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] motion-safe:animate-[consent-in_220ms_ease-out] sm:inset-x-auto sm:bottom-4 sm:left-4 sm:px-0 sm:pb-0 ${inApp ? "max-lg:bottom-[62px]" : ""}`}
     >
-      <div className="mx-auto flex max-w-[1120px] items-center gap-3 px-4 py-2.5 sm:px-8">
+      <div className="mx-auto flex items-center gap-2 rounded-2xl border border-slate-200 bg-white/95 py-2 pl-3.5 pr-2 shadow-[0_10px_30px_-12px_rgba(15,23,42,0.35)] backdrop-blur sm:w-[380px] sm:flex-col sm:items-stretch sm:gap-3 sm:p-4">
         <p className="min-w-0 flex-1 text-[13px] leading-snug text-slate-600 sm:text-sm">
           <span className="sm:hidden">Cookies til statistik? </span>
           <span className="hidden sm:inline">Må vi bruge cookies til at forstå, hvordan siden bruges? Det hjælper os med at gøre den bedre. </span>
@@ -158,13 +158,13 @@ export function ConsentAnalytics() {
         <div className="flex shrink-0 gap-1.5 sm:gap-2">
           <button
             onClick={() => choose("declined")}
-            className="min-h-10 whitespace-nowrap rounded-lg border border-slate-300 px-3.5 text-[13px] font-semibold text-slate-800 transition-colors hover:bg-slate-100 sm:text-sm"
+            className="min-h-10 rounded-full border border-slate-200 px-3.5 text-[13px] font-semibold text-slate-700 transition-colors hover:bg-slate-50 sm:flex-1 sm:text-sm"
           >
             Afvis
           </button>
           <button
             onClick={() => choose("accepted")}
-            className="min-h-10 whitespace-nowrap rounded-lg bg-slate-900 px-3.5 text-[13px] font-semibold text-white transition-colors hover:bg-slate-800 sm:text-sm"
+            className="min-h-10 rounded-full bg-slate-900 px-3.5 text-[13px] font-semibold text-white transition-colors hover:bg-slate-800 sm:flex-1 sm:text-sm"
           >
             Accepter
           </button>

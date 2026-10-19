@@ -43,7 +43,7 @@ export function AppShell({ user, props, counts, children }: { user: ShellUser; p
   return (
     <div className="flex min-h-[100dvh]">
       {/* Rail (desktop) */}
-      <aside data-tour="nav" className="sticky top-0 hidden h-[100dvh] w-[248px] shrink-0 flex-col bg-[#17213a] px-3 pb-4 pt-5 text-white lg:flex">
+      <aside data-tour="nav" className="sticky top-0 hidden h-[100dvh] w-[248px] shrink-0 flex-col bg-[#0b1b33] px-3 pb-4 pt-5 text-white lg:flex">
         <Link href="/app" className="flex items-center gap-2.5 px-2">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-slate-200/60"><Image src="/nordinvest-logo.png" alt="" width={40} height={40} className="h-[78%] w-[78%] object-contain" /></span>
           <span className="text-[17px] font-semibold tracking-[-0.01em]">NordInvest</span>

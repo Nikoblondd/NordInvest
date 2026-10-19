@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { MessageSquare, Send, X, Loader2 } from "lucide-react";
+import { Sparkles, Send, X, Loader2 } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -169,10 +169,10 @@ export function AnalystChat({ context }: { context: Record<string, unknown> }) {
       {open && (
         <div className="fixed bottom-5 right-5 z-50 flex h-[min(560px,80vh)] w-[min(384px,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
           {/* header */}
-          <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-[#0F1F3D] to-[#25345a] px-4 py-3.5 text-white">
+          <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-[#0F1F3D] to-[#2563EB] px-4 py-3.5 text-white">
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
-                <MessageSquare size={18} />
+                <Sparkles size={18} />
               </div>
               <div>
                 <div className="text-sm font-bold leading-tight">Analytikeren</div>
@@ -238,7 +238,7 @@ export function AnalystChat({ context }: { context: Record<string, unknown> }) {
           className={`group fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-40 ${scrolled ? "flex" : "hidden sm:flex"} h-12 w-12 items-center justify-center rounded-full sm:bottom-5 sm:right-5 sm:h-14 sm:w-14 bg-slate-900 text-white shadow-[0_10px_30px_-8px_rgba(15,23,42,0.45)] ring-1 ring-black/5 transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2`}
           aria-label="Åbn Analytikeren"
         >
-          <MessageSquare size={22} />
+          <Sparkles size={22} />
           {nudge && <span className="absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-400" />}
         </button>
       )}

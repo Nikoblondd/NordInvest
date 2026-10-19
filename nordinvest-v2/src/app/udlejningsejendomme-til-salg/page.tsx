@@ -82,7 +82,7 @@ export default async function Page() {
     <PublicShell crumbs={crumbs}>
       <JsonLd data={ld} />
       <section className="mx-auto max-w-[1180px] px-4 pb-10 pt-8 sm:px-6 lg:px-8 lg:pt-12">
-        <h1 className="max-w-3xl text-[34px] font-semibold leading-[1.06] tracking-[-0.035em] text-[#17213a] [text-wrap:balance] sm:text-[46px]">Udlejningsejendomme og erhvervsejendomme til salg</h1>
+        <h1 className="max-w-3xl text-[34px] font-semibold leading-[1.06] tracking-[-0.035em] text-[#0b1b33] [text-wrap:balance] sm:text-[46px]">Udlejningsejendomme og erhvervsejendomme til salg</h1>
         <p className="mt-5 max-w-3xl text-[18px] leading-relaxed text-slate-600">
           {m ? <>Lige nu er der <b className="text-slate-900">{m.total.toLocaleString("da-DK")} investerings- og erhvervsejendomme</b> til salg i Danmark. Vi har regnet dem alle igennem med 40 % udbetaling og 5 % rente{rentalType?.medianYield != null ? <>, og medianafkastet for boligudlejningsejendomme er <b className="text-slate-900">{pct(rentalType.medianYield)}</b></> : null}.</> : "Markedsdata opdateres. Kig igen om lidt."}
         </p>
@@ -92,7 +92,7 @@ export default async function Page() {
       {m && (
         <>
           <section className="mx-auto max-w-[1180px] px-4 pb-14 sm:px-6 lg:px-8">
-            <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-[#17213a] sm:text-[32px]">Afkast pr. ejendomstype</h2>
+            <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-[#0b1b33] sm:text-[32px]">Afkast pr. ejendomstype</h2>
             <p className="mt-2 max-w-3xl text-[16px] text-slate-600">Medianen af det oplyste startafkast for ejendommene til salg, holdt op mod det niveau, der normalt er sundt for typen. Et afkast langt over niveauet betyder oftest en risiko i prisen.</p>
             <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200">
               <table className="w-full min-w-[620px] text-left text-[15px]">
@@ -115,18 +115,18 @@ export default async function Page() {
           <section className="bg-slate-50 px-4 py-14 sm:px-6 lg:px-8">
             <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-2">
               <div className="min-w-0">
-                <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-[#17213a] sm:text-[28px]">Boligudlejningsejendomme med højest score</h2>
+                <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-[#0b1b33] sm:text-[28px]">Boligudlejningsejendomme med højest score</h2>
                 <ul className="mt-5 space-y-3">{m.rental.slice(0, 8).map((r) => <Listing key={r.url || r.road} r={r} />)}</ul>
               </div>
               <div className="min-w-0">
-                <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-[#17213a] sm:text-[28px]">Alle erhvervstyper: højest score</h2>
+                <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-[#0b1b33] sm:text-[28px]">Alle erhvervstyper: højest score</h2>
                 <ul className="mt-5 space-y-3">{m.top.slice(0, 8).map((r) => <Listing key={r.url || r.road} r={r} />)}</ul>
               </div>
             </div>
           </section>
 
           <section className="mx-auto max-w-[1180px] px-4 py-14 sm:px-6 lg:px-8">
-            <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-[#17213a] sm:text-[32px]">Hvor ligger ejendommene?</h2>
+            <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-[#0b1b33] sm:text-[32px]">Hvor ligger ejendommene?</h2>
             <p className="mt-2 text-[16px] text-slate-600">De kommuner med flest investerings- og erhvervsejendomme til salg lige nu.</p>
             <ul className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {m.kommuner.map((k) => (
@@ -143,7 +143,7 @@ export default async function Page() {
       <section className="bg-slate-50 px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
           <div>
-            <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-[#17213a] sm:text-[32px]">Sådan vurderer du en udlejningsejendom</h2>
+            <h2 className="text-[26px] font-semibold tracking-[-0.02em] text-[#0b1b33] sm:text-[32px]">Sådan vurderer du en udlejningsejendom</h2>
             <div className="mt-4 space-y-4 text-[17px] leading-relaxed text-slate-700">
               <p>Startafkastet i annoncen er driftsresultatet delt med prisen. Det er et godt første filter, men det siger intet om lånet. Regn derfor altid cash flow efter ydelse og se, hvor høj renten kan blive, før ejendommen ikke længere betaler sig selv.</p>
               <p>Læs lejekontrakterne og driftsbudgettet: hvornår kan lejen reguleres, hvor stor er tomgangen, og er vedligeholdelsen budgetteret realistisk? For boliger taget i brug før 1992 kan lejen være omfattet af omkostningsbestemt leje, hvilket begrænser, hvad du kan hæve den til.</p>
@@ -152,7 +152,7 @@ export default async function Page() {
             <div className="mt-8"><Faq items={FAQ} /></div>
           </div>
           <aside className="space-y-3">
-            <div className="rounded-2xl bg-[#17213a] p-5 text-white">
+            <div className="rounded-2xl bg-[#0b1b33] p-5 text-white">
               <p className="text-[16px] font-semibold">Få besked om nye ejendomme</p>
               <p className="mt-1.5 text-[14px] leading-relaxed text-white/70">En søgeagent holder øje med erhvervsmarkedet med dine krav til type, område og afkast og giver besked på mail.</p>
               <Link href="/funktioner/soegeagent" className="mt-4 inline-flex items-center gap-1.5 text-[14px] font-semibold text-blue-300 hover:underline">Om søgeagenter <ArrowRight size={14} /></Link>

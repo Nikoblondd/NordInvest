@@ -1,4 +1,5 @@
-import { Inter, Instrument_Serif } from "next/font/google";
+import localFont from "next/font/local";
+import { Instrument_Serif } from "next/font/google";
 
 // Landing-page type: Instrument Serif for headlines (upright only) and Geist
 // for everything else, including the numbers. Both open-source (OFL). Geist
@@ -11,13 +12,10 @@ export const serif = Instrument_Serif({
   fallback: ["Georgia", "Times New Roman", "serif"],
 });
 
-// The app, analyser and public pages set text through --font-geist. Since the
-// Oct 2026 redesign (design.md) that variable carries Inter, the same
-// body face as the rest of the site; the export keeps its old name so no call
-// site changes.
-export const geist = Inter({
-  subsets: ["latin"],
+export const geist = localFont({
+  src: "./font-files/Geist-latin.woff2",
   variable: "--font-geist",
   display: "swap",
+  weight: "100 900",
   fallback: ["-apple-system", "system-ui", "Segoe UI", "sans-serif"],
 });

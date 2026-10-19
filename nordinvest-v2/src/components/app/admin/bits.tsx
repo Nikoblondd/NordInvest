@@ -27,7 +27,7 @@ export function Avatar({ m, size = 40 }: { m: Pick<MemberSummary, "name" | "emai
   const text = (m.name.trim() ? m.name.trim().split(/\s+/).map((p) => p[0]).slice(0, 2).join("") : m.email.slice(0, 2)).toUpperCase();
   return (
     <span style={{ width: size, height: size, fontSize: Math.round(size * 0.34) }}
-      className={clsx("flex shrink-0 items-center justify-center rounded-full font-semibold", m.access === "admin" ? "bg-violet-600 text-white" : m.access === "member" || m.access === "broker" ? "bg-[#17213a] text-white" : "bg-slate-200 text-slate-500")}>
+      className={clsx("flex shrink-0 items-center justify-center rounded-full font-semibold", m.access === "admin" ? "bg-violet-600 text-white" : m.access === "member" || m.access === "broker" ? "bg-[#0b1b33] text-white" : "bg-slate-200 text-slate-500")}>
       {text}
     </span>
   );

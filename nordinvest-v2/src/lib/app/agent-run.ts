@@ -127,9 +127,9 @@ export function agentEmail(agent: Agent, fresh: Hit[], firstName: string): { sub
 <td style="padding:12px 0;border-top:1px solid #eef2f7;vertical-align:top"><div style="font-weight:600;color:#0f172a">${esc(h.road)}</div>
 <div style="color:#64748b;font-size:13px">${h.zip} ${esc(h.city)} · ${kr(h.price)}${h.area ? ` · ${h.area} m²` : ""}</div>
 <div style="font-size:13px;margin-top:4px"><span style="color:${h.cashFlow >= 0 ? "#047857" : "#e11d48"};font-weight:600">${cf}</span> <span style="color:#64748b">· score ${h.score}${h.fit != null ? ` · match ${h.fit}` : ""}</span></div>
-${h.signals?.length ? `<div style="font-size:12px;color:#1d2a4b;margin-top:4px">${h.signals.slice(0, 3).map(esc).join(" · ")}</div>` : ""}
+${h.signals?.length ? `<div style="font-size:12px;color:#1d4ed8;margin-top:4px">${h.signals.slice(0, 3).map(esc).join(" · ")}</div>` : ""}
 ${h.ai?.take ? `<div style="font-size:13px;color:#334155;margin-top:6px;line-height:1.45">${esc(h.ai.take)}</div>` : ""}
-<a href="${SITE}${esc(h.href)}" style="display:inline-block;margin-top:6px;color:#25345a;font-weight:600;font-size:13px;text-decoration:none">Se analysen</a></td></tr>`;
+<a href="${SITE}${esc(h.href)}" style="display:inline-block;margin-top:6px;color:#2563eb;font-weight:600;font-size:13px;text-decoration:none">Se analysen</a></td></tr>`;
   }).join("");
   const more = fresh.length > top.length ? `<p style="color:#64748b;font-size:14px">Og ${fresh.length - top.length} mere.</p>` : "";
   return {
@@ -139,7 +139,7 @@ ${h.ai?.take ? `<div style="font-size:13px;color:#334155;margin-top:6px;line-hei
 <p>Din søgeagent <b>${esc(agent.name)}</b> har fundet ${fresh.length === 1 ? "en ny bolig" : `${fresh.length} nye boliger`}, der er kommet på markedet siden sidst.</p>
 <p style="color:#64748b;font-size:13px;margin:0 0 8px">${criteriaChips(agent.criteria).map(esc).join(" · ")}</p>
 <table style="width:100%;border-collapse:collapse">${rows}</table>${more}
-<p style="margin-top:20px"><a href="${SITE}/app/find/agenter/${agent.id}" style="display:inline-block;background:#25345a;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:8px">Åbn agenten i NordInvest</a></p>
+<p style="margin-top:20px"><a href="${SITE}/app/find/agenter/${agent.id}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:8px">Åbn agenten i NordInvest</a></p>
 <p style="font-size:12px;color:#94a3b8">Agenten kører ${esc(scheduleLabel(agent.schedule).toLowerCase())}. Du kan ændre tidspunktet eller slå mails fra under Find boliger → Søgeagenter.</p></div>`,
   };
 }

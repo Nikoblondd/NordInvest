@@ -1113,9 +1113,9 @@ export function AnalyzerApp() {
   // Before anything is analysed: the form is the page's tool, shown inline.
   if (!ran) {
     return (
-      <section aria-label="Regn selv" className="mx-auto max-w-[800px] px-4 pb-16 sm:px-6 lg:px-8">
-        <div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+      <section aria-label="Regn selv" className="px-4 pb-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1080px]">
+          <div className="max-w-[560px] rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
             {form}
             <button
               type="button"
@@ -1157,11 +1157,12 @@ export function AnalyzerApp() {
     if (bar && bar.getBoundingClientRect().top < 64) window.scrollTo({ top: window.scrollY + bar.getBoundingClientRect().top - 72 });
   };
   const tabBar = (
-    <div id="analyse-tabs" className="sticky top-16 z-20 -mx-4 flex items-center gap-2 border-b border-slate-200 bg-white px-4 sm:mx-0 sm:px-0">
+    <div id="analyse-tabs" className="sticky top-16 z-20 -mx-4 flex items-center gap-2 border-b border-slate-200 bg-slate-50/95 px-4 py-1.5 backdrop-blur sm:mx-0 sm:rounded-xl sm:border sm:bg-white/95 sm:px-1.5">
       <nav aria-label="Analysens dele" role="tablist" className="flex min-w-0 flex-1 gap-0.5 overflow-x-auto [scrollbar-width:none]">
         {tabs.map((t) => (
           <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => openTab(t.id)}
-            className={clsx("-mb-px inline-flex min-h-[46px] shrink-0 items-center whitespace-nowrap border-b-2 px-3 text-[14px] font-semibold transition-colors", tab === t.id ? "border-slate-900 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-900")}>
+            className={clsx("inline-flex min-h-[38px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 text-[14px] font-semibold transition-colors", tab === t.id ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900")}>
+            {t.id !== "overblik" && <span aria-hidden className={clsx("h-1.5 w-1.5 rounded-full", t.tone === "good" ? "bg-emerald-500" : t.tone === "warn" ? "bg-amber-500" : t.tone === "bad" ? "bg-rose-500" : "bg-slate-400")} />}
             {t.label}
           </button>
         ))}
@@ -1237,16 +1238,16 @@ export function AnalyzerApp() {
         )}
       </section>
       <section className="rounded-2xl border border-slate-200 bg-white p-2">
-        <p className="px-3 pb-1 pt-2 text-[14px] font-semibold text-slate-900">Næste skridt</p>
-        <button type="button" onClick={() => plan("fremvisning")} disabled={save.status === "saving"} className={lightBtn}><CalendarPlus aria-hidden size={16} className="text-slate-500" /> Planlæg fremvisning</button>
+        <p className="px-3 pb-1 pt-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Næste skridt</p>
+        <button type="button" onClick={() => plan("fremvisning")} disabled={save.status === "saving"} className={lightBtn}><CalendarPlus aria-hidden size={16} className="text-sky-600" /> Planlæg fremvisning</button>
         <button type="button" onClick={() => plan("andet")} disabled={save.status === "saving"} className={lightBtn}><ListPlus aria-hidden size={16} className="text-slate-500" /> Opret opgave</button>
-        <button type="button" onClick={() => goCase("bud")} disabled={save.status === "saving"} className={lightBtn}><Gavel aria-hidden size={16} className="text-slate-500" /> Registrér bud</button>
-        <button type="button" onClick={() => goCase("papirer")} disabled={save.status === "saving"} className={lightBtn}><Upload aria-hidden size={16} className="text-slate-500" /> Gennemgå salgsdokumenter</button>
+        <button type="button" onClick={() => goCase("bud")} disabled={save.status === "saving"} className={lightBtn}><Gavel aria-hidden size={16} className="text-orange-600" /> Registrér bud</button>
+        <button type="button" onClick={() => goCase("papirer")} disabled={save.status === "saving"} className={lightBtn}><Upload aria-hidden size={16} className="text-amber-600" /> Gennemgå salgsdokumenter</button>
       </section>
       <section className="rounded-2xl border border-slate-200 bg-white p-2">
-        <p className="px-3 pb-1 pt-2 text-[14px] font-semibold text-slate-900">Del og eksportér</p>
-        <button type="button" onClick={() => requirePaid("report", openBankReport)} className={lightBtn}><FileText aria-hidden size={16} className="text-slate-500" /> Bankrapport (PDF)</button>
-        <button type="button" onClick={() => requirePaid("excel", exportExcel)} disabled={exporting} className={lightBtn}>{exporting ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <FileSpreadsheet aria-hidden size={16} className="text-slate-500" />} {exporting ? "Eksporterer…" : "Eksportér til Excel"}</button>
+        <p className="px-3 pb-1 pt-2 text-[12px] font-semibold uppercase tracking-[0.06em] text-slate-500">Del og eksportér</p>
+        <button type="button" onClick={() => requirePaid("report", openBankReport)} className={lightBtn}><FileText aria-hidden size={16} className="text-blue-600" /> Bankrapport (PDF)</button>
+        <button type="button" onClick={() => requirePaid("excel", exportExcel)} disabled={exporting} className={lightBtn}>{exporting ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <FileSpreadsheet aria-hidden size={16} className="text-emerald-600" />} {exporting ? "Eksporterer…" : "Eksportér til Excel"}</button>
         {listingUrl && (watch.status === "saved"
           ? <p className={clsx(lightBtn, "text-emerald-700 hover:bg-transparent")}><BellRing aria-hidden size={16} /> Prisvagt aktiv</p>
           : <button type="button" onClick={startWatch} disabled={watch.status === "saving"} className={lightBtn}>{watch.status === "saving" ? <Loader2 aria-hidden size={16} className="animate-spin" /> : <Bell aria-hidden size={16} className="text-slate-500" />} Giv besked ved prisfald</button>)}

@@ -115,7 +115,7 @@ export function DailyCard({
   const total = board?.total ?? done?.total;
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-700 to-[#17213a] p-5 text-white shadow-card-lift sm:p-6">
+    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-700 to-[#0b1b33] p-5 text-white shadow-card-lift sm:p-6">
       <div aria-hidden className="daily-sheen absolute inset-0" />
       <div className="relative">
         <div className="flex items-center justify-between gap-3">

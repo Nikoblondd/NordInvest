@@ -28,7 +28,7 @@ export function FeaturePage({ f }: { f: Feature }) {
       <section className="mx-auto grid max-w-[1180px] gap-10 px-4 pb-16 pt-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:px-8 lg:pt-12">
         <div>
           <p className="text-[14px] font-semibold text-blue-600">{f.nav}</p>
-          <h1 className="mt-3 text-[34px] font-semibold leading-[1.06] tracking-[-0.035em] text-[#17213a] [text-wrap:balance] sm:text-[48px]">{f.h1}</h1>
+          <h1 className="mt-3 text-[34px] font-semibold leading-[1.06] tracking-[-0.035em] text-[#0b1b33] [text-wrap:balance] sm:text-[48px]">{f.h1}</h1>
           <p className="mt-5 max-w-[36rem] text-[18px] leading-relaxed text-slate-600">{f.lead}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href="/adgang" className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-[16px] font-semibold text-white hover:bg-blue-500">Anmod om adgang <ArrowRight size={17} /></Link>
@@ -56,7 +56,7 @@ export function FeaturePage({ f }: { f: Feature }) {
 
       <section className="px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[1180px]">
-          <h2 className="max-w-2xl text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#17213a] sm:text-[38px]">Det får du</h2>
+          <h2 className="max-w-2xl text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#0b1b33] sm:text-[38px]">Det får du</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {f.points.map((p) => (
               <div key={p.title} className="rounded-2xl border border-slate-200 p-5">
@@ -76,7 +76,7 @@ export function FeaturePage({ f }: { f: Feature }) {
 
       <section className="bg-slate-50 px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[1180px]">
-          <h2 className="text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#17213a] sm:text-[38px]">Til den måde, du investerer på</h2>
+          <h2 className="text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#0b1b33] sm:text-[38px]">Til den måde, du investerer på</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {f.investors.map((x) => (
               <div key={x.who} className="rounded-2xl border border-slate-200 bg-white p-5">
@@ -91,7 +91,7 @@ export function FeaturePage({ f }: { f: Feature }) {
       <section className="px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
           <div>
-            <h2 className="text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#17213a] sm:text-[38px]">Spørgsmål og svar</h2>
+            <h2 className="text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#0b1b33] sm:text-[38px]">Spørgsmål og svar</h2>
             <div className="mt-6"><Faq items={f.faq} /></div>
           </div>
           <aside>

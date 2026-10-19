@@ -416,7 +416,7 @@ export function FlipReport() {
       </section>
 
       {/* The deal as one sheet: what a bank, a partner or an investor reads first. */}
-      <section id="kalkule" className="bg-[#ffffff] px-4 py-10 sm:px-6 sm:py-14">
+      <section id="kalkule" className="bg-[#f4f6f9] px-4 py-10 sm:px-6 sm:py-14">
         <div className="mx-auto max-w-[1080px]">
           <h2 className="text-[26px] font-semibold tracking-[-0.03em] sm:text-[32px]">Hele regnestykket</h2>
           <p className="mt-2 max-w-2xl text-[16px] text-slate-600">Ret et blåt felt, så opdateres beregningen. Klik på en række for at se udregningen. Afsnittene nedenfor dokumenterer hver række.</p>
@@ -618,7 +618,7 @@ export function FlipReport() {
         <Checklist answers={answers} year={property.yearBuilt} />
       </Band>
 
-      <section className="border-t border-slate-200/70 bg-[#ffffff] px-4 py-10 sm:px-6 sm:py-14">
+      <section className="border-t border-slate-200/70 bg-[#f4f6f9] px-4 py-10 sm:px-6 sm:py-14">
         <div className="mx-auto max-w-[1080px]">
           <FlipFeedback zip={property.zip} address={listing.address} profit={result.profit} />
           <div className="no-print mt-8 flex flex-wrap gap-3">
@@ -649,7 +649,7 @@ function Band({ id, title, answer, tone, muted, children }: { id: string; title:
     return () => window.removeEventListener("hashchange", check);
   }, [id]);
   return (
-    <section id={id} className={clsx("scroll-mt-20 border-t border-slate-200/70 px-4 sm:px-6", muted ? "bg-[#ffffff]" : "bg-white")}>
+    <section id={id} className={clsx("scroll-mt-20 border-t border-slate-200/70 px-4 sm:px-6", muted ? "bg-[#f4f6f9]" : "bg-white")}>
       <div className="mx-auto max-w-[1080px]">
         <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="group flex w-full items-center gap-4 py-5 text-left sm:py-6">
           <span className="min-w-0 flex-1">

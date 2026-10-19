@@ -73,7 +73,7 @@ export function AccessForm({ source = "adgang" }: { source?: string }) {
   }
 
   const input = (bad?: string) => `h-12 w-full rounded-lg border bg-white px-3.5 text-[16px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${bad ? "border-rose-400 focus:border-rose-500 focus:ring-rose-100" : "border-slate-300 focus:border-blue-600 focus:ring-blue-100"}`;
-  const chip = (on: boolean) => `min-h-[44px] rounded-lg border px-3.5 text-[15px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${on ? "border-[#17213a] bg-[#17213a] text-white" : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"}`;
+  const chip = (on: boolean) => `min-h-[44px] rounded-lg border px-3.5 text-[15px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${on ? "border-[#0b1b33] bg-[#0b1b33] text-white" : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"}`;
   const Err = ({ k }: { k: keyof FieldErrors }) => (errors[k] ? <p id={`af-${k}-err`} className="mt-1.5 text-[13px] font-medium text-rose-600">{errors[k]}</p> : null);
   const label = "text-[14px] font-medium text-slate-700";
 

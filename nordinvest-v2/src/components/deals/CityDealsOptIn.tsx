@@ -33,7 +33,7 @@ export function CityDealsOptIn({ slug, name, cityIn }: { slug: string; name: str
   };
 
   return (
-    <section aria-labelledby={`optin-${slug}`} className="mt-10 overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 shadow-[0_10px_30px_-20px_rgba(37, 52, 90,0.45)] sm:p-7">
+    <section aria-labelledby={`optin-${slug}`} className="mt-10 overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 shadow-[0_10px_30px_-20px_rgba(37,99,235,0.45)] sm:p-7">
       <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] md:items-center">
         <div>
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white">
