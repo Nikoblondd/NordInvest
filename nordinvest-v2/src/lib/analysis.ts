@@ -202,8 +202,11 @@ export function analyze(input: AnalysisInput): AnalysisResult {
   let cumulative = 0;
   for (let y = 1; y <= holdYears; y++) {
     const grownAnnualRent = annualRent * Math.pow(1 + rentGrowthPct / 100, y - 1);
-    const grownMaint = grownAnnualRent * (maintenancePct / 100);
-    const grownFixed = fixed * Math.pow(1 + 0.02, y - 1); // udgifter +2 %/år
+    // Running costs and upkeep rise faster than rent (3 % a year against the
+    // rent growth), so a forecast never improves on costs it cannot know.
+    const costGrowth = Math.max(3, rentGrowthPct + 1);
+    const grownMaint = annualRent * (maintenancePct / 100) * Math.pow(1 + costGrowth / 100, y - 1);
+    const grownFixed = fixed * Math.pow(1 + costGrowth / 100, y - 1);
     const yNoiClean = grownAnnualRent - grownAnnualRent * (vacancyPct / 100) - grownMaint - grownFixed;
     const yCash = yNoiClean - annualDebtService;
     cumulative += yCash;

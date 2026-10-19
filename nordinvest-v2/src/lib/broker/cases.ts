@@ -16,6 +16,9 @@ export type Case = {
   image: string | null;
   agency: string | null;
   agencyUrl: string | null;
+  /** The seller's annual operating costs; null when not stated (0 counts as not stated). */
+  opex: number | null;
+  area: number | null;
 };
 
 const SITE = "https://www.ejendomstorvet.dk";
@@ -39,6 +42,8 @@ function toCase(r: Record<string, unknown>): Case | null {
     image: etImage(r.image_url),
     agency: main ? String(main.name ?? "") || null : null,
     agencyUrl: main ? String(main.external_listing_url ?? "") || null : null,
+    opex: Number(r.yearly_operating_cost_dkk) > 0 ? Math.round(Number(r.yearly_operating_cost_dkk)) : null,
+    area: Number(r.floor_area_m2) > 0 ? Math.round(Number(r.floor_area_m2)) : null,
   };
 }
 

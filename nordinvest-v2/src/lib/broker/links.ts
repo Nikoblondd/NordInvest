@@ -22,6 +22,12 @@ export type BrokerLink = {
   ownerId?: string;
   createdAt?: string;
   legacy?: boolean; // one of the hand-made links in maegler-links.json
+  /** Seller's annual operating costs (Ejendomstorvet), floor area and BBR building facts, for the operating budget. */
+  opex?: number | null;
+  area?: number | null;
+  areaSource?: "annonce" | "bbr";
+  builtYear?: number | null;
+  renovatedYear?: number | null;
   contact?: string; // hand-made links: the listing agent's e-mail, where buyer messages go (never sent to the browser)
 };
 

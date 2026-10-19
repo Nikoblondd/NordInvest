@@ -106,6 +106,18 @@ export default async function OmPage() {
             </p>
           )}
 
+          <h2 className="mt-16 text-2xl font-semibold text-stone-900 md:text-3xl">Sådan holder jeg tallene skarpe</h2>
+          <ul className="mt-6 space-y-3 text-[16px] leading-relaxed text-stone-700">
+            {[
+              ["Kilde på hvert tal", "Analysen skiller sælgers tal, offentlige data og NordInvests egne skøn ad, så du kan se, hvad der er dokumenteret, og hvad der er antaget."],
+              ["Forsigtig frem for flot", "Driften af en ældre ejendom er svær at forudsige. Derfor regner analysen med tillæg til vedligehold og lejetab, måler hvad driften kan tåle i dag og viser fremtiden som tre scenarier, ikke som en prognose."],
+              ["Dine egne tal vinder", "Har du lejeliste, regnskab eller en vedligeholdelsesplan, skriver du tallene ind, og analysen regnes om på dem."],
+              ["Rettelser fra fagfolk går ind i modellen", "Erhvervsmæglere og investorer har allerede ændret modellen: 40 % udbetaling på erhverv og forsigtige scenarier for udlejningsejendomme. Hver ændring står i versionsloggen i metodebeskrivelsen."],
+            ].map(([t, d]) => (
+              <li key={t} className="rounded-xl border border-stone-200 bg-white px-5 py-4"><span className="block font-semibold text-stone-900">{t}</span>{d}</li>
+            ))}
+          </ul>
+          <p className="mt-4 text-[15px] text-stone-600">Hele metoden står i <Link href="/methodology#investeringsejendomme" className="font-medium text-stone-900 underline underline-offset-4">metodebeskrivelsen</Link>.</p>
           <h2 className="mt-16 text-2xl font-semibold text-stone-900 md:text-3xl">Hvem står bag</h2>
           <div className="mt-6 flex items-center gap-5">
             <Image src={site.founder.photo} alt={`${site.founder.name}, stifter af NordInvest`} width={88} height={88} className="h-[88px] w-[88px] rounded-full object-cover" />
@@ -122,7 +134,7 @@ export default async function OmPage() {
             <dt className="font-medium text-stone-900">CVR</dt><dd className="tabular-nums">{site.business.cvr}</dd>
             <dt className="font-medium text-stone-900">Adresse</dt><dd>{site.business.address}, {site.business.country}</dd>
             <dt className="font-medium text-stone-900">Kontakt</dt>
-            <dd><a href={`mailto:${site.email}`} className="underline underline-offset-4">{site.email}</a> · <a href="/kontakt" className="underline underline-offset-4">Kontaktformular</a></dd>
+            <dd><a href={site.phoneHref} className="underline underline-offset-4">{site.phone}</a> · <a href={`mailto:${site.email}`} className="underline underline-offset-4">{site.email}</a> · <a href="/kontakt" className="underline underline-offset-4">Kontaktformular</a></dd>
           </dl>
           <p className="mt-6 text-[15px] leading-relaxed text-stone-600">
             Presse, samarbejde eller investering: skriv til <a href={`mailto:${site.email}`} className="underline underline-offset-4">{site.email}</a>, så svarer jeg selv.

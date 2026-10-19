@@ -3,6 +3,7 @@ import { brokerUser } from "@/lib/broker/gate";
 import { caseFromUrl, listingPhotos } from "@/lib/broker/cases";
 import { createLink, deleteLink, legacyLinks, listLinks, viewCount, type BrokerLink } from "@/lib/broker/links";
 import { listLeads } from "@/lib/broker/leads";
+import { buildingFacts } from "@/lib/building-facts";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,8 +34,12 @@ export async function POST(req: Request) {
   if (b.url) {
     const c = await caseFromUrl(String(b.url).slice(0, 500));
     if (!c) return json({ ok: false, reason: "not_found" }, 404);
-    const imgs = await listingPhotos(c.url, c.image);
-    const link = await createLink(me.user.id, { url: c.url, price: c.price, rent: Math.round((c.price * c.yieldPct) / 100 / 12), subcat: c.subcat, addr: c.addr, imgs });
+    const [imgs, bf] = await Promise.all([listingPhotos(c.url, c.image), buildingFacts(c.addr)]);
+    const link = await createLink(me.user.id, {
+      url: c.url, price: c.price, rent: Math.round((c.price * c.yieldPct) / 100 / 12), subcat: c.subcat, addr: c.addr, imgs,
+      opex: c.opex, area: c.area ?? bf?.area ?? null, areaSource: c.area ? "annonce" : bf?.area ? "bbr" : undefined,
+      builtYear: bf?.builtYear ?? null, renovatedYear: bf?.renovatedYear ?? null,
+    });
     return link ? json({ ok: true, link: { ...link, views: 0 } }) : json({ ok: false, reason: "save_failed" }, 502);
   }
 
@@ -53,7 +58,14 @@ export async function POST(req: Request) {
     if (url && !/^https:\/\/\S+\.\S+/i.test(url)) errors.url = "Linket skal starte med https://";
     if (image && !/^https:\/\/\S+\.\S+/i.test(image)) errors.image = "Billedlinket skal starte med https://";
     if (Object.keys(errors).length) return json({ ok: false, reason: "invalid", errors }, 422);
-    const link = await createLink(me.user.id, { url: url || "https://nordinvest.io", price, rent: Math.round((price * yieldPct) / 100 / 12), subcat, addr, imgs: image ? [image] : [] });
+    const opexIn = Math.round(Number(String(m.opex ?? "").replace(/\./g, "")));
+    const areaIn = Math.round(Number(String(m.area ?? "").replace(/\./g, "")));
+    const bf = await buildingFacts(addr);
+    const link = await createLink(me.user.id, {
+      url: url || "https://nordinvest.io", price, rent: Math.round((price * yieldPct) / 100 / 12), subcat, addr, imgs: image ? [image] : [],
+      opex: opexIn > 0 ? opexIn : null, area: areaIn > 0 ? areaIn : bf?.area ?? null, areaSource: areaIn > 0 ? "annonce" : bf?.area ? "bbr" : undefined,
+      builtYear: bf?.builtYear ?? null, renovatedYear: bf?.renovatedYear ?? null,
+    });
     return link ? json({ ok: true, link: { ...link, views: 0 } }) : json({ ok: false, reason: "save_failed" }, 502);
   }
 

@@ -46,7 +46,7 @@ export default async function SharedAnalysisPage({ params }: { params: { slug: s
   return (
     <div className="min-h-[100dvh] overflow-x-clip bg-[#f4f6f9] text-slate-900">
       <Nav />
-      <SharedAnalysis listing={{ slug: l.slug, url: l.url, price: l.price, rent: l.rent, subcat: l.subcat, addr: l.addr, imgs: l.imgs, direct: !!(l.ownerId || l.contact) }} />
+      <SharedAnalysis listing={{ slug: l.slug, url: l.url, price: l.price, rent: l.rent, subcat: l.subcat, addr: l.addr, imgs: l.imgs, direct: !!(l.ownerId || l.contact), opex: l.opex ?? null, area: l.area ?? null, areaSource: l.areaSource, builtYear: l.builtYear ?? null, renovatedYear: l.renovatedYear ?? null }} />
       <Footer />
     </div>
   );

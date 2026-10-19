@@ -164,6 +164,60 @@ export default function MethodologyPage() {
             </div>
           </div>
 
+          <div id="investeringsejendomme" className="scroll-mt-24">
+            <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Investeringsejendomme: sådan regner vi</h2>
+            <p className="mt-2 text-[15px] text-slate-500">Beregningsmodel version 2, oktober 2026</p>
+            <div className="mt-4 space-y-4 text-lg leading-relaxed text-slate-700">
+              <p>
+                En udlejningsejendom er kun så god som dens drift, og driften af en ældre ejendom er svær at forudsige.
+                Derfor skiller analysen fire ting ad: sælgers tal, NordInvests forsigtige tillæg, hvad driften kan tåle i
+                dag, og scenarier for fremtiden. Ingen af delene præsenteres som en prognose.
+              </p>
+            </div>
+            <ol className="mt-6 space-y-4 text-[16px] leading-relaxed text-slate-700">
+              <li className="rounded-2xl border border-slate-200 bg-white p-5"><b className="text-slate-900">1. Sælgers driftsbudget, som det er.</b> Driftsresultatet er sælgers afkast gange købsprisen. Lejeindtægten er driftsresultatet plus sælgers oplyste driftsudgifter fra Ejendomstorvet. Hvert tal er mærket med sin kilde: annonce, beregnet, BBR, indtastet eller skøn. Har du lejeliste og regnskab, kan du skrive de faktiske tal ind, og alt regnes om.</li>
+              <li className="rounded-2xl border border-slate-200 bg-white p-5"><b className="text-slate-900">2. Forsigtige tillæg, synlige og til at rette.</b> Sælgers budgetter viser sjældent det fulde vedligeholdelsesbehov i ældre bygninger. Analysen trækker derfor et ekstra vedligehold fra efter bygningens opførelsesår i BBR, samt et lejetab i procent af lejen.
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[420px] text-[15px]">
+                    <thead><tr className="text-left text-slate-500"><th className="py-1 font-medium">Opført</th><th className="py-1 text-right font-medium">Bolig, kr./m² om året</th><th className="py-1 text-right font-medium">Erhverv, kr./m² om året</th></tr></thead>
+                    <tbody className="tabular-nums">
+                      <tr className="border-t border-slate-100"><td className="py-1">Før 1950</td><td className="py-1 text-right">100</td><td className="py-1 text-right">50</td></tr>
+                      <tr className="border-t border-slate-100"><td className="py-1">1950-1979</td><td className="py-1 text-right">75</td><td className="py-1 text-right">38</td></tr>
+                      <tr className="border-t border-slate-100"><td className="py-1">1980-1999</td><td className="py-1 text-right">50</td><td className="py-1 text-right">25</td></tr>
+                      <tr className="border-t border-slate-100"><td className="py-1">2000 og senere</td><td className="py-1 text-right">25</td><td className="py-1 text-right">13</td></tr>
+                      <tr className="border-t border-slate-100"><td className="py-1">Ukendt</td><td className="py-1 text-right">75</td><td className="py-1 text-right">38</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <span className="mt-2 block text-[14px] text-slate-500">Er bygningen ombygget, bruges et år midt mellem opførelse og ombygning. Erhverv får det halve, fordi lejeren ofte har mere af vedligeholdelsen. Lejetab: 2 % for boligudlejning, 3 % for blandet bolig og erhverv og 5 % for rent erhverv.</span>
+              </li>
+              <li className="rounded-2xl border border-slate-200 bg-white p-5"><b className="text-slate-900">3. Hvad driften kan tåle i dag.</b> Tålegrænsen er, hvor mange procent driftsresultatet kan falde, før cash flow er nul. Den måles på år 1, uden at fremskrive noget. Derudover vises cash flow, hvis vedligeholdelsen, lejetabet, lejen (minus 10 %), driftsudgifterne (plus 20 %) eller renten (plus 2 procentpoint) bliver dårligere end budgettet, og hvis det hele sker på én gang.</li>
+              <li className="rounded-2xl border border-slate-200 bg-white p-5"><b className="text-slate-900">4. Tre scenarier, ikke én prognose.</b> I alle tre stiger driftsudgifterne mindst lige så hurtigt som lejen.
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full min-w-[420px] text-[15px]">
+                    <thead><tr className="text-left text-slate-500"><th className="py-1 font-medium">Pr. år</th><th className="py-1 text-right font-medium">Forsigtig</th><th className="py-1 text-right font-medium">Middel</th><th className="py-1 text-right font-medium">Positiv</th></tr></thead>
+                    <tbody className="tabular-nums">
+                      <tr className="border-t border-slate-100"><td className="py-1">Leje</td><td className="py-1 text-right">0-1 %</td><td className="py-1 text-right">1,5 %</td><td className="py-1 text-right">2 %</td></tr>
+                      <tr className="border-t border-slate-100"><td className="py-1">Driftsudgifter</td><td className="py-1 text-right">3 %</td><td className="py-1 text-right">2,5 %</td><td className="py-1 text-right">2 %</td></tr>
+                      <tr className="border-t border-slate-100"><td className="py-1">Ejendommens værdi</td><td className="py-1 text-right">0 %</td><td className="py-1 text-right">1,5 %</td><td className="py-1 text-right">2,5 %</td></tr>
+                      <tr className="border-t border-slate-100"><td className="py-1">Forsigtige tillæg</td><td className="py-1 text-right">Med</td><td className="py-1 text-right">Med</td><td className="py-1 text-right">Uden</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <span className="mt-2 block text-[14px] text-slate-500">Lejen stiger 0 % i det forsigtige scenarie for boligudlejning i ejendomme taget i brug før 1992, fordi lejen typisk er omkostningsbestemt. Uændret rente, købsomkostninger 1,5 % og salgsomkostninger efter mæglersalær. Før skat.</span>
+              </li>
+              <li className="rounded-2xl border border-slate-200 bg-white p-5"><b className="text-slate-900">5. Hvad der mangler.</b> Analysen viser altid, hvad den ikke bygger på: lejeliste og lejefastsættelse, regnskab for de seneste tre år og en vedligeholdelsesplan eller teknisk gennemgang. Uden dem er analysen en screening, ikke grundlag for et bud eller en indstilling.</li>
+            </ol>
+            <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+              <h3 className="text-lg font-semibold text-slate-900">Versionslog</h3>
+              <ul className="mt-3 space-y-2 text-[15px] leading-relaxed text-slate-700">
+                <li><b className="text-slate-900">Version 2, oktober 2026.</b> Efter feedback fra en professionel ejendomsinvestor: 10-årsfremskrivningen er erstattet af tre scenarier, hvor udgifterne stiger mindst lige så hurtigt som lejen. Forsigtige tillæg til vedligehold og lejetab efter bygningens alder. Tålegrænse målt på i dag. Kilde på hvert tal. Driftsbudgettet kan rettes med egne tal. I boliganalysens fremskrivning stiger driftsudgifter og vedligehold nu 3 % om året mod lejens 2 %.</li>
+                <li><b className="text-slate-900">Oktober 2026.</b> Udbetaling på erhverv sat til 40 % efter feedback fra en erhvervsmægler: bankerne låner sjældent mere end 60 % ud til private købere af erhverv.</li>
+                <li><b className="text-slate-900">Version 1, 2026.</b> Driftsresultat fra annoncens afkast og 10-årsfremskrivning med 2 % lejestigning og 3 % værdistigning.</li>
+              </ul>
+            </div>
+          </div>
+
           <div className="rounded-3xl border border-rose-200 bg-rose-50 p-7">
             <h2 className="text-xl font-bold text-rose-900">Det gør vi ikke</h2>
             <ul className="mt-4 space-y-2 text-rose-900/90">
