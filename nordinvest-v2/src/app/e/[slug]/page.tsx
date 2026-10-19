@@ -5,6 +5,7 @@ import { getLink, recordView } from "@/lib/broker/links";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { SharedAnalysis } from "@/components/shared/SharedAnalysis";
+import { getMarketRates } from "@/lib/market-rates";
 
 /*
  * Short, readable links to the analysis of one listing, for the brokers we
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function SharedAnalysisPage({ params }: { params: { slug: string } }) {
-  const l = await getLink(params.slug);
+  const [l, rates] = await Promise.all([getLink(params.slug), getMarketRates()]);
   if (!l) redirect("/deals");
   const ua = headers().get("user-agent") ?? "";
   // Link previews and crawlers are not visitors.
@@ -46,7 +47,7 @@ export default async function SharedAnalysisPage({ params }: { params: { slug: s
   return (
     <div className="min-h-[100dvh] overflow-x-clip bg-[#f4f6f9] text-slate-900">
       <Nav />
-      <SharedAnalysis listing={{ slug: l.slug, url: l.url, price: l.price, rent: l.rent, subcat: l.subcat, addr: l.addr, imgs: l.imgs, direct: !!(l.ownerId || l.contact), opex: l.opex ?? null, area: l.area ?? null, areaSource: l.areaSource, builtYear: l.builtYear ?? null, renovatedYear: l.renovatedYear ?? null }} />
+      <SharedAnalysis rates={rates} listing={{ slug: l.slug, url: l.url, price: l.price, rent: l.rent, subcat: l.subcat, addr: l.addr, imgs: l.imgs, direct: !!(l.ownerId || l.contact), opex: l.opex ?? null, area: l.area ?? null, areaSource: l.areaSource, builtYear: l.builtYear ?? null, renovatedYear: l.renovatedYear ?? null, dossier: l.dossier ?? null }} />
       <Footer />
     </div>
   );

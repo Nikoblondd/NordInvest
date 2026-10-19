@@ -6,7 +6,8 @@ import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import { FounderNote } from "@/components/shared/FounderNote";
 import { monthlyPayment, type AnalysisResult } from "@/lib/analysis";
 import { CLASS_YIELD, DEFAULT_YIELD } from "@/lib/deals";
-import { budget, dataQuality, scenarios, stress, type OpsFacts, type Source } from "@/lib/investment-ops";
+import { budget, dataQuality, findings, scenarios, stress, type Finding, type OpsFacts, type Source } from "@/lib/investment-ops";
+import type { Dossier } from "@/lib/dossier";
 
 /*
  * The analysis of an investeringsejendom, written for a professional reader
@@ -20,6 +21,7 @@ import { budget, dataQuality, scenarios, stress, type OpsFacts, type Source } fr
 const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
 const signed = (n: number) => `${n >= 0 ? "+" : "−"}${kr(Math.abs(n))}`;
 const pct1 = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 1 })} %`;
+const pct2 = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 2 })} %`;
 const mio = (n: number) => `${(n / 1e6).toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mio. kr.`;
 
 const SOURCE: Record<Source, { label: string; cls: string }> = {
@@ -66,7 +68,7 @@ function Part({ id, tint, q, a, tone, children }: { id: string; tint?: boolean; 
 const card = "rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-18px_rgba(15,23,42,0.18)]";
 
 export function CommercialStory({
-  r, price, rate, termYears, subcategory, address, trust, onAdjust, facts, allowancePerM2, lossPct,
+  r, price, rate, termYears, subcategory, address, trust, onAdjust, facts, allowancePerM2, lossPct, dossier,
 }: {
   r: AnalysisResult; price: number; rate: number; termYears: number; subcategory: string | null;
   /** Kept for callers; scenarios carry their own value assumptions. */
@@ -75,6 +77,8 @@ export function CommercialStory({
   /** The seller's budget, building facts and their sources. Without it only the operating result is known. */
   facts?: OpsFacts;
   allowancePerM2?: number | null; lossPct?: number | null;
+  /** The public record (BBR, VUR, land tax) gathered for this property. */
+  dossier?: Dossier | null;
 }) {
   const f: OpsFacts = facts ?? { price, noi: r.noi, opex: null, area: null, builtYear: null, subcat: subcategory };
   const dp = price > 0 ? Math.round((1 - r.loan / price) * 1000) / 10 : 20;
@@ -82,7 +86,8 @@ export function CommercialStory({
   const b = budget({ ...f, noi: r.noi }, { allowancePerM2, lossPct });
   const st = stress(b, price, fin);
   const sc = scenarios({ ...f, noi: r.noi }, b, fin);
-  const dq = dataQuality(f);
+  const dq = dataQuality(f, dossier);
+  const found = findings(f, b, dossier);
   const debt = st.debtService;
   const cf = b.noi - debt, prudentCf = b.prudentNoi - debt;
 
@@ -96,7 +101,7 @@ export function CommercialStory({
       : r.capRate > band.goodHi
         ? "Højt for ejendomstypen. Undersøg beliggenhed, lejernes betalingsevne og bygningens stand."
         : r.capRate >= band.goodLo ? "Normalt niveau for ejendomstypen." : "I den lave ende for ejendomstypen.";
-  const base = Math.round(rate * 10) / 10;
+  const base = Math.round(rate * 100) / 100;
   const rateRows = [0, 1, 2, 3].map((d) => ({ at: base + d, cf: r.cashFlow + (r.monthlyMortgage - monthlyPayment(r.loan, base + d, termYears)), today: d === 0 }));
   const checks = [...(subcategory && BY_TYPE[subcategory] ? BY_TYPE[subcategory] : []), ...COMMON];
   const maxAbs = Math.max(1, ...st.rows.map((x) => Math.abs(x.cashFlow)));
@@ -144,7 +149,7 @@ export function CommercialStory({
                 <tr><td className="px-5 py-1.5 text-slate-700 sm:px-6">Ekstra vedligehold<Src s="skøn" /><span className="block text-[13px] text-slate-500">{b.maintenancePerM2 ? `${b.maintenancePerM2} kr. pr. m² om året${f.builtYear ? `, bygget ${f.builtYear}` : ""}` : "5 % af lejen"}</span></td><td className="px-3 py-1.5 text-right text-slate-400">–</td><td className="px-5 py-1.5 text-right text-slate-600 sm:px-6">{signed(-b.maintenance)}</td></tr>
                 <tr><td className="px-5 py-1.5 text-slate-700 sm:px-6">Lejetab og tomgang<Src s="skøn" /><span className="block text-[13px] text-slate-500">{pct1(b.rentLossPct)} af lejen</span></td><td className="px-3 py-1.5 text-right text-slate-400">–</td><td className="px-5 py-1.5 text-right text-slate-600 sm:px-6">{signed(-b.rentLoss)}</td></tr>
                 <tr className="border-t border-slate-200 font-semibold text-slate-900"><td className="px-5 py-2.5 sm:px-6">Driftsresultat</td><td className="px-3 py-2.5 text-right">{kr(b.noi)}</td><td className="px-5 py-2.5 text-right sm:px-6">{kr(b.prudentNoi)}</td></tr>
-                <tr><td className="px-5 py-1.5 text-slate-700 sm:px-6">Ydelse på lån <span className="text-[13px] text-slate-500">({pct1(fin.ratePct)}, {termYears} år)</span></td><td className="px-3 py-1.5 text-right text-slate-600">{signed(-debt)}</td><td className="px-5 py-1.5 text-right text-slate-600 sm:px-6">{signed(-debt)}</td></tr>
+                <tr><td className="px-5 py-1.5 text-slate-700 sm:px-6">Ydelse på lån <span className="text-[13px] text-slate-500">({pct2(fin.ratePct)}, {termYears} år)</span></td><td className="px-3 py-1.5 text-right text-slate-600">{signed(-debt)}</td><td className="px-5 py-1.5 text-right text-slate-600 sm:px-6">{signed(-debt)}</td></tr>
                 <tr className="border-t-2 border-slate-900"><td className="px-5 py-3 text-[17px] font-semibold text-slate-900 sm:px-6">Cash flow</td>
                   <td className={`px-3 py-3 text-right text-[18px] font-bold ${cf >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{signed(cf)}</td>
                   <td className={`px-5 py-3 text-right text-[18px] font-bold sm:px-6 ${prudentCf >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{signed(prudentCf)}</td></tr>
@@ -174,6 +179,37 @@ export function CommercialStory({
           </div>
         </div>
       </Part>
+
+      {/* 1b. Checked against the public record */}
+      {dossier && (
+        <Part id="registre" q="Tjek mod offentlige registre" tone={found.some((x) => x.tone === "bad") ? "bad" : found.some((x) => x.tone === "warn") ? "warn" : "good"}
+          a={found.filter((x) => x.tone === "bad" || x.tone === "warn").length
+            ? `${found.filter((x) => x.tone === "bad" || x.tone === "warn").length} forhold skal undersøges nærmere, før tallene kan bruges.`
+            : "Sælgers tal hænger sammen med BBR, den offentlige vurdering og kommunens grundskyld."}>
+          <div className="grid gap-6 lg:grid-cols-[1.35fr_1fr] lg:items-start">
+            <ul className={`${card} divide-y divide-slate-100`}>
+              {found.map((x) => <FindingRow key={x.title} f={x} />)}
+            </ul>
+            <div className={`${card} p-5 sm:p-6`}>
+              <p className="text-[16px] font-semibold text-slate-900">Ejendommen i BBR</p>
+              <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-[15px]">
+                {dossier.units && <><dt className="text-slate-500">Boliger</dt><dd className="text-right tabular-nums text-slate-900">{dossier.units.residential} · {dossier.units.residentialArea.toLocaleString("da-DK")} m²</dd></>}
+                {dossier.units && dossier.units.flats.length > 0 && <><dt className="text-slate-500">Boligstørrelser</dt><dd className="text-right tabular-nums text-slate-900">{dossier.units.flats.join(", ")} m²</dd></>}
+                {dossier.units && <><dt className="text-slate-500">Erhverv</dt><dd className="text-right tabular-nums text-slate-900">{dossier.units.commercial} · {dossier.units.commercialArea.toLocaleString("da-DK")} m²</dd></>}
+                {dossier.building?.builtYear && <><dt className="text-slate-500">Opført</dt><dd className="text-right tabular-nums text-slate-900">{dossier.building.builtYear}{dossier.building.renovatedYear ? `, ombygget ${dossier.building.renovatedYear}` : ""}</dd></>}
+                {dossier.building?.floors && <><dt className="text-slate-500">Etager</dt><dd className="text-right tabular-nums text-slate-900">{dossier.building.floors}</dd></>}
+                {dossier.building?.roof && <><dt className="text-slate-500">Tag</dt><dd className="text-right text-slate-900">{dossier.building.roof}</dd></>}
+                {dossier.building?.wall && <><dt className="text-slate-500">Ydervægge</dt><dd className="text-right text-slate-900">{dossier.building.wall}</dd></>}
+                {dossier.building?.heating && <><dt className="text-slate-500">Varme</dt><dd className="text-right text-slate-900">{dossier.building.heating}{dossier.building.fuel ? `, ${dossier.building.fuel.toLowerCase()}` : ""}</dd></>}
+                {dossier.valuation?.propertyValue && <><dt className="text-slate-500">Ejendomsværdi</dt><dd className="text-right tabular-nums text-slate-900">{kr(dossier.valuation.propertyValue)} ({dossier.valuation.year})</dd></>}
+                {dossier.valuation?.landValue && <><dt className="text-slate-500">Grundværdi</dt><dd className="text-right tabular-nums text-slate-900">{kr(dossier.valuation.landValue)}</dd></>}
+                {dossier.landTax && <><dt className="text-slate-500">Grundskyld (skøn)</dt><dd className="text-right tabular-nums text-slate-900">{kr(dossier.landTax.annual)} om året</dd></>}
+              </dl>
+              <p className="mt-4 text-[13px] leading-relaxed text-slate-500">Kilder: BBR og Ejendomsvurderingen via Datafordeler, grundskyldspromille fra Danmarks Statistik (PSKAT). Grundskyld er skønnet som 80 % af grundværdien gange promillen. Den faktiske kan være lavere pga. grundskatteloftet, og erhverv kan betale dækningsafgift. BFE {dossier.bfe}.</p>
+            </div>
+          </div>
+        </Part>
+      )}
 
       {/* 2. What today's operation can take */}
       <Part id="risici" q="Hvad kan driften tåle?" tone={st.tolerancePct >= 30 ? "good" : st.tolerancePct > 0 ? "warn" : "bad"}
@@ -209,7 +245,7 @@ export function CommercialStory({
               <tbody className="divide-y divide-slate-100 tabular-nums">
                 {rateRows.map((x) => (
                   <tr key={x.at} className={x.today ? "bg-slate-50" : ""}>
-                    <td className="py-2.5 pl-1 text-slate-700">{pct1(x.at)}{x.today && <span className="ml-2 text-[13px] text-slate-500">valgt</span>}</td>
+                    <td className="py-2.5 pl-1 text-slate-700">{pct2(x.at)}{x.today && <span className="ml-2 text-[13px] text-slate-500">valgt</span>}</td>
                     <td className={`py-2.5 pr-1 text-right font-semibold ${x.cf >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{signed(x.cf)}</td>
                   </tr>
                 ))}
@@ -294,6 +330,21 @@ export function CommercialStory({
         <div className="mt-6"><FounderNote /></div>
       </Part>
     </>
+  );
+}
+
+const TONE: Record<Finding["tone"], { dot: string; text: string }> = {
+  good: { dot: "bg-emerald-500", text: "text-emerald-800" },
+  info: { dot: "bg-blue-500", text: "text-slate-900" },
+  warn: { dot: "bg-amber-500", text: "text-amber-900" },
+  bad: { dot: "bg-rose-500", text: "text-rose-800" },
+};
+function FindingRow({ f }: { f: Finding }) {
+  return (
+    <li className="flex gap-3 px-5 py-4 sm:px-6">
+      <span className={`mt-2 h-2.5 w-2.5 shrink-0 rounded-full ${TONE[f.tone].dot}`} aria-hidden />
+      <span className="min-w-0"><span className={`block text-[16px] font-semibold ${TONE[f.tone].text}`}>{f.title}</span><span className="mt-0.5 block text-[14px] leading-relaxed text-slate-600">{f.note}</span></span>
+    </li>
   );
 }
 

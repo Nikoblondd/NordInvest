@@ -15,6 +15,7 @@
  */
 
 import { saleCosts } from "@/lib/dk-fees";
+import type { Dossier } from "@/lib/dossier";
 
 export type Source = "annonce" | "bbr" | "indtastet" | "beregnet" | "skøn";
 
@@ -30,6 +31,8 @@ export type OpsFacts = {
   builtYear: number | null;
   renovatedYear?: number | null;
   subcat: string | null;
+  /** Residential and commercial floor area from BBR's units, for a split maintenance allowance. */
+  mix?: { residentialArea: number; commercialArea: number } | null;
   /** Where rent, opex, area and building year come from. */
   sources?: Partial<Record<"rent" | "opex" | "area" | "builtYear", Source>>;
 };
@@ -82,12 +85,16 @@ export function budget(f: OpsFacts, o: { allowancePerM2?: number | null; lossPct
     opex = rent - f.noi; opexSource = "skøn";
   }
   const noi = rent - opex;
-  const perM2 = o.allowancePerM2 ?? maintenanceAllowance(f.builtYear, f.renovatedYear, f.subcat);
+  // Mixed buildings: the residential rate on the flats, the commercial rate on the rest (BBR units).
+  const mixed = f.mix && f.mix.residentialArea + f.mix.commercialArea > 0 && o.allowancePerM2 == null ? f.mix : null;
+  const perM2 = o.allowancePerM2 ?? (mixed
+    ? (maintenanceAllowance(f.builtYear, f.renovatedYear, "Boligudlejning") * mixed.residentialArea + maintenanceAllowance(f.builtYear, f.renovatedYear, "Kontor") * mixed.commercialArea) / (mixed.residentialArea + mixed.commercialArea)
+    : maintenanceAllowance(f.builtYear, f.renovatedYear, f.subcat));
   // Without an area, fall back to an allowance of 5 % of the rent.
-  const maintenance = f.area ? perM2 * f.area : rent * 0.05;
+  const maintenance = f.area ? Math.round(perM2) * f.area : rent * 0.05;
   const lossPct = o.lossPct ?? rentLossPct(f.subcat);
   const rentLoss = rent * (lossPct / 100);
-  return { rent, rentSource, opex, opexSource, noi, maintenance, maintenancePerM2: f.area ? perM2 : 0, rentLoss, rentLossPct: lossPct, prudentNoi: noi - maintenance - rentLoss };
+  return { rent, rentSource, opex, opexSource, noi, maintenance, maintenancePerM2: f.area ? Math.round(perM2) : 0, rentLoss, rentLossPct: lossPct, prudentNoi: noi - maintenance - rentLoss };
 }
 
 export function payment(loan: number, ratePct: number, years: number): number {
@@ -179,17 +186,50 @@ export function scenarios(f: OpsFacts, b: Budget, fin: Financing, years = 10): S
 export type QualityItem = { label: string; ok: boolean; note: string };
 
 /** What the analysis is built on, and what a professional still has to get before relying on it. */
-export function dataQuality(f: OpsFacts): { items: QualityItem[]; known: number; level: "screening" | "delvis" } {
+export function dataQuality(f: OpsFacts, d?: Dossier | null): { items: QualityItem[]; known: number; level: "screening" | "delvis" } {
   const s = f.sources ?? {};
   const items: QualityItem[] = [
     { label: "Pris og afkast", ok: true, note: "Fra sælgers annonce" },
     { label: "Driftsudgifter", ok: f.opex != null, note: f.opex != null ? (s.opex === "indtastet" ? "Indtastet" : "Fra sælgers annonce, ikke specificeret") : "Mangler. Lejeindtægten er skønnet" },
     { label: "Areal", ok: f.area != null, note: f.area != null ? (s.area === "bbr" ? "Fra BBR" : s.area === "indtastet" ? "Indtastet" : "Fra annoncen") : "Mangler" },
     { label: "Byggeår", ok: f.builtYear != null, note: f.builtYear != null ? `${f.builtYear}${f.renovatedYear ? `, ombygget ${f.renovatedYear}` : ""} (${s.builtYear === "indtastet" ? "indtastet" : "BBR"})` : "Mangler. Vedligeholdelsestillægget er sat til middel" },
+    { label: "Enheder og arealer", ok: !!d?.units, note: d?.units ? `BBR: ${d.units.residential} boliger (${d.units.residentialArea} m²) og ${d.units.commercial} erhvervsenheder (${d.units.commercialArea} m²)` : "Ikke hentet fra BBR" },
+    { label: "Offentlig vurdering og grundskyld", ok: !!d?.valuation, note: d?.valuation ? `Vurdering ${d.valuation.year}${d.landTax ? `, grundskyld skønnet med ${d.kommune ?? "kommunens"} promille for ${d.landTax.year}` : ""}` : "Ikke hentet" },
     { label: "Lejeliste og lejefastsættelse", ok: false, note: "Kræver lejekontrakter: omkostningsbestemt leje, § 5, stk. 2, eller fri leje" },
     { label: "Regnskab for de seneste 3 år", ok: false, note: "Kræver ejendommens regnskab fra sælger" },
     { label: "Vedligeholdelsesplan og teknisk gennemgang", ok: false, note: "Kræver byggeteknisk gennemgang eller plan for tag, facade, vinduer og installationer" },
   ];
   const known = items.filter((i) => i.ok).length;
   return { items, known, level: known >= 4 ? "delvis" : "screening" };
+}
+
+export type Finding = { tone: "good" | "warn" | "bad" | "info"; title: string; note: string };
+
+/**
+ * Cross-checks of the seller's budget against the public record: rent against
+ * market rent for the flats BBR registers, running costs against the estimated
+ * land tax, the price against the public valuation, and BBR's risk flags.
+ */
+export function findings(f: OpsFacts, b: Budget, d: Dossier | null | undefined): Finding[] {
+  const out: Finding[] = [];
+  if (!d) return out;
+  const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
+  const u = d.units;
+  if (d.marketRent && u && u.commercialArea === 0 && b.rentSource !== "skøn") {
+    const diff = (b.rent / d.marketRent.annual - 1) * 100;
+    const sizes = u.flats.length ? `${u.flats.length} ${u.flats.length === 1 ? "bolig" : "boliger"} på ${Math.min(...u.flats)}${u.flats.length > 1 ? `-${Math.max(...u.flats)}` : ""} m²` : "boligerne";
+    if (diff > 15) out.push({ tone: "warn", title: `Lejen er ${Math.round(diff)} % over markedslejen`, note: `Sælgers leje er ${kr(b.rent)} om året. NordInvests skøn over markedslejen for ${sizes} i ${d.marketRent.zip} er ${kr(d.marketRent.annual)}. Kontrollér lejekontrakterne, og om lejen er lovlig${f.builtYear && f.builtYear < 1992 ? ", da ejendommen er taget i brug før 1992" : ""}.` });
+    else if (diff < -15) out.push({ tone: "info", title: `Lejen er ${Math.round(-diff)} % under markedslejen`, note: `Sælgers leje er ${kr(b.rent)} om året mod et skøn på ${kr(d.marketRent.annual)} for ${sizes}. Det kan være omkostningsbestemt leje. Et potentiale kræver, at lejen lovligt kan hæves, fx ved forbedringer.` });
+    else out.push({ tone: "good", title: "Lejen svarer til markedslejen", note: `Sælgers leje (${kr(b.rent)}) ligger inden for 15 % af skønnet for ${sizes} (${kr(d.marketRent.annual)}).` });
+  }
+  if (d.landTax && b.opexSource !== "skøn") {
+    if (b.opex < d.landTax.annual) out.push({ tone: "bad", title: "Driftsudgifterne er lavere end grundskylden alene", note: `Sælgers driftsudgifter er ${kr(b.opex)}, men den skønnede grundskyld er ${kr(d.landTax.annual)} (${d.landTax.promille.toLocaleString("da-DK")} ‰ i ${d.kommune ?? "kommunen"}). Bed om det fulde driftsbudget.` });
+    else out.push({ tone: "info", title: `Grundskyld ca. ${kr(d.landTax.annual)} om året`, note: `Skønnet ud fra grundværdien ${d.valuation?.landValue ? kr(d.valuation.landValue) : ""} (vurdering ${d.valuation?.year ?? ""}) og ${d.kommune ?? "kommunen"}s promille på ${d.landTax.promille.toLocaleString("da-DK")} ‰ for ${d.landTax.year}. Det svarer til ${Math.round((d.landTax.annual / Math.max(1, b.opex)) * 100)} % af sælgers driftsudgifter.` });
+  }
+  if (d.valuation?.propertyValue) {
+    const ratio = f.price / d.valuation.propertyValue;
+    out.push({ tone: ratio > 2 ? "warn" : "info", title: `Prisen er ${ratio.toLocaleString("da-DK", { maximumFractionDigits: 1 })} gange den offentlige vurdering`, note: `Offentlig ejendomsværdi ${kr(d.valuation.propertyValue)} (vurdering ${d.valuation.year}). Ældre vurderinger ligger ofte under markedsprisen, så tallet er en pejling, ikke en værdi.` });
+  }
+  for (const r of d.risks) out.push({ tone: r.level === "hoej" ? "bad" : "warn", title: r.title, note: r.note });
+  return out;
 }

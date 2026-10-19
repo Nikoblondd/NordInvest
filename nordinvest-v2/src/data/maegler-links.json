@@ -15,7 +15,60 @@
     "area": 233,
     "areaSource": "annonce",
     "builtYear": 1878,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5675630",
+      "kommunekode": "0621",
+      "kommune": "Kolding",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2000000,
+        "landValue": 315800
+      },
+      "landTax": {
+        "promille": 11.1,
+        "year": 2026,
+        "annual": 2804
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 170,
+        "commercial": 2,
+        "commercialArea": 63,
+        "flats": [
+          85,
+          85
+        ]
+      },
+      "building": {
+        "builtYear": 1878,
+        "renovatedYear": null,
+        "area": 255,
+        "floors": 3,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1878 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 189600,
+        "flats": 2,
+        "zip": 6000
+      },
+      "fetchedAt": "2026-10-19T07:16:44.219Z"
+    }
   },
   "fussingsvej-41-horsens": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/a0fecc9a-1d1e-46a3-87c9-baff5a81ceb8",
@@ -32,7 +85,60 @@
     "area": 266,
     "areaSource": "annonce",
     "builtYear": 1920,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5638239",
+      "kommunekode": "0615",
+      "kommune": "Horsens",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 1876000,
+        "landValue": 796000
+      },
+      "landTax": {
+        "promille": 8.7,
+        "year": 2026,
+        "annual": 5540
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 194,
+        "commercial": 0,
+        "commercialArea": 0,
+        "flats": [
+          72,
+          122
+        ]
+      },
+      "building": {
+        "builtYear": 1920,
+        "renovatedYear": null,
+        "area": 144,
+        "floors": 2,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1920 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 187200,
+        "flats": 2,
+        "zip": 8700
+      },
+      "fetchedAt": "2026-10-19T07:16:44.649Z"
+    }
   },
   "teglvaenget-65-herning": {
     "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/andre-typer/3ffb45e6-09af-438c-ba32-66c0ff85c9a2",
@@ -51,7 +157,48 @@
     "area": 368,
     "areaSource": "annonce",
     "builtYear": 1986,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5703551",
+      "kommunekode": "0657",
+      "kommune": "Herning",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 630000,
+        "landValue": 270000
+      },
+      "landTax": {
+        "promille": 9.9,
+        "year": 2026,
+        "annual": 2138
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 368,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1986,
+        "renovatedYear": null,
+        "area": 368,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Metal",
+        "heating": "Varmepumpe",
+        "fuel": "El"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:16:46.035Z"
+    }
   },
   "noerre-alle-66-aarhus-c": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/aarhus/detailhandel-butik/f1e36560-4b1e-488e-890f-9e89f188e28b",
@@ -68,7 +215,48 @@
     "area": 106,
     "areaSource": "annonce",
     "builtYear": 1914,
-    "renovatedYear": 1987
+    "renovatedYear": 1987,
+    "dossier": {
+      "bfe": "5623268",
+      "kommunekode": "0751",
+      "kommune": "Aarhus",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 3,
+        "residentialArea": 369,
+        "commercial": 1,
+        "commercialArea": 94,
+        "flats": [
+          100,
+          129,
+          140
+        ]
+      },
+      "building": {
+        "builtYear": 1914,
+        "renovatedYear": 1987,
+        "area": 395,
+        "floors": 3,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1914 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 495600,
+        "flats": 3,
+        "zip": 8000
+      },
+      "fetchedAt": "2026-10-19T07:16:46.577Z"
+    }
   },
   "klokagervej-69-hjoerring": {
     "url": "https://www.ejendomstorvet.dk/investering/nordjylland/hjoerring/boligudlejning/17e79a10-11e9-495c-b6b9-cd7822d28f2a",
@@ -90,7 +278,59 @@
     "area": 369,
     "areaSource": "annonce",
     "builtYear": 1897,
-    "renovatedYear": 1959
+    "renovatedYear": 1959,
+    "dossier": {
+      "bfe": "5524352",
+      "kommunekode": "0860",
+      "kommune": "Hjørring",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2100000,
+        "landValue": 363700
+      },
+      "landTax": {
+        "promille": 16.5,
+        "year": 2026,
+        "annual": 4801
+      },
+      "units": {
+        "residential": 6,
+        "residentialArea": 292,
+        "commercial": 1,
+        "commercialArea": 77,
+        "flats": [
+          37,
+          38,
+          42,
+          43,
+          65,
+          67
+        ]
+      },
+      "building": {
+        "builtYear": 1897,
+        "renovatedYear": 1959,
+        "area": 300,
+        "floors": 1,
+        "roof": "Tagpap med hældning",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1897 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 308400,
+        "flats": 6,
+        "zip": 9800
+      },
+      "fetchedAt": "2026-10-19T07:16:47.166Z"
+    }
   },
   "vestergade-13-grindsted": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/billund/detailhandel-butik/b28ff791-b76c-4806-9b57-f327fcfbb718",
@@ -112,7 +352,48 @@
     "area": 1083,
     "areaSource": "annonce",
     "builtYear": 1990,
-    "renovatedYear": 2007
+    "renovatedYear": 2007,
+    "dossier": {
+      "bfe": "10036016",
+      "kommunekode": "0530",
+      "kommune": "Billund",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 6350000,
+        "landValue": 3205200
+      },
+      "landTax": {
+        "promille": 7.2,
+        "year": 2026,
+        "annual": 18462
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 126,
+        "commercial": 2,
+        "commercialArea": 957,
+        "flats": [
+          126
+        ]
+      },
+      "building": {
+        "builtYear": 1990,
+        "renovatedYear": 2007,
+        "area": 1025,
+        "floors": 1,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 114000,
+        "flats": 1,
+        "zip": 7200
+      },
+      "fetchedAt": "2026-10-19T07:16:47.899Z"
+    }
   },
   "hospitalsgade-6-8-horsens": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/35d45719-f2b2-4275-bd06-8ae67876c0a6",
@@ -128,8 +409,60 @@
     "opex": 230560,
     "area": 1093,
     "areaSource": "annonce",
-    "builtYear": null,
-    "renovatedYear": null
+    "builtYear": 1765,
+    "renovatedYear": 1984,
+    "dossier": {
+      "bfe": "8560759",
+      "kommunekode": "0615",
+      "kommune": "Horsens",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 18000000,
+        "landValue": 2504000
+      },
+      "landTax": {
+        "promille": 8.7,
+        "year": 2026,
+        "annual": 17428
+      },
+      "units": {
+        "residential": 6,
+        "residentialArea": 539,
+        "commercial": 3,
+        "commercialArea": 333,
+        "flats": [
+          46,
+          63,
+          75,
+          103,
+          112,
+          140
+        ]
+      },
+      "building": {
+        "builtYear": 1765,
+        "renovatedYear": 1984,
+        "area": 614,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Bindingsværk",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1765 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 519600,
+        "flats": 6,
+        "zip": 8700
+      },
+      "fetchedAt": "2026-10-19T07:18:31.275Z"
+    }
   },
   "ahlgade-59-holbaek": {
     "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/holbaek/andre-typer/9f10aea7-bbd4-4745-b239-5b34b8a438e0",
@@ -146,7 +479,59 @@
     "area": 273,
     "areaSource": "annonce",
     "builtYear": 1860,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5334466",
+      "kommunekode": "0316",
+      "kommune": "Holbæk",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 7350000,
+        "landValue": 404100
+      },
+      "landTax": {
+        "promille": 8.1,
+        "year": 2026,
+        "annual": 2619
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 64,
+        "commercial": 3,
+        "commercialArea": 209,
+        "flats": [
+          64
+        ]
+      },
+      "building": {
+        "builtYear": 1860,
+        "renovatedYear": null,
+        "area": 172,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Olie"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Oliefyr",
+          "note": "Bygningen opvarmes med olie ifølge BBR. Regn med udskiftning til varmepumpe eller fjernvarme."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1860 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 73200,
+        "flats": 1,
+        "zip": 4300
+      },
+      "fetchedAt": "2026-10-19T07:16:48.838Z"
+    }
   },
   "foldagervej-16-lille-skensved": {
     "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/koege/kontor/8f015b68-36ba-413a-80fb-07ba8187000c",
@@ -168,7 +553,48 @@
     "area": 498,
     "areaSource": "annonce",
     "builtYear": 2008,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "10081785",
+      "kommunekode": "0259",
+      "kommune": "Køge",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2100000,
+        "landValue": 1624500
+      },
+      "landTax": {
+        "promille": 5.3,
+        "year": 2026,
+        "annual": 6888
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 498,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 2008,
+        "renovatedYear": null,
+        "area": 498,
+        "floors": 1,
+        "roof": "Tagpap med hældning",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:16:49.889Z"
+    }
   },
   "helligkorsvej-12-roskilde": {
     "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/detailhandel-butik/858e3f61-35d5-40b9-8a40-f6f30ed15038",
@@ -190,7 +616,54 @@
     "area": 734,
     "areaSource": "annonce",
     "builtYear": 1919,
-    "renovatedYear": 2002
+    "renovatedYear": 2002,
+    "dossier": {
+      "bfe": "5309446",
+      "kommunekode": "0265",
+      "kommune": "Roskilde",
+      "valuation": {
+        "year": 2008,
+        "propertyValue": 12600000,
+        "landValue": 1058800
+      },
+      "landTax": {
+        "promille": 7.4,
+        "year": 2026,
+        "annual": 6268
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 102,
+        "commercial": 3,
+        "commercialArea": 734,
+        "flats": [
+          102
+        ]
+      },
+      "building": {
+        "builtYear": 1919,
+        "renovatedYear": 2002,
+        "area": 936,
+        "floors": 1,
+        "roof": "Tagpap med hældning",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": {
+        "annual": 106800,
+        "flats": 1,
+        "zip": 4000
+      },
+      "fetchedAt": "2026-10-19T07:16:50.754Z"
+    }
   },
   "storegade-3-grenaa": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/norddjurs/andre-typer/24c0f874-5862-49c6-96a6-c3613152caf4",
@@ -209,7 +682,55 @@
     "area": 413,
     "areaSource": "annonce",
     "builtYear": 1830,
-    "renovatedYear": 2021
+    "renovatedYear": 2021,
+    "dossier": {
+      "bfe": "5595138",
+      "kommunekode": "0707",
+      "kommune": "Norddjurs",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2950000,
+        "landValue": 240700
+      },
+      "landTax": {
+        "promille": 16.8,
+        "year": 2026,
+        "annual": 3235
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 211,
+        "commercial": 1,
+        "commercialArea": 203,
+        "flats": [
+          103,
+          108
+        ]
+      },
+      "building": {
+        "builtYear": 1830,
+        "renovatedYear": 2021,
+        "area": 281,
+        "floors": 2,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": {
+        "annual": 201600,
+        "flats": 2,
+        "zip": 8500
+      },
+      "fetchedAt": "2026-10-19T07:16:51.247Z"
+    }
   },
   "strandlodsvej-15a-d-koebenhavn-s": {
     "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/koebenhavn/hotel-restaurant/8cdf7f68-c79c-4597-93be-1b0c1231bdc7",
@@ -225,8 +746,147 @@
     "opex": 145870,
     "area": 343,
     "areaSource": "annonce",
-    "builtYear": null,
-    "renovatedYear": null
+    "builtYear": 2020,
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "100078152",
+      "kommunekode": "0101",
+      "kommune": "København",
+      "valuation": {
+        "year": 2018,
+        "propertyValue": 20447300,
+        "landValue": 20447300
+      },
+      "landTax": {
+        "promille": 5.1,
+        "year": 2026,
+        "annual": 83425
+      },
+      "units": {
+        "residential": 93,
+        "residentialArea": 6871,
+        "commercial": 3,
+        "commercialArea": 537,
+        "flats": [
+          38,
+          38,
+          38,
+          38,
+          38,
+          38,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          46,
+          47,
+          47,
+          47,
+          47,
+          47,
+          47,
+          47,
+          49,
+          49,
+          49,
+          49,
+          49,
+          49,
+          49,
+          49,
+          49,
+          50,
+          54,
+          54,
+          54,
+          54,
+          54,
+          59,
+          73,
+          73,
+          73,
+          81,
+          81,
+          81,
+          84,
+          84,
+          84,
+          84,
+          84,
+          84,
+          84,
+          86,
+          86,
+          86,
+          86,
+          86,
+          87,
+          89,
+          94,
+          94,
+          94,
+          95,
+          97,
+          97,
+          97,
+          97,
+          98,
+          98,
+          98,
+          98,
+          98,
+          103,
+          103,
+          110,
+          110,
+          110,
+          110,
+          110,
+          110,
+          112,
+          112,
+          114,
+          114,
+          114,
+          117,
+          120,
+          132,
+          138
+        ]
+      },
+      "building": {
+        "builtYear": 2020,
+        "renovatedYear": null,
+        "area": 7428,
+        "floors": 11,
+        "roof": "Tagpap, fladt",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Fladt tagpaptag",
+          "note": "Tagpap på fladt tag holder typisk 20-30 år. Spørg til, hvornår taget sidst er udskiftet."
+        }
+      ],
+      "marketRent": {
+        "annual": 12930000,
+        "flats": 93,
+        "zip": 2300
+      },
+      "fetchedAt": "2026-10-19T07:18:32.321Z"
+    }
   },
   "moellevej-13-dragoer": {
     "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/dragoer/boligudlejning/21c6e43f-109b-4d40-8ee6-e04603e9290e",
@@ -243,7 +903,65 @@
     "area": 989,
     "areaSource": "annonce",
     "builtYear": 2016,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "2030954",
+      "kommunekode": "0155",
+      "kommune": "Dragør",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 11800000,
+        "landValue": 2992600
+      },
+      "landTax": {
+        "promille": 8.1,
+        "year": 2026,
+        "annual": 19392
+      },
+      "units": {
+        "residential": 12,
+        "residentialArea": 989,
+        "commercial": 0,
+        "commercialArea": 0,
+        "flats": [
+          41,
+          41,
+          55,
+          55,
+          56,
+          69,
+          110,
+          110,
+          113,
+          113,
+          113,
+          113
+        ]
+      },
+      "building": {
+        "builtYear": 2016,
+        "renovatedYear": null,
+        "area": 721,
+        "floors": 1,
+        "roof": "Fibercement",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        }
+      ],
+      "marketRent": {
+        "annual": 1477200,
+        "flats": 12,
+        "zip": 2791
+      },
+      "fetchedAt": "2026-10-19T07:16:52.018Z"
+    }
   },
   "sallvej-22-hammel": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/boligudlejning/90575260-b8a7-426b-ad7a-88b8a8e28ed0",
@@ -260,7 +978,61 @@
     "area": 292,
     "areaSource": "annonce",
     "builtYear": 1914,
-    "renovatedYear": 1985
+    "renovatedYear": 1985,
+    "dossier": {
+      "bfe": "4276290",
+      "kommunekode": "0710",
+      "kommune": "Favrskov",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2500000,
+        "landValue": 523300
+      },
+      "landTax": {
+        "promille": 10.6,
+        "year": 2026,
+        "annual": 4438
+      },
+      "units": {
+        "residential": 3,
+        "residentialArea": 246,
+        "commercial": 0,
+        "commercialArea": 0,
+        "flats": [
+          63,
+          81,
+          102
+        ]
+      },
+      "building": {
+        "builtYear": 1914,
+        "renovatedYear": 1985,
+        "area": 216,
+        "floors": 2,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1914 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 249600,
+        "flats": 3,
+        "zip": 8450
+      },
+      "fetchedAt": "2026-10-19T07:16:52.754Z"
+    }
   },
   "haarup-oestervej-6-silkeborg": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/silkeborg/kontor/0b033a49-3c2d-4092-98e3-53083fd38246",
@@ -277,7 +1049,34 @@
     "area": 1375,
     "areaSource": "annonce",
     "builtYear": 2022,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "100249348",
+      "kommunekode": "0740",
+      "kommune": "Silkeborg",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 1375,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 2022,
+        "renovatedYear": null,
+        "area": 980,
+        "floors": 1,
+        "roof": "Tegl",
+        "wall": "Metal",
+        "heating": "Ingen varme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:16:53.383Z"
+    }
   },
   "falstersgade-3-fredericia": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/fredericia/boligudlejning/e374a301-6069-4086-8199-51ede790a1cc",
@@ -294,7 +1093,63 @@
     "area": 296,
     "areaSource": "annonce",
     "builtYear": 1917,
-    "renovatedYear": 1972
+    "renovatedYear": 1972,
+    "dossier": {
+      "bfe": "5664975",
+      "kommunekode": "0607",
+      "kommune": "Fredericia",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 1900000,
+        "landValue": 391500
+      },
+      "landTax": {
+        "promille": 13,
+        "year": 2026,
+        "annual": 4072
+      },
+      "units": {
+        "residential": 5,
+        "residentialArea": 296,
+        "commercial": 0,
+        "commercialArea": 0,
+        "flats": [
+          40,
+          40,
+          54,
+          54,
+          108
+        ]
+      },
+      "building": {
+        "builtYear": 1917,
+        "renovatedYear": 1972,
+        "area": 216,
+        "floors": 2,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1917 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 324000,
+        "flats": 5,
+        "zip": 7000
+      },
+      "fetchedAt": "2026-10-19T07:16:54.062Z"
+    }
   },
   "n-toerrings-vej-10-odense-soe": {
     "url": "https://www.ejendomstorvet.dk/investering/fyn/odense/boligudlejning/fb67ddc5-7c2a-4ab5-aa73-d287db38b171",
@@ -311,7 +1166,55 @@
     "area": 779,
     "areaSource": "annonce",
     "builtYear": 1917,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "2651225",
+      "kommunekode": "0461",
+      "kommune": "Odense",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 3000000,
+        "landValue": 324200
+      },
+      "landTax": {
+        "promille": 5.7,
+        "year": 2026,
+        "annual": 1478
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 327,
+        "commercial": 1,
+        "commercialArea": 452,
+        "flats": [
+          135,
+          192
+        ]
+      },
+      "building": {
+        "builtYear": 1917,
+        "renovatedYear": null,
+        "area": 692,
+        "floors": 1,
+        "roof": "Levende tag",
+        "wall": "Mursten",
+        "heating": "Ingen varme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1917 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 294000,
+        "flats": 2,
+        "zip": 5220
+      },
+      "fetchedAt": "2026-10-19T07:16:55.368Z"
+    }
   },
   "byleddet-6-roskilde": {
     "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/boligudlejning/973bf4cb-1187-4d84-b03e-73c80095e9a7",
@@ -328,7 +1231,61 @@
     "area": 710,
     "areaSource": "annonce",
     "builtYear": 1965,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5306184",
+      "kommunekode": "0265",
+      "kommune": "Roskilde",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 3800000,
+        "landValue": 1088000
+      },
+      "landTax": {
+        "promille": 7.4,
+        "year": 2026,
+        "annual": 6441
+      },
+      "units": {
+        "residential": 3,
+        "residentialArea": 246,
+        "commercial": 1,
+        "commercialArea": 361,
+        "flats": [
+          35,
+          101,
+          110
+        ]
+      },
+      "building": {
+        "builtYear": 1965,
+        "renovatedYear": null,
+        "area": 506,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Letbeton",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Olie"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "hoej",
+          "title": "Oliefyr",
+          "note": "Bygningen opvarmes med olie ifølge BBR. Regn med udskiftning til varmepumpe eller fjernvarme."
+        }
+      ],
+      "marketRent": {
+        "annual": 256800,
+        "flats": 3,
+        "zip": 4000
+      },
+      "fetchedAt": "2026-10-19T07:16:55.931Z"
+    }
   },
   "hoejvang-5-frederikssund": {
     "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/frederikssund/detailhandel-butik/2d9ab104-275c-46ab-b86a-f432c75eaa02",
@@ -345,7 +1302,48 @@
     "area": 690,
     "areaSource": "annonce",
     "builtYear": 1986,
-    "renovatedYear": 1988
+    "renovatedYear": 1988,
+    "dossier": {
+      "bfe": "2245765",
+      "kommunekode": "0250",
+      "kommune": "Frederikssund",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2800000,
+        "landValue": 1521000
+      },
+      "landTax": {
+        "promille": 12,
+        "year": 2026,
+        "annual": 14602
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 2,
+        "commercialArea": 690,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1986,
+        "renovatedYear": 1988,
+        "area": 690,
+        "floors": 1,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:16:56.493Z"
+    }
   },
   "askov-kirkevej-17-vejen": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejen/boligudlejning/e1474d73-570c-4658-8234-71eb2caa51f9",
@@ -379,7 +1377,48 @@
     "area": 5239,
     "areaSource": "annonce",
     "builtYear": 1963,
-    "renovatedYear": 1969
+    "renovatedYear": 1969,
+    "dossier": {
+      "bfe": "8747182",
+      "kommunekode": "0269",
+      "kommune": "Solrød",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 15800000,
+        "landValue": 3375000
+      },
+      "landTax": {
+        "promille": 7.9,
+        "year": 2026,
+        "annual": 21330
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 7,
+        "commercialArea": 5239,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1963,
+        "renovatedYear": 1969,
+        "area": 5239,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Letbeton",
+        "heating": "Ingen varme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:16:57.289Z"
+    }
   },
   "industriparken-6-bredsten": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejle/lager-produktion/589e00b5-bc6b-45d0-bb9f-64d2486c1384",
@@ -396,7 +1435,53 @@
     "area": 845,
     "areaSource": "annonce",
     "builtYear": 1976,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "4367257",
+      "kommunekode": "0630",
+      "kommune": "Vejle",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 1250000,
+        "landValue": 235400
+      },
+      "landTax": {
+        "promille": 10.5,
+        "year": 2026,
+        "annual": 1977
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 2,
+        "commercialArea": 845,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1976,
+        "renovatedYear": null,
+        "area": 845,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Betonelementer",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Olie"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "hoej",
+          "title": "Oliefyr",
+          "note": "Bygningen opvarmes med olie ifølge BBR. Regn med udskiftning til varmepumpe eller fjernvarme."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:16:57.778Z"
+    }
   },
   "storegade-181-esbjerg": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/esbjerg/andre-typer/9139502c-9c4e-4a2f-bce3-8db6b22c1188",
@@ -413,7 +1498,56 @@
     "area": 421,
     "areaSource": "annonce",
     "builtYear": 1895,
-    "renovatedYear": 2000
+    "renovatedYear": 2000,
+    "dossier": {
+      "bfe": "5744006",
+      "kommunekode": "0561",
+      "kommune": "Esbjerg",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 1800000,
+        "landValue": 345800
+      },
+      "landTax": {
+        "promille": 9.9,
+        "year": 2026,
+        "annual": 2739
+      },
+      "units": {
+        "residential": 3,
+        "residentialArea": 202,
+        "commercial": 1,
+        "commercialArea": 219,
+        "flats": [
+          55,
+          59,
+          88
+        ]
+      },
+      "building": {
+        "builtYear": 1895,
+        "renovatedYear": 2000,
+        "area": 429,
+        "floors": 3,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": {
+        "annual": 214800,
+        "flats": 3,
+        "zip": 6705
+      },
+      "fetchedAt": "2026-10-19T07:16:58.251Z"
+    }
   },
   "bredgade-26-videbaek": {
     "url": "https://www.ejendomstorvet.dk/investering/vestjylland/ringkoebing-skjern/andre-typer/cdf1d8e0-e428-4b56-9128-833608a976fc",
@@ -430,7 +1564,50 @@
     "area": 262,
     "areaSource": "annonce",
     "builtYear": 1902,
-    "renovatedYear": 1993
+    "renovatedYear": 1993,
+    "dossier": {
+      "bfe": "4482812",
+      "kommunekode": "0760",
+      "kommune": "Ringkøbing-Skjern",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 1100000,
+        "landValue": 186200
+      },
+      "landTax": {
+        "promille": 16.4,
+        "year": 2026,
+        "annual": 2443
+      },
+      "units": {
+        "residential": 3,
+        "residentialArea": 176,
+        "commercial": 1,
+        "commercialArea": 86,
+        "flats": [
+          45,
+          61,
+          70
+        ]
+      },
+      "building": {
+        "builtYear": 1902,
+        "renovatedYear": 1993,
+        "area": 262,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 187200,
+        "flats": 3,
+        "zip": 6920
+      },
+      "fetchedAt": "2026-10-19T07:17:00.040Z"
+    }
   },
   "dronningensvej-13-nyborg": {
     "url": "https://www.ejendomstorvet.dk/investering/fyn/nyborg/andre-typer/710c253b-2a05-4488-906b-8fc40287dc82",
@@ -447,7 +1624,48 @@
     "area": 401,
     "areaSource": "annonce",
     "builtYear": 1947,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5484800",
+      "kommunekode": "0450",
+      "kommune": "Nyborg",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 1800000,
+        "landValue": 374400
+      },
+      "landTax": {
+        "promille": 12.8,
+        "year": 2026,
+        "annual": 3834
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 141,
+        "commercial": 1,
+        "commercialArea": 174,
+        "flats": [
+          141
+        ]
+      },
+      "building": {
+        "builtYear": 1947,
+        "renovatedYear": null,
+        "area": 260,
+        "floors": 1,
+        "roof": "Tagpap med hældning",
+        "wall": "Mursten",
+        "heating": "Ingen varme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 122400,
+        "flats": 1,
+        "zip": 5800
+      },
+      "fetchedAt": "2026-10-19T07:17:00.750Z"
+    }
   },
   "strandgade-10a-frederiksvaerk": {
     "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/halsnaes/andre-typer/5bad110c-f29b-4131-8f7b-8d052c3b9365",
@@ -464,7 +1682,60 @@
     "area": 634,
     "areaSource": "annonce",
     "builtYear": 1891,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5316977",
+      "kommunekode": "0260",
+      "kommune": "Halsnæs",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2450000,
+        "landValue": 467900
+      },
+      "landTax": {
+        "promille": 10.9,
+        "year": 2026,
+        "annual": 4080
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 217,
+        "commercial": 5,
+        "commercialArea": 417,
+        "flats": [
+          60,
+          157
+        ]
+      },
+      "building": {
+        "builtYear": 1891,
+        "renovatedYear": null,
+        "area": 501,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1891 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 238800,
+        "flats": 2,
+        "zip": 3300
+      },
+      "fetchedAt": "2026-10-19T07:17:01.328Z"
+    }
   },
   "lyoevej-10-haderslev": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/haderslev/detailhandel-butik/dc39b29e-28d6-4dcf-85fa-786cc4ce5c02",
@@ -481,7 +1752,48 @@
     "area": 752,
     "areaSource": "annonce",
     "builtYear": 2006,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "10031096",
+      "kommunekode": "0510",
+      "kommune": "Haderslev",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 8200000,
+        "landValue": 302000
+      },
+      "landTax": {
+        "promille": 12.7,
+        "year": 2026,
+        "annual": 3068
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 752,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 2006,
+        "renovatedYear": null,
+        "area": 752,
+        "floors": 1,
+        "roof": "Fibercement",
+        "wall": "Betonelementer",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:01.840Z"
+    }
   },
   "oestergade-2a-c-grenaa": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/norddjurs/andre-typer/2463a97f-2323-403f-ad3f-a98120dc7633",
@@ -495,9 +1807,45 @@
       "https://i.ejendomstorvet.dk/56/1d/561dc46cce5b6755239220ff0df5aa94b92e921f82ee40e44c2b47b371870c91.jpg?class=listingimagebannermax"
     ],
     "opex": null,
-    "area": null,
-    "builtYear": null,
-    "renovatedYear": null
+    "area": 1000,
+    "builtYear": 1962,
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5595208",
+      "kommunekode": "0707",
+      "kommune": "Norddjurs",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 4600000,
+        "landValue": 336000
+      },
+      "landTax": {
+        "promille": 16.8,
+        "year": 2026,
+        "annual": 4516
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 1138,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1962,
+        "renovatedYear": null,
+        "area": 1000,
+        "floors": 3,
+        "roof": "Andet",
+        "wall": "Betonelementer",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:18:33.193Z"
+    },
+    "areaSource": "bbr"
   },
   "soendergade-21-23-tranekaer": {
     "url": "https://www.ejendomstorvet.dk/investering/fyn/langeland/hotel-restaurant/e2d5dafc-e020-49b8-bc7b-6f877719e905",
@@ -514,7 +1862,64 @@
     "area": 1965,
     "areaSource": "bbr",
     "builtYear": 1969,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "3067392",
+      "kommunekode": "0482",
+      "kommune": "Langeland",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 10300000,
+        "landValue": 1095100
+      },
+      "landTax": {
+        "promille": 12.2,
+        "year": 2026,
+        "annual": 10688
+      },
+      "units": {
+        "residential": 11,
+        "residentialArea": 1965,
+        "commercial": 0,
+        "commercialArea": 0,
+        "flats": [
+          60,
+          66,
+          75,
+          76,
+          82,
+          86,
+          87,
+          104,
+          105,
+          240,
+          984
+        ]
+      },
+      "building": {
+        "builtYear": 1969,
+        "renovatedYear": null,
+        "area": 1965,
+        "floors": 2,
+        "roof": "Tagpap, fladt",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Fladt tagpaptag",
+          "note": "Tagpap på fladt tag holder typisk 20-30 år. Spørg til, hvornår taget sidst er udskiftet."
+        }
+      ],
+      "marketRent": {
+        "annual": 1299600,
+        "flats": 11,
+        "zip": 5953
+      },
+      "fetchedAt": "2026-10-19T07:17:02.445Z"
+    }
   },
   "torvet-1-ringe": {
     "url": "https://www.ejendomstorvet.dk/investering/fyn/faaborg-midtfyn/detailhandel-butik/a4e984e2-38e9-4e6c-b2e3-72f1bac4646e",
@@ -531,7 +1936,42 @@
     "area": 1053,
     "areaSource": "annonce",
     "builtYear": 1975,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "3029670",
+      "kommunekode": "0430",
+      "kommune": "Faaborg-Midtfyn",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 7000000,
+        "landValue": 1411700
+      },
+      "landTax": {
+        "promille": 8.5,
+        "year": 2026,
+        "annual": 9600
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 3,
+        "commercialArea": 1053,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1975,
+        "renovatedYear": null,
+        "area": 702,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:03.216Z"
+    }
   },
   "oestergade-2-noerre-aaby": {
     "url": "https://www.ejendomstorvet.dk/investering/fyn/middelfart/andre-typer/5f814468-b243-4e4c-bf5a-95647f115817",
@@ -548,7 +1988,55 @@
     "area": 249,
     "areaSource": "annonce",
     "builtYear": 1897,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "3003665",
+      "kommunekode": "0410",
+      "kommune": "Middelfart",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 550000,
+        "landValue": 43600
+      },
+      "landTax": {
+        "promille": 6.8,
+        "year": 2026,
+        "annual": 237
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 157,
+        "commercial": 1,
+        "commercialArea": 92,
+        "flats": [
+          65,
+          92
+        ]
+      },
+      "building": {
+        "builtYear": 1897,
+        "renovatedYear": null,
+        "area": 184,
+        "floors": 2,
+        "roof": "Andet",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1897 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 160800,
+        "flats": 2,
+        "zip": 5580
+      },
+      "fetchedAt": "2026-10-19T07:17:05.419Z"
+    }
   },
   "haderslevvej-90-kolding": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/kolding/andre-typer/452a9bed-a3a9-4bbd-8bda-54086a9350f3",
@@ -565,7 +2053,54 @@
     "area": 352,
     "areaSource": "annonce",
     "builtYear": 1905,
-    "renovatedYear": 1992
+    "renovatedYear": 1992,
+    "dossier": {
+      "bfe": "5684021",
+      "kommunekode": "0621",
+      "kommune": "Kolding",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 1500000,
+        "landValue": 405700
+      },
+      "landTax": {
+        "promille": 11.1,
+        "year": 2026,
+        "annual": 3603
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 93,
+        "commercial": 2,
+        "commercialArea": 259,
+        "flats": [
+          93
+        ]
+      },
+      "building": {
+        "builtYear": 1905,
+        "renovatedYear": 1992,
+        "area": 302,
+        "floors": 2,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": {
+        "annual": 99600,
+        "flats": 1,
+        "zip": 6000
+      },
+      "fetchedAt": "2026-10-19T07:17:07.857Z"
+    }
   },
   "egevej-3-hadsten": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/andre-typer/619f9b82-fa3e-4fb4-b094-0c4a1d1e4bc2",
@@ -582,7 +2117,54 @@
     "area": 316,
     "areaSource": "annonce",
     "builtYear": 1910,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "4106409",
+      "kommunekode": "0710",
+      "kommune": "Favrskov",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 830000,
+        "landValue": 265300
+      },
+      "landTax": {
+        "promille": 10.6,
+        "year": 2026,
+        "annual": 2250
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 64,
+        "commercial": 2,
+        "commercialArea": 252,
+        "flats": [
+          64
+        ]
+      },
+      "building": {
+        "builtYear": 1910,
+        "renovatedYear": null,
+        "area": 252,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1910 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 67200,
+        "flats": 1,
+        "zip": 8370
+      },
+      "fetchedAt": "2026-10-19T07:17:09.154Z"
+    }
   },
   "langgade-32-nykoebing": {
     "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/guldborgsund/andre-typer/09b6bb8d-f56d-4993-bf56-c1ded79ad3ed",
@@ -599,7 +2181,50 @@
     "area": 1108,
     "areaSource": "annonce",
     "builtYear": 1915,
-    "renovatedYear": 2019
+    "renovatedYear": 2019,
+    "dossier": {
+      "bfe": "5424876",
+      "kommunekode": "0376",
+      "kommune": "Guldborgsund",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 5150000,
+        "landValue": 1363300
+      },
+      "landTax": {
+        "promille": 15.9,
+        "year": 2026,
+        "annual": 17341
+      },
+      "units": {
+        "residential": 3,
+        "residentialArea": 334,
+        "commercial": 3,
+        "commercialArea": 774,
+        "flats": [
+          89,
+          106,
+          139
+        ]
+      },
+      "building": {
+        "builtYear": 1915,
+        "renovatedYear": 2019,
+        "area": 1049,
+        "floors": 3,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 313200,
+        "flats": 3,
+        "zip": 4800
+      },
+      "fetchedAt": "2026-10-19T07:17:09.698Z"
+    }
   },
   "ringvejen-2-hadsund": {
     "url": "https://www.ejendomstorvet.dk/investering/nordjylland/mariagerfjord/lager-produktion/3c5aaa32-fff0-4915-a651-66321223f23e",
@@ -616,7 +2241,48 @@
     "area": 8280,
     "areaSource": "annonce",
     "builtYear": 1972,
-    "renovatedYear": 1996
+    "renovatedYear": 1996,
+    "dossier": {
+      "bfe": "8189181",
+      "kommunekode": "0846",
+      "kommune": "Mariagerfjord",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 16900000,
+        "landValue": 1306500
+      },
+      "landTax": {
+        "promille": 15.7,
+        "year": 2026,
+        "annual": 16410
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 5,
+        "commercialArea": 8280,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1972,
+        "renovatedYear": 1996,
+        "area": 8280,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:10.554Z"
+    }
   },
   "hadsundvej-96-aalborg": {
     "url": "https://www.ejendomstorvet.dk/investering/nordjylland/aalborg/detailhandel-butik/9f11bbaf-1ebd-4452-835b-25e6d44ab9ca",
@@ -633,7 +2299,41 @@
     "area": 220,
     "areaSource": "annonce",
     "builtYear": 1910,
-    "renovatedYear": 1995
+    "renovatedYear": 1995,
+    "dossier": {
+      "bfe": "5551057",
+      "kommunekode": "0851",
+      "kommune": "Aalborg",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 2,
+        "residentialArea": 232,
+        "commercial": 1,
+        "commercialArea": 81,
+        "flats": [
+          108,
+          124
+        ]
+      },
+      "building": {
+        "builtYear": 1910,
+        "renovatedYear": 1995,
+        "area": 239,
+        "floors": 2,
+        "roof": "Tegl",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 231600,
+        "flats": 2,
+        "zip": 9000
+      },
+      "fetchedAt": "2026-10-19T07:17:11.723Z"
+    }
   },
   "soendergade-14-hadsten": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/favrskov/andre-typer/adcab248-ef33-48d4-bf57-3c996d99f778",
@@ -650,7 +2350,56 @@
     "area": 421,
     "areaSource": "annonce",
     "builtYear": 1903,
-    "renovatedYear": 2017
+    "renovatedYear": 2017,
+    "dossier": {
+      "bfe": "4106321",
+      "kommunekode": "0710",
+      "kommune": "Favrskov",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 4250000,
+        "landValue": 350200
+      },
+      "landTax": {
+        "promille": 10.6,
+        "year": 2026,
+        "annual": 2970
+      },
+      "units": {
+        "residential": 3,
+        "residentialArea": 248,
+        "commercial": 2,
+        "commercialArea": 173,
+        "flats": [
+          64,
+          88,
+          96
+        ]
+      },
+      "building": {
+        "builtYear": 1903,
+        "renovatedYear": 2017,
+        "area": 374,
+        "floors": 3,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": {
+        "annual": 252000,
+        "flats": 3,
+        "zip": 8370
+      },
+      "fetchedAt": "2026-10-19T07:17:12.799Z"
+    }
   },
   "islevdalvej-98-roedovre": {
     "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/roedovre/lager-produktion/c7d54454-a519-4a4f-971b-28437e968df3",
@@ -667,7 +2416,42 @@
     "area": 3682,
     "areaSource": "annonce",
     "builtYear": 1990,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "1301798",
+      "kommunekode": "0175",
+      "kommune": "Rødovre",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 20000000,
+        "landValue": 3602500
+      },
+      "landTax": {
+        "promille": 7.8,
+        "year": 2026,
+        "annual": 22480
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 3648,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1990,
+        "renovatedYear": null,
+        "area": 3613,
+        "floors": 1,
+        "roof": "Tagpap med hældning",
+        "wall": "Betonelementer",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:14.020Z"
+    }
   },
   "noerregade-1-holstebro": {
     "url": "https://www.ejendomstorvet.dk/investering/vestjylland/holstebro/andre-typer/7ca602da-0fb2-410d-9e15-f51dc64f9e44",
@@ -684,7 +2468,49 @@
     "area": 669,
     "areaSource": "annonce",
     "builtYear": 1847,
-    "renovatedYear": 2013
+    "renovatedYear": 2013,
+    "dossier": {
+      "bfe": "5708876",
+      "kommunekode": "0661",
+      "kommune": "Holstebro",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 11100000,
+        "landValue": 1815500
+      },
+      "landTax": {
+        "promille": 11.5,
+        "year": 2026,
+        "annual": 16703
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 208,
+        "commercial": 1,
+        "commercialArea": 441,
+        "flats": [
+          87,
+          121
+        ]
+      },
+      "building": {
+        "builtYear": 1847,
+        "renovatedYear": 2013,
+        "area": 649,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 199200,
+        "flats": 2,
+        "zip": 7500
+      },
+      "fetchedAt": "2026-10-19T07:17:14.858Z"
+    }
   },
   "groefthoejparken-154a-viby": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/aarhus/andre-typer/88fa6850-9759-4537-b36d-1cd302e20eab",
@@ -701,7 +2527,48 @@
     "area": 356,
     "areaSource": "annonce",
     "builtYear": 1969,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "4249887",
+      "kommunekode": "0751",
+      "kommune": "Aarhus",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 360000,
+        "landValue": 173600
+      },
+      "landTax": {
+        "promille": 6,
+        "year": 2026,
+        "annual": 833
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 178,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1969,
+        "renovatedYear": null,
+        "area": 178,
+        "floors": 1,
+        "roof": "Tagpap, fladt",
+        "wall": "Letbeton",
+        "heating": "Ingen varme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Fladt tagpaptag",
+          "note": "Tagpap på fladt tag holder typisk 20-30 år. Spørg til, hvornår taget sidst er udskiftet."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:15.783Z"
+    }
   },
   "soeborg-hovedgade-96a-soeborg": {
     "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/gladsaxe/detailhandel-butik/5f54ed4c-5a34-4e5f-a06a-2e55f3ab737b",
@@ -718,7 +2585,100 @@
     "area": 888,
     "areaSource": "annonce",
     "builtYear": 2017,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "2014068",
+      "kommunekode": "0159",
+      "kommune": "Gladsaxe",
+      "valuation": {
+        "year": 2016,
+        "propertyValue": 464200,
+        "landValue": 464200
+      },
+      "landTax": {
+        "promille": 5.9,
+        "year": 2026,
+        "annual": 2191
+      },
+      "units": {
+        "residential": 53,
+        "residentialArea": 5554,
+        "commercial": 8,
+        "commercialArea": 888,
+        "flats": [
+          68,
+          68,
+          68,
+          70,
+          84,
+          95,
+          95,
+          97,
+          97,
+          100,
+          100,
+          100,
+          102,
+          102,
+          102,
+          102,
+          102,
+          102,
+          102,
+          102,
+          103,
+          103,
+          103,
+          103,
+          104,
+          104,
+          104,
+          104,
+          104,
+          104,
+          104,
+          104,
+          105,
+          105,
+          105,
+          105,
+          106,
+          106,
+          107,
+          107,
+          109,
+          109,
+          109,
+          111,
+          112,
+          112,
+          112,
+          113,
+          115,
+          140,
+          140,
+          142,
+          182
+        ]
+      },
+      "building": {
+        "builtYear": 2017,
+        "renovatedYear": null,
+        "area": 6443,
+        "floors": 5,
+        "roof": "Tegl",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 8092800,
+        "flats": 53,
+        "zip": 2860
+      },
+      "fetchedAt": "2026-10-19T07:17:17.184Z"
+    }
   },
   "soeborg-hovedgade-72a-soeborg": {
     "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/gladsaxe/detailhandel-butik/6ee4228a-15a4-407d-a34f-acdb0a911f8b",
@@ -735,7 +2695,72 @@
     "area": 291,
     "areaSource": "annonce",
     "builtYear": 1990,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "10056235",
+      "kommunekode": "0159",
+      "kommune": "Gladsaxe",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 33,
+        "residentialArea": 1755,
+        "commercial": 3,
+        "commercialArea": 476,
+        "flats": [
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          32,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          59,
+          62,
+          62,
+          62,
+          73,
+          73,
+          73
+        ]
+      },
+      "building": {
+        "builtYear": 1990,
+        "renovatedYear": null,
+        "area": 2572,
+        "floors": 4,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 2851200,
+        "flats": 33,
+        "zip": 2860
+      },
+      "fetchedAt": "2026-10-19T07:17:18.725Z"
+    }
   },
   "soendergade-48-horsens": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/detailhandel-butik/00de1395-d4e8-40ae-8b5e-1a5e23730bca",
@@ -752,7 +2777,42 @@
     "area": 1281,
     "areaSource": "annonce",
     "builtYear": 1827,
-    "renovatedYear": 2011
+    "renovatedYear": 2011,
+    "dossier": {
+      "bfe": "5639338",
+      "kommunekode": "0615",
+      "kommune": "Horsens",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 11500000,
+        "landValue": 10887300
+      },
+      "landTax": {
+        "promille": 8.7,
+        "year": 2026,
+        "annual": 75776
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 1281,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1827,
+        "renovatedYear": 2011,
+        "area": 1014,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:19.452Z"
+    }
   },
   "bredgade-17-toerring": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/hedensted/detailhandel-butik/c45ae5ec-0124-439b-832a-9e774281b39e",
@@ -769,7 +2829,59 @@
     "area": 577,
     "areaSource": "annonce",
     "builtYear": 1910,
-    "renovatedYear": 1980
+    "renovatedYear": 1980,
+    "dossier": {
+      "bfe": "4312846",
+      "kommunekode": "0766",
+      "kommune": "Hedensted",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2650000,
+        "landValue": 417200
+      },
+      "landTax": {
+        "promille": 7.9,
+        "year": 2026,
+        "annual": 2637
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 355,
+        "commercial": 2,
+        "commercialArea": 222,
+        "flats": [
+          355
+        ]
+      },
+      "building": {
+        "builtYear": 1910,
+        "renovatedYear": 1980,
+        "area": 480,
+        "floors": 2,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1910 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 190800,
+        "flats": 1,
+        "zip": 7160
+      },
+      "fetchedAt": "2026-10-19T07:17:20.606Z"
+    }
   },
   "sct-laurentii-vej-47a-skagen": {
     "url": "https://www.ejendomstorvet.dk/investering/nordjylland/frederikshavn/detailhandel-butik/de28978d-640b-4502-a01e-96b6824fdbc0",
@@ -786,7 +2898,52 @@
     "area": 104,
     "areaSource": "annonce",
     "builtYear": 1895,
-    "renovatedYear": 1976
+    "renovatedYear": 1976,
+    "dossier": {
+      "bfe": "5529956",
+      "kommunekode": "0813",
+      "kommune": "Frederikshavn",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 2,
+        "residentialArea": 177,
+        "commercial": 2,
+        "commercialArea": 176,
+        "flats": [
+          62,
+          115
+        ]
+      },
+      "building": {
+        "builtYear": 1895,
+        "renovatedYear": 1976,
+        "area": 228,
+        "floors": 1,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1895 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 172800,
+        "flats": 2,
+        "zip": 9990
+      },
+      "fetchedAt": "2026-10-19T07:17:21.514Z"
+    }
   },
   "alleroed-stationsvej-2c-alleroed": {
     "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/alleroed/kontor/fe45791c-e043-4d13-99bd-20261dfb8102",
@@ -803,7 +2960,55 @@
     "area": 111,
     "areaSource": "annonce",
     "builtYear": 2001,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "8285776",
+      "kommunekode": "0201",
+      "kommune": "Allerød",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 10,
+        "residentialArea": 860,
+        "commercial": 5,
+        "commercialArea": 830,
+        "flats": [
+          54,
+          68,
+          82,
+          84,
+          84,
+          85,
+          95,
+          100,
+          102,
+          106
+        ]
+      },
+      "building": {
+        "builtYear": 2001,
+        "renovatedYear": null,
+        "area": 1720,
+        "floors": 2,
+        "roof": "Tagpap med hældning",
+        "wall": "Betonelementer",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        }
+      ],
+      "marketRent": {
+        "annual": 1083600,
+        "flats": 10,
+        "zip": 3450
+      },
+      "fetchedAt": "2026-10-19T07:17:22.334Z"
+    }
   },
   "hulgade-6-svendborg": {
     "url": "https://www.ejendomstorvet.dk/investering/fyn/svendborg/andre-typer/fe75f8a7-2424-447d-afa2-6eec5405a552",
@@ -820,7 +3025,34 @@
     "area": 2078,
     "areaSource": "annonce",
     "builtYear": 1964,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "100646284",
+      "kommunekode": "0479",
+      "kommune": "Svendborg",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 2,
+        "commercialArea": 2262,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1964,
+        "renovatedYear": null,
+        "area": 1193,
+        "floors": 3,
+        "roof": "Andet",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:22.742Z"
+    }
   },
   "noerretorv-7-vejle": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejle/detailhandel-butik/db1f0afe-3e6d-46a7-b189-cc4ff718955e",
@@ -837,7 +3069,53 @@
     "area": 543,
     "areaSource": "annonce",
     "builtYear": 1877,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5688232",
+      "kommunekode": "0630",
+      "kommune": "Vejle",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 5300000,
+        "landValue": 967900
+      },
+      "landTax": {
+        "promille": 10.5,
+        "year": 2026,
+        "annual": 8130
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 4,
+        "commercialArea": 538,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1877,
+        "renovatedYear": null,
+        "area": 538,
+        "floors": 3,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1877 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:23.250Z"
+    }
   },
   "ordrupvej-94-charlottenlund": {
     "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/gentofte/detailhandel-butik/26448d23-1feb-4624-9d39-8b7a550e072b",
@@ -854,7 +3132,52 @@
     "area": 113,
     "areaSource": "annonce",
     "builtYear": 1924,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "2039822",
+      "kommunekode": "0157",
+      "kommune": "Gentofte",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 7,
+        "residentialArea": 715,
+        "commercial": 11,
+        "commercialArea": 296,
+        "flats": [
+          69,
+          93,
+          99,
+          102,
+          102,
+          102,
+          148
+        ]
+      },
+      "building": {
+        "builtYear": 1924,
+        "renovatedYear": null,
+        "area": 820,
+        "floors": 4,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1924 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 1047600,
+        "flats": 7,
+        "zip": 2920
+      },
+      "fetchedAt": "2026-10-19T07:17:24.119Z"
+    }
   },
   "ubberudvej-121-blommenslyst": {
     "url": "https://www.ejendomstorvet.dk/investering/fyn/odense/detailhandel-butik/8160ee73-ed6e-45e5-997d-15cb09d8b0d5",
@@ -871,7 +3194,53 @@
     "area": 1656,
     "areaSource": "annonce",
     "builtYear": 1982,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "2632135",
+      "kommunekode": "0461",
+      "kommune": "Odense",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 5750000,
+        "landValue": 552200
+      },
+      "landTax": {
+        "promille": 5.7,
+        "year": 2026,
+        "annual": 2518
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 2,
+        "commercialArea": 1656,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1982,
+        "renovatedYear": null,
+        "area": 1656,
+        "floors": 1,
+        "roof": "Tagpap, fladt",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        },
+        {
+          "level": "middel",
+          "title": "Fladt tagpaptag",
+          "note": "Tagpap på fladt tag holder typisk 20-30 år. Spørg til, hvornår taget sidst er udskiftet."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:24.854Z"
+    }
   },
   "noerregade-12b-ringsted": {
     "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/ringsted/boligudlejning/9e428919-4417-4977-bb52-c27b16ee2b1c",
@@ -888,7 +3257,67 @@
     "area": 368,
     "areaSource": "annonce",
     "builtYear": 1867,
-    "renovatedYear": 2016
+    "renovatedYear": 2016,
+    "dossier": {
+      "bfe": "5358034",
+      "kommunekode": "0329",
+      "kommune": "Ringsted",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 28,
+        "residentialArea": 1994,
+        "commercial": 3,
+        "commercialArea": 487,
+        "flats": [
+          28,
+          30,
+          30,
+          33,
+          33,
+          35,
+          37,
+          40,
+          49,
+          53,
+          70,
+          74,
+          75,
+          77,
+          77,
+          86,
+          86,
+          87,
+          87,
+          87,
+          87,
+          89,
+          89,
+          92,
+          92,
+          93,
+          93,
+          185
+        ]
+      },
+      "building": {
+        "builtYear": 1867,
+        "renovatedYear": 2016,
+        "area": 1908,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 2158800,
+        "flats": 28,
+        "zip": 4100
+      },
+      "fetchedAt": "2026-10-19T07:17:25.463Z"
+    }
   },
   "niels-bohrs-vej-14-laasby": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/skanderborg/lager-produktion/1c4a6869-ee04-4fb3-948e-c29638384c4a",
@@ -910,7 +3339,59 @@
     "area": 9952,
     "areaSource": "annonce",
     "builtYear": 1989,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "9880975",
+      "kommunekode": "0746",
+      "kommune": "Skanderborg",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 30500000,
+        "landValue": 2184400
+      },
+      "landTax": {
+        "promille": 8.6,
+        "year": 2026,
+        "annual": 15029
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 149,
+        "commercial": 7,
+        "commercialArea": 4942,
+        "flats": [
+          149
+        ]
+      },
+      "building": {
+        "builtYear": 1989,
+        "renovatedYear": null,
+        "area": 9951,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Metal",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        }
+      ],
+      "marketRent": {
+        "annual": 124800,
+        "flats": 1,
+        "zip": 8670
+      },
+      "fetchedAt": "2026-10-19T07:17:26.312Z"
+    }
   },
   "vordingborgvej-78c-herfoelge": {
     "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/koege/detailhandel-butik/b632c6af-8e0f-4b82-bc37-6185855c80f4",
@@ -932,7 +3413,48 @@
     "area": 1102,
     "areaSource": "annonce",
     "builtYear": null,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "8336715",
+      "kommunekode": "0259",
+      "kommune": "Køge",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 8750000,
+        "landValue": 3280900
+      },
+      "landTax": {
+        "promille": 5.3,
+        "year": 2026,
+        "annual": 13911
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 1002,
+        "flats": []
+      },
+      "building": {
+        "builtYear": null,
+        "renovatedYear": null,
+        "area": 1202,
+        "floors": 2,
+        "roof": "Tagpap, fladt",
+        "wall": "Betonelementer",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Fladt tagpaptag",
+          "note": "Tagpap på fladt tag holder typisk 20-30 år. Spørg til, hvornår taget sidst er udskiftet."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:28.287Z"
+    }
   },
   "fiskene-20-aalborg": {
     "url": "https://www.ejendomstorvet.dk/investering/nordjylland/aalborg/detailhandel-butik/7b2ad39e-567c-484f-8843-acad8a063986",
@@ -949,7 +3471,42 @@
     "area": 4757,
     "areaSource": "annonce",
     "builtYear": 2018,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "100086883",
+      "kommunekode": "0851",
+      "kommune": "Aalborg",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 12500000,
+        "landValue": 8229000
+      },
+      "landTax": {
+        "promille": 7.4,
+        "year": 2026,
+        "annual": 48716
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 2,
+        "commercialArea": 4757,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 2018,
+        "renovatedYear": null,
+        "area": 4757,
+        "floors": 1,
+        "roof": "Tegl",
+        "wall": "Træ",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:28.767Z"
+    }
   },
   "roedovrevej-210a-roedovre": {
     "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/roedovre/detailhandel-butik/1405f112-81b9-4765-9387-bc09e7d57582",
@@ -971,7 +3528,48 @@
     "area": 933,
     "areaSource": "annonce",
     "builtYear": 2014,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "2094404",
+      "kommunekode": "0175",
+      "kommune": "Rødovre",
+      "valuation": {
+        "year": 2013,
+        "propertyValue": 7150000,
+        "landValue": 2174000
+      },
+      "landTax": {
+        "promille": 7.8,
+        "year": 2026,
+        "annual": 13566
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 3,
+        "commercialArea": 2005,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 2014,
+        "renovatedYear": null,
+        "area": 1840,
+        "floors": 1,
+        "roof": "Tagpap, fladt",
+        "wall": "Mursten",
+        "heating": "Varmepumpe",
+        "fuel": "El"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Fladt tagpaptag",
+          "note": "Tagpap på fladt tag holder typisk 20-30 år. Spørg til, hvornår taget sidst er udskiftet."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:29.389Z"
+    }
   },
   "stormgade-155-esbjerg": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/esbjerg/hotel-restaurant/9d80c6a2-0dd9-4e2e-a633-e6cda43c3d1a",
@@ -993,7 +3591,34 @@
     "area": 700,
     "areaSource": "annonce",
     "builtYear": 1987,
-    "renovatedYear": 2002
+    "renovatedYear": 2002,
+    "dossier": {
+      "bfe": "5110481",
+      "kommunekode": "0561",
+      "kommune": "Esbjerg",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 4,
+        "commercialArea": 7812,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1987,
+        "renovatedYear": 2002,
+        "area": 7083,
+        "floors": 2,
+        "roof": "Tagpap med hældning",
+        "wall": "Metal",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:29.871Z"
+    }
   },
   "dalgas-plads-6-herning": {
     "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/kontor/55fedd20-6fbd-4cf4-a924-c9e00a958671",
@@ -1012,7 +3637,48 @@
     "area": 1058,
     "areaSource": "annonce",
     "builtYear": 2005,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "9529070",
+      "kommunekode": "0657",
+      "kommune": "Herning",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 6450000,
+        "landValue": 2632000
+      },
+      "landTax": {
+        "promille": 9.9,
+        "year": 2026,
+        "annual": 20845
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 4,
+        "commercialArea": 1058,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 2005,
+        "renovatedYear": null,
+        "area": 1058,
+        "floors": 3,
+        "roof": "Tagpap, fladt",
+        "wall": "Andet",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Fladt tagpaptag",
+          "note": "Tagpap på fladt tag holder typisk 20-30 år. Spørg til, hvornår taget sidst er udskiftet."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:30.916Z"
+    }
   },
   "moerupvej-9-herning": {
     "url": "https://www.ejendomstorvet.dk/investering/vestjylland/herning/lager-produktion/fc7f7e13-57cf-47f9-82d9-9d9b211ec34f",
@@ -1032,7 +3698,54 @@
     "area": 11272,
     "areaSource": "annonce",
     "builtYear": 1960,
-    "renovatedYear": 2003
+    "renovatedYear": 2003,
+    "dossier": {
+      "bfe": "5702208",
+      "kommunekode": "0657",
+      "kommune": "Herning",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 33000000,
+        "landValue": 4323600
+      },
+      "landTax": {
+        "promille": 9.9,
+        "year": 2026,
+        "annual": 34243
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 385,
+        "commercial": 7,
+        "commercialArea": 10840,
+        "flats": [
+          385
+        ]
+      },
+      "building": {
+        "builtYear": 1960,
+        "renovatedYear": 2003,
+        "area": 11380,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": {
+        "annual": 200400,
+        "flats": 1,
+        "zip": 7400
+      },
+      "fetchedAt": "2026-10-19T07:17:32.393Z"
+    }
   },
   "kirkegaardsvej-38-koebenhavn-s": {
     "url": "https://falcherhverv.dk/kirkegaardsvej-38-kl-tv-2300-koebenhavn-s/",
@@ -1049,7 +3762,73 @@
     "area": 82,
     "areaSource": "annonce",
     "builtYear": 1901,
-    "renovatedYear": 1987
+    "renovatedYear": 1987,
+    "dossier": {
+      "bfe": "6013845",
+      "kommunekode": "0101",
+      "kommune": "København",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 16200000,
+        "landValue": 1807000
+      },
+      "landTax": {
+        "promille": 5.1,
+        "year": 2026,
+        "annual": 7373
+      },
+      "units": {
+        "residential": 15,
+        "residentialArea": 1157,
+        "commercial": 4,
+        "commercialArea": 250,
+        "flats": [
+          45,
+          45,
+          45,
+          45,
+          45,
+          65,
+          65,
+          65,
+          90,
+          90,
+          90,
+          90,
+          105,
+          110,
+          162
+        ]
+      },
+      "building": {
+        "builtYear": 1901,
+        "renovatedYear": 1987,
+        "area": 982,
+        "floors": 4,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1901 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 2136000,
+        "flats": 15,
+        "zip": 2300
+      },
+      "fetchedAt": "2026-10-19T07:17:33.386Z"
+    }
   },
   "hallandsgade-2-4-amagerbrogade-38-koebenhavn": {
     "url": "https://www.ejendomstorvet.dk/investering/byen-koebenhavn/koebenhavn/boligudlejning/e5d2bd16-449f-4759-b9a0-45d22a4f7a9e",
@@ -1066,8 +3845,56 @@
     "opex": 426043,
     "area": 1108,
     "areaSource": "annonce",
-    "builtYear": null,
-    "renovatedYear": null
+    "builtYear": 1991,
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "6011957",
+      "kommunekode": "0101",
+      "kommune": "København",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 25500000,
+        "landValue": 1941000
+      },
+      "landTax": {
+        "promille": 5.1,
+        "year": 2026,
+        "annual": 7919
+      },
+      "units": {
+        "residential": 8,
+        "residentialArea": 616,
+        "commercial": 3,
+        "commercialArea": 492,
+        "flats": [
+          60,
+          64,
+          66,
+          84,
+          84,
+          86,
+          86,
+          86
+        ]
+      },
+      "building": {
+        "builtYear": 1991,
+        "renovatedYear": null,
+        "area": 872,
+        "floors": 3,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 1200000,
+        "flats": 8,
+        "zip": 2300
+      },
+      "fetchedAt": "2026-10-19T07:18:34.447Z"
+    }
   },
   "oestergade-11-hjoerring": {
     "url": "https://www.ejendomstorvet.dk/investering/nordjylland/hjoerring/detailhandel-butik/0be2a4a2-75c4-4f58-971b-06455bc23e50",
@@ -1107,7 +3934,55 @@
     "area": 220,
     "areaSource": "annonce",
     "builtYear": 1900,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5780829",
+      "kommunekode": "0540",
+      "kommune": "Sønderborg",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 1550000,
+        "landValue": 285600
+      },
+      "landTax": {
+        "promille": 13.5,
+        "year": 2026,
+        "annual": 3084
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 99,
+        "commercial": 2,
+        "commercialArea": 121,
+        "flats": [
+          34,
+          65
+        ]
+      },
+      "building": {
+        "builtYear": 1900,
+        "renovatedYear": null,
+        "area": 220,
+        "floors": 2,
+        "roof": "Tagpap med hældning",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1900 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 104400,
+        "flats": 2,
+        "zip": 6400
+      },
+      "fetchedAt": "2026-10-19T07:17:34.551Z"
+    }
   },
   "sct-laurentii-vej-61a-skagen": {
     "url": "https://www.ejendomstorvet.dk/investering/nordjylland/frederikshavn/detailhandel-butik/d7a0545d-f77d-4f92-93fa-a14a3bcf5c1b",
@@ -1130,7 +4005,44 @@
     "area": 167,
     "areaSource": "annonce",
     "builtYear": 1900,
-    "renovatedYear": 2008
+    "renovatedYear": 2008,
+    "dossier": {
+      "bfe": "5529801",
+      "kommunekode": "0813",
+      "kommune": "Frederikshavn",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 5,
+        "residentialArea": 270,
+        "commercial": 3,
+        "commercialArea": 167,
+        "flats": [
+          29,
+          38,
+          62,
+          62,
+          79
+        ]
+      },
+      "building": {
+        "builtYear": 1900,
+        "renovatedYear": 2008,
+        "area": 272,
+        "floors": 1,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 286800,
+        "flats": 5,
+        "zip": 9990
+      },
+      "fetchedAt": "2026-10-19T07:17:35.257Z"
+    }
   },
   "jyllandsgade-29-fredericia": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/fredericia/boligudlejning/e91c96ea-1db9-43cb-a478-ee1cba4ceba2",
@@ -1148,7 +4060,61 @@
     "area": 357,
     "areaSource": "annonce",
     "builtYear": 1900,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5663688",
+      "kommunekode": "0607",
+      "kommune": "Fredericia",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2650000,
+        "landValue": 798000
+      },
+      "landTax": {
+        "promille": 13,
+        "year": 2026,
+        "annual": 8299
+      },
+      "units": {
+        "residential": 3,
+        "residentialArea": 263,
+        "commercial": 1,
+        "commercialArea": 94,
+        "flats": [
+          75,
+          94,
+          94
+        ]
+      },
+      "building": {
+        "builtYear": 1900,
+        "renovatedYear": null,
+        "area": 282,
+        "floors": 3,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1900 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 286800,
+        "flats": 3,
+        "zip": 7000
+      },
+      "fetchedAt": "2026-10-19T07:17:35.754Z"
+    }
   },
   "ellekaer-14-herlev": {
     "url": "https://www.ejendomstorvet.dk/investering/koebenhavns-omegn/herlev/lager-produktion/f673127b-9f42-4a94-b3f0-079a45e23096",
@@ -1171,7 +4137,58 @@
     "area": 4169,
     "areaSource": "annonce",
     "builtYear": 1974,
-    "renovatedYear": 2001
+    "renovatedYear": 2001,
+    "dossier": {
+      "bfe": "2019238",
+      "kommunekode": "0163",
+      "kommune": "Herlev",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 19100000,
+        "landValue": 5488700
+      },
+      "landTax": {
+        "promille": 5.4,
+        "year": 2026,
+        "annual": 23711
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 2,
+        "commercialArea": 4169,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1974,
+        "renovatedYear": 2001,
+        "area": 3369,
+        "floors": 2,
+        "roof": "Tagpap, fladt",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Olie"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "hoej",
+          "title": "Oliefyr",
+          "note": "Bygningen opvarmes med olie ifølge BBR. Regn med udskiftning til varmepumpe eller fjernvarme."
+        },
+        {
+          "level": "middel",
+          "title": "Fladt tagpaptag",
+          "note": "Tagpap på fladt tag holder typisk 20-30 år. Spørg til, hvornår taget sidst er udskiftet."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:36.265Z"
+    }
   },
   "jernbanegade-5a-c-fredensborg": {
     "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/fredensborg/boligudlejning/1e32a749-793c-40a8-834b-b3bdcd095d88",
@@ -1191,9 +4208,66 @@
     ],
     "contact": "cs@kraer.dk",
     "opex": null,
-    "area": null,
-    "builtYear": null,
-    "renovatedYear": null
+    "area": 1056,
+    "builtYear": 1956,
+    "renovatedYear": 2007,
+    "dossier": {
+      "bfe": "2340169",
+      "kommunekode": "0210",
+      "kommune": "Fredensborg",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 16300000,
+        "landValue": 2129400
+      },
+      "landTax": {
+        "promille": 8.3,
+        "year": 2026,
+        "annual": 14139
+      },
+      "units": {
+        "residential": 10,
+        "residentialArea": 936,
+        "commercial": 3,
+        "commercialArea": 533,
+        "flats": [
+          46,
+          70,
+          88,
+          88,
+          95,
+          102,
+          105,
+          107,
+          114,
+          121
+        ]
+      },
+      "building": {
+        "builtYear": 1956,
+        "renovatedYear": 2007,
+        "area": 1056,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        }
+      ],
+      "marketRent": {
+        "annual": 1141200,
+        "flats": 10,
+        "zip": 3480
+      },
+      "fetchedAt": "2026-10-19T07:18:35.695Z"
+    },
+    "areaSource": "bbr"
   },
   "oestergade-20b-horsens": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/horsens/boligudlejning/48b66212-3ffa-4964-b060-9e10ba5b9735",
@@ -1212,7 +4286,55 @@
     "area": 115,
     "areaSource": "annonce",
     "builtYear": 1933,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5640723",
+      "kommunekode": "0615",
+      "kommune": "Horsens",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2138000,
+        "landValue": 1182000
+      },
+      "landTax": {
+        "promille": 8.7,
+        "year": 2026,
+        "annual": 8227
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 115,
+        "commercial": 0,
+        "commercialArea": 0,
+        "flats": [
+          51,
+          64
+        ]
+      },
+      "building": {
+        "builtYear": 1933,
+        "renovatedYear": null,
+        "area": 64,
+        "floors": 1,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1933 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 121200,
+        "flats": 2,
+        "zip": 8700
+      },
+      "fetchedAt": "2026-10-19T07:17:37.112Z"
+    }
   },
   "svinget-2-jelling": {
     "url": "https://www.ejendomstorvet.dk/investering/sydjylland/vejle/lager-produktion/eeb02257-37b0-4de0-a025-534373925b52",
@@ -1233,7 +4355,53 @@
     "area": 1212,
     "areaSource": "annonce",
     "builtYear": 1965,
-    "renovatedYear": 1989
+    "renovatedYear": 1989,
+    "dossier": {
+      "bfe": "4372021",
+      "kommunekode": "0630",
+      "kommune": "Vejle",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2450000,
+        "landValue": 135400
+      },
+      "landTax": {
+        "promille": 10.5,
+        "year": 2026,
+        "annual": 1137
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 2,
+        "commercialArea": 1212,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1965,
+        "renovatedYear": 1989,
+        "area": 1212,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Olie"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "hoej",
+          "title": "Oliefyr",
+          "note": "Bygningen opvarmes med olie ifølge BBR. Regn med udskiftning til varmepumpe eller fjernvarme."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:37.592Z"
+    }
   },
   "kongevejen-40-helsingoer": {
     "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/helsingoer/boligudlejning/a0ecaa30-8348-4709-9bc9-b991f07f532f",
@@ -1256,7 +4424,64 @@
     "area": 408,
     "areaSource": "annonce",
     "builtYear": 1929,
-    "renovatedYear": 1984
+    "renovatedYear": 1984,
+    "dossier": {
+      "bfe": "5320597",
+      "kommunekode": "0217",
+      "kommune": "Helsingør",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2400000,
+        "landValue": 376800
+      },
+      "landTax": {
+        "promille": 9.5,
+        "year": 2026,
+        "annual": 2864
+      },
+      "units": {
+        "residential": 6,
+        "residentialArea": 408,
+        "commercial": 0,
+        "commercialArea": 0,
+        "flats": [
+          54,
+          58,
+          74,
+          74,
+          74,
+          74
+        ]
+      },
+      "building": {
+        "builtYear": 1929,
+        "renovatedYear": 1984,
+        "area": 296,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1929 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 536400,
+        "flats": 6,
+        "zip": 3000
+      },
+      "fetchedAt": "2026-10-19T07:17:38.012Z"
+    }
   },
   "sleipnersvej-14-ringsted": {
     "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/ringsted/lager-produktion/06ad95ea-b91c-4837-b36b-f820863f3de1",
@@ -1279,7 +4504,53 @@
     "area": 2058,
     "areaSource": "annonce",
     "builtYear": 1988,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5359173",
+      "kommunekode": "0329",
+      "kommune": "Ringsted",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 10700000,
+        "landValue": 2469200
+      },
+      "landTax": {
+        "promille": 7,
+        "year": 2026,
+        "annual": 13828
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 2058,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1988,
+        "renovatedYear": null,
+        "area": 2058,
+        "floors": 2,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:38.600Z"
+    }
   },
   "hvidkaervej-44-odense": {
     "url": "https://www.ejendomstorvet.dk/investering/fyn/odense/lager-produktion/9ad1ea9b-3e08-4e7e-bf0a-20b75e168bf9",
@@ -1299,7 +4570,48 @@
     "area": 596,
     "areaSource": "annonce",
     "builtYear": 1989,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "2625054",
+      "kommunekode": "0461",
+      "kommune": "Odense",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2350000,
+        "landValue": 614100
+      },
+      "landTax": {
+        "promille": 5.7,
+        "year": 2026,
+        "annual": 2800
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 596,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1989,
+        "renovatedYear": null,
+        "area": 596,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Metal",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:39.315Z"
+    }
   },
   "aeroevej-24-viborg": {
     "url": "https://www.ejendomstorvet.dk/investering/vestjylland/viborg/lager-produktion/3ed884c5-1b21-4b65-a73e-f82508adf2a0",
@@ -1319,7 +4631,53 @@
     "area": 853,
     "areaSource": "annonce",
     "builtYear": 1976,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5585936",
+      "kommunekode": "0791",
+      "kommune": "Viborg",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 2400000,
+        "landValue": 352300
+      },
+      "landTax": {
+        "promille": 11.5,
+        "year": 2026,
+        "annual": 3241
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 2,
+        "commercialArea": 853,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 1976,
+        "renovatedYear": null,
+        "area": 790,
+        "floors": 1,
+        "roof": "Fibercement med asbest",
+        "wall": "Letbeton",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Olie"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "hoej",
+          "title": "Oliefyr",
+          "note": "Bygningen opvarmes med olie ifølge BBR. Regn med udskiftning til varmepumpe eller fjernvarme."
+        }
+      ],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:40.113Z"
+    }
   },
   "schaldemosevej-3-ringsted": {
     "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/ringsted/boligudlejning/ad734244-9704-4aec-a221-e3da662cdab7",
@@ -1339,7 +4697,63 @@
     "area": 298,
     "areaSource": "annonce",
     "builtYear": 1912,
-    "renovatedYear": 1977
+    "renovatedYear": 1977,
+    "dossier": {
+      "bfe": "5358555",
+      "kommunekode": "0329",
+      "kommune": "Ringsted",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 3300000,
+        "landValue": 412800
+      },
+      "landTax": {
+        "promille": 7,
+        "year": 2026,
+        "annual": 2312
+      },
+      "units": {
+        "residential": 5,
+        "residentialArea": 298,
+        "commercial": 0,
+        "commercialArea": 0,
+        "flats": [
+          57,
+          57,
+          57,
+          57,
+          70
+        ]
+      },
+      "building": {
+        "builtYear": 1912,
+        "renovatedYear": 1977,
+        "area": 228,
+        "floors": 2,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1912 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 339600,
+        "flats": 5,
+        "zip": 4100
+      },
+      "fetchedAt": "2026-10-19T07:17:40.789Z"
+    }
   },
   "stjernegade-5c-helsingoer": {
     "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/helsingoer/detailhandel-butik/436bf83f-a124-47b5-b824-76614ebafe26",
@@ -1357,7 +4771,66 @@
     "area": 138,
     "areaSource": "annonce",
     "builtYear": 1900,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5319189",
+      "kommunekode": "0217",
+      "kommune": "Helsingør",
+      "valuation": {
+        "year": 2003,
+        "propertyValue": 2700000,
+        "landValue": 743300
+      },
+      "landTax": {
+        "promille": 9.5,
+        "year": 2026,
+        "annual": 5649
+      },
+      "units": {
+        "residential": 3,
+        "residentialArea": 421,
+        "commercial": 2,
+        "commercialArea": 248,
+        "flats": [
+          139,
+          139,
+          143
+        ]
+      },
+      "building": {
+        "builtYear": 1900,
+        "renovatedYear": null,
+        "area": 569,
+        "floors": 3,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1900 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 459600,
+        "flats": 3,
+        "zip": 3000
+      },
+      "fetchedAt": "2026-10-19T07:17:41.593Z"
+    }
   },
   "hovedgaden-24-birkeroed": {
     "url": "https://www.ejendomstorvet.dk/investering/nordsjaelland/rudersdal/detailhandel-butik/200d48ef-79bf-4839-84f3-9f764d590bfc",
@@ -1380,7 +4853,52 @@
     "area": 1484,
     "areaSource": "bbr",
     "builtYear": 1971,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "2358782",
+      "kommunekode": "0230",
+      "kommune": "Rudersdal",
+      "valuation": null,
+      "landTax": null,
+      "units": {
+        "residential": 2,
+        "residentialArea": 240,
+        "commercial": 21,
+        "commercialArea": 1794,
+        "flats": [
+          106,
+          134
+        ]
+      },
+      "building": {
+        "builtYear": 1971,
+        "renovatedYear": null,
+        "area": 1484,
+        "floors": 2,
+        "roof": "Tagpap, fladt",
+        "wall": "Mursten",
+        "heating": "Centralvarme med eget fyr",
+        "fuel": "Naturgas"
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Gasopvarmning",
+          "note": "Bygningen opvarmes med gas ifølge BBR. Mange kommuner udfaser gas i de kommende år, så tjek kommunens varmeplan."
+        },
+        {
+          "level": "middel",
+          "title": "Fladt tagpaptag",
+          "note": "Tagpap på fladt tag holder typisk 20-30 år. Spørg til, hvornår taget sidst er udskiftet."
+        }
+      ],
+      "marketRent": {
+        "annual": 274800,
+        "flats": 2,
+        "zip": 3460
+      },
+      "fetchedAt": "2026-10-19T07:17:42.326Z"
+    }
   },
   "jernbanegade-5-nykoebing": {
     "url": "https://www.ejendomstorvet.dk/investering/vest--og-sydsjaelland/guldborgsund/andre-typer/4a2c9b15-c9a9-4690-b5fe-fc7ca5022b98",
@@ -1403,7 +4921,55 @@
     "area": 904,
     "areaSource": "annonce",
     "builtYear": 1912,
-    "renovatedYear": 1983
+    "renovatedYear": 1983,
+    "dossier": {
+      "bfe": "5424730",
+      "kommunekode": "0376",
+      "kommune": "Guldborgsund",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 3450000,
+        "landValue": 978300
+      },
+      "landTax": {
+        "promille": 15.9,
+        "year": 2026,
+        "annual": 12444
+      },
+      "units": {
+        "residential": 2,
+        "residentialArea": 413,
+        "commercial": 2,
+        "commercialArea": 491,
+        "flats": [
+          145,
+          268
+        ]
+      },
+      "building": {
+        "builtYear": 1912,
+        "renovatedYear": 1983,
+        "area": 867,
+        "floors": 2,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "middel",
+          "title": "Bygget 1912 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 286800,
+        "flats": 2,
+        "zip": 4800
+      },
+      "fetchedAt": "2026-10-19T07:17:43.446Z"
+    }
   },
   "maroegelhoej-9-lystrup": {
     "url": "https://www.ejendomstorvet.dk/investering/oestjylland/aarhus/lager-produktion/dcf372da-cab8-46b8-be88-7d7b757ab0be",
@@ -1421,7 +4987,42 @@
     "area": 1168,
     "areaSource": "annonce",
     "builtYear": 2011,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "10114769",
+      "kommunekode": "0751",
+      "kommune": "Aarhus",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 5950000,
+        "landValue": 700000
+      },
+      "landTax": {
+        "promille": 6,
+        "year": 2026,
+        "annual": 3360
+      },
+      "units": {
+        "residential": 0,
+        "residentialArea": 0,
+        "commercial": 1,
+        "commercialArea": 1168,
+        "flats": []
+      },
+      "building": {
+        "builtYear": 2011,
+        "renovatedYear": null,
+        "area": 718,
+        "floors": 1,
+        "roof": "Tagpap med hældning",
+        "wall": "Betonelementer",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": null,
+      "fetchedAt": "2026-10-19T07:17:43.936Z"
+    }
   },
   "oestergade-3-rudkoebing": {
     "url": "https://www.ejendomstorvet.dk/investering/fyn/langeland/andre-typer/9161f9fe-3d44-42b3-a903-d2878c3668a2",
@@ -1441,7 +5042,59 @@
     "area": 225,
     "areaSource": "annonce",
     "builtYear": 1900,
-    "renovatedYear": null
+    "renovatedYear": null,
+    "dossier": {
+      "bfe": "5489349",
+      "kommunekode": "0482",
+      "kommune": "Langeland",
+      "valuation": {
+        "year": 2020,
+        "propertyValue": 720000,
+        "landValue": 43600
+      },
+      "landTax": {
+        "promille": 12.2,
+        "year": 2026,
+        "annual": 426
+      },
+      "units": {
+        "residential": 1,
+        "residentialArea": 139,
+        "commercial": 1,
+        "commercialArea": 86,
+        "flats": [
+          139
+        ]
+      },
+      "building": {
+        "builtYear": 1900,
+        "renovatedYear": null,
+        "area": 196,
+        "floors": 2,
+        "roof": "Fibercement med asbest",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [
+        {
+          "level": "hoej",
+          "title": "Asbest i taget",
+          "note": "BBR registrerer tag af fibercement med asbest. Udskiftning kræver anmeldelse og særlig håndtering og bør indgå i vedligeholdelsesplanen."
+        },
+        {
+          "level": "middel",
+          "title": "Bygget 1900 uden registreret ombygning siden 1990",
+          "note": "Ældre installationer (el, vand, afløb) og vinduer bør gennemgås af en byggesagkyndig."
+        }
+      ],
+      "marketRent": {
+        "annual": 122400,
+        "flats": 1,
+        "zip": 5900
+      },
+      "fetchedAt": "2026-10-19T07:17:44.722Z"
+    }
   },
   "skomagergade-36a-roskilde": {
     "url": "https://www.ejendomstorvet.dk/investering/oestsjaelland/roskilde/andre-typer/cbf8c749-7095-498f-885c-e7fc4168dc16",
@@ -1459,6 +5112,54 @@
     "area": 989,
     "areaSource": "annonce",
     "builtYear": 1837,
-    "renovatedYear": 2023
+    "renovatedYear": 2023,
+    "dossier": {
+      "bfe": "5303978",
+      "kommunekode": "0265",
+      "kommune": "Roskilde",
+      "valuation": {
+        "year": 2003,
+        "propertyValue": 26000000,
+        "landValue": 2341000
+      },
+      "landTax": {
+        "promille": 7.4,
+        "year": 2026,
+        "annual": 13859
+      },
+      "units": {
+        "residential": 8,
+        "residentialArea": 1054,
+        "commercial": 3,
+        "commercialArea": 987,
+        "flats": [
+          91,
+          106,
+          114,
+          124,
+          127,
+          148,
+          154,
+          190
+        ]
+      },
+      "building": {
+        "builtYear": 1837,
+        "renovatedYear": 2023,
+        "area": 1789,
+        "floors": 4,
+        "roof": "Betontagsten",
+        "wall": "Mursten",
+        "heating": "Fjernvarme",
+        "fuel": null
+      },
+      "risks": [],
+      "marketRent": {
+        "annual": 986400,
+        "flats": 8,
+        "zip": 4000
+      },
+      "fetchedAt": "2026-10-19T07:17:45.590Z"
+    }
   }
 }

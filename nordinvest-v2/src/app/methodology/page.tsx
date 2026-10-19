@@ -206,12 +206,20 @@ export default function MethodologyPage() {
                 </div>
                 <span className="mt-2 block text-[14px] text-slate-500">Lejen stiger 0 % i det forsigtige scenarie for boligudlejning i ejendomme taget i brug før 1992, fordi lejen typisk er omkostningsbestemt. Uændret rente, købsomkostninger 1,5 % og salgsomkostninger efter mæglersalær. Før skat.</span>
               </li>
+              <li className="rounded-2xl border border-slate-200 bg-white p-5"><b className="text-slate-900">Tjek mod offentlige registre.</b> For hver ejendom henter NordInvest:
+                <ul className="mt-2 list-disc space-y-1 pl-5">
+                  <li>alle boliger og erhvervsenheder med areal, opførelsesår, tag, ydervægge og varmeinstallation fra BBR</li>
+                  <li>den offentlige ejendoms- og grundværdi fra Ejendomsvurderingen</li>
+                  <li>kommunens grundskyldspromille fra Danmarks Statistik (PSKAT)</li>
+                </ul>
+                Analysen holder sælgers leje op mod markedslejen for hver enkelt bolig og sælgers driftsudgifter op mod den skønnede grundskyld (80 % af grundværdien gange promillen). Den markerer asbest i tag eller facade, oliefyr, gas og elvarme.</li>
+              <li className="rounded-2xl border border-slate-200 bg-white p-5"><b className="text-slate-900">Renten.</b> Standardrenten er den aktuelle effektive rente inklusive bidrag på nye realkreditlån til virksomheder med fast rente i over 10 år. Den kommer fra Danmarks Nationalbank (DNRNURI) og opdateres hver måned. Variabel rente kan vælges med ét klik. Med 40 % udbetaling ligger lånet inden for realkreditgrænsen på 60 % for erhverv.</li>
               <li className="rounded-2xl border border-slate-200 bg-white p-5"><b className="text-slate-900">5. Hvad der mangler.</b> Analysen viser altid, hvad den ikke bygger på: lejeliste og lejefastsættelse, regnskab for de seneste tre år og en vedligeholdelsesplan eller teknisk gennemgang. Uden dem er analysen en screening, ikke grundlag for et bud eller en indstilling.</li>
             </ol>
             <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
               <h3 className="text-lg font-semibold text-slate-900">Versionslog</h3>
               <ul className="mt-3 space-y-2 text-[15px] leading-relaxed text-slate-700">
-                <li><b className="text-slate-900">Version 2, oktober 2026.</b> Efter feedback fra en professionel ejendomsinvestor: 10-årsfremskrivningen er erstattet af tre scenarier, hvor udgifterne stiger mindst lige så hurtigt som lejen. Forsigtige tillæg til vedligehold og lejetab efter bygningens alder. Tålegrænse målt på i dag. Kilde på hvert tal. Driftsbudgettet kan rettes med egne tal. I boliganalysens fremskrivning stiger driftsudgifter og vedligehold nu 3 % om året mod lejens 2 %.</li>
+                <li><b className="text-slate-900">Version 2, oktober 2026.</b> Efter feedback fra en professionel ejendomsinvestor: 10-årsfremskrivningen er erstattet af tre scenarier, hvor udgifterne stiger mindst lige så hurtigt som lejen. Forsigtige tillæg til vedligehold og lejetab efter bygningens alder. Tålegrænse målt på i dag. Kilde på hvert tal. Driftsbudgettet kan rettes med egne tal. Tjek mod BBR-enheder, offentlig vurdering og kommunens grundskyld. Markedsrenten fra Nationalbanken som standardrente. I boliganalysens fremskrivning stiger driftsudgifter og vedligehold nu 3 % om året mod lejens 2 %.</li>
                 <li><b className="text-slate-900">Oktober 2026.</b> Udbetaling på erhverv sat til 40 % efter feedback fra en erhvervsmægler: bankerne låner sjældent mere end 60 % ud til private købere af erhverv.</li>
                 <li><b className="text-slate-900">Version 1, 2026.</b> Driftsresultat fra annoncens afkast og 10-årsfremskrivning med 2 % lejestigning og 3 % værdistigning.</li>
               </ul>

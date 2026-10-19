@@ -28,6 +28,8 @@ export type BrokerLink = {
   areaSource?: "annonce" | "bbr";
   builtYear?: number | null;
   renovatedYear?: number | null;
+  /** Public record (BBR units, VUR, land tax, risks) gathered when the link was made. */
+  dossier?: import("@/lib/dossier").Dossier | null;
   contact?: string; // hand-made links: the listing agent's e-mail, where buyer messages go (never sent to the browser)
 };
 

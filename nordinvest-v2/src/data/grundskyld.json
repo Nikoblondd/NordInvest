@@ -1,0 +1,398 @@
+{
+ "year": 2026,
+ "source": "Danmarks Statistik, PSKAT (grundskyldspromille)",
+ "rates": {
+  "0101": {
+   "name": "København",
+   "promille": 5.1
+  },
+  "0147": {
+   "name": "Frederiksberg",
+   "promille": 3.1
+  },
+  "0155": {
+   "name": "Dragør",
+   "promille": 8.1
+  },
+  "0185": {
+   "name": "Tårnby",
+   "promille": 6
+  },
+  "0165": {
+   "name": "Albertslund",
+   "promille": 9.1
+  },
+  "0151": {
+   "name": "Ballerup",
+   "promille": 8.3
+  },
+  "0153": {
+   "name": "Brøndby",
+   "promille": 4.9
+  },
+  "0157": {
+   "name": "Gentofte",
+   "promille": 5.1
+  },
+  "0159": {
+   "name": "Gladsaxe",
+   "promille": 5.9
+  },
+  "0161": {
+   "name": "Glostrup",
+   "promille": 6.5
+  },
+  "0163": {
+   "name": "Herlev",
+   "promille": 5.4
+  },
+  "0167": {
+   "name": "Hvidovre",
+   "promille": 6.5
+  },
+  "0169": {
+   "name": "Høje-Taastrup",
+   "promille": 6.3
+  },
+  "0183": {
+   "name": "Ishøj",
+   "promille": 6.5
+  },
+  "0173": {
+   "name": "Lyngby-Taarbæk",
+   "promille": 6.7
+  },
+  "0175": {
+   "name": "Rødovre",
+   "promille": 7.8
+  },
+  "0187": {
+   "name": "Vallensbæk",
+   "promille": 8.6
+  },
+  "0201": {
+   "name": "Allerød",
+   "promille": 8
+  },
+  "0240": {
+   "name": "Egedal",
+   "promille": 8.8
+  },
+  "0210": {
+   "name": "Fredensborg",
+   "promille": 8.3
+  },
+  "0250": {
+   "name": "Frederikssund",
+   "promille": 12
+  },
+  "0190": {
+   "name": "Furesø",
+   "promille": 7
+  },
+  "0270": {
+   "name": "Gribskov",
+   "promille": 11.1
+  },
+  "0260": {
+   "name": "Halsnæs",
+   "promille": 10.9
+  },
+  "0217": {
+   "name": "Helsingør",
+   "promille": 9.5
+  },
+  "0219": {
+   "name": "Hillerød",
+   "promille": 6.6
+  },
+  "0223": {
+   "name": "Hørsholm",
+   "promille": 8.5
+  },
+  "0230": {
+   "name": "Rudersdal",
+   "promille": 9.4
+  },
+  "0400": {
+   "name": "Bornholm",
+   "promille": 10.7
+  },
+  "0253": {
+   "name": "Greve",
+   "promille": 5.5
+  },
+  "0259": {
+   "name": "Køge",
+   "promille": 5.3
+  },
+  "0350": {
+   "name": "Lejre",
+   "promille": 9.6
+  },
+  "0265": {
+   "name": "Roskilde",
+   "promille": 7.4
+  },
+  "0269": {
+   "name": "Solrød",
+   "promille": 7.9
+  },
+  "0320": {
+   "name": "Faxe",
+   "promille": 8
+  },
+  "0376": {
+   "name": "Guldborgsund",
+   "promille": 15.9
+  },
+  "0316": {
+   "name": "Holbæk",
+   "promille": 8.1
+  },
+  "0326": {
+   "name": "Kalundborg",
+   "promille": 16.6
+  },
+  "0360": {
+   "name": "Lolland",
+   "promille": 17.4
+  },
+  "0370": {
+   "name": "Næstved",
+   "promille": 9.8
+  },
+  "0306": {
+   "name": "Odsherred",
+   "promille": 12.3
+  },
+  "0329": {
+   "name": "Ringsted",
+   "promille": 7
+  },
+  "0330": {
+   "name": "Slagelse",
+   "promille": 11.1
+  },
+  "0340": {
+   "name": "Sorø",
+   "promille": 9.8
+  },
+  "0336": {
+   "name": "Stevns",
+   "promille": 8.3
+  },
+  "0390": {
+   "name": "Vordingborg",
+   "promille": 13.5
+  },
+  "0420": {
+   "name": "Assens",
+   "promille": 11.2
+  },
+  "0430": {
+   "name": "Faaborg-Midtfyn",
+   "promille": 8.5
+  },
+  "0440": {
+   "name": "Kerteminde",
+   "promille": 12.4
+  },
+  "0482": {
+   "name": "Langeland",
+   "promille": 12.2
+  },
+  "0410": {
+   "name": "Middelfart",
+   "promille": 6.8
+  },
+  "0480": {
+   "name": "Nordfyns",
+   "promille": 15.1
+  },
+  "0450": {
+   "name": "Nyborg",
+   "promille": 12.8
+  },
+  "0461": {
+   "name": "Odense",
+   "promille": 5.7
+  },
+  "0479": {
+   "name": "Svendborg",
+   "promille": 8.8
+  },
+  "0492": {
+   "name": "Ærø",
+   "promille": 11.1
+  },
+  "0530": {
+   "name": "Billund",
+   "promille": 7.2
+  },
+  "0561": {
+   "name": "Esbjerg",
+   "promille": 9.9
+  },
+  "0563": {
+   "name": "Fanø",
+   "promille": 12.5
+  },
+  "0607": {
+   "name": "Fredericia",
+   "promille": 13
+  },
+  "0510": {
+   "name": "Haderslev",
+   "promille": 12.7
+  },
+  "0621": {
+   "name": "Kolding",
+   "promille": 11.1
+  },
+  "0540": {
+   "name": "Sønderborg",
+   "promille": 13.5
+  },
+  "0550": {
+   "name": "Tønder",
+   "promille": 10.8
+  },
+  "0573": {
+   "name": "Varde",
+   "promille": 17.7
+  },
+  "0575": {
+   "name": "Vejen",
+   "promille": 9
+  },
+  "0630": {
+   "name": "Vejle",
+   "promille": 10.5
+  },
+  "0580": {
+   "name": "Aabenraa",
+   "promille": 7.8
+  },
+  "0710": {
+   "name": "Favrskov",
+   "promille": 10.6
+  },
+  "0766": {
+   "name": "Hedensted",
+   "promille": 7.9
+  },
+  "0615": {
+   "name": "Horsens",
+   "promille": 8.7
+  },
+  "0707": {
+   "name": "Norddjurs",
+   "promille": 16.8
+  },
+  "0727": {
+   "name": "Odder",
+   "promille": 14.4
+  },
+  "0730": {
+   "name": "Randers",
+   "promille": 13.9
+  },
+  "0741": {
+   "name": "Samsø",
+   "promille": 10.5
+  },
+  "0740": {
+   "name": "Silkeborg",
+   "promille": 11
+  },
+  "0746": {
+   "name": "Skanderborg",
+   "promille": 8.6
+  },
+  "0706": {
+   "name": "Syddjurs",
+   "promille": 14.2
+  },
+  "0751": {
+   "name": "Aarhus",
+   "promille": 6
+  },
+  "0657": {
+   "name": "Herning",
+   "promille": 9.9
+  },
+  "0661": {
+   "name": "Holstebro",
+   "promille": 11.5
+  },
+  "0756": {
+   "name": "Ikast-Brande",
+   "promille": 9.1
+  },
+  "0665": {
+   "name": "Lemvig",
+   "promille": 15.4
+  },
+  "0760": {
+   "name": "Ringkøbing-Skjern",
+   "promille": 16.4
+  },
+  "0779": {
+   "name": "Skive",
+   "promille": 11.6
+  },
+  "0671": {
+   "name": "Struer",
+   "promille": 15.5
+  },
+  "0791": {
+   "name": "Viborg",
+   "promille": 11.5
+  },
+  "0810": {
+   "name": "Brønderslev",
+   "promille": 17.1
+  },
+  "0813": {
+   "name": "Frederikshavn",
+   "promille": 13.4
+  },
+  "0860": {
+   "name": "Hjørring",
+   "promille": 16.5
+  },
+  "0849": {
+   "name": "Jammerbugt",
+   "promille": 13.2
+  },
+  "0825": {
+   "name": "Læsø",
+   "promille": 12.7
+  },
+  "0846": {
+   "name": "Mariagerfjord",
+   "promille": 15.7
+  },
+  "0773": {
+   "name": "Morsø",
+   "promille": 15.3
+  },
+  "0840": {
+   "name": "Rebild",
+   "promille": 8.9
+  },
+  "0787": {
+   "name": "Thisted",
+   "promille": 11.2
+  },
+  "0820": {
+   "name": "Vesthimmerlands",
+   "promille": 9.3
+  },
+  "0851": {
+   "name": "Aalborg",
+   "promille": 7.4
+  }
+ }
+}

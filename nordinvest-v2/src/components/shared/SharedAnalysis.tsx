@@ -11,6 +11,8 @@ import { CommercialStory } from "@/components/analyzer/CommercialStory";
 import { BuyerContact } from "@/components/shared/BuyerContact";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { budget, maintenanceAllowance, rentLossPct, type OpsFacts } from "@/lib/investment-ops";
+import type { Dossier } from "@/lib/dossier";
+import type { MarketRates } from "@/lib/market-rates";
 
 /*
  * The analysis behind a shared link, open to anyone who has it. Same verdict
@@ -22,6 +24,7 @@ export type SharedListing = {
   slug?: string; url: string; price: number; rent: number; subcat: string | null; addr: string; imgs?: string[]; direct?: boolean;
   /** From the listing (annual operating costs, floor area) and BBR (building and renovation year). */
   opex?: number | null; area?: number | null; builtYear?: number | null; renovatedYear?: number | null; areaSource?: "annonce" | "bbr";
+  dossier?: Dossier | null;
 };
 
 /** The site the listing is on, for "Annoncen på …". */
@@ -29,9 +32,12 @@ const sourceOf = (u: string) => { try { const h = new URL(u).hostname.replace(/^
 const dk = (n: number) => Math.round(n).toLocaleString("da-DK");
 const num = (n: number) => n.toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 2 });
 
-export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
+export function SharedAnalysis({ listing: l, rates }: { listing: SharedListing; rates?: MarketRates | null }) {
   const [dp, setDp] = useState(40);
-  const [rate, setRate] = useState(5);
+  // Today's fixed mortgage rate for companies incl. contribution (Nationalbanken), else 5 %.
+  const marketFixed = rates ? Math.round(rates.company.fixed * 100) / 100 : null;
+  const marketVar = rates ? Math.round(rates.company.variable * 100) / 100 : null;
+  const [rate, setRate] = useState(marketFixed ?? 5);
   // The professional's own figures override the listing's: gross rent and
   // running costs from the rent roll and accounts, area and building year.
   const [rentIn, setRentIn] = useState<number | null>(null);
@@ -44,6 +50,7 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
   const facts: OpsFacts = {
     price: l.price, noi: l.rent * 12, rent: rentIn, opex: opexIn, area: areaIn, builtYear: yearIn,
     renovatedYear: yearIn === (l.builtYear ?? null) ? l.renovatedYear : null, subcat: l.subcat,
+    mix: l.dossier?.units ? { residentialArea: l.dossier.units.residentialArea, commercialArea: l.dossier.units.commercialArea } : null,
     sources: {
       rent: rentIn ? "indtastet" : undefined,
       opex: opexIn != null && opexIn !== (l.opex ?? null) ? "indtastet" : "annonce",
@@ -95,12 +102,27 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
             <Field id="f-opex" label="Driftsudgifter pr. år" hint={l.opex != null ? `Annonce: ${dk(l.opex)} kr.` : "Ikke oplyst i annoncen"} value={opexIn} onChange={setOpexIn} placeholder={dk(b.opex)} />
             <Field id="f-area" label="Areal (m²)" hint={l.area != null ? `${l.areaSource === "bbr" ? "BBR" : "Annonce"}: ${dk(l.area)} m²` : "Ikke oplyst"} value={areaIn} onChange={setAreaIn} />
             <Field id="f-year" label="Byggeår" hint={l.builtYear ? `BBR: ${l.builtYear}${l.renovatedYear ? `, ombygget ${l.renovatedYear}` : ""}` : "Ikke fundet i BBR"} value={yearIn} onChange={setYearIn} group={false} />
-            <Field id="f-allow" label="Ekstra vedligehold (kr. pr. m² om året)" hint={`Forsigtigt skøn efter alder: ${defAllowance} kr.`} value={allowIn} onChange={setAllowIn} placeholder={String(defAllowance)} />
+            <Field id="f-allow" label="Ekstra vedligehold (kr. pr. m² om året)" hint={`Forsigtigt skøn efter alder${facts.mix && facts.mix.commercialArea > 0 && facts.mix.residentialArea > 0 ? " og fordeling af bolig og erhverv" : ""}: ${allowIn == null && b.maintenancePerM2 ? b.maintenancePerM2 : defAllowance} kr.`} value={allowIn} onChange={setAllowIn} placeholder={String(allowIn == null && b.maintenancePerM2 ? b.maintenancePerM2 : defAllowance)} />
             <Field id="f-loss" label="Lejetab og tomgang (%)" hint={`Forsigtigt skøn: ${rentLossPct(l.subcat)} %`} value={lossIn} onChange={setLossIn} placeholder={String(rentLossPct(l.subcat))} decimals={1} />
           </div>
           <div className="mt-6 grid gap-6 border-t border-slate-100 pt-5 sm:grid-cols-2">
             <Slider label="Udbetaling" value={dp} min={10} max={100} step={5} unit="%" sub={`${dk((l.price * dp) / 100)} kr. Erhverv belånes typisk højst 60 %.`} onChange={setDp} />
-            <Slider label="Rente på lånet" value={rate} min={2} max={9} step={0.25} unit="%" sub="Om året" onChange={setRate} />
+            <div>
+              <Slider label="Rente på lånet" value={rate} min={2} max={9} step={0.05} unit="%" sub="Inkl. bidrag" onChange={setRate} />
+              {rates && marketFixed != null && marketVar != null && (
+                <div className="mt-3">
+                  <div className="flex flex-wrap gap-2">
+                    {[["Fast, over 10 år", marketFixed], ["Variabel", marketVar]].map(([t, v]) => (
+                      <button key={String(t)} type="button" onClick={() => setRate(Number(v))} aria-pressed={rate === v}
+                        className={`min-h-[36px] rounded-lg px-3 text-[13px] font-semibold ring-1 ring-inset ${rate === v ? "bg-slate-900 text-white ring-slate-900" : "bg-white text-slate-700 ring-slate-300 hover:ring-slate-400"}`}>
+                        {t}: {Number(v).toLocaleString("da-DK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-1.5 text-[12px] text-slate-500">Markedsrente på nye realkreditlån til virksomheder, {rates.label}. Kilde: Danmarks Nationalbank. Bankens tilbud kan afvige.</p>
+                </div>
+              )}
+            </div>
           </div>
         </section>
       </div>
@@ -108,7 +130,7 @@ export function SharedAnalysis({ listing: l }: { listing: SharedListing }) {
       <div className="mt-6 overflow-hidden lg:mx-auto lg:max-w-[1080px] lg:rounded-2xl lg:border lg:border-slate-200">
         <CommercialStory
           r={r} price={l.price} rate={rate} termYears={30} subcategory={l.subcat} address={null} onAdjust={adjust}
-          facts={facts} allowancePerM2={allowIn} lossPct={lossIn}
+          facts={facts} allowancePerM2={allowIn} lossPct={lossIn} dossier={l.dossier ?? null}
           trust={
             <ul className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 text-[16px] leading-relaxed text-slate-700 sm:p-6">
               <li><b className="font-semibold text-slate-900">Driftsresultat:</b> sælgers afkast × købspris, med mindre I har indtastet lejeindtægt og driftsudgifter.</li>
