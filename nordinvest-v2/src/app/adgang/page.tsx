@@ -23,7 +23,7 @@ export default async function AdgangPage({ searchParams }: { searchParams: { kil
   return (
     <div className={`${geist.variable} min-h-screen bg-white font-[family-name:var(--font-geist)] text-slate-900 antialiased`}>
       <LandingNav />
-      <main className="relative overflow-hidden" style={{ background: "radial-gradient(1100px 600px at 10% 0%, #1a3a6b 0%, #0b1b33 60%)" }}>
+      <main className="relative overflow-hidden" style={{ background: "radial-gradient(1100px 600px at 10% 0%, #1a3a6b 0%, #17213a 60%)" }}>
         <div className="mx-auto grid max-w-[1320px] gap-12 px-4 py-12 text-white sm:px-8 sm:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div className="lg:pt-6">
             {waiting && (

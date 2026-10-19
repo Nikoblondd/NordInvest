@@ -45,7 +45,7 @@ export default async function SharedAnalysisPage({ params }: { params: { slug: s
   if (!/bot|crawl|spider|preview|facebookexternalhit|slack|whatsapp|telegram|linkedin|headless/i.test(ua)) await recordView(params.slug);
   console.log(`[maegler-link] ${params.slug} ${ua.slice(0, 80)}`);
   return (
-    <div className="min-h-[100dvh] overflow-x-clip bg-[#f4f6f9] text-slate-900">
+    <div className="min-h-[100dvh] overflow-x-clip bg-[#f6f4ef] text-slate-900">
       <Nav />
       <SharedAnalysis rates={rates} listing={{ slug: l.slug, url: l.url, price: l.price, rent: l.rent, subcat: l.subcat, addr: l.addr, imgs: l.imgs, direct: !!(l.ownerId || l.contact), opex: l.opex ?? null, area: l.area ?? null, areaSource: l.areaSource, builtYear: l.builtYear ?? null, renovatedYear: l.renovatedYear ?? null, dossier: l.dossier ?? null }} />
       <Footer />

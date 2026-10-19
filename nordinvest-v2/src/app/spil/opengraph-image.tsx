@@ -31,7 +31,7 @@ export default async function OGImage() {
               width: 44,
               height: 44,
               borderRadius: 10,
-              background: "#3b82f6",
+              background: "#4a5c82",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -59,7 +59,7 @@ export default async function OGImage() {
               fontWeight: 600,
               letterSpacing: 1.5,
               textTransform: "uppercase",
-              color: "#bfdbfe",
+              color: "#c6cedd",
             }}
           >
             Gratis · Ingen login · Dansk

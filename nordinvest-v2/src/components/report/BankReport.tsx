@@ -77,7 +77,7 @@ export function BankReport() {
   const { inputs, address, bbr, cal } = payload;
   const { r, u } = model;
   const genDate = new Date(payload.generatedAt).toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric" });
-  const scoreColor = r.score >= 65 ? "#059669" : r.score >= 45 ? "#2563eb" : "#e11d48";
+  const scoreColor = r.score >= 65 ? "#059669" : r.score >= 45 ? "#25345a" : "#e11d48";
   const cfPos = r.cashFlow >= 0;
 
   return (

@@ -33,7 +33,7 @@ export default async function EmbedDeals({ params, searchParams }: { params: { b
     <div style={{ background: dark ? "#0a0e16" : "#ffffff", color: ink, fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif", padding: 16, minHeight: "100vh", boxSizing: "border-box" }}>
       <div style={{ border: `1px solid ${line}`, borderRadius: 16, overflow: "hidden" }}>
         <div style={{ padding: "16px 18px 12px" }}>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#2563eb" }}>Månedens bedste køb · {month}</div>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#25345a" }}>Månedens bedste køb · {month}</div>
           <div style={{ fontSize: 21, fontWeight: 700, letterSpacing: "-0.02em", marginTop: 6 }}>Bedste udlejningsboliger {c.in}</div>
           {snap && (
             <div style={{ fontSize: 14, color: muted, marginTop: 4, lineHeight: 1.45 }}>
@@ -70,7 +70,7 @@ export default async function EmbedDeals({ params, searchParams }: { params: { b
         </ol>
         <a href={link(`/deals/${c.slug}`)} target="_blank" rel="noopener" style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "12px 18px", borderTop: `1px solid ${line}`, fontSize: 13, color: muted, textDecoration: "none" }}>
           <span>Cash flow med 20 % udbetaling og 5 % rente. Lejen er et estimat.</span>
-          <span style={{ fontWeight: 700, color: "#2563eb", whiteSpace: "nowrap" }}>Data: NordInvest →</span>
+          <span style={{ fontWeight: 700, color: "#25345a", whiteSpace: "nowrap" }}>Data: NordInvest →</span>
         </a>
       </div>
     </div>

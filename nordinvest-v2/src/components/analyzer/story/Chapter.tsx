@@ -60,7 +60,7 @@ export function Chapter({
     <section
       id={id}
       aria-labelledby={`${id}-q`}
-      className={clsx("scroll-mt-32 border-t border-slate-200/70 px-4 sm:px-6", tint === "tint" ? "bg-[#f4f6f9]" : "bg-white")}
+      className={clsx("scroll-mt-32 border-t border-slate-200/70 px-4 sm:px-6", tint === "tint" ? "bg-[#f6f4ef]" : "bg-white")}
     >
       <div className="mx-auto max-w-[1080px]">
         <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="group flex w-full items-center gap-4 py-6 text-left sm:py-7">

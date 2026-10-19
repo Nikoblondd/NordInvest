@@ -8,7 +8,7 @@ type Particle = {
   size: number; rot: number; vrot: number; color: string; shape: 0 | 1;
 };
 
-const COLORS = ["#2563eb", "#10b981", "#f59e0b", "#0f172a", "#60a5fa", "#34d399"];
+const COLORS = ["#25345a", "#10b981", "#f59e0b", "#0f172a", "#6f80a3", "#34d399"];
 
 /**
  * Full-screen celebration: a spring-in check mark over a confetti burst.

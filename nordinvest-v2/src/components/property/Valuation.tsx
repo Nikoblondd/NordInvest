@@ -168,8 +168,8 @@ function HistoryChart({ pts, price }: { pts: { year: number; propertyValue: numb
         >
           <defs>
             <linearGradient id="vur-fill" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stopColor="#2563eb" stopOpacity="0.16" />
-              <stop offset="1" stopColor="#2563eb" stopOpacity="0.01" />
+              <stop offset="0" stopColor="#25345a" stopOpacity="0.16" />
+              <stop offset="1" stopColor="#25345a" stopOpacity="0.01" />
             </linearGradient>
           </defs>
           {tk.map((t) => (
@@ -181,18 +181,18 @@ function HistoryChart({ pts, price }: { pts: { year: number; propertyValue: numb
           {showPrice && (
             <g>
               {price > pts[pts.length - 1].propertyValue && (
-                <rect x={padL} y={Y(price)} width={iw} height={Y(pts[pts.length - 1].propertyValue) - Y(price)} fill="#2563eb" opacity="0.04" />
+                <rect x={padL} y={Y(price)} width={iw} height={Y(pts[pts.length - 1].propertyValue) - Y(price)} fill="#25345a" opacity="0.04" />
               )}
-              <line x1={padL} x2={padL + iw} y1={Y(price)} y2={Y(price)} stroke="#2563eb" strokeWidth="1.5" strokeDasharray="5 4" />
-              <text x={padL + 2} y={Y(price) - 7} fontSize="12" fontWeight="600" fill="#2563eb" stroke="#fff" strokeWidth="4" paintOrder="stroke" strokeLinejoin="round">Udbudspris</text>
+              <line x1={padL} x2={padL + iw} y1={Y(price)} y2={Y(price)} stroke="#25345a" strokeWidth="1.5" strokeDasharray="5 4" />
+              <text x={padL + 2} y={Y(price) - 7} fontSize="12" fontWeight="600" fill="#25345a" stroke="#fff" strokeWidth="4" paintOrder="stroke" strokeLinejoin="round">Udbudspris</text>
             </g>
           )}
           <path d={area} fill="url(#vur-fill)" />
-          <path d={d} fill="none" stroke="#2563eb" strokeWidth="2" strokeLinejoin="round" />
+          <path d={d} fill="none" stroke="#25345a" strokeWidth="2" strokeLinejoin="round" />
           {hover != null && (
             <g>
               <line x1={ax} x2={ax} y1={ay} y2={padT + ih} stroke="#0f172a" strokeOpacity="0.15" />
-              <circle cx={ax} cy={ay} r="4" fill="#2563eb" stroke="#fff" strokeWidth="2" />
+              <circle cx={ax} cy={ay} r="4" fill="#25345a" stroke="#fff" strokeWidth="2" />
               <g transform={`translate(${lx},${Math.max(2, ay - 34)})`}>
                 <rect width={lw} height="22" rx="6" fill="#0f172a" />
                 <text x={lw / 2} y="15" fontSize="11.5" fontWeight="600" fill="#fff" textAnchor="middle" className="tabular-nums">{label}</text>

@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// NordInvest brand = light + blue (slate/blue/indigo/emerald).
+// NordInvest brand = paper + ink navy (see the blue/slate remap below).
 // Legacy token names (navy/gold/cream/stone) are remapped to the new palette so
 // every existing page adopts the rebrand without per-file rewrites.
 const config: Config = {
@@ -8,25 +8,39 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Oct 2026 redesign: Tailwind's default blue and cool slate read as
+        // "AI-generated SaaS". Blue becomes NordInvest's ink navy (buttons,
+        // links, focus) and slate a warm neutral that darkens into the same
+        // ink, on a paper canvas. Green, amber and rose keep their meaning
+        // (good / watch / bad) and are never used as decoration.
+        blue: {
+          50: "#f1f3f7", 100: "#e2e6ee", 200: "#c6cedd", 300: "#9eabc4", 400: "#6f80a3",
+          500: "#4a5c82", 600: "#25345a", 700: "#1d2a4b", 800: "#18233f", 900: "#141d34", 950: "#0c1222",
+        },
+        slate: {
+          50: "#f8f7f4", 100: "#f1efea", 200: "#e4e0d8", 300: "#cfc9be", 400: "#a09a90",
+          500: "#6f6c68", 600: "#555661", 700: "#3c4153", 800: "#272e42", 900: "#17213a", 950: "#0d1426",
+        },
+        paper: "#f6f4ef",
         navy: {
-          900: "#0f172a", // slate-900 — dark surfaces, featured card
-          800: "#1e293b", // slate-800
-          700: "#334155", // slate-700
+          900: "#17213a", // ink — dark surfaces, featured card
+          800: "#272e42",
+          700: "#3c4153",
         },
         gold: {
-          400: "#60a5fa", // blue-400
-          500: "#2563eb", // blue-600 — primary accent
-          600: "#1d4ed8", // blue-700 — hover
+          400: "#6f80a3",
+          500: "#25345a", // ink — primary accent
+          600: "#1d2a4b", // hover
         },
         cream: {
-          50: "#f8fafc", // slate-50 — page background
-          100: "#f1f5f9", // slate-100
+          50: "#f6f4ef", // paper — page background
+          100: "#efece5",
         },
         stone: {
-          200: "#e2e8f0", // slate-200 — borders
-          400: "#94a3b8", // slate-400 — muted
-          600: "#475569", // slate-600 — secondary text
-          900: "#0f172a", // slate-900 — body text
+          200: "#e4e0d8", // borders
+          400: "#a09a90", // muted
+          600: "#555661", // secondary text
+          900: "#17213a", // body text
         },
         data: {
           pos: "#10b981", // emerald-500

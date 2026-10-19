@@ -556,7 +556,7 @@ export default function GameClient({ children }: { children?: React.ReactNode })
 
       {stage === "home" && profile && (
         <>
-          <header className="game-hero relative overflow-hidden bg-[#0b1b33] px-4 pb-24 pt-10 text-white sm:px-6 sm:pt-14">
+          <header className="game-hero relative overflow-hidden bg-[#17213a] px-4 pb-24 pt-10 text-white sm:px-6 sm:pt-14">
             <div className="relative mx-auto max-w-6xl">
               <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Gæt boligprisen</h2>
               <p className="mt-2 max-w-xl text-blue-100">
@@ -968,7 +968,7 @@ function RoundResult({
         {home.zipCode && <CityMap zip={home.zipCode} city={home.city} />}
       </div>
       <div className="min-w-0 space-y-4">
-        <div className="rounded-3xl bg-[#0b1b33] p-5 text-white shadow-card-lift sm:p-6">
+        <div className="rounded-3xl bg-[#17213a] p-5 text-white shadow-card-lift sm:p-6">
           <div className="text-sm text-blue-100">Den rigtige pris</div>
           <div className="mt-1 text-4xl font-extrabold tabular-nums tracking-tight sm:text-5xl">
             <CountUp to={round.price} onDone={() => setShown(true)} /> <span className="text-2xl font-bold text-blue-200">kr.</span>
@@ -1098,7 +1098,7 @@ function FreeFinal({
   const best = ownPcts.length ? Math.min(...ownPcts) : 0;
   return (
     <div className="space-y-5">
-      <div className="final-pop rounded-3xl bg-[#0b1b33] p-6 text-center text-white shadow-card-lift sm:p-8">
+      <div className="final-pop rounded-3xl bg-[#17213a] p-6 text-center text-white shadow-card-lift sm:p-8">
         <Crown className="mx-auto h-10 w-10 text-amber-400" />
         <div className="mt-2 text-sm font-semibold text-blue-100">{players.length > 1 ? (tie ? "Uafgjort" : "Vinderen er") : "Dit resultat"}</div>
         <div className="mt-1 text-3xl font-extrabold sm:text-4xl">{players.length > 1 ? ranked.filter((p) => p.score === top.score).map((p) => p.name).join(" & ") : `${top.score} point`}</div>
@@ -1177,7 +1177,7 @@ function DailyFinal({
   const streak = liveStreak(profile);
   return (
     <div className="space-y-5">
-      <div className="final-pop rounded-3xl bg-gradient-to-br from-blue-700 to-[#0b1b33] p-6 text-center text-white shadow-card-lift sm:p-8">
+      <div className="final-pop rounded-3xl bg-gradient-to-br from-blue-700 to-[#17213a] p-6 text-center text-white shadow-card-lift sm:p-8">
         <div className="text-sm font-semibold text-blue-100">Dagens 5</div>
         <div className="mt-2 text-6xl font-extrabold tabular-nums">{result.score}</div>
         <div className="text-blue-100">af 500 point</div>

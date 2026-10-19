@@ -18,7 +18,7 @@ const EASE = [0.2, 0.7, 0.2, 1] as const;
 function Card({ title, children, footer }: { title: string; children: ReactNode; footer?: ReactNode }) {
   return (
     <div className="flex h-full flex-col rounded-lg bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.06),0_8px_24px_-12px_rgba(15,23,42,0.18)] ring-1 ring-slate-200/70 sm:p-5">
-      <p className="text-[19px] font-semibold leading-tight tracking-[-0.02em] text-[#0b1b33] sm:text-[20px]">{title}</p>
+      <p className="text-[19px] font-semibold leading-tight tracking-[-0.02em] text-[#17213a] sm:text-[20px]">{title}</p>
       <div className="relative min-h-0 flex-1">{children}</div>
       {footer}
     </div>
@@ -215,7 +215,7 @@ export function RateStressVisual({ today = 4, breakEven = 5.2, surplusToday = 11
           <motion.polyline
             points={pts.join(" ")}
             fill="none"
-            className="stroke-[#0b1b33]"
+            className="stroke-[#17213a]"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"

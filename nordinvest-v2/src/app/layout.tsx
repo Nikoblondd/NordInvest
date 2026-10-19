@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { AuthCodeHandler } from "@/components/auth/AuthCodeHandler";
@@ -25,12 +25,14 @@ const inter = Inter({
 // Display face for big numbers and chapter headings — gives the analyzer a
 // voice of its own instead of Inter-everywhere. Not preloaded: it's used below
 // the fold on most pages, so it shouldn't compete with the LCP font.
-const outfit = Outfit({
+// Schibsted Grotesk (drawn for a Nordic news house) for headings: reads like
+// journalism rather than a startup template. Preloaded, since every page's
+// first heading uses it.
+const outfit = Schibsted_Grotesk({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
   weight: ["500", "600", "700", "800"],
-  preload: false,
   fallback: ["-apple-system", "system-ui", "sans-serif"],
 });
 

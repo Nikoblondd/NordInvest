@@ -169,7 +169,7 @@ export default async function UdlejerindeksPage() {
         </section>
 
         {idx && top && (
-          <section aria-labelledby="press-h" className="border-t border-slate-200 bg-[#f4f6f9] px-4 py-10 sm:px-6 sm:py-14">
+          <section aria-labelledby="press-h" className="border-t border-slate-200 bg-[#f6f4ef] px-4 py-10 sm:px-6 sm:py-14">
             <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-2">
               <div>
                 <h2 id="press-h" className="text-2xl font-semibold tracking-[-0.02em]">Til journalister</h2>

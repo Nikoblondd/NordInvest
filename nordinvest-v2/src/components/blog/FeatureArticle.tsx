@@ -137,7 +137,7 @@ export function FeatureArticle({
 
           {/* The three numbers the article is about */}
           {extras.facts.length > 0 && (
-            <section aria-label="Kort fortalt" className="border-y border-slate-200/80 bg-[#f4f6f9] px-4 py-8 sm:px-6 sm:py-10">
+            <section aria-label="Kort fortalt" className="border-y border-slate-200/80 bg-[#f6f4ef] px-4 py-8 sm:px-6 sm:py-10">
               <dl className="mx-auto grid max-w-[1104px] gap-y-6 sm:grid-cols-3 sm:gap-y-0">
                 {extras.facts.map((f, i) => (
                   <div key={f.value} className={i > 0 ? "border-t border-slate-200 pt-6 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0" : "sm:pr-8"}>

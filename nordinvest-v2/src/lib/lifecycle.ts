@@ -71,7 +71,7 @@ function layout(body: string, unsubUrl: string) {
 }
 
 function button(href: string, label: string) {
-  return `<a href="${href}" style="display:inline-block;margin:8px 0 4px;padding:12px 20px;border-radius:10px;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;">${label}</a>`;
+  return `<a href="${href}" style="display:inline-block;margin:8px 0 4px;padding:12px 20px;border-radius:10px;background:#25345a;color:#fff;text-decoration:none;font-weight:600;">${label}</a>`;
 }
 
 const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
@@ -85,7 +85,7 @@ export function activateEmail(p: {
   const deal = p.topDeal
     ? `<p>Leder du efter en bolig at prøve med? Lige nu står <strong>${p.topDeal.address}</strong> øverst i Deal-motoren: ${
         p.topDeal.cashFlow >= 0 ? "+" : "−"
-      }${kr(Math.abs(p.topDeal.cashFlow))} om måneden og score ${p.topDeal.score}. <a href="${SITE}${p.topDeal.href}" style="color:#2563eb;">Se analysen</a>.</p>`
+      }${kr(Math.abs(p.topDeal.cashFlow))} om måneden og score ${p.topDeal.score}. <a href="${SITE}${p.topDeal.href}" style="color:#25345a;">Se analysen</a>.</p>`
     : "";
   return {
     subject: "Din første analyse tager under et minut",
@@ -110,7 +110,7 @@ export function limitEmail(p: { name: string | null; unsubUrl: string; resetsOn:
       <p>Du har brugt de 3 gratis analyser, der følger med din konto i denne måned. De kommer igen den ${date}.</p>
       <p>Regner du på flere boliger før det, giver Starter 10 analyser om måneden for 129 kr., eller 107,50 kr. om måneden med årlig betaling. Du kan opsige når som helst.</p>
       ${button(`${SITE}/priser`, "Se planerne")}
-      <p style="color:#64748b;font-size:14px;">Deal-motoren er gratis og uden grænse, hvis du vil se, hvilke boliger der giver plus lige nu: <a href="${SITE}/deals" style="color:#2563eb;">nordinvest.io/deals</a>.</p>`,
+      <p style="color:#64748b;font-size:14px;">Deal-motoren er gratis og uden grænse, hvis du vil se, hvilke boliger der giver plus lige nu: <a href="${SITE}/deals" style="color:#25345a;">nordinvest.io/deals</a>.</p>`,
       p.unsubUrl,
     ),
   };

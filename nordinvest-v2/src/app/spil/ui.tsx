@@ -33,7 +33,7 @@ export const fmt = (n: number) => new Intl.NumberFormat("da-DK", { maximumFracti
 export const kr = (n: number) => `${fmt(n)} kr.`;
 
 export function playerColor(idx: number): string {
-  return ["#2563eb", "#e11d48", "#059669", "#d97706", "#7c3aed", "#0891b2", "#db2777", "#475569"][idx % 8];
+  return ["#25345a", "#e11d48", "#059669", "#d97706", "#7c3aed", "#0891b2", "#db2777", "#475569"][idx % 8];
 }
 
 export const ACC_STYLE: Record<string, string> = {
@@ -392,7 +392,7 @@ export function TimerBadge({ startedAt }: { startedAt: number }) {
             cy="18"
             r={r}
             fill="none"
-            stroke={over ? "#e11d48" : left < 10 ? "#f59e0b" : "#2563eb"}
+            stroke={over ? "#e11d48" : left < 10 ? "#f59e0b" : "#25345a"}
             strokeWidth="3.5"
             strokeLinecap="round"
             strokeDasharray={c}
@@ -445,7 +445,7 @@ export function Confetti({ burst }: { burst: number }) {
   useEffect(() => {
     if (!burst) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const colors = ["#2563eb", "#10b981", "#f59e0b", "#e11d48", "#7c3aed", "#0ea5e9"];
+    const colors = ["#25345a", "#10b981", "#f59e0b", "#e11d48", "#7c3aed", "#0ea5e9"];
     setPieces(
       Array.from({ length: 70 }, (_, i) => ({
         id: burst * 100 + i,
@@ -492,7 +492,7 @@ export function Toasts({ toasts }: { toasts: Toast[] }) {
         <div
           key={t.id}
           className={`toast-in pointer-events-auto flex w-full max-w-sm items-center gap-3 rounded-2xl px-4 py-3 shadow-card-lift ring-1 ${
-            t.tone === "level" ? "bg-[#0b1b33] text-white ring-white/10" : "bg-white text-slate-900 ring-slate-200"
+            t.tone === "level" ? "bg-[#17213a] text-white ring-white/10" : "bg-white text-slate-900 ring-slate-200"
           }`}
         >
           <span

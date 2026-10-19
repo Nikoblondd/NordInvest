@@ -169,7 +169,7 @@ export function AnalystChat({ context }: { context: Record<string, unknown> }) {
       {open && (
         <div className="fixed bottom-5 right-5 z-50 flex h-[min(560px,80vh)] w-[min(384px,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
           {/* header */}
-          <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-[#0F1F3D] to-[#2563EB] px-4 py-3.5 text-white">
+          <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-[#0F1F3D] to-[#25345a] px-4 py-3.5 text-white">
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                 <Sparkles size={18} />

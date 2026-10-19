@@ -43,22 +43,22 @@
   }
   ::selection {
     /* A warmer selection tint reads considered vs. the default blue-200. */
-    background: rgba(37, 99, 235, 0.14);
+    background: rgba(37, 52, 90, 0.16);
     color: inherit;
   }
   h1,
   h2,
   h3 {
-    @apply font-sans font-bold tracking-tight;
-    /* Tighten headings past what tracking-tight does — real editorial polish. */
-    letter-spacing: -0.022em;
+    @apply font-sans font-semibold;
+    font-family: var(--font-display), var(--font-inter), -apple-system, system-ui, sans-serif;
+    letter-spacing: -0.015em;
     text-wrap: balance;
   }
-  h1 { letter-spacing: -0.028em; }
+  h1 { letter-spacing: -0.02em; }
   /* Considered focus ring: a single subtle offset ring, not the default browser
      halo or the ubiquitous blue-500 double-ring you see on every AI site. */
   :focus-visible {
-    outline: 2px solid rgba(37, 99, 235, 0.55);
+    outline: 2px solid rgba(37, 52, 90, 0.6);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -177,7 +177,7 @@
    a whisper of navy, fading out towards the bottom so it never reads as a
    pattern fill. */
 .drafting-paper {
-  background-color: #f4f6f9;
+  background-color: #f6f4ef;
   background-image:
     linear-gradient(rgba(11, 27, 51, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(11, 27, 51, 0.045) 1px, transparent 1px);
@@ -204,7 +204,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: #2563eb;
+  background: #25345a;
   transform: translateY(-100%);
   animation: scroll-cue 1.8s cubic-bezier(0.6, 0, 0.3, 1) infinite;
 }
@@ -259,7 +259,7 @@
   color: #0f172a;
 }
 .feature-prose h2 + *, .feature-prose h3 + * { margin-top: 0.75rem; }
-.feature-prose a { color: #1d4ed8; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.feature-prose a { color: #1d2a4b; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .feature-prose a:hover { color: #1e3a8a; }
 .feature-prose strong { font-weight: 600; color: #0f172a; }
 .feature-prose ul, .feature-prose ol { padding-left: 1.4rem; }
@@ -273,7 +273,7 @@
 .feature-prose blockquote.note {
   margin: 2rem 0;
   border-radius: 16px;
-  background: #f4f6f9;
+  background: #f6f4ef;
   padding: 1.25rem 1.5rem;
   font-size: 17px;
   color: #334155;
@@ -338,8 +338,8 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
   box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.35);
 }
 .ni-range:active::-webkit-slider-thumb { transform: scale(1.12); }
-.ni-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.35); }
-.ni-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.35); }
+.ni-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(37, 52, 90, 0.35); }
+.ni-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(37, 52, 90, 0.35); }
 
 /* Fold (components/ui/Fold.tsx): long sections shortened on phones only. */
 @media (max-width: 639px) {

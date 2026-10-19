@@ -207,7 +207,7 @@ export function CityMap({ zip, city }: { zip: string; city: string }) {
               vectorEffect="non-scaling-stroke"
             />
             <g clipPath="url(#dk-clip)">
-              <path d={shape.d} fill="#1d4ed8" fillOpacity="0.88" fillRule="evenodd" />
+              <path d={shape.d} fill="#1d2a4b" fillOpacity="0.88" fillRule="evenodd" />
               <path d={shape.d} fill="none" stroke="#ffffff" strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
             </g>
           </svg>
@@ -224,7 +224,7 @@ export function CityMap({ zip, city }: { zip: string; city: string }) {
                 />
               )}
               <span
-                className={`pointer-events-none absolute -translate-x-1/2 whitespace-nowrap rounded-full bg-[#0b1b33] px-2.5 py-1 text-xs font-bold text-white shadow-card ${
+                className={`pointer-events-none absolute -translate-x-1/2 whitespace-nowrap rounded-full bg-[#17213a] px-2.5 py-1 text-xs font-bold text-white shadow-card ${
                   pin.below > 80 ? "-translate-y-full" : ""
                 }`}
                 style={{

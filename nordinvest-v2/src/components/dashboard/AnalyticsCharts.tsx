@@ -11,7 +11,7 @@ const fmtDay = (d: string) => {
 export function AnalyticsCharts({ series }: { series: DayPoint[] }) {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <ChartCard title="Nye brugere" subtitle="Tilmeldinger pr. dag (30 dage)" data={series} dataKey="signups" color="#2563eb" />
+      <ChartCard title="Nye brugere" subtitle="Tilmeldinger pr. dag (30 dage)" data={series} dataKey="signups" color="#25345a" />
       <ChartCard title="Analyser kørt" subtitle="Brug af værktøjet pr. dag (30 dage)" data={series} dataKey="analyses" color="#10b981" />
     </div>
   );

@@ -189,7 +189,7 @@ function Label({ children }: { children: ReactNode }) {
 // Instrument Serif is a condensed face: on phones it gets neutral tracking and a
 // little more leading so it reads as calm, not squeezed.
 const H2 =
-  "font-thesis text-[2.2rem] font-normal leading-[1.08] tracking-[0.005em] text-[#0b1b33] [text-wrap:balance] sm:text-[3.1rem] sm:leading-[1.02] sm:tracking-[-0.01em]";
+  "font-thesis text-[2.2rem] font-normal leading-[1.08] tracking-[0.005em] text-[#17213a] [text-wrap:balance] sm:text-[3.1rem] sm:leading-[1.02] sm:tracking-[-0.01em]";
 
 // ── Intro ────────────────────────────────────────────────────────────────
 
@@ -241,7 +241,7 @@ function ScanCopy({ progress }: { progress: MotionValue<number> }) {
 
 function Check({ progress, at, children }: { progress: MotionValue<number>; at: number; children: ReactNode }) {
   const done = useTransform(progress, [at - 0.02, at], [0, 1]);
-  const color = useTransform(done, [0, 1], ["#94a3b8", "#0b1b33"]);
+  const color = useTransform(done, [0, 1], ["#94a3b8", "#17213a"]);
   return (
     <li className="flex items-center gap-3 text-[15px]">
       <span aria-hidden className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-white ring-1 ring-inset ring-slate-200">
@@ -419,7 +419,7 @@ function ProgressRail({ progress }: { progress: MotionValue<number> }) {
 
 function RailStep({ progress, label, from, to }: { progress: MotionValue<number>; label: string; from: number; to: number }) {
   const fill = useTransform(progress, [from, to], [0, 1]);
-  const color = useTransform(fill, [0, 0.01], ["#94a3b8", "#0b1b33"]);
+  const color = useTransform(fill, [0, 0.01], ["#94a3b8", "#17213a"]);
   return (
     <div>
       <div className="h-[3px] overflow-hidden rounded-full bg-slate-200">
@@ -512,7 +512,7 @@ function CalloutMark({ c, scan, progress, compact = false }: { c: Callout; scan:
   return (
     <motion.div style={{ opacity }} className="pointer-events-none absolute inset-0">
       <svg aria-hidden className={`absolute inset-0 h-full w-full ${compact ? "hidden" : ""}`} viewBox="0 0 100 100" preserveAspectRatio="none">
-        <line x1={c.at[0]} y1={c.at[1]} x2={c.tip[0]} y2={c.tip[1]} stroke="#dbeafe" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        <line x1={c.at[0]} y1={c.at[1]} x2={c.tip[0]} y2={c.tip[1]} stroke="#e2e6ee" strokeWidth="1" vectorEffect="non-scaling-stroke" />
       </svg>
       <span className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${c.at[0]}%`, top: `${c.at[1]}%` }}>
         <motion.span style={{ opacity: ring }} className="absolute -inset-1.5 rounded-full ring-2 ring-blue-300" />

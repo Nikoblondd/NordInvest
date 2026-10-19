@@ -2,7 +2,7 @@
 
 .game-hero {
   background-image:
-    radial-gradient(60% 80% at 85% 0%, rgba(37, 99, 235, 0.45), transparent 70%),
+    radial-gradient(60% 80% at 85% 0%, rgba(37, 52, 90, 0.45), transparent 70%),
     linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: auto, 28px 28px, 28px 28px;

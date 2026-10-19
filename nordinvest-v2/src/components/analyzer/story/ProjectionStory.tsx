@@ -149,7 +149,7 @@ function YearScrubber({ data, downPayment, sel, onSel }: { data: WealthYear[]; d
           onChange={(e) => onSel(Number(e.target.value))}
           aria-label="Vælg år"
           aria-valuetext={`År ${d.year}: friværdi ${dk(equity)} kroner`}
-          style={{ background: `linear-gradient(to right, #2563eb 0%, #2563eb ${pctDone}%, #e2e8f0 ${pctDone}%, #e2e8f0 100%)` }}
+          style={{ background: `linear-gradient(to right, #25345a 0%, #25345a ${pctDone}%, #e2e8f0 ${pctDone}%, #e2e8f0 100%)` }}
         />
         <div aria-hidden className="mt-2 flex justify-between text-[12px] tabular-nums text-slate-400">
           <span>År {data[0].year}</span>

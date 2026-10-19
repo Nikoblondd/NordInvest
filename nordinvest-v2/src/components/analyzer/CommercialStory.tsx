@@ -55,7 +55,7 @@ const BY_TYPE: Record<string, Check[]> = {
 function Part({ id, tint, q, a, tone, children }: { id: string; tint?: boolean; q: string; a: string; tone: "good" | "warn" | "bad" | "neutral"; children: ReactNode }) {
   const col = tone === "good" ? "text-emerald-700" : tone === "warn" ? "text-amber-700" : tone === "bad" ? "text-rose-600" : "text-slate-600";
   return (
-    <section id={id} className={`scroll-mt-24 border-t border-slate-200/70 px-4 py-10 sm:px-6 sm:py-14 ${tint ? "bg-[#f4f6f9]" : "bg-white"}`}>
+    <section id={id} className={`scroll-mt-24 border-t border-slate-200/70 px-4 py-10 sm:px-6 sm:py-14 ${tint ? "bg-[#f6f4ef]" : "bg-white"}`}>
       <div className="mx-auto max-w-[1080px]">
         <h2 className="text-[26px] font-semibold leading-[1.12] tracking-[-0.02em] text-slate-900 [text-wrap:balance] sm:text-[32px]">{q}</h2>
         <p className={`mt-2 max-w-[70ch] text-[18px] font-medium leading-snug ${col}`}>{a}</p>

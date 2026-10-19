@@ -162,7 +162,7 @@ export function QuestionsDemo() {
                 />
                 <span
                   className={`whitespace-nowrap text-[15px] font-medium leading-tight transition-colors lg:whitespace-normal lg:font-thesis lg:text-[1.65rem] lg:font-normal lg:tracking-[-0.01em] ${
-                    on ? "text-[#0b1b33]" : "text-slate-500 group-hover:text-slate-800"
+                    on ? "text-[#17213a]" : "text-slate-500 group-hover:text-slate-800"
                   }`}
                 >
                   {item.q}
@@ -191,7 +191,7 @@ export function QuestionsDemo() {
               transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
               className="p-4 sm:p-6"
             >
-              <p className="font-thesis text-[1.75rem] leading-[1.1] text-[#0b1b33] sm:text-[1.7rem] sm:tracking-[-0.01em]">{q.q}</p>
+              <p className="font-thesis text-[1.75rem] leading-[1.1] text-[#17213a] sm:text-[1.7rem] sm:tracking-[-0.01em]">{q.q}</p>
               <span
                 className={`mt-3 inline-flex items-start gap-2 rounded-lg px-2.5 py-1.5 text-sm font-medium ring-1 ring-inset ${
                   q.tone === "good" ? "bg-emerald-50 text-emerald-800 ring-emerald-200" : "bg-amber-50 text-amber-900 ring-amber-200"
@@ -207,7 +207,7 @@ export function QuestionsDemo() {
               <div
                 role="img"
                 aria-label={q.alt}
-                className="relative mt-5 aspect-square overflow-hidden rounded-xl bg-[#f4f6f9] p-3 ring-1 ring-inset ring-slate-200/70 sm:aspect-[16/9] sm:p-4"
+                className="relative mt-5 aspect-square overflow-hidden rounded-xl bg-[#f6f4ef] p-3 ring-1 ring-inset ring-slate-200/70 sm:aspect-[16/9] sm:p-4"
               >
                 <q.visual />
               </div>

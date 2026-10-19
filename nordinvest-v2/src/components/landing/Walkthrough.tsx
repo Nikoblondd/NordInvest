@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
-import { AnalysisScreen, DealScreen, DocsScreen, Notice, OfferScreen } from "./screens";
+import { AnalysisScreen, DealScreen, DocsScreen, OfferScreen } from "./screens";
 
 /*
  * One property, all the way: the visitor clicks through the four stages and
@@ -71,8 +71,8 @@ function Stepper({ active, onPick, compact }: { active: number; onPick: (i: numb
       <span aria-hidden className="absolute left-6 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-blue-600 transition-[width] duration-700 ease-out" style={{ width: `calc((100% - 3rem) * ${active / (N - 1)})` }} />
       {STEPS.map((st, n) => (
         <button key={st.k} type="button" role="tab" aria-selected={active === n} onClick={() => onPick(n)}
-          className={`relative z-10 flex min-h-[44px] items-center gap-2 rounded-full font-semibold ${compact ? (active === n ? "px-3 text-[14px]" : "min-w-[44px] justify-center px-2.5 text-[14px]") : "px-3.5 text-[15px]"} transition-all duration-500 ${active === n ? "bg-[#0b1b33] text-white shadow-lg shadow-blue-900/20" : n < active ? "bg-white text-slate-900 ring-1 ring-slate-200" : "bg-white text-slate-500 ring-1 ring-slate-200 hover:text-slate-900"}`}>
-          <span className={`flex h-6 w-6 items-center justify-center rounded-full text-[12px] tabular-nums transition-colors duration-500 ${active === n ? "bg-blue-500 text-white" : n < active ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{n < active ? <Check size={13} /> : n + 1}</span>
+          className={`relative z-10 flex min-h-[44px] items-center gap-2 rounded-full font-semibold ${compact ? (active === n ? "px-3 text-[14px]" : "min-w-[44px] justify-center px-2.5 text-[14px]") : "px-3.5 text-[15px]"} transition-all duration-500 ${active === n ? "bg-[#17213a] text-white" : n < active ? "bg-white text-slate-900 ring-1 ring-slate-200" : "bg-white text-slate-500 ring-1 ring-slate-200 hover:text-slate-900"}`}>
+          <span className={`flex h-6 w-6 items-center justify-center rounded-full text-[12px] tabular-nums transition-colors duration-500 ${active === n ? "bg-white/15 text-white" : n < active ? "bg-slate-100 text-slate-700" : "bg-slate-100 text-slate-500"}`}>{n < active ? <Check size={13} /> : n + 1}</span>
           {(!compact || active === n) ? st.k : <span className="sr-only">{st.k}</span>}
         </button>
       ))}
@@ -104,11 +104,11 @@ function PinnedSteps() {
           <div className="grid">
             {STEPS.map((s, i) => (
               <div key={s.k} aria-hidden={i !== active} className={`[grid-area:1/1] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${i === active ? "opacity-100" : i < active ? "pointer-events-none -translate-y-6 opacity-0" : "pointer-events-none translate-y-6 opacity-0"}`}>
-                <p className="text-[14px] font-semibold text-blue-600">Trin {i + 1} af 4 · {s.k}</p>
-                <h3 className="mt-2 text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#0b1b33] [text-wrap:balance] xl:text-[40px]">{s.title}</h3>
+                <p className="text-[14px] font-semibold text-slate-500">{i + 1}. {s.k}</p>
+                <h3 className="mt-2 text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#17213a] [text-wrap:balance] xl:text-[40px]">{s.title}</h3>
                 <p className="mt-4 text-[17px] leading-relaxed text-slate-600">{s.text}</p>
                 <ul className="mt-6 space-y-3 border-t border-slate-200 pt-6">
-                  {s.points.map((p) => <li key={p} className="flex gap-3 text-[16px] text-slate-800"><span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600"><Check size={13} strokeWidth={2.5} /></span>{p}</li>)}
+                  {s.points.map((p) => <li key={p} className="border-t border-slate-200 pt-2 text-[16px] text-slate-800">{p}</li>)}
                 </ul>
                 <div className="mt-8 flex flex-wrap gap-3">
                   {i < N - 1
@@ -125,11 +125,8 @@ function PinnedSteps() {
               const { Screen } = s;
               const state = i === active ? "on" : i < active ? "past" : "next";
               return (
-                <div key={s.k} aria-hidden={i !== active} className={`relative [grid-area:1/1] [transform-style:preserve-3d] transition-[transform,opacity,filter] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${state === "on" ? "z-20 opacity-100" : state === "past" ? "z-10 opacity-0 [transform:translateY(-48px)_scale(0.92)] blur-[2px]" : "z-0 opacity-0 [transform:translateY(90px)_rotateX(14deg)_scale(0.96)]"}`}>
+                <div key={s.k} aria-hidden={i !== active} className={`relative [grid-area:1/1] transition-opacity duration-300 ease-out ${state === "on" ? "z-20 opacity-100" : "z-0 opacity-0"}`}>
                   <Screen />
-                  <div className={`absolute -bottom-10 -right-4 transition-all delay-300 duration-700 ease-[cubic-bezier(0.34,1.4,0.64,1)] 2xl:-right-10 ${state === "on" ? "translate-y-0 scale-100 opacity-100" : "translate-y-4 scale-95 opacity-0"}`}>
-                    <Notice {...s.notice} />
-                  </div>
                 </div>
               );
             })}
@@ -165,11 +162,10 @@ function SwipeSteps() {
           return (
             <div key={s.k} ref={(el) => { cards.current[i] = el; }} data-i={i} aria-label={`Trin ${i + 1} af 4`}
               className={`w-[86%] shrink-0 snap-start rounded-2xl bg-white p-4 ring-1 ring-slate-200 transition-[transform,opacity] duration-500 sm:w-[70%] ${active === i ? "opacity-100" : "scale-[0.97] opacity-60"}`}>
-              <p className="text-[13px] font-semibold text-blue-600">Trin {i + 1} af 4 · {s.k}</p>
-              <h3 className="mt-1.5 text-[22px] font-semibold leading-[1.15] tracking-[-0.025em] text-[#0b1b33]">{s.title}</h3>
+              <p className="text-[13px] font-semibold text-slate-500">{i + 1}. {s.k}</p>
+              <h3 className="mt-1.5 text-[22px] font-semibold leading-[1.15] tracking-[-0.025em] text-[#17213a]">{s.title}</h3>
               <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{s.text}</p>
               <div className="mt-4"><Screen /></div>
-              <Notice {...s.notice} className="mt-3 !w-full" />
             </div>
           );
         })}

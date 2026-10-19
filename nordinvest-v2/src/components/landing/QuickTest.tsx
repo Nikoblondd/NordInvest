@@ -138,7 +138,7 @@ export function QuickTest({ autoplay = false }: { autoplay?: boolean }) {
           ))}
         </ul>
       </div>
-      <Link href="/adgang" className="mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-[#0b1b33] px-4 text-[15px] font-semibold text-white hover:bg-[#13284a]">
+      <Link href="/adgang" className="mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-[#17213a] px-4 text-[15px] font-semibold text-white hover:bg-[#13284a]">
         Anmod om adgang
       </Link>
     </div>

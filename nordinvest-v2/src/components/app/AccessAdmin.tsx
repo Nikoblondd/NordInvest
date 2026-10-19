@@ -147,7 +147,7 @@ function RequestCard({ r, highlight, onApprove, onReject, onReopen }: { r: Acces
   return (
     <li ref={ref} className={clsx("rounded-2xl border bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:p-5", highlight ? "border-blue-300 ring-4 ring-blue-50" : "border-slate-200")}>
       <div className="flex flex-wrap items-start gap-3.5">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0b1b33] text-[14px] font-semibold text-white">{initials}</span>
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#17213a] text-[14px] font-semibold text-white">{initials}</span>
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-center gap-2 text-[16px] font-semibold text-slate-900">
             {r.name}

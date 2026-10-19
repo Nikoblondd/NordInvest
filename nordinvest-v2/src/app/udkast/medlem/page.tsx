@@ -19,7 +19,7 @@ export default function DraftMember() {
   return (
     <div className={`${geist.variable} flex min-h-screen bg-slate-50 font-[family-name:var(--font-geist)] text-slate-900`}>
       {/* Sidebar (desktop) */}
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col bg-[#0b1b33] px-3 py-4 text-white lg:flex">
+      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col bg-[#17213a] px-3 py-4 text-white lg:flex">
         <p className="px-2 text-[17px] font-semibold">NordInvest</p>
         <button className="mt-5 flex h-10 items-center gap-2 rounded-lg bg-blue-600 px-3 text-[14px] font-semibold"><Plus size={16} /> Tilføj bolig</button>
         <nav className="mt-5 space-y-0.5">

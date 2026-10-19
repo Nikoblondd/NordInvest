@@ -56,7 +56,7 @@ export function savedSearchEmail(params: {
           <div style="color:#64748b;font-size:13px;">${dk(m.price)} · score ${m.score}/100</div>
         </td>
         <td style="padding:10px 0;border-top:1px solid #eef2f7;text-align:right;vertical-align:middle;">
-          <a href="${m.url}" style="color:#2563eb;text-decoration:none;font-weight:600;font-size:13px;">Se analyse →</a>
+          <a href="${m.url}" style="color:#25345a;text-decoration:none;font-weight:600;font-size:13px;">Se analyse →</a>
         </td>
       </tr>`,
     )
@@ -69,12 +69,12 @@ export function savedSearchEmail(params: {
         <span style="font-weight:700;font-size:16px;color:#0f1f3d;">NordInvest</span>
       </div>
       <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:24px;">
-        <div style="font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#2563eb;">Vagt på søgning</div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#25345a;">Vagt på søgning</div>
         <h1 style="margin:6px 0 4px;font-size:20px;line-height:1.3;color:#0f1f3d;">${n} ny${n === 1 ? "" : "e"} handel${n === 1 ? "" : "er"} matcher din søgning</h1>
         <p style="margin:0 0 8px;color:#334155;font-size:14px;">${greeting} nye boliger matcher <b>“${params.label}”</b>:</p>
         <table style="width:100%;border-collapse:collapse;">${rows}</table>
         <div style="margin-top:20px;">
-          <a href="${SITE}/deals" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:11px 20px;border-radius:999px;">Åbn Deal-motoren →</a>
+          <a href="${SITE}/deals" style="display:inline-block;background:#25345a;color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:11px 20px;border-radius:999px;">Åbn Deal-motoren →</a>
         </div>
       </div>
       <p style="margin:16px 4px 0;color:#94a3b8;font-size:11px;line-height:1.5;">
@@ -111,7 +111,7 @@ export function vagtAlertEmail(params: {
         <span style="font-weight:700;font-size:16px;color:#0f1f3d;">NordInvest</span>
       </div>
       <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:24px;">
-        <div style="font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#2563eb;">Vagt · prisændring</div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#25345a;">Vagt · prisændring</div>
         <h1 style="margin:6px 0 4px;font-size:20px;line-height:1.3;color:#0f1f3d;">${addr}</h1>
         <p style="margin:0 0 16px;color:#334155;font-size:14px;">${greeting}</p>
         <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:14px 16px;color:#065f46;font-size:14px;line-height:1.5;">
@@ -122,9 +122,9 @@ export function vagtAlertEmail(params: {
           ${scoreLine}
         </table>
         <div style="margin-top:20px;">
-          <a href="${SITE}/analyseren?url=${encodeURIComponent(params.listingUrl)}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:11px 20px;border-radius:999px;">Se den opdaterede analyse →</a>
+          <a href="${SITE}/analyseren?url=${encodeURIComponent(params.listingUrl)}" style="display:inline-block;background:#25345a;color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:11px 20px;border-radius:999px;">Se den opdaterede analyse →</a>
         </div>
-        <a href="${SITE}/dashboard" style="display:inline-block;margin-top:12px;color:#2563eb;text-decoration:none;font-size:13px;">Åbn dit dashboard</a>
+        <a href="${SITE}/dashboard" style="display:inline-block;margin-top:12px;color:#25345a;text-decoration:none;font-size:13px;">Åbn dit dashboard</a>
       </div>
       <p style="margin:16px 4px 0;color:#94a3b8;font-size:11px;line-height:1.5;">
         Du modtager denne mail, fordi du har sat en vagt på denne bolig i NordInvest.

@@ -122,7 +122,7 @@ const kr = (n: number) => n.toLocaleString("da-DK");
 
 function H2({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-thesis text-[2rem] font-normal leading-[1.05] tracking-[-0.01em] text-[#0b1b33] [text-wrap:balance] sm:text-[2.6rem]">
+    <h2 className="font-thesis text-[2rem] font-normal leading-[1.05] tracking-[-0.01em] text-[#17213a] [text-wrap:balance] sm:text-[2.6rem]">
       {children}
     </h2>
   );
@@ -160,7 +160,7 @@ export default function AnalyseGuidePage() {
   };
 
   return (
-    <div className={`${serif.variable} ${geist.variable} min-h-screen overflow-x-clip bg-[#f4f6f9] font-geist text-slate-900`}>
+    <div className={`${serif.variable} ${geist.variable} min-h-screen overflow-x-clip bg-[#f6f4ef] font-geist text-slate-900`}>
       <Nav />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
@@ -172,7 +172,7 @@ export default function AnalyseGuidePage() {
             </Link>{" "}
             / <span className="text-slate-700">Analyse af ejendomsinvestering</span>
           </nav>
-          <h1 className="font-thesis text-[2.8rem] font-normal leading-[0.98] tracking-[-0.015em] text-[#0b1b33] [text-wrap:balance] sm:text-[4.2rem]">
+          <h1 className="font-thesis text-[2.8rem] font-normal leading-[0.98] tracking-[-0.015em] text-[#17213a] [text-wrap:balance] sm:text-[4.2rem]">
             Analyse af ejendomsinvestering i Danmark
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
@@ -315,7 +315,7 @@ export default function AnalyseGuidePage() {
             </div>
           </section>
 
-          <section className="overflow-hidden rounded-3xl bg-[#0b1b33] p-6 text-white shadow-card-lift sm:p-8">
+          <section className="overflow-hidden rounded-3xl bg-[#17213a] p-6 text-white shadow-card-lift sm:p-8">
             <h2 className="font-thesis text-[2rem] font-normal leading-[1.05] sm:text-[2.4rem]">Lad NordInvest regne den igennem</h2>
             <p className="mt-3 max-w-xl leading-relaxed text-blue-100">
               Cashflow, afkast, rentestress, pris mod området og planer for adressen på under et minut. Analysen er en

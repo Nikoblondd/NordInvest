@@ -37,7 +37,7 @@ export default function PriserPage() {
         <section className="bg-gradient-to-b from-slate-50 to-white px-4 pb-16 pt-14 sm:px-8 sm:pb-24 sm:pt-24">
           <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             <div>
-              <h1 className="text-[38px] font-semibold leading-[1.05] tracking-[-0.035em] text-[#0b1b33] [text-wrap:balance] sm:text-[56px]">
+              <h1 className="text-[38px] font-semibold leading-[1.05] tracking-[-0.035em] text-[#17213a] [text-wrap:balance] sm:text-[56px]">
                 Prisen aftaler vi, <span className="text-blue-600">når vi kender dit behov.</span>
               </h1>
               <p className="mt-5 max-w-xl text-[18px] leading-relaxed text-slate-600">NordInvest er et lukket system for danske ejendomsinvestorer. Vi starter med en samtale på 20 minutter om, hvordan du investerer, og aftaler derefter en pris, der passer til dig.</p>
@@ -57,7 +57,7 @@ export default function PriserPage() {
         </section>
         <section className="px-4 pb-24 sm:px-8">
           <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
-            <h2 className="text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#0b1b33] sm:text-[40px]">Spørgsmål om pris</h2>
+            <h2 className="text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] text-[#17213a] sm:text-[40px]">Spørgsmål om pris</h2>
             <Faq items={FAQ} />
           </div>
         </section>
