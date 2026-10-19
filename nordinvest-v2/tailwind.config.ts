@@ -22,6 +22,8 @@ const config: Config = {
           500: "#6f6c68", 600: "#555661", 700: "#3c4153", 800: "#272e42", 900: "#17213a", 950: "#0d1426",
         },
         paper: "#f6f4ef",
+        // The one accent (design.md): Danish red brick. Footnote marks and links only, < 5 % of a view.
+        brick: { 600: "#9a3b26", 700: "#7e2f1e" },
         navy: {
           900: "#17213a", // ink — dark surfaces, featured card
           800: "#272e42",
@@ -52,7 +54,7 @@ const config: Config = {
         // All roles map to Inter — single bold grotesque brand voice.
         sans: ["var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
         serif: ["var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
-        mono: ["var(--font-inter)", "ui-monospace", "monospace"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
         display: ["var(--font-display)", "var(--font-inter)", "-apple-system", "system-ui", "sans-serif"],
         // Landing page only (see components/home/fonts.ts).
         thesis: ["var(--font-serif-display)", "Georgia", "Times New Roman", "serif"],

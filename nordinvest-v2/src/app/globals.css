@@ -49,12 +49,13 @@
   h1,
   h2,
   h3 {
-    @apply font-sans font-semibold;
-    font-family: var(--font-display), var(--font-inter), -apple-system, system-ui, sans-serif;
-    letter-spacing: -0.015em;
+    @apply font-semibold;
+    font-family: var(--font-display), Georgia, "Times New Roman", serif;
+    font-style: normal;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
-  h1 { letter-spacing: -0.02em; }
+  h1 { letter-spacing: -0.015em; }
   /* Considered focus ring: a single subtle offset ring, not the default browser
      halo or the ubiquitous blue-500 double-ring you see on every AI site. */
   :focus-visible {
@@ -425,3 +426,21 @@ html[data-lang="en"] body { transition: opacity 120ms ease-out; }
 @keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 .skeleton { animation: skeleton-pulse 1.4s ease-in-out infinite; background: #e9eef5; border-radius: 10px; }
 @media (prefers-reduced-motion: reduce) { .page-in, .page-rise, .skeleton { animation: none; } }
+
+
+/* Hallmark · genre: editorial · macrostructure: Long Document (investeringsnotat)
+ * design-system: design.md · designed-as-app · nav: N9 · footer: Ft4
+ * Tokens for the Oct 2026 redesign. Components reference these by name. */
+:root {
+  --color-paper: oklch(97% 0.008 85);    /* #f6f4ef */
+  --color-paper-2: oklch(99.2% 0.003 85);
+  --color-ink: oklch(24% 0.035 262);     /* #17213a */
+  --color-ink-2: oklch(38% 0.025 262);   /* #3c4153 */
+  --color-muted: oklch(50% 0.015 262);   /* #555661 */
+  --color-rule: oklch(89% 0.012 85);     /* #e4e0d8 */
+  --color-accent: oklch(45% 0.13 35);    /* brick #9a3b26 */
+  --color-focus: oklch(45% 0.13 35);
+  --color-ink-hover: oklch(31% 0.045 262); /* #25345a */
+  --font-body: var(--font-inter);
+  --measure: 66ch;
+}

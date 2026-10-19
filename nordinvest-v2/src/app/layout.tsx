@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Schibsted_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { AuthCodeHandler } from "@/components/auth/AuthCodeHandler";
@@ -10,8 +10,11 @@ import { LangScript } from "@/components/i18n/LangScript";
 import { I18nRuntime } from "@/components/i18n/I18nRuntime";
 import { NavProgress } from "@/components/NavProgress";
 
-const inter = Inter({
+// Body face (design.md): IBM Plex Sans, a report-like sans with real tabular
+// figures. Kept on the --font-inter variable so every existing use switches.
+const inter = IBM_Plex_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
   // Not preloaded: the landing and the analyser set their text in Geist, and a
@@ -25,16 +28,18 @@ const inter = Inter({
 // Display face for big numbers and chapter headings — gives the analyzer a
 // voice of its own instead of Inter-everywhere. Not preloaded: it's used below
 // the fold on most pages, so it shouldn't compete with the LCP font.
-// Schibsted Grotesk (drawn for a Nordic news house) for headings: reads like
-// journalism rather than a startup template. Preloaded, since every page's
-// first heading uses it.
-const outfit = Schibsted_Grotesk({
+// Display face (design.md): Source Serif 4, the voice of a printed analysis
+// or a financial paper rather than a startup template. Always roman.
+const outfit = Source_Serif_4({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
-  weight: ["500", "600", "700", "800"],
+  weight: ["500", "600", "700"],
   fallback: ["-apple-system", "system-ui", "sans-serif"],
 });
+
+// Footnotes, sources and the colophon.
+const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono", display: "swap", preload: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nordinvest.io"),
@@ -160,7 +165,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="da" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+    <html lang="da" className={`${inter.variable} ${outfit.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         <LangScript />
       </head>

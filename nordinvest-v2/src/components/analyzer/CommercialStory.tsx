@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Check, ChevronDown, Circle, SlidersHorizontal } from "lucide-react";
+import { Check, ChevronDown, SlidersHorizontal } from "lucide-react";
 import { FutureBurdens } from "@/components/analyzer/FutureBurdens";
 import { FounderNote } from "@/components/shared/FounderNote";
 import { monthlyPayment, type AnalysisResult } from "@/lib/analysis";
@@ -24,14 +24,9 @@ const pct1 = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits
 const pct2 = (n: number) => `${n.toLocaleString("da-DK", { maximumFractionDigits: 2 })} %`;
 const mio = (n: number) => `${(n / 1e6).toLocaleString("da-DK", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mio. kr.`;
 
-const SOURCE: Record<Source, { label: string; cls: string }> = {
-  annonce: { label: "Annonce", cls: "bg-slate-100 text-slate-700 ring-slate-200" },
-  beregnet: { label: "Beregnet", cls: "bg-slate-100 text-slate-700 ring-slate-200" },
-  bbr: { label: "BBR", cls: "bg-slate-100 text-slate-700 ring-slate-200" },
-  indtastet: { label: "Indtastet", cls: "bg-blue-50 text-blue-800 ring-blue-200" },
-  skøn: { label: "Skøn", cls: "bg-amber-50 text-amber-800 ring-amber-200" },
-};
-const Src = ({ s }: { s: Source }) => <span className={`ml-2 inline-flex shrink-0 items-center rounded-md px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] ring-1 ring-inset ${SOURCE[s].cls}`}>{SOURCE[s].label}</span>;
+const SOURCE: Record<Source, string> = { annonce: "annonce", beregnet: "beregnet", bbr: "BBR", indtastet: "indtastet", skøn: "skøn" };
+/** The source of a figure, set like a reference note in a printed report. Estimates in brick. */
+const Src = ({ s }: { s: Source }) => <span className={`ml-2 font-[family-name:var(--font-mono)] text-[11.5px] ${s === "skøn" ? "text-[var(--color-accent)]" : "text-[var(--color-muted)]"}`}>[{SOURCE[s]}]</span>;
 
 type Check = { title: string; why: string };
 const COMMON: Check[] = [
@@ -55,17 +50,18 @@ const BY_TYPE: Record<string, Check[]> = {
 function Part({ id, tint, q, a, tone, children }: { id: string; tint?: boolean; q: string; a: string; tone: "good" | "warn" | "bad" | "neutral"; children: ReactNode }) {
   const col = tone === "good" ? "text-emerald-700" : tone === "warn" ? "text-amber-700" : tone === "bad" ? "text-rose-600" : "text-slate-600";
   return (
-    <section id={id} className={`scroll-mt-24 border-t border-slate-200/70 px-4 py-10 sm:px-6 sm:py-14 ${tint ? "bg-[#f6f4ef]" : "bg-white"}`}>
-      <div className="mx-auto max-w-[1080px]">
-        <h2 className="text-[26px] font-semibold leading-[1.12] tracking-[-0.02em] text-slate-900 [text-wrap:balance] sm:text-[32px]">{q}</h2>
-        <p className={`mt-2 max-w-[70ch] text-[18px] font-medium leading-snug ${col}`}>{a}</p>
+    <section id={id} data-tint={tint ? "1" : undefined} className="scroll-mt-24 bg-[var(--color-paper)] px-4 py-10 sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-[1080px] border-t-2 border-[var(--color-ink)] pt-6">
+        <h2 className="text-[26px] font-semibold leading-[1.15] text-[var(--color-ink)] [text-wrap:balance] sm:text-[30px]">{q}</h2>
+        <p className={`mt-2 max-w-[70ch] text-[17px] leading-relaxed ${col}`}>{a}</p>
         <div className="mt-7">{children}</div>
       </div>
     </section>
   );
 }
 
-const card = "rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_30px_-18px_rgba(15,23,42,0.18)]";
+// No shadows (design.md): a hairline and a slightly lighter paper mark a table or a note.
+const card = "rounded-md border border-[var(--color-rule)] bg-[var(--color-paper-2)]";
 
 export function CommercialStory({
   r, price, rate, termYears, subcategory, address, trust, onAdjust, facts, allowancePerM2, lossPct, dossier,
@@ -111,19 +107,13 @@ export function CommercialStory({
   return (
     <>
       {/* 0. How to read the numbers */}
-      <section className="border-t border-slate-200/70 bg-white px-4 py-6 sm:px-6">
-        <div className="mx-auto flex max-w-[1080px] flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="min-w-0">
-            <p className="text-[16px] font-semibold text-slate-900">{dq.level === "delvis" ? "Screening på sælgers driftsbudget" : "Foreløbig screening på annoncens afkast"}</p>
-            <p className="mt-0.5 max-w-[62ch] text-[15px] text-slate-600">Analysen er et udgangspunkt for at vurdere, om ejendommen er værd at gå videre med. Den erstatter ikke lejeliste, regnskab og teknisk gennemgang.</p>
-          </div>
-          <ul className="flex flex-wrap gap-1.5" aria-label="Datagrundlag">
-            {dq.items.map((i) => (
-              <li key={i.label} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[13px] font-medium ring-1 ring-inset ${i.ok ? "bg-emerald-50 text-emerald-800 ring-emerald-200" : "bg-slate-50 text-slate-500 ring-slate-200"}`}>
-                {i.ok ? <Check size={13} strokeWidth={2.4} /> : <Circle size={11} strokeWidth={2} />}{i.label}
-              </li>
-            ))}
-          </ul>
+      <section className="bg-[var(--color-paper)] px-4 pt-8 sm:px-6">
+        <div className="mx-auto max-w-[1080px]">
+          <p className="max-w-[78ch] text-[16px] leading-relaxed text-[var(--color-ink-2)]">
+            <b className="font-semibold text-[var(--color-ink)]">{dq.level === "delvis" ? "Screening på sælgers driftsbudget." : "Foreløbig screening på annoncens afkast."}</b>{" "}
+            Bygger på {dq.items.filter((i) => i.ok).map((i) => i.label.toLowerCase()).join(", ")}.{" "}
+            Mangler {dq.items.filter((i) => !i.ok).map((i) => i.label.toLowerCase()).join(", ")}, før tallene kan bruges til et bud.
+          </p>
         </div>
       </section>
 
@@ -259,33 +249,39 @@ export function CommercialStory({
       {/* 3. Scenarios, not a forecast */}
       <Part id="fremtid" tint q="Tre scenarier over 10 år" tone="neutral"
         a="Ikke en prognose. Tre sæt forudsætninger side om side, hvor driftsudgifterne stiger mindst lige så hurtigt som lejen. Brug dem til at se, hvad udfaldet afhænger af.">
-        <div className="grid gap-4 md:grid-cols-3">
-          {sc.map((s) => (
-            <div key={s.id} className={`${card} flex flex-col p-5 ${s.id === "forsigtig" ? "ring-2 ring-slate-900" : ""}`}>
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-[17px] font-semibold text-slate-900">{s.label}</p>
-                {s.id === "forsigtig" && <span className="rounded-md bg-slate-900 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-white">Udgangspunkt</span>}
-              </div>
-              <dl className="mt-3 grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-[14px]">
-                <dt className="text-slate-500">Leje pr. år</dt><dd className="text-right tabular-nums">{s.rentGrowth > 0 ? "+" : ""}{pct1(s.rentGrowth)}</dd>
-                <dt className="text-slate-500">Driftsudgifter pr. år</dt><dd className="text-right tabular-nums">+{pct1(s.opexGrowth)}</dd>
-                <dt className="text-slate-500">Værdi pr. år</dt><dd className="text-right tabular-nums">{s.valueGrowth > 0 ? "+" : ""}{pct1(s.valueGrowth)}</dd>
-                <dt className="text-slate-500">Forsigtige tillæg</dt><dd className="text-right">{s.prudent ? "Med" : "Uden"}</dd>
-              </dl>
-              <dl className="mt-4 grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 border-t border-slate-100 pt-4 text-[14px] tabular-nums">
-                <dt className="text-slate-600">Cash flow år 1</dt><dd className={`text-right font-medium ${s.cashFlowY1 >= 0 ? "text-slate-900" : "text-rose-600"}`}>{signed(s.cashFlowY1)}</dd>
-                <dt className="text-slate-600">Cash flow år 10</dt><dd className={`text-right font-medium ${s.cashFlowY10 >= 0 ? "text-slate-900" : "text-rose-600"}`}>{signed(s.cashFlowY10)}</dd>
-                <dt className="text-slate-600">Cash flow i alt</dt><dd className={`text-right font-medium ${s.cumulative >= 0 ? "text-slate-900" : "text-rose-600"}`}>{signed(s.cumulative)}</dd>
-                <dt className="text-slate-600">Afdrag på lån</dt><dd className="text-right font-medium text-slate-900">{signed(s.paidDown)}</dd>
-                <dt className="text-slate-600">Værdiændring</dt><dd className="text-right font-medium text-slate-900">{signed(s.valueChange)}</dd>
-                <dt className="text-slate-600">Køb- og salgsomk.</dt><dd className="text-right font-medium text-slate-600">{signed(-(s.buyCosts + s.saleCosts))}</dd>
-              </dl>
-              <div className="mt-auto flex items-baseline justify-between gap-3 border-t-2 border-slate-900 pt-3">
-                <span className="text-[15px] font-semibold text-slate-900">Gevinst før skat</span>
-                <span className={`text-[18px] font-bold tabular-nums ${s.total >= 0 ? "text-emerald-700" : "text-rose-600"}`}>{s.total >= 1e6 || s.total <= -1e6 ? `${s.total >= 0 ? "+" : "−"}${mio(Math.abs(s.total))}` : signed(s.total)}</span>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[560px] text-[15px] tabular-nums">
+            <caption className="sr-only">Tre scenarier over 10 år</caption>
+            <thead>
+              <tr className="border-b-2 border-[var(--color-ink)] text-left">
+                <th className="py-2 pr-4 font-normal text-[var(--color-muted)]">Over 10 år</th>
+                {sc.map((s) => <th key={s.id} className="py-2 pl-4 text-right font-semibold text-[var(--color-ink)]">{s.label}{s.id === "forsigtig" && <span className="block text-[12px] font-normal text-[var(--color-muted)]">udgangspunkt</span>}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {([
+                ["Leje pr. år", (s) => `${s.rentGrowth > 0 ? "+" : ""}${pct1(s.rentGrowth)}`, false],
+                ["Driftsudgifter pr. år", (s) => `+${pct1(s.opexGrowth)}`, false],
+                ["Værdi pr. år", (s) => `${s.valueGrowth > 0 ? "+" : ""}${pct1(s.valueGrowth)}`, false],
+                ["Forsigtige tillæg", (s) => (s.prudent ? "med" : "uden"), false],
+                ["Cash flow år 1", (s) => signed(s.cashFlowY1), true],
+                ["Cash flow år 10", (s) => signed(s.cashFlowY10), true],
+                ["Cash flow i alt", (s) => signed(s.cumulative), true],
+                ["Afdrag på lån", (s) => signed(s.paidDown), false],
+                ["Værdiændring", (s) => signed(s.valueChange), false],
+                ["Købs- og salgsomkostninger", (s) => signed(-(s.buyCosts + s.saleCosts)), false],
+              ] as [string, (s: (typeof sc)[number]) => string, boolean][]).map(([k, f, money], ri) => (
+                <tr key={k} className={`border-b border-[var(--color-rule)] ${ri === 4 ? "border-t-2 border-t-[var(--color-ink)]" : ""}`}>
+                  <th scope="row" className="py-2 pr-4 text-left font-normal text-[var(--color-ink-2)]">{k}</th>
+                  {sc.map((s) => <td key={s.id} className={`py-2 pl-4 text-right ${money && f(s).startsWith("−") ? "text-rose-700" : "text-[var(--color-ink)]"}`}>{f(s)}</td>)}
+                </tr>
+              ))}
+              <tr className="border-b-2 border-[var(--color-ink)]">
+                <th scope="row" className="py-3 pr-4 text-left font-semibold text-[var(--color-ink)]">Gevinst før skat</th>
+                {sc.map((s) => <td key={s.id} className={`py-3 pl-4 text-right text-[16px] font-semibold ${s.total >= 0 ? "text-emerald-800" : "text-rose-700"}`}>{s.total >= 1e6 || s.total <= -1e6 ? `${s.total >= 0 ? "+" : "−"}${mio(Math.abs(s.total))}` : signed(s.total)}</td>)}
+              </tr>
+            </tbody>
+          </table>
         </div>
         <p className="mt-5 max-w-[80ch] text-[14px] leading-relaxed text-slate-600">
           {oldResidential ? "I det forsigtige scenarie stiger lejen ikke, fordi lejen i ejendomme taget i brug før 1992 typisk er omkostningsbestemt og kun kan hæves efter lejelovens regler. " : ""}

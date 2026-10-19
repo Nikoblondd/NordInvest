@@ -2,10 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Info } from "lucide-react";
 import { analyze } from "@/lib/analysis";
 import { assessInvestment } from "@/lib/deals";
-import { AppHero } from "@/components/analyzer/story/AppHero";
 import type { HeroMetric } from "@/components/analyzer/story/DealHero";
 import { CommercialStory } from "@/components/analyzer/CommercialStory";
 import { BuyerContact } from "@/components/shared/BuyerContact";
@@ -82,18 +80,43 @@ export function SharedAnalysis({ listing: l, rates }: { listing: SharedListing; 
   return (
     <main className="pb-4">
       <div className="mx-auto max-w-[1080px] px-4 pt-6 sm:px-6 sm:pt-10">
-        <p className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[13px] font-medium text-slate-600 ring-1 ring-slate-200">
-          <Info size={14} className="text-blue-600" /> Screening på sælgers tal. Ret driftsbudgettet med jeres egne tal nedenfor.
-        </p>
-        <AppHero
-          images={l.imgs ?? []} address={l.addr} score={inv.score} headline={`${inv.rating === "Stærk" || inv.rating === "Solid" ? inv.rating : inv.rating === "Middel" ? "Marginal" : "Svag"} på sælgers tal`}
-          verdict={verdict} tone={tone} notes={inv.note ? [inv.note] : []} metrics={metrics} probability={null}
-          listingUrl={/nordinvest\.io/i.test(l.url) ? null : l.url} sourceLabel={sourceOf(l.url)} kindLabel={`Erhverv${l.subcat ? `, ${l.subcat}` : ""}`}
-        />
+        {/* Report head (design.md): date line, address, verdict in words, one photo, key figures as a table row. */}
+        <header className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] lg:gap-12">
+          <div className="min-w-0">
+            <p className="font-[family-name:var(--font-mono)] text-[13px] text-[var(--color-muted)]">
+              Investeringsanalyse · {new Date().toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric" })} · {`Erhverv${l.subcat ? `, ${l.subcat.toLowerCase()}` : ""}`}
+            </p>
+            <h1 className="mt-4 text-[34px] font-semibold leading-[1.1] text-[var(--color-ink)] [overflow-wrap:anywhere] sm:text-[44px]">{l.addr.split(",")[0]}</h1>
+            <p className="mt-2 text-[16px] text-[var(--color-ink-2)]">
+              {l.addr.split(",").slice(1).join(",").trim()} · udbudspris {dk(l.price)} kr.
+              {!/nordinvest\.io/i.test(l.url) && <> · <a href={l.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[var(--color-accent)] underline-offset-4 hover:text-[var(--color-ink)]">annoncen på {sourceOf(l.url)}</a></>}
+            </p>
+            <p className="mt-6 max-w-[62ch] text-[18px] leading-[1.6] text-[var(--color-ink)]">
+              <b className="font-semibold">{inv.rating === "Stærk" || inv.rating === "Solid" ? inv.rating : inv.rating === "Middel" ? "Marginal" : "Svag"} på sælgers tal</b>
+              <span className="text-[var(--color-muted)]"> ({inv.score} af 100). </span>{verdict}
+            </p>
+            {inv.note && <p className="mt-2 max-w-[62ch] text-[15px] text-amber-800">{inv.note}</p>}
+          </div>
+          {l.imgs?.[0] && (
+            <figure className="min-w-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={l.imgs[0]} alt={`${l.addr}, foto fra annoncen`} className="aspect-[4/3] w-full rounded-md border border-[var(--color-rule)] object-cover" fetchPriority="high" />
+              <figcaption className="mt-1.5 font-[family-name:var(--font-mono)] text-[11.5px] text-[var(--color-muted)]">Foto fra annoncen{l.imgs.length > 1 ? ` (1 af ${l.imgs.length})` : ""}</figcaption>
+            </figure>
+          )}
+        </header>
+        <dl className="mt-8 grid grid-cols-2 border-y-2 border-[var(--color-ink)] sm:grid-cols-4">
+          {metrics.map((m, i) => (
+            <div key={m.label} className={`py-3 ${i % 2 ? "pl-4" : "pr-4"} sm:px-4 ${i > 0 ? "sm:border-l sm:border-[var(--color-rule)]" : "sm:pl-0"} ${i > 1 ? "border-t border-[var(--color-rule)] sm:border-t-0" : ""}`}>
+              <dt className="text-[13px] text-[var(--color-muted)]">{m.label}</dt>
+              <dd className={`mt-0.5 font-[family-name:var(--font-display)] text-[24px] font-semibold ${m.tone === "good" ? "text-emerald-800" : m.tone === "bad" ? "text-rose-700" : m.tone === "warn" ? "text-amber-800" : "text-[var(--color-ink)]"}`}>{m.value}{m.unit ? <span className="ml-1 text-[14px] font-normal text-[var(--color-muted)]">{m.unit}</span> : null}</dd>
+            </div>
+          ))}
+        </dl>
 
-        <section id="juster" className="mt-4 scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+        <section id="juster" className="mt-10 scroll-mt-24">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <p className="text-[16px] font-semibold text-slate-900">Driftsbudget og finansiering</p>
+            <h2 className="text-[22px] font-semibold text-[var(--color-ink)]">Driftsbudget og finansiering</h2>
             <p className="text-[14px] text-slate-500">Købspris {dk(l.price)} kr. · driftsresultat i annoncen {dk(l.rent * 12)} kr. om året</p>
           </div>
           <p className="mt-1 max-w-[70ch] text-[14px] text-slate-600">Felterne er udfyldt med annoncens og BBR&apos;s tal. Har I lejeliste og regnskab, så skriv de faktiske tal ind. Alt regnes om med det samme.</p>
@@ -127,7 +150,7 @@ export function SharedAnalysis({ listing: l, rates }: { listing: SharedListing; 
         </section>
       </div>
 
-      <div className="mt-6 overflow-hidden lg:mx-auto lg:max-w-[1080px] lg:rounded-2xl lg:border lg:border-slate-200">
+      <div className="mt-4">
         <CommercialStory
           r={r} price={l.price} rate={rate} termYears={30} subcategory={l.subcat} address={null} onAdjust={adjust}
           facts={facts} allowancePerM2={allowIn} lossPct={lossIn} dossier={l.dossier ?? null}
@@ -149,17 +172,12 @@ export function SharedAnalysis({ listing: l, rates }: { listing: SharedListing; 
         </div>
       )}
 
-      <div className="mx-auto mt-8 max-w-[1080px] px-4 sm:px-6">
-        <div className="flex flex-col gap-5 rounded-2xl bg-slate-900 p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
-          <div className="max-w-[560px]">
-            <p className="text-[20px] font-semibold tracking-[-0.01em]">Analyseret med NordInvest</p>
-            <p className="mt-1.5 text-[15px] leading-relaxed text-slate-300">NordInvest er et analyseværktøj til danske ejendomsinvestorer med analyse, bankrapport, søgeagenter og pipeline.</p>
-          </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-            <Link href="/adgang?kilde=delt-analyse" className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-white px-5 text-[16px] font-semibold text-slate-900 hover:bg-slate-100">Få adgang <ArrowRight size={17} /></Link>
-            <Link href="/funktioner" className="text-center text-[14px] font-medium text-slate-300 hover:text-white">Se funktionerne</Link>
-          </div>
-        </div>
+      <div className="mx-auto mt-10 max-w-[1080px] px-4 sm:px-6">
+        <p className="max-w-[70ch] border-t-2 border-[var(--color-ink)] pt-6 text-[16px] leading-relaxed text-[var(--color-ink-2)]">
+          Analysen er lavet med NordInvest, et analyseværktøj til danske ejendomsinvestorer og mæglere.{" "}
+          <Link href="/adgang?kilde=delt-analyse" className="font-semibold text-[var(--color-ink)] underline decoration-[var(--color-accent)] underline-offset-4">Anmod om adgang</Link>{" "}
+          eller <Link href="/" className="font-medium text-[var(--color-ink)] underline decoration-[var(--color-accent)] underline-offset-4">læs, hvordan tallene bliver regnet</Link>.
+        </p>
       </div>
     </main>
   );
