@@ -25,6 +25,8 @@ export type Filters = {
   onlyCut: boolean;
   onlyNew: boolean;
   sort: Sort;
+  /** An area drawn on the map, as [lon, lat] points. Only homes inside it are shown. */
+  shape?: [number, number][] | null;
 };
 
 export const EMPTY_FILTERS: Filters = { types: [], priceMin: null, priceMax: null, areaMin: null, roomsMin: null, verdicts: [], onlyCut: false, onlyNew: false, sort: "bedste" };
@@ -82,6 +84,9 @@ export function cleanState(raw: unknown, prev: BuyerState = EMPTY_STATE): BuyerS
     verdicts: Array.isArray(f.verdicts) ? f.verdicts.filter((v: unknown) => (VERDICTS as readonly unknown[]).includes(v)) : [],
     onlyCut: !!f.onlyCut, onlyNew: !!f.onlyNew,
     sort: SORTS.some((s) => s.id === f.sort) ? f.sort : "bedste",
+    shape: Array.isArray(f.shape) && f.shape.length >= 3 && f.shape.length <= 400 && f.shape.every((pt: unknown) => Array.isArray(pt) && pt.length === 2 && pt.every((x) => typeof x === "number" && Number.isFinite(x)))
+      ? (f.shape as [number, number][]).map(([x, y]) => [Math.round(x * 1e5) / 1e5, Math.round(y * 1e5) / 1e5] as [number, number])
+      : null,
   };
   const v = r.view;
   const bounds = Array.isArray(v?.bounds) && v.bounds.length === 4 && v.bounds.every((x: unknown) => typeof x === "number" && Number.isFinite(x)) ? (v.bounds as [number, number, number, number]) : undefined;

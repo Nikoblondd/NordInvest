@@ -23,9 +23,10 @@ export const TYPE_LABEL: Record<string, string> = {
   cooperative: "Andelsbolig",
   "holiday house": "Fritidshus",
   farm: "Landejendom",
+  "hobby farm": "Lystejendom",
   "villa apartment": "Villalejlighed",
 };
-const GROUP: Record<string, string> = { "villa apartment": "condo" };
+const GROUP: Record<string, string> = { "villa apartment": "condo", "hobby farm": "farm" };
 const groupOf = (t: string) => GROUP[t] ?? t;
 
 const BANDS = [55, 80, 110, 150];
@@ -127,10 +128,10 @@ export async function getMarket(): Promise<Market | null> {
 function plausible(r: Row): boolean {
   if (r.lat == null || r.lon == null || !r.price || !r.area) return false;
   const t = r.type ?? "";
-  if (r.area < 15 || r.area > (t === "farm" ? 1500 : 450)) return false;
+  if (r.area < 15 || r.area > (t === "farm" || t === "hobby farm" ? 1500 : 450)) return false;
   if (r.price < 150_000) return false;
   const ppm = r.price / r.area;
-  return ppm >= (t === "farm" || t === "holiday house" || t === "cooperative" ? 800 : 3000) && ppm <= 250_000;
+  return ppm >= (t === "farm" || t === "hobby farm" || t === "holiday house" || t === "cooperative" ? 800 : 3000) && ppm <= 250_000;
 }
 
 function build(rows: Row[]): Market {

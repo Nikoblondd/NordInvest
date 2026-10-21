@@ -27,8 +27,9 @@ export async function GET(req: Request) {
 
   const [row, growth, yoy, rates, plans] = await Promise.all([
     rowP,
-    getDstAppreciationPct(h.kommune, h.type).catch(() => null),
-    getDstLatestYoY(h.kommune, h.type).catch(() => null),
+    // Sommerhuse have no index for every landsdel; houses in general stand in for them.
+    getDstAppreciationPct(h.kommune, h.type).then((v) => v ?? getDstAppreciationPct(h.kommune, "villa")).catch(() => null),
+    getDstLatestYoY(h.kommune, h.type).then((v) => v ?? getDstLatestYoY(h.kommune, "villa")).catch(() => null),
     getMarketRates().catch(() => null),
     plansNear(h.lat, h.lon, 2000).catch(() => []),
   ]);

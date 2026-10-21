@@ -3,7 +3,7 @@ import { areaNews } from "@/lib/buyer/news";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 /** GET /api/boligkoeb/news?kommune=slug: what is happening in the kommune, with a source for every item (cached a week). */
 export async function GET(req: Request) {

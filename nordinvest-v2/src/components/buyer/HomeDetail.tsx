@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { ArrowDown, ArrowUp, Bell, Building2, Check, ExternalLink, FileText, Heart, Loader2, MapPinned, Share2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Bell, Check, ExternalLink, FileText, Heart, Loader2, MapPinned, Share2, X } from "lucide-react";
 import type { Basis, BuyerHome } from "@/lib/buyer/market";
 import { TYPE_LABEL } from "@/lib/buyer/market";
 import type { Plan } from "@/lib/buyer/plans";
@@ -15,6 +15,7 @@ import { STAGES, type Household, type SavedHome } from "@/lib/buyer/state";
 import { INSTITUTES, capacity, defaultOwnerCost, equityPath, financing, yearlyBidrag } from "@/lib/buyer/finance";
 import { VERDICT_COLOR } from "./BuyerMap";
 import { kr, mio, pct, useImages, VerdictPill } from "./ui";
+import { Gallery } from "./Gallery";
 
 /*
  * The home, in the side panel. Everything about it is here, split into short
@@ -124,17 +125,17 @@ export function HomePanel(p: PanelProps) {
   const img = d?.listing.image ?? images.get(home.id) ?? null;
   const expected = Math.round((home.expPpm * home.area) / 10000) * 10000;
 
+  // Five full sections, each one screen: the home, the money, its value, the surroundings, the facts.
+  const Rule = () => <div className="my-5 border-t border-slate-100" />;
   const sections: { id: string; title: string; body: React.ReactNode }[] = [
     { id: "bolig", title: "Boligen", body: <SecHome {...p} d={d} img={img} expected={expected} /> },
-    { id: "okonomi", title: "Økonomi", body: <SecMoney home={home} d={d} household={p.household} onHousehold={p.onHousehold} /> },
-    { id: "laan", title: "Lån", body: <SecLoan home={home} d={d} /> },
-    { id: "frivaerdi", title: "Friværdi", body: <SecEquity home={home} d={d} expected={expected} /> },
-    { id: "omraade", title: "Området", body: <SecArea home={home} d={d} /> },
-    { id: "byggeri", title: "Byggeri", body: <SecPlans d={d} onShowPlans={p.onShowPlans} /> },
-    { id: "fakta", title: "Fakta", body: <SecFacts dos={dos} price={home.price} energy={home.energy} /> },
-    ...(home.kommune ? [{ id: "nyt", title: "Nyheder", body: <SecNews slug={home.kommune} name={p.kommuneName ?? home.kommune} active={false} /> }] : []),
-    { id: "lignende", title: "Lignende", body: <SecSimilar d={d} onSelect={p.onSelect} /> },
+    { id: "okonomi", title: "Økonomi", body: <><SecMoney home={home} d={d} household={p.household} onHousehold={p.onHousehold} /><Rule /><SecLoan home={home} d={d} /></> },
+    { id: "vaerdi", title: "Værdi", body: <><SecEquity home={home} d={d} expected={expected} /><Rule /><SecArea home={home} d={d} /></> },
+    { id: "omgivelser", title: "Omgivelser", body: <><SecPlans d={d} onShowPlans={p.onShowPlans} />{home.kommune && <><Rule /><SecNews slug={home.kommune} name={p.kommuneName ?? home.kommune} /></>}</> },
+    { id: "fakta", title: "Fakta", body: <><SecFacts dos={dos} price={home.price} energy={home.energy} />{d && d.listing.history.length > 1 && <><Rule /><SecHistory history={d.listing.history} /></>}<Rule /><SecSimilar d={d} onSelect={p.onSelect} /></> },
   ];
+  // Local news can take a while the first time: start it as soon as the home opens.
+  useEffect(() => { if (home.kommune && !p.locked) void prefetchNews(home.kommune); }, [home.kommune, p.locked]);
   const last = sections.length - 1;
   const go = useCallback((n: number) => setI((cur) => Math.max(0, Math.min(last, typeof n === "number" ? n : cur))), [last]);
 
@@ -208,7 +209,7 @@ export function HomePanel(p: PanelProps) {
             <div className="h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" style={{ transform: `translateY(-${i * 100}%)` }}>
               {sections.map((s, n) => (
                 <section key={s.id} data-sec aria-hidden={n !== i} className="h-full overflow-y-auto overscroll-contain px-5 pb-6 pt-4 [scrollbar-width:thin]">
-                  {n === i || Math.abs(n - i) === 1 ? (s.id === "nyt" ? <SecNews slug={home.kommune!} name={p.kommuneName ?? home.kommune!} active={n === i} /> : s.body) : null}
+                  {Math.abs(n - i) <= 1 ? s.body : null}
                 </section>
               ))}
             </div>
@@ -236,9 +237,8 @@ function SecHome(p: PanelProps & { d: Detail | null; img: string | null; expecte
   const first = hist.length ? hist[0].price : home.price;
   return (
     <div className="space-y-4">
-      <div className="relative -mx-5 -mt-4 aspect-[16/10] bg-slate-100">
-        {p.img ? <img src={p.img} alt={`Billede af ${home.address}`} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-slate-300"><Building2 size={36} /></div>}
-        {first > home.price && <span className="absolute bottom-3 left-3 rounded-lg bg-emerald-600 px-2 py-1 text-[12px] font-semibold text-white">Sat ned {kr(first - home.price)}</span>}
+      <div className="-mx-5 -mt-4">
+        <Gallery id={home.id} fallback={p.img} alt={home.address} badge={first > home.price ? <span className="rounded-lg bg-emerald-600 px-2 py-1 text-[12px] font-semibold text-white">Sat ned {kr(first - home.price)}</span> : undefined} />
       </div>
       <div>
         <Big>{kr(home.price)}</Big>
@@ -288,10 +288,11 @@ function SecMoney({ home, d, household, onHousehold }: { home: BuyerHome; d: Det
   const [downPct, setDownPct] = useState(5);
   const [owner, setOwner] = useState(() => defaultOwnerCost(home.type, home.area, home.price));
   const [editHh, setEditHh] = useState(false);
+  const [knobs, setKnobs] = useState(false);
   const f = useMemo(() => financing(home.price, { downPct, mortgageRate: rate, ownerCost: owner, couple: household.couple }), [home.price, downPct, rate, owner, household.couple]);
   const cap = household.income ? capacity(household.income, household.savings ?? 0, household.debt ?? 0) : null;
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div>
         <H>Pr. måned</H>
         <Big className="mt-2">{kr(f.monthlyNet)}</Big>
@@ -301,10 +302,14 @@ function SecMoney({ home, d, household, onHousehold }: { home: BuyerHome; d: Det
           <Box><p className="text-[11px] text-slate-500">Ejerudgift</p><p className="text-[14px] font-semibold tabular-nums">{kr(f.ownerCost)}</p></Box>
           <Box><p className="text-[11px] text-slate-500">Fradrag</p><p className="text-[14px] font-semibold tabular-nums text-emerald-700">−{kr(f.deductionMonthly)}</p></Box>
         </div>
-        <label className="mt-3 block"><span className="flex justify-between text-[12px] text-slate-500"><span>Udbetaling</span><span className="font-semibold text-slate-900">{pct(downPct, 0)} · {kr(f.down)}</span></span>
-          <input type="range" min={5} max={50} value={downPct} onChange={(e) => setDownPct(Number(e.target.value))} className="mt-1.5 w-full accent-emerald-600" /></label>
-        <div className="mt-2"><NumIn v={owner} set={(n) => setOwner(n ?? 0)} label="Ejerudgift pr. måned (står i salgsopstillingen)" /></div>
-        <p className="mt-2 text-[12px] text-slate-400">Rente {pct(rate)} inkl. bidrag{d?.rates ? ` (Nationalbanken, ${d.rates.label})` : ""}</p>
+        {knobs ? (
+          <div className="mt-3 space-y-2 rounded-2xl bg-slate-50 p-3">
+            <label className="block"><span className="flex justify-between text-[12px] text-slate-500"><span>Udbetaling</span><span className="font-semibold text-slate-900">{pct(downPct, 0)} · {kr(f.down)}</span></span>
+              <input type="range" min={5} max={50} value={downPct} onChange={(e) => setDownPct(Number(e.target.value))} className="mt-1.5 w-full accent-emerald-600" /></label>
+            <NumIn v={owner} set={(n) => setOwner(n ?? 0)} label="Ejerudgift pr. måned (står i salgsopstillingen)" />
+          </div>
+        ) : null}
+        <p className="mt-2 flex items-center justify-between text-[12px] text-slate-400"><span>{pct(downPct, 0)} udbetaling · rente {pct(rate)} inkl. bidrag</span><button type="button" onClick={() => setKnobs(!knobs)} className="font-semibold text-emerald-700">{knobs ? "Færdig" : "Ret tal"}</button></p>
       </div>
       <div className="border-t border-slate-100 pt-4">
         <H>Kan I låne til den?</H>
@@ -334,18 +339,16 @@ function SecLoan({ home, d }: { home: BuyerHome; d: Detail | null }) {
   const banks = INSTITUTES.map((x) => ({ ...x, yearly: yearlyBidrag(home.price, f.mortgage, x.bands) })).sort((a, b) => a.yearly - b.yearly);
   return (
     <div>
-      <H>Billigste realkreditlån</H>
-      <p className="mt-2 text-[15px] text-slate-600">Renten er den samme alle steder. Forskellen er bidraget på dit lån på {mio(f.mortgage)}.</p>
-      <ul className="mt-4 space-y-2">
+      <div className="flex items-baseline justify-between"><H>Billigste realkreditlån</H><span className="text-[12px] text-slate-400">bidrag pr. md.</span></div>
+      <ul className="mt-2.5 space-y-1.5">
         {banks.map((b, n) => (
-          <li key={b.name} className={`flex items-center justify-between rounded-2xl px-4 py-3 ${n === 0 ? "bg-emerald-50 ring-1 ring-emerald-200" : "bg-slate-50"}`}>
-            <span><span className="block text-[15px] font-semibold">{b.name}</span>{n === 0 && <span className="text-[12px] font-semibold text-emerald-700">Billigst</span>}</span>
-            <span className="text-right"><span className="block text-[15px] font-semibold tabular-nums">{kr(b.yearly / 12)}</span><span className="text-[12px] text-slate-500">om måneden</span></span>
+          <li key={b.name} className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 ${n === 0 ? "bg-emerald-50 ring-1 ring-emerald-200" : "bg-slate-50"}`}>
+            <span className="text-[14px] font-semibold">{b.name}{n === 0 && <span className="ml-2 text-[12px] text-emerald-700">Billigst</span>}</span>
+            <span className="text-[14px] font-semibold tabular-nums">{kr(b.yearly / 12)}</span>
           </li>
         ))}
       </ul>
-      <p className="mt-4 rounded-2xl bg-slate-900 px-4 py-3 text-[14px] text-white">Du sparer <b>{kr(banks[banks.length - 1].yearly - banks[0].yearly)}</b> om året ved at vælge {banks[0].name}.</p>
-      <p className="mt-3 text-[12px] text-slate-400">Prisblade 2026, fastforrentet lån med afdrag. Spørg altid to banker.</p>
+      <p className="mt-2 text-[13px] text-slate-500">Renten er den samme alle steder. Vælg {banks[0].name}, og spar {kr(banks[banks.length - 1].yearly - banks[0].yearly)} om året.</p>
     </div>
   );
 }
@@ -362,7 +365,7 @@ function SecEquity({ home, d, expected }: { home: BuyerHome; d: Detail | null; e
       <div className="mt-3 grid grid-cols-3 gap-2">
         {[0, 5, 10].map((y) => <Box key={y}><p className="text-[12px] text-slate-500">{y === 0 ? "Ved køb" : `Om ${y} år`}</p><p className="mt-0.5 text-[18px] font-semibold tabular-nums">{mio(path[y].equity)}</p></Box>)}
       </div>
-      <div className="mt-4 h-[170px]">
+      <div className="mt-3 h-[130px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={path.map((x) => ({ år: x.year, v: Math.round(x.equity) }))} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
             <defs><linearGradient id="eqp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#059669" stopOpacity={0.3} /><stop offset="100%" stopColor="#059669" stopOpacity={0.02} /></linearGradient></defs>
@@ -373,7 +376,7 @@ function SecEquity({ home, d, expected }: { home: BuyerHome; d: Detail | null; e
         </ResponsiveContainer>
       </div>
       <p className="mt-2 text-[14px] text-slate-600">Afdrag plus {pct(growth)} prisstigning om året.</p>
-      {gap > 50_000 && <p className="mt-3 rounded-2xl bg-emerald-50 px-4 py-3 text-[14px] text-emerald-900">Køber du til områdets pris, er den ca. <b>{mio(gap)}</b> mere værd fra start.</p>}
+      {gap > 50_000 && <p className="mt-2 rounded-2xl bg-emerald-50 px-4 py-2.5 text-[14px] text-emerald-900">Til områdets pris er den ca. <b>{mio(gap)}</b> mere værd fra start.</p>}
     </div>
   );
 }
@@ -408,7 +411,7 @@ function SecPlans({ d, onShowPlans }: { d: Detail | null; onShowPlans: () => voi
           <p className="mt-2 text-[18px] font-semibold leading-snug">{plans.length} nye lokalplaner inden for 2 km{housing ? `, ${housing} med boliger` : ""}.</p>
           <p className="text-[15px] text-slate-500">{plans.length >= 10 ? "Et område i vækst." : plans.length >= 4 ? "Der sker en del." : "Lidt aktivitet."}</p>
           <ul className="mt-3 space-y-2">
-            {plans.slice(0, 4).map((x) => (
+            {plans.slice(0, 3).map((x) => (
               <li key={x.id} className="rounded-2xl bg-slate-50 px-3.5 py-2.5">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.05em] text-violet-700">{x.status === "forslag" ? "Forslag" : "Vedtaget"}{x.distanceM != null ? ` · ${x.distanceM < 1000 ? `${Math.round(x.distanceM / 10) * 10} m` : `${(x.distanceM / 1000).toFixed(1).replace(".", ",")} km`}` : ""}</p>
                 <p className="line-clamp-1 text-[14px] font-semibold">{x.name}</p>
@@ -456,8 +459,27 @@ function SecFacts({ dos, price, energy }: { dos: { dossier: Dossier | null; burd
   );
 }
 
-function SecNews({ slug, name, active }: { slug: string; name: string; active: boolean }) {
-  return <div><H>Nyt fra {name}</H><div className="mt-3"><News slug={slug} name={name} max={4} start={active} /></div></div>;
+function SecNews({ slug, name }: { slug: string; name: string }) {
+  return <div><H>Nyt fra {name}</H><div className="mt-3"><News slug={slug} name={name} max={3} /></div></div>;
+}
+
+function SecHistory({ history }: { history: { d: string; price: number }[] }) {
+  return (
+    <div>
+      <H>Prishistorik</H>
+      <ol className="mt-2.5 space-y-1.5">
+        {history.map((x, n) => {
+          const prev = n > 0 ? history[n - 1].price : null;
+          return (
+            <li key={x.d + n} className="flex items-center justify-between text-[14px]">
+              <span className="text-slate-500">{new Date(x.d).toLocaleDateString("da-DK", { day: "numeric", month: "short", year: "numeric" })}</span>
+              <span className="font-semibold tabular-nums">{kr(x.price)}{prev != null && prev !== x.price && <span className={`ml-2 text-[12px] ${x.price < prev ? "text-emerald-700" : "text-rose-700"}`}>{x.price < prev ? "−" : "+"}{kr(Math.abs(x.price - prev))}</span>}</span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
 }
 
 function SecSimilar({ d, onSelect }: { d: Detail | null; onSelect: (id: string) => void }) {
@@ -467,7 +489,7 @@ function SecSimilar({ d, onSelect }: { d: Detail | null; onSelect: (id: string) 
       <H>Lignende boliger i nærheden</H>
       {!d.similar.length ? <p className="mt-3 text-[15px] text-slate-500">Ingen lignende boliger til salg tæt på.</p> : (
         <ul className="mt-2 divide-y divide-slate-100">
-          {d.similar.slice(0, 6).map((s) => (
+          {d.similar.slice(0, 4).map((s) => (
             <li key={s.id}>
               <button type="button" onClick={() => onSelect(s.id)} className="flex min-h-[54px] w-full items-center gap-3 text-left hover:bg-slate-50">
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: VERDICT_COLOR[s.verdict] }} />
@@ -482,32 +504,45 @@ function SecSimilar({ d, onSelect }: { d: Detail | null; onSelect: (id: string) 
   );
 }
 
-/** Local news for a kommune: a short summary and the top items, each with its source. Loads when shown. */
-export function News({ slug, name, max = 3, start = true }: { slug: string; name: string; max?: number; start?: boolean }) {
-  const [n, setN] = useState<AreaNews | null | "loading" | "idle">("idle");
+/*
+ * Local news per kommune, fetched once per page visit and kept, so stepping
+ * between sections or homes never starts it over. Most kommuner are already
+ * cached on the server (a cron keeps them fresh); a cold one can take a minute.
+ */
+const newsCache = new Map<string, Promise<AreaNews | null>>();
+export function prefetchNews(slug: string): Promise<AreaNews | null> {
+  if (!newsCache.has(slug)) {
+    const p = fetch(`/api/boligkoeb/news?kommune=${encodeURIComponent(slug)}`).then((r) => r.json()).then((j) => (j.ok ? (j.news as AreaNews) : null)).catch(() => null);
+    newsCache.set(slug, p);
+    p.then((v) => { if (!v) newsCache.delete(slug); });
+  }
+  return newsCache.get(slug)!;
+}
+
+/** Local news for a kommune: a short summary and the top items, each with its source. */
+export function News({ slug, name, max = 3 }: { slug: string; name: string; max?: number; start?: boolean }) {
+  const [n, setN] = useState<AreaNews | null | "loading">("loading");
   const [more, setMore] = useState(false);
+  const [slow, setSlow] = useState(false);
+  const [retry, setRetry] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => { setN("idle"); }, [slug]);
   useEffect(() => {
-    if (!start || n !== "idle") return;
-    const el = ref.current;
-    if (!el) return;
     let live = true;
-    const io = new IntersectionObserver((e) => {
-      if (!e[0].isIntersecting) return;
-      io.disconnect();
-      setN("loading");
-      fetch(`/api/boligkoeb/news?kommune=${encodeURIComponent(slug)}`).then((r) => r.json()).then((j) => live && setN(j.ok ? j.news : null)).catch(() => live && setN(null));
-    }, { rootMargin: "200px" });
-    io.observe(el);
-    return () => { live = false; io.disconnect(); };
-  }, [slug, start, n]);
+    setN("loading"); setSlow(false);
+    const t = setTimeout(() => live && setSlow(true), 6000);
+    prefetchNews(slug).then((v) => { if (live) setN(v); });
+    return () => { live = false; clearTimeout(t); };
+  }, [slug, retry]);
   return (
     <div ref={ref}>
-      {n === "idle" || n === "loading" ? (
-        <p className="flex items-center gap-2 text-[14px] text-slate-500"><Loader2 size={16} className="animate-spin" /> Læser lokale nyheder om {name} …</p>
+      {n === "loading" ? (
+        <div>
+          <p className="flex items-center gap-2 text-[14px] text-slate-500"><Loader2 size={16} className="animate-spin" /> Læser lokale nyheder om {name} …</p>
+          {slow && <p className="mt-2 text-[13px] text-slate-400">Første gang for {name} tager op til et minut. Du kan bladre videre imens.</p>}
+          <div className="mt-4 space-y-2.5">{[0, 1, 2].map((x) => <div key={x} className="h-12 animate-pulse rounded-xl bg-slate-100" />)}</div>
+        </div>
       ) : !n || (!n.items.length && !n.summary) ? (
-        <p className="text-[14px] text-slate-500">Ingen nyheder lige nu.</p>
+        <div className="text-[14px] text-slate-500">Nyhederne kunne ikke hentes lige nu. <button type="button" onClick={() => setRetry((r) => r + 1)} className="font-semibold text-emerald-700 hover:underline">Prøv igen</button></div>
       ) : (
         <>
           {n.summary && <p className="text-[15px] leading-relaxed text-slate-700"><b className={n.outlook === "vaekst" ? "text-emerald-700" : n.outlook === "tilbagegang" ? "text-rose-700" : "text-slate-900"}>{n.outlook === "vaekst" ? "I vækst. " : n.outlook === "tilbagegang" ? "Under pres. " : ""}</b>{n.summary}</p>}

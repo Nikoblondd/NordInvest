@@ -18,6 +18,29 @@ const MODEL = process.env.NORDINVEST_NEWS_MODEL ?? process.env.NORDINVEST_ANALYS
 const WEEK = 7 * 24 * 3600 * 1000;
 const inflight = new Map<string, Promise<AreaNews | null>>();
 
+/** Fresh news without waiting: the cached copy if there is one (any age up to a week), else null. */
+export async function cachedNews(slug: string): Promise<AreaNews | null> {
+  return readCache<AreaNews>(`omraade-${slug}`, WEEK);
+}
+
+/**
+ * Keeps every kommune's news ready, so nobody waits a minute for a web search:
+ * refreshes up to `max` kommuner whose copy is missing or older than six days.
+ * Called by a cron every hour.
+ */
+export async function warmNews(max = 3): Promise<string[]> {
+  if (!process.env.ANTHROPIC_API_KEY) return [];
+  const start = (new Date().getUTCHours() * 7) % MUNICIPALITIES.length;
+  const order = [...MUNICIPALITIES.slice(start), ...MUNICIPALITIES.slice(0, start)];
+  const stale: { slug: string; name: string }[] = [];
+  for (const k of order) {
+    if (stale.length >= max) break;
+    if (!(await readCache<AreaNews>(`omraade-${k.slug}`, 6 * 24 * 3600 * 1000))) stale.push(k);
+  }
+  await Promise.all(stale.map((k) => fetchNews(k.slug, k.name)));
+  return stale.map((k) => k.slug);
+}
+
 export async function areaNews(slug: string): Promise<AreaNews | null> {
   const k = MUNICIPALITIES.find((m) => m.slug === slug);
   if (!k) return null;
@@ -43,7 +66,7 @@ Højst 8 punkter, nyeste og vigtigste først.`;
         model: MODEL,
         max_tokens: 4000,
         system,
-        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 6 } as any],
+        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 4 } as any],
         messages,
       } as any);
       if (res.stop_reason !== "pause_turn") break;

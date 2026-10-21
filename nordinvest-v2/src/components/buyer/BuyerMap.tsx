@@ -32,16 +32,20 @@ type Props = {
   onSelect: (id: string | null) => void;
   onMove: (view: { lat: number; lon: number; zoom: number; bounds: [number, number, number, number] }) => void;
   onPlansState?: (s: "off" | "zoom" | "loading" | "ready") => void;
+  /** Drawing mode: the person outlines an area with the mouse or a finger. */
+  drawing?: boolean;
+  shape?: [number, number][] | null;
+  onDrawn?: (shape: [number, number][] | null) => void;
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const BuyerMap = forwardRef<MapHandle, Props>(function BuyerMap({ homes, savedIds, selectedId, initialView, showPlans, onSelect, onMove, onPlansState }, ref) {
+export const BuyerMap = forwardRef<MapHandle, Props>(function BuyerMap({ homes, savedIds, selectedId, initialView, showPlans, onSelect, onMove, onPlansState, drawing = false, shape = null, onDrawn }, ref) {
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<any>(null);
   const lib = useRef<any>(null);
   const ready = useRef(false);
-  const latest = useRef({ homes, savedIds, selectedId, showPlans, onSelect, onMove, onPlansState });
-  latest.current = { homes, savedIds, selectedId, showPlans, onSelect, onMove, onPlansState };
+  const latest = useRef({ homes, savedIds, selectedId, showPlans, onSelect, onMove, onPlansState, shape, onDrawn });
+  latest.current = { homes, savedIds, selectedId, showPlans, onSelect, onMove, onPlansState, shape, onDrawn };
 
   useImperativeHandle(ref, () => ({
     flyTo: (lat, lon, zoom = 14) => map.current?.flyTo({ center: [lon, lat], zoom, speed: 1.6, essential: true }),
@@ -83,6 +87,9 @@ export const BuyerMap = forwardRef<MapHandle, Props>(function BuyerMap({ homes, 
         m.addLayer({ id: "plans-fill", type: "fill", source: "plans", paint: { "fill-color": ["match", ["get", "status"], "forslag", "#7c3aed", "#6366f1"], "fill-opacity": 0.13 } });
         m.addLayer({ id: "plans-line", type: "line", source: "plans", paint: { "line-color": ["match", ["get", "status"], "forslag", "#7c3aed", "#6366f1"], "line-width": 1.6, "line-dasharray": [2, 1.5] } });
 
+        m.addSource("shape", { type: "geojson", data: empty() });
+        m.addLayer({ id: "shape-fill", type: "fill", source: "shape", paint: { "fill-color": "#2563eb", "fill-opacity": 0.08 } });
+        m.addLayer({ id: "shape-line", type: "line", source: "shape", paint: { "line-color": "#2563eb", "line-width": 3, "line-opacity": 0.9 }, layout: { "line-join": "round", "line-cap": "round" } });
         m.addSource("homes", { type: "geojson", data: empty(), promoteId: "id" });
         m.addLayer({
           id: "homes", type: "circle", source: "homes",
@@ -104,6 +111,7 @@ export const BuyerMap = forwardRef<MapHandle, Props>(function BuyerMap({ homes, 
         m.addLayer({ id: "sel-dot", type: "circle", source: "sel", paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 6, 12, 9, 16, 12], "circle-color": ["get", "c"], "circle-stroke-color": "#0f172a", "circle-stroke-width": 2.5 } });
 
         ready.current = true;
+        drawShape();
         draw();
         drawSelected();
         report();
@@ -185,6 +193,37 @@ export const BuyerMap = forwardRef<MapHandle, Props>(function BuyerMap({ homes, 
     m.getSource("sel")?.setData(h ? { type: "FeatureCollection", features: [{ type: "Feature", geometry: { type: "Point", coordinates: [h.lon, h.lat] }, properties: { c: VERDICT_COLOR[h.verdict] } }] } : empty());
   };
 
+  const drawShape = () => {
+    const m = map.current;
+    if (!m || !ready.current) return;
+    const sh = latest.current.shape;
+    m.getSource("shape")?.setData(sh && sh.length >= 3 ? { type: "FeatureCollection", features: [{ type: "Feature", geometry: { type: "Polygon", coordinates: [[...sh, sh[0]]] }, properties: {} }] } : empty());
+  };
+
+  // Drawing: points follow the pointer while it is down; letting go closes the area.
+  const pts = useRef<[number, number][]>([]);
+  const down = useRef(false);
+  const onPointer = (kind: "down" | "move" | "up", e: React.PointerEvent<HTMLDivElement>) => {
+    const m = map.current;
+    if (!m) return;
+    const r = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    const ll = m.unproject([e.clientX - r.left, e.clientY - r.top]);
+    const pt: [number, number] = [ll.lng, ll.lat];
+    if (kind === "down") { down.current = true; pts.current = [pt]; (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId); }
+    else if (kind === "move" && down.current) {
+      const last = m.project(pts.current[pts.current.length - 1]);
+      if (Math.hypot(last.x - (e.clientX - r.left), last.y - (e.clientY - r.top)) < 6) return;
+      pts.current.push(pt);
+    } else if (kind === "up" && down.current) {
+      down.current = false;
+      const done = pts.current.length >= 6 ? simplify(pts.current) : null;
+      latest.current.shape = done;
+      latest.current.onDrawn?.(done);
+      if (done) { const b = new lib.current.LngLatBounds(); done.forEach((x) => b.extend(x)); m.fitBounds(b, { padding: 70, maxZoom: 16, duration: 700 }); }
+    }
+    m.getSource("shape")?.setData(pts.current.length > 1 ? { type: "FeatureCollection", features: [{ type: "Feature", geometry: { type: "LineString", coordinates: kind === "up" ? [...pts.current, pts.current[0]] : pts.current }, properties: {} }] } : empty());
+  };
+
   const plansKey = useRef("");
   const loadPlans = async () => {
     const m = map.current;
@@ -216,10 +255,25 @@ export const BuyerMap = forwardRef<MapHandle, Props>(function BuyerMap({ homes, 
   useEffect(draw, [homes, savedIds]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(drawSelected, [selectedId, homes]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { plansKey.current = ""; void loadPlans(); }, [showPlans]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(drawShape, [shape]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // MapLibre sets position: relative on its container, so the container fills an absolutely placed wrapper.
-  return <div className="absolute inset-0"><div ref={box} className="h-full w-full bg-[#eef0ec]" aria-label="Kort over boliger til salg" role="region" /></div>;
+  return (
+    <div className="absolute inset-0">
+      <div ref={box} className="h-full w-full bg-[#eef0ec]" aria-label="Kort over boliger til salg" role="region" />
+      {drawing && (
+        <div className="absolute inset-0 z-10 cursor-crosshair touch-none" aria-label="Tegn et område på kortet"
+          onPointerDown={(e) => onPointer("down", e)} onPointerMove={(e) => onPointer("move", e)} onPointerUp={(e) => onPointer("up", e)} onPointerCancel={(e) => onPointer("up", e)} />
+      )}
+    </div>
+  );
 });
+
+/** Thin a hand-drawn outline to at most ~120 points. */
+function simplify(p: [number, number][]): [number, number][] {
+  const step = Math.max(1, Math.ceil(p.length / 120));
+  return p.filter((_, i) => i % step === 0);
+}
 
 const empty = () => ({ type: "FeatureCollection", features: [] }) as any;
 

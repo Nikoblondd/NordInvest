@@ -8,7 +8,7 @@
 // LLM needed. Only when ALL candidates fail does the optional self-repair kick in
 // (see repair.mjs). Mapping candidates live in MAPPINGS so repair can extend them.
 
-import { zipToMunicipality } from "./kommuner.mjs";
+import { ZIP_TO_MUNI, zipToMunicipality } from "./kommuner.mjs";
 
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36";
@@ -288,20 +288,27 @@ const BOLIG_TYPES = [
   "villa apartment",  // villalejlighed
   "holiday house",    // fritidshus
   "farm",             // landejendom
+  "hobby farm",       // lystejendom
 ];
+
+// Boligsiden stops at page 200 (10.000 results) per search, so one nationwide
+// search per type silently missed most villas (25.000 for sale, 8.800 seen).
+// Searching each kommune on its own keeps every search far below the cap.
+const KOMMUNER = Array.from(new Set(Object.values(ZIP_TO_MUNI))).sort();
 
 export const PORTALS = [
   {
     name: "boligsiden",
     // one "task" per address type; each pages nationwide
     tasks: () =>
-      BOLIG_TYPES.map((type) => ({
-        label: `boligsiden/${type}`,
+      KOMMUNER.flatMap((kommune) => BOLIG_TYPES.map((type) => ({
+        label: `boligsiden/${kommune}/${type}`,
         pageSize: 50,
-        page: (n) => `https://api.boligsiden.dk/search/cases?addressTypes=${encodeURIComponent(type)}&perPage=50&page=${n}`,
-        rows: (d) => (Array.isArray(d?.cases) ? d.cases : null),
+        page: (n) => `https://api.boligsiden.dk/search/cases?addressTypes=${encodeURIComponent(type)}&municipalities=${encodeURIComponent(kommune)}&perPage=50&page=${n}`,
+        // A kommune with none of a type answers { cases: null, totalHits: 0 }: that is an empty list, not a broken format.
+        rows: (d) => (Array.isArray(d?.cases) ? d.cases : d?.totalHits === 0 ? [] : null),
         norm: (row) => normBoligsiden(row, type),
-      })),
+      }))),
   },
   {
     name: "ejendomstorvet",

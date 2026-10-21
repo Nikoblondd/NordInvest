@@ -8,10 +8,20 @@ export const TYPE_CHIPS: { id: string; label: string; types: string[] }[] = [
   { id: "raekkehus", label: "Rækkehus", types: ["terraced house"] },
   { id: "andel", label: "Andelsbolig", types: ["cooperative"] },
   { id: "fritid", label: "Fritidshus", types: ["holiday house"] },
-  { id: "land", label: "Landejendom", types: ["farm"] },
+  { id: "land", label: "Landejendom", types: ["farm", "hobby farm"] },
 ];
 
 const DAY = 86400_000;
+
+/** Is a point inside a drawn area? (Ray casting; points are [lon, lat].) */
+export function inShape(lon: number, lat: number, shape: [number, number][]): boolean {
+  let inside = false;
+  for (let i = 0, j = shape.length - 1; i < shape.length; j = i++) {
+    const [xi, yi] = shape[i], [xj, yj] = shape[j];
+    if (yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
 
 /** Does a home match the filters? `newSince` decides what "Nye" means (default: the last 7 days). */
 export function matches(h: BuyerHome, f: Filters, newSince = Date.now() - 7 * DAY): boolean {
@@ -26,6 +36,7 @@ export function matches(h: BuyerHome, f: Filters, newSince = Date.now() - 7 * DA
   if (f.verdicts.length && !f.verdicts.includes(h.verdict)) return false;
   if (f.onlyCut && h.cutPct <= 0) return false;
   if (f.onlyNew && !(h.knownStart && Date.parse(h.firstSeen) >= newSince)) return false;
+  if (f.shape && f.shape.length >= 3 && !inShape(h.lon, h.lat, f.shape)) return false;
   return true;
 }
 
@@ -42,4 +53,4 @@ export function compare(sort: Sort): (a: BuyerHome, b: BuyerHome) => number {
 }
 
 /** True when the filters narrow anything at all. */
-export const hasFilters = (f: Filters) => !!(f.types.length || f.priceMin != null || f.priceMax != null || f.areaMin != null || f.roomsMin != null || f.verdicts.length || f.onlyCut || f.onlyNew);
+export const hasFilters = (f: Filters) => !!(f.shape?.length || f.types.length || f.priceMin != null || f.priceMax != null || f.areaMin != null || f.roomsMin != null || f.verdicts.length || f.onlyCut || f.onlyNew);

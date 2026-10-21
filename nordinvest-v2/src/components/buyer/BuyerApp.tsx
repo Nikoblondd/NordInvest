@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- listing photos come from the portals' own image CDN */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Bell, Building2, Check, ChevronDown, Heart, LayoutDashboard, List, Loader2, LocateFixed, Map as MapIcon, Search, Share2, SlidersHorizontal, X } from "lucide-react";
+import { Bell, Building2, Check, ChevronDown, Heart, LayoutDashboard, List, Loader2, LocateFixed, Map as MapIcon, PenLine, Search, Share2, SlidersHorizontal, X } from "lucide-react";
 import { BuyerMap, VERDICT_COLOR, type MapHandle } from "./BuyerMap";
 import { HomePanel } from "./HomeDetail";
 import { BoligkrydsMark } from "./Brand";
@@ -63,6 +63,7 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
   const [tab, setTab] = useState<Tab>("kort");
   const [filterOpen, setFilterOpen] = useState(false);
   const [showPlans, setShowPlans] = useState(true);
+  const [drawing, setDrawing] = useState(false);
   const [plansState, setPlansState] = useState<"off" | "zoom" | "loading" | "ready">("zoom");
   const [shown, setShown] = useState(PAGE);
   const [greeting, setGreeting] = useState<{ fresh: BuyerHome[]; drops: { h: BuyerHome; from: number }[]; since: string } | null>(null);
@@ -227,7 +228,7 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
       <div className="relative min-w-0 flex-1" data-tour="map">
         {state && (
           <BuyerMap ref={mapRef} homes={filtered} savedIds={savedIds} selectedId={selected} initialView={state.view} showPlans={showPlans}
-            onSelect={select} onMove={onMove} onPlansState={setPlansState} />
+            onSelect={select} onMove={onMove} onPlansState={setPlansState} drawing={drawing} shape={filters.shape ?? null} onDrawn={(sh) => { setDrawing(false); if (sh) setFilters({ shape: sh }); }} />
         )}
         {!homes && <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60 backdrop-blur-[2px]"><div className="flex items-center gap-2.5 rounded-full bg-white px-5 py-3 text-[15px] font-medium shadow-lg ring-1 ring-slate-200"><Loader2 size={18} className="animate-spin text-blue-600" /> Henter alle boliger til salg …</div></div>}
 
@@ -251,6 +252,19 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
             {TYPE_CHIPS.slice(0, 4).map((c) => <Chip key={c.id} on={filters.types.includes(c.id)} onClick={() => setFilters({ types: filters.types.includes(c.id) ? filters.types.filter((t) => t !== c.id) : [...filters.types, c.id] })}>{c.label}</Chip>)}
             <Chip on={showPlans} onClick={() => setShowPlans(!showPlans)} dot="#7c3aed">Byggeprojekter</Chip>
           </div>
+          {drawing && (
+            <div className="pointer-events-auto mt-2 inline-flex items-center gap-3 rounded-full bg-blue-600 py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-white shadow-lg">
+              Tegn en ring om området med musen eller fingeren
+              <button type="button" onClick={() => setDrawing(false)} className="rounded-full bg-white/20 px-3 py-1 text-[13px]">Annullér</button>
+            </div>
+          )}
+          {!drawing && filters.shape && (
+            <div className="pointer-events-auto mt-2 inline-flex items-center gap-2 rounded-full bg-white py-1.5 pl-3 pr-1.5 text-[14px] font-semibold text-blue-700 shadow-lg ring-1 ring-blue-200">
+              <PenLine size={15} /> Viser kun dit tegnede område
+              <button type="button" onClick={() => setDrawing(true)} className="rounded-full px-2 py-1 text-[13px] text-slate-600 hover:bg-slate-100">Tegn igen</button>
+              <button type="button" onClick={() => setFilters({ shape: null })} aria-label="Fjern det tegnede område" className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 hover:bg-blue-100"><X size={14} /></button>
+            </div>
+          )}
           {freshIds && (
             <div className="pointer-events-auto mt-2 inline-flex items-center gap-2 rounded-full bg-blue-600 py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-white shadow-lg">
               Viser {freshIds.size} nye boliger <button type="button" onClick={() => setFreshIds(null)} className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20" aria-label="Vis alle boliger igen"><X size={14} /></button>
@@ -260,6 +274,8 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
 
         {/* Right-side map buttons */}
         <div className="absolute right-3 top-[132px] z-20 flex flex-col gap-2 sm:right-4">
+          <button type="button" onClick={() => { setSelected(null); setDrawing(!drawing); }} aria-pressed={drawing} title="Tegn et område" aria-label="Tegn et område på kortet"
+            className={`flex h-11 w-11 items-center justify-center rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ${drawing || filters.shape ? "bg-blue-600 text-white ring-blue-600" : "bg-white text-blue-600 ring-slate-200/70"}`}><PenLine size={19} /></button>
           <MapButton label="Find mig" onClick={() => navigator.geolocation?.getCurrentPosition((p) => mapRef.current?.flyTo(p.coords.latitude, p.coords.longitude, 13.5), () => alert("Vi kunne ikke finde din placering."))}><LocateFixed size={19} /></MapButton>
         </div>
 
