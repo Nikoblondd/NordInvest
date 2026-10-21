@@ -7,7 +7,8 @@ import { geist } from "@/components/home/fonts";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { AccessForm } from "@/components/landing/AccessForm";
 import { createClient } from "@/lib/supabase/server";
-import { hasToolAccess } from "@/lib/access";
+import { hasToolAccess, isPrivate } from "@/lib/access";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Anmod om adgang",
@@ -15,10 +16,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/adgang" },
 };
 
-export default async function AdgangPage({ searchParams }: { searchParams: { kilde?: string } }) {
+export default async function AdgangPage({ searchParams }: { searchParams: { kilde?: string; type?: string } }) {
   // A logged-in account without tool access lands here: say so plainly.
   const supabase = createClient();
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+  if (user && isPrivate(user)) redirect("/boligkoeb");
   const waiting = !!user && !hasToolAccess(user);
   return (
     <div className={`${geist.variable} min-h-screen bg-white font-[family-name:var(--font-geist)] text-slate-900 antialiased`}>
@@ -36,7 +38,7 @@ export default async function AdgangPage({ searchParams }: { searchParams: { kil
             </h1>
             <p className="mt-5 max-w-[32rem] text-[18px] leading-relaxed text-white/65">Svar på et par korte spørgsmål. Så ringer jeg dig op, og vi finder ud af, om NordInvest kan hjælpe dig.</p>
             <ol className="mt-10 space-y-6">
-              {[["Du sender anmodningen", "Det tager 2 minutter."], ["Vi tager en samtale på 20 minutter", "Jeg ringer inden for en arbejdsdag. Vi taler om, hvordan du investerer i dag, og hvad du har brug for."], ["Du får et ærligt svar", "Passer NordInvest til dig, aftaler vi pris, og du får en personlig invitation. Ellers siger jeg det."]].map(([t, d], i) => (
+              {[["Du sender anmodningen", "Det tager 2 minutter."], ["Vi tager en samtale på 20 minutter", "Jeg ringer inden for en arbejdsdag. Vi taler om, hvad du skal købe, og hvad du har brug for."], ["Du får et ærligt svar", "Passer NordInvest til dig, aftaler vi pris, og du får en personlig invitation. Ellers siger jeg det."]].map(([t, d], i) => (
                 <li key={t} className="flex gap-4">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500 text-[14px] font-semibold">{i + 1}</span>
                   <span><span className="block text-[17px] font-semibold">{t}</span><span className="mt-0.5 block max-w-md text-[15px] leading-relaxed text-white/60">{d}</span></span>
@@ -54,7 +56,7 @@ export default async function AdgangPage({ searchParams }: { searchParams: { kil
               </div>
             </div>
           </div>
-          <div><AccessForm source={searchParams.kilde ? String(searchParams.kilde).slice(0, 40) : "adgang"} /></div>
+          <div><AccessForm source={searchParams.kilde ? String(searchParams.kilde).slice(0, 40) : "adgang"} role={searchParams.type === "privat" || searchParams.type === "maegler" || searchParams.type === "investor" ? searchParams.type : undefined} /></div>
         </div>
       </main>
       <Footer />

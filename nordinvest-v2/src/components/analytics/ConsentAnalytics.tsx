@@ -104,6 +104,8 @@ export function ConsentAnalytics() {
   const embedded = path.startsWith("/embed");
   // Inside the app, sit above the phone tab bar.
   const inApp = path === "/app" || path.startsWith("/app/");
+  // On the home buyer's map it sits at the top, clear of the legend and the tab bar.
+  const onMap = path === "/boligkoeb";
   const [consent, setConsent] = useState<"accepted" | "declined" | "unset" | "loading">("loading");
   const engaged = useEngaged(consent === "unset");
   // "Cookie-indstillinger" in the footer reopens the banner straight away.
@@ -147,7 +149,7 @@ export function ConsentAnalytics() {
       role="region"
       aria-label="Cookies"
       data-consent
-      className={`fixed inset-x-0 bottom-0 z-[60] px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] motion-safe:animate-[consent-in_220ms_ease-out] sm:inset-x-auto sm:bottom-4 sm:left-4 sm:px-0 sm:pb-0 ${inApp ? "max-lg:bottom-[62px]" : ""}`}
+      className={`fixed inset-x-0 bottom-0 z-[60] px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] motion-safe:animate-[consent-in_220ms_ease-out] sm:inset-x-auto sm:bottom-4 sm:left-4 sm:px-0 sm:pb-0 ${inApp ? "max-lg:bottom-[62px]" : ""} ${onMap ? "!bottom-[104px]" : ""}`}
     >
       <div className="mx-auto flex items-center gap-2 rounded-2xl border border-slate-200 bg-white/95 py-2 pl-3.5 pr-2 shadow-[0_10px_30px_-12px_rgba(15,23,42,0.35)] backdrop-blur sm:w-[380px] sm:flex-col sm:items-stretch sm:gap-3 sm:p-4">
         <p className="min-w-0 flex-1 text-[13px] leading-snug text-slate-600 sm:text-sm">

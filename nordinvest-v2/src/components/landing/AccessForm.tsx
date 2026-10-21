@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Loader2 } from "lucide-react";
-import { GOALS, PORTFOLIO, validate, type FieldErrors } from "@/lib/access/fields";
+import { GOALS, HOME_GOALS, PORTFOLIO, ROLES, validate, type FieldErrors, type Role } from "@/lib/access/fields";
 import { captureEvent } from "@/lib/analytics-events";
 
 /*
@@ -12,9 +12,10 @@ import { captureEvent } from "@/lib/analytics-events";
  * /api/adgang. Submitting never grants access.
  */
 
-export function AccessForm({ source = "adgang" }: { source?: string }) {
+export function AccessForm({ source = "adgang", role: initialRole }: { source?: string; role?: Role }) {
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [role, setRole] = useState<Role | "">(initialRole ?? "");
   const [portfolio, setPortfolio] = useState("");
   const [goals, setGoals] = useState<string[]>([]);
   const started = useRef(Date.now());
@@ -27,7 +28,7 @@ export function AccessForm({ source = "adgang" }: { source?: string }) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const body = {
-      name: f.get("name"), email: f.get("email"), phone: f.get("phone"), portfolio, goals,
+      role, name: f.get("name"), email: f.get("email"), phone: f.get("phone"), portfolio, goals,
       message: f.get("message"), website: f.get("website"),
       source, t: started.current,
     };
@@ -45,7 +46,7 @@ export function AccessForm({ source = "adgang" }: { source?: string }) {
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
         setState("sent");
-        captureEvent("access_requested", { portfolio, goals: goals.join(","), source });
+        captureEvent("access_requested", { role, portfolio, goals: goals.join(","), source });
         return;
       }
       if (data.errors) {
@@ -85,7 +86,22 @@ export function AccessForm({ source = "adgang" }: { source?: string }) {
       {/* Hidden from people; bots fill it in. */}
       <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden"><label>Hjemmeside<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <fieldset className="mt-6">
+        <legend className={label}>Hvem er du?</legend>
+        <div className="mt-2 grid gap-2 sm:grid-cols-3" role="radiogroup" aria-invalid={!!errors.role}>
+          {ROLES.map((r, i) => (
+            <button key={r.id} type="button" role="radio" aria-checked={role === r.id} data-field={i === 0 ? "role" : undefined}
+              onClick={() => { setRole(r.id); setGoals([]); setErrors((e) => ({ ...e, role: undefined })); }}
+              className={`min-h-[44px] rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 ${role === r.id ? "border-[#0b1b33] bg-[#0b1b33] text-white" : "border-slate-300 bg-white text-slate-800 hover:border-slate-400"}`}>
+              <span className="block text-[15px] font-semibold">{r.label}</span>
+              <span className={`mt-0.5 block text-[13px] leading-snug ${role === r.id ? "text-white/70" : "text-slate-500"}`}>{r.lead}</span>
+            </button>
+          ))}
+        </div>
+        <Err k="role" />
+      </fieldset>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label htmlFor="af-name" className={label}>Navn</label>
           <input id="af-name" name="name" data-field="name" autoComplete="name" aria-invalid={!!errors.name} aria-describedby={errors.name ? "af-name-err" : undefined} className={`mt-1.5 ${input(errors.name)}`} />
@@ -103,22 +119,22 @@ export function AccessForm({ source = "adgang" }: { source?: string }) {
         </div>
       </div>
 
-      <fieldset className="mt-5">
+      {role === "investor" && <fieldset className="mt-5">
         <legend className={label}>Hvor mange udlejningsejendomme ejer du i dag?</legend>
         <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-invalid={!!errors.portfolio}>
           {PORTFOLIO.map((p, i) => <button key={p} type="button" role="radio" aria-checked={portfolio === p} data-field={i === 0 ? "portfolio" : undefined} onClick={() => setPortfolio(p)} className={chip(portfolio === p)}>{p}</button>)}
         </div>
         <Err k="portfolio" />
-      </fieldset>
-      <fieldset className="mt-5">
+      </fieldset>}
+      {(role === "investor" || role === "privat") && <fieldset className="mt-5">
         <legend className={label}>Hvad kigger du efter? <span className="font-normal text-slate-400">Vælg gerne flere</span></legend>
         <div className="mt-2 flex flex-wrap gap-2">
-          {GOALS.map((g) => { const on = goals.includes(g); return <button key={g} type="button" aria-pressed={on} onClick={() => setGoals(on ? goals.filter((x) => x !== g) : [...goals, g])} className={chip(on)}>{g}</button>; })}
+          {(role === "privat" ? HOME_GOALS : GOALS).map((g) => { const on = goals.includes(g); return <button key={g} type="button" aria-pressed={on} onClick={() => setGoals(on ? goals.filter((x) => x !== g) : [...goals, g])} className={chip(on)}>{g}</button>; })}
         </div>
-      </fieldset>
+      </fieldset>}
 
       <div className="mt-5">
-        <label htmlFor="af-msg" className={label}>Hvad skal NordInvest hjælpe dig med? <span className="font-normal text-slate-400">(valgfrit)</span></label>
+        <label htmlFor="af-msg" className={label}>{role === "privat" ? "Hvor leder du, og hvad er vigtigt for dig?" : role === "maegler" ? "Hvilket mæglerfirma er du fra?" : "Hvad skal NordInvest hjælpe dig med?"} <span className="font-normal text-slate-400">(valgfrit)</span></label>
         <textarea id="af-msg" name="message" rows={3} className={`mt-1.5 ${input()} h-auto py-2.5`} />
       </div>
 

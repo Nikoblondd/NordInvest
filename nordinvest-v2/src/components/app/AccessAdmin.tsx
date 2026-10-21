@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, Copy, Loader2, Mail, Phone, RotateCcw, Send, X } from "lucide-react";
 import { clsx } from "@/lib/clsx";
-import { REQUEST_STATUS, type AccessRequest, type RequestStatus } from "@/lib/access/fields";
+import { REQUEST_STATUS, ROLE_LABEL, type AccessRequest, type RequestStatus } from "@/lib/access/fields";
 import { DEFAULT_INVITE_TEXT, INVITE_TEXT_MAX, type InviteCopyKind } from "@/lib/access/invite-copy";
 
 /*
@@ -70,7 +70,8 @@ export function AccessAdmin({ requests: initial, focus }: { requests: AccessRequ
   }, []);
 
   const approve = async (r: AccessRequest): Promise<boolean> => {
-    const res = await call({ action: "invite", email: r.email, name: r.name, requestId: r.id, requestCreatedAt: r.createdAt });
+    const kind = r.role === "privat" ? "privat" : r.role === "maegler" ? "maegler" : "member";
+    const res = await call({ action: "invite", email: r.email, name: r.name, requestId: r.id, requestCreatedAt: r.createdAt, kind });
     if (!res.ok) { say(res.reason === "email" ? "E-mailen i anmodningen er ugyldig." : "Godkendelsen mislykkedes. Prøv igen.", undefined, "info"); return false; }
     replace({ ...r, status: "inviteret", invitedUserId: res.userId, inviteMailId: res.mailId ?? undefined });
     void report(res, r.name, r.email);
@@ -162,7 +163,8 @@ function RequestCard({ r, highlight, onApprove, onReject, onReopen }: { r: Acces
       </div>
 
       <dl className="mt-4 grid gap-x-6 gap-y-2 border-t border-slate-100 pt-3 text-[14px] sm:grid-cols-2">
-        <div className="flex gap-2"><dt className="text-slate-500">Ejer i dag</dt><dd className="font-medium text-slate-800">{r.portfolio}</dd></div>
+        <div className="flex gap-2"><dt className="text-slate-500">Hvem</dt><dd className="font-medium text-slate-800">{ROLE_LABEL[r.role ?? "investor"]}</dd></div>
+        {(r.role ?? "investor") === "investor" && <div className="flex gap-2"><dt className="text-slate-500">Ejer i dag</dt><dd className="font-medium text-slate-800">{r.portfolio}</dd></div>}
         <div className="flex gap-2"><dt className="text-slate-500">Leder efter</dt><dd className="font-medium text-slate-800">{r.goals.join(", ") || "Ikke oplyst"}</dd></div>
       </dl>
       {r.message && <p className="mt-3 whitespace-pre-line rounded-lg bg-slate-50 p-3 text-[15px] leading-relaxed text-slate-700">{r.message}</p>}
@@ -251,7 +253,7 @@ function InviteForm({ onInvited }: { onInvited: (email: string, res: { sent?: bo
     <form onSubmit={submit} className="mt-5 max-w-xl rounded-2xl border border-slate-200 bg-white p-5">
       <p className="text-[15px] text-slate-600">Giv adgang uden en anmodning. Personen får en mail med et personligt link, der ikke udløber.</p>
       <div className="mt-4 flex flex-wrap gap-2" role="radiogroup" aria-label="Type adgang">
-        {([["member", "Medlem", "Hele platformen"], ["maegler", "Ejendomsmægler", "Kun mæglerværktøjet"], ["begge", "Begge", "Platformen og mæglerværktøjet"]] as const).map(([k, t, d]) => (
+        {([["member", "Medlem", "Hele platformen"], ["privat", "Boligkøber", "Boligkortet for private"], ["maegler", "Ejendomsmægler", "Kun mæglerværktøjet"], ["begge", "Begge", "Platformen og mæglerværktøjet"]] as const).map(([k, t, d]) => (
           <button key={k} type="button" role="radio" aria-checked={kind === k} onClick={() => pick(k)}
             className={`min-h-[44px] rounded-lg border px-3.5 py-1.5 text-left text-[14px] ${kind === k ? "border-blue-600 bg-blue-50 text-blue-900" : "border-slate-300 bg-white text-slate-700"}`}>
             <span className="block font-semibold">{t}</span><span className="block text-[12px] text-slate-500">{d}</span>

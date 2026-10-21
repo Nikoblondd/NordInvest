@@ -11,7 +11,7 @@ const URL_ = () => process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const KEY = () => process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 const h = (json = false) => ({ Authorization: `Bearer ${KEY()}`, apikey: KEY(), ...(json ? { "Content-Type": "application/json" } : {}) });
 
-export type Kind = "agents" | "events";
+export type Kind = "agents" | "events" | "boligkoeb";
 const path = (kind: Kind, userId: string) => `${kind}/${userId}.json`;
 const validId = (id: string) => /^[0-9a-f-]{36}$/i.test(id);
 
@@ -59,4 +59,21 @@ export async function storeOwners(kind: Kind): Promise<string[]> {
     if (files.length < 1000) break;
   }
   return out;
+}
+
+/** A shared cached JSON document (not per member), e.g. area news per kommune. */
+export async function readCache<T>(name: string, maxAgeMs: number): Promise<T | null> {
+  if (!/^[a-z0-9-]+$/.test(name) || !URL_() || !KEY()) return null;
+  const r = await fetch(`${URL_()}/storage/v1/object/${BUCKET}/cache/${name}.json`, { headers: h(), cache: "no-store" }).catch(() => null);
+  if (!r?.ok) return null;
+  const d = (await r.json().catch(() => null)) as { at: number; data: T } | null;
+  return d && Date.now() - d.at < maxAgeMs ? d.data : null;
+}
+
+export async function writeCache<T>(name: string, data: T): Promise<void> {
+  if (!/^[a-z0-9-]+$/.test(name) || !URL_() || !KEY()) return;
+  await ensureBucket();
+  await fetch(`${URL_()}/storage/v1/object/${BUCKET}/cache/${name}.json`, {
+    method: "POST", headers: { ...h(true), "x-upsert": "true", "cache-control": "no-cache" }, body: JSON.stringify({ at: Date.now(), data }),
+  }).catch(() => null);
 }

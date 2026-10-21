@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Building2, CalendarDays, Calculator, ChevronDown, CircleHelp, Home, KeyRound, LayoutGrid, LogOut, Mail, Plus, Code2, Rocket, Search, Settings, BarChart3, Users, X } from "lucide-react";
+import { Building2, CalendarDays, Calculator, ChevronDown, CircleHelp, Home, KeyRound, LayoutGrid, LogOut, Mail, Plus, Code2, Rocket, Search, Settings, BarChart3, Users, X, MapPinned } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { Tour, startTour } from "./Tour";
 
@@ -29,6 +29,7 @@ const ADMIN = [
   { href: "/app/admin/medlemmer", label: "Medlemmer", Icon: Users },
   { href: "/app/admin/adgang", label: "Anmodninger", Icon: KeyRound },
   { href: "/maegler", label: "Mæglerværktøj", Icon: Code2 },
+  { href: "/boligkoeb", label: "Boligkort (private)", Icon: MapPinned },
   { href: "/dashboard/launch", label: "Launch", Icon: Rocket },
   { href: "/dashboard/analytics", label: "Analytics", Icon: BarChart3 },
 ];

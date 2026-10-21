@@ -18,7 +18,7 @@ type Sort = "aktiv" | "analyser" | "boliger" | "nyeste";
 const SORTS: Record<Sort, string> = { aktiv: "Senest aktiv", analyser: "Flest analyser", boliger: "Flest boliger", nyeste: "Nyeste konto" };
 
 const inSeg = (m: MemberSummary, s: Seg) =>
-  s === "alle" || (s === "medlemmer" ? m.access === "member" || m.access === "broker" || m.access === "admin" : s === "fjernet" ? m.access === "revoked" : m.access === "none");
+  s === "alle" || (s === "medlemmer" ? m.access === "member" || m.access === "broker" || m.access === "privat" || m.access === "admin" : s === "fjernet" ? m.access === "revoked" : m.access === "none");
 
 export function MembersBoard({ members, pending }: { members: MemberSummary[]; pending: number }) {
   const router = useRouter();
@@ -35,7 +35,7 @@ export function MembersBoard({ members, pending }: { members: MemberSummary[]; p
     return [...list].sort((a, b) => { const x = key[sort](a), y = key[sort](b); return x < y ? 1 : x > y ? -1 : 0; });
   }, [members, q, seg, sort]);
 
-  const active = members.filter((m) => m.access === "member" || m.access === "broker" || m.access === "admin");
+  const active = members.filter((m) => m.access === "member" || m.access === "broker" || m.access === "privat" || m.access === "admin");
   const week = Date.now() - 7 * 24 * 3600 * 1000;
   const kpis: [string, number, string][] = [
     ["Medlemmer", active.length, `${active.filter((m) => m.onboarded).length} har logget ind`],

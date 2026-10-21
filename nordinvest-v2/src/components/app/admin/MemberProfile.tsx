@@ -65,7 +65,7 @@ export function MemberProfile({ m, self }: { m: MemberDetail; self: boolean }) {
           <h1 className="flex flex-wrap items-center gap-2.5 text-[26px] font-semibold leading-tight tracking-[-0.025em] text-slate-900 sm:text-[30px]">
             {m.name || m.email.split("@")[0]} <AccessBadge access={m.access} alsoBroker={m.alsoBroker} />
           </h1>
-          <p className="mt-1 text-[15px] text-slate-500">{m.access === "member" || m.access === "broker" || m.access === "admin" ? `Medlem siden ${dateDk(m.invitedAt ?? m.createdAt)}` : `Konto siden ${dateDk(m.createdAt)}`} · senest aktiv {ago(m.lastActive).toLowerCase()}</p>
+          <p className="mt-1 text-[15px] text-slate-500">{m.access === "member" || m.access === "broker" || m.access === "privat" || m.access === "admin" ? `Medlem siden ${dateDk(m.invitedAt ?? m.createdAt)}` : `Konto siden ${dateDk(m.createdAt)}`} · senest aktiv {ago(m.lastActive).toLowerCase()}</p>
         </div>
         <div className="flex w-full flex-wrap gap-2 sm:w-auto">
           {m.phone && <a href={`tel:${m.phone.replace(/\s/g, "")}`} className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 text-[14px] font-semibold text-slate-700 hover:border-slate-300"><Phone size={15} /> Ring</a>}
@@ -187,7 +187,7 @@ export function MemberProfile({ m, self }: { m: MemberDetail; self: boolean }) {
           <section className="rounded-2xl border border-slate-200 bg-white p-5">
             <h2 className="text-[16px] font-semibold text-slate-900">Handlinger</h2>
             <div className="mt-3 space-y-2">
-              {(m.access === "member" || m.access === "broker" || m.access === "admin") && (
+              {(m.access === "member" || m.access === "broker" || m.access === "privat" || m.access === "admin") && (
                 <button type="button" onClick={sendLink} disabled={!!busy} className="flex min-h-[44px] w-full items-center gap-2.5 rounded-lg border border-slate-200 px-3.5 text-[14px] font-semibold text-slate-700 hover:border-slate-300 disabled:opacity-60">
                   {busy === "link" ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} className="text-slate-400" />} Send login-link
                 </button>
@@ -202,7 +202,7 @@ export function MemberProfile({ m, self }: { m: MemberDetail; self: boolean }) {
               ) : (
                 <button type="button" onClick={() => setAsk("unadmin")} disabled={!!busy} className="flex min-h-[44px] w-full items-center gap-2.5 rounded-lg border border-slate-200 px-3.5 text-[14px] font-semibold text-slate-700 hover:border-slate-300"><KeyRound size={16} className="text-slate-400" /> Fjern administratorrolle</button>
               ))}
-              {(m.access === "member" || m.access === "broker") && (ask === "revoke" ? (
+              {(m.access === "member" || m.access === "broker" || m.access === "privat") && (ask === "revoke" ? (
                 <Confirm text="Fjern adgangen? Personen kan ikke længere logge ind i NordInvest. Data bevares." yes="Ja, fjern adgang" busy={busy === "revoke"} onYes={() => act("revoke", { action: "revoke", userId: m.id }, "Adgangen er fjernet.")} onNo={() => setAsk(null)} danger />
               ) : (
                 <button type="button" onClick={() => setAsk("revoke")} disabled={!!busy} className="flex min-h-[44px] w-full items-center gap-2.5 rounded-lg px-3.5 text-[14px] font-semibold text-rose-700 hover:bg-rose-50"><UserMinus size={16} /> Fjern adgang</button>

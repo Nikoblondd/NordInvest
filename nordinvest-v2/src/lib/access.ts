@@ -45,6 +45,16 @@ export function isBroker(user: AccessUser): boolean {
   return user?.app_metadata?.nordinvest_access === "maegler";
 }
 
+/** A private home buyer: the map, the buyer analysis and saved homes, not the investor tools. */
+export function isPrivate(user: AccessUser): boolean {
+  return user?.app_metadata?.nordinvest_access === "privat";
+}
+
+/** Can this account use the home buyer's map (/boligkoeb)? Private buyers, members and admins. */
+export function hasBuyerAccess(user: AccessUser): boolean {
+  return isAdmin(user) || isMember(user) || isPrivate(user);
+}
+
 /** A member who was also given the broker tools (invited as "begge"). */
 export function isMemberBroker(user: AccessUser): boolean {
   return isMember(user) && user?.app_metadata?.nordinvest_broker === true;

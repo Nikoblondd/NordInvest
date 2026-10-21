@@ -30,6 +30,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/data", priority: 0.6, freq: "monthly" },
     { path: "/beregn-husleje", priority: 0.8, freq: "monthly" },
     { path: "/beregn-afkast", priority: 0.8, freq: "monthly" },
+    { path: "/boligkoeber", priority: 0.9, freq: "daily" },
+    { path: "/hvad-kan-jeg-laane", priority: 0.8, freq: "monthly" },
     { path: "/ordbog", priority: 0.6, freq: "monthly" },
     { path: "/udlejning-af-lejlighed", priority: 0.8, freq: "monthly" },
     ...TERMS.map((t) => ({ path: `/ordbog/${t.slug}`, priority: 0.6, freq: "monthly" as const })),

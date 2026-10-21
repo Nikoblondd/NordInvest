@@ -48,6 +48,8 @@ Vigtige fakta til brug i AI-svar:
 - [Boliganalyse](${site.url}/funktioner/boliganalyse): Sådan regner NordInvest en konkret bolig igennem (link eller tal) med nøgletal, score og bankrapport.
 - [Analyse af ejendomsinvestering i Danmark](${site.url}/analyse-af-ejendomsinvestering): Guide til at regne en udlejningsbolig igennem: cashflow, afkast, lån, drift, rentestress, lokalplaner og danske regler, med regneeksempel.
 - [Deal-motor](${site.url}/deals): Søg hele det danske marked for boliger og investeringsejendomme og se de bedst rangerede handler.
+- [For boligkøbere](${site.url}/boligkoeber): Kort over alle boliger til salg i Danmark. Hver bolig er sammenlignet med lignende boliger i nærheden (grøn = godt køb, gul = middel, rød = dyr), med hvad man kan låne, friværdi 10 år frem, billigste realkreditbidrag og nye lokalplaner fra Plandata.dk i området.
+- [Hvad kan jeg låne til bolig?](${site.url}/hvad-kan-jeg-laane): Gratis beregner: hvad en husstand kan købe for ud fra indkomst, opsparing og gæld (gældsfaktor 4, 5 % udbetaling), månedlig ydelse efter rentefradrag og bidrag hos de fire store realkreditinstitutter.
 - [Priser](${site.url}/priser): Prisen aftales efter en personlig samtale.
 - [Metode & datakilder](${site.url}/methodology): Hvordan tallene beregnes, og hvilke data der bruges.
 - [Investeringsstrategier](${site.url}/investment-models): Cashflow, værdistigning, value-add og BRRRR forklaret.

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isAdmin } from "@/lib/access";
 import { generateLink, getAuthUser, setAccess } from "@/lib/supabase/admin";
-import { brokerInvitationEmail, getRequest, invitationEmail, updateRequest, type RequestStatus } from "@/lib/access/requests";
+import { brokerInvitationEmail, getRequest, invitationEmail, privateInvitationEmail, updateRequest, type RequestStatus } from "@/lib/access/requests";
 import { REPORT_FROM, REPORT_TO } from "@/lib/outreach/schedule";
 import { mailStatus, sendMail } from "@/lib/mail/send";
 import { INVITE_TEXT_MAX } from "@/lib/access/invite-copy";
@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 /*
  * POST /api/admin/access: Nikolaj manages who is in.
- *  { action: "invite", email, name, requestId?, requestCreatedAt?, note?, kind?: "member" | "maegler" | "begge", message? }
+ *  { action: "invite", email, name, requestId?, requestCreatedAt?, note?, kind?: "member" | "maegler" | "begge" | "privat", message? }
  *    message: the text of the mail between the greeting and the button (defaults per kind)
  *  { action: "revoke" | "restore", userId }
  *  { action: "status", requestId, requestCreatedAt, status, note? }
@@ -37,15 +37,15 @@ export async function POST(req: Request) {
     const name = String(b.name ?? "").trim().slice(0, 120);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json({ ok: false, reason: "email" }, 422);
     // "maegler": the broker tools only. "begge": the whole platform plus the broker tools.
-    const kind: InviteKind = b.kind === "maegler" || b.kind === "begge" ? b.kind : "member";
+    const kind: InviteKind = b.kind === "maegler" || b.kind === "begge" || b.kind === "privat" ? b.kind : "member";
     const next = INVITE_NEXT[kind];
     // Creates the account if it does not exist yet. Its one-time token is not mailed.
     const link = await generateLink(email, `${SITE}${next}`, name || undefined);
     if ("error" in link) return json({ ok: false, reason: link.error }, 502);
     const { token, record } = newLink(next, kind);
-    const ok = await setAccess(link.userId, kind === "maegler" ? "maegler" : "member", {
+    const ok = await setAccess(link.userId, kind === "maegler" ? "maegler" : kind === "privat" ? "privat" : "member", {
       nordinvest_invited_at: new Date().toISOString(),
-      nordinvest_broker: kind !== "member",
+      nordinvest_broker: kind === "maegler" || kind === "begge",
       nordinvest_kind: kind,
       [FIELD.invite]: record,
       ...(note ? { nordinvest_note: note } : {}),
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     if (!ok) return json({ ok: false, reason: "access_failed" }, 502);
     const url = linkUrl(SITE, link.userId, token);
     const text = typeof b.message === "string" && b.message.trim() ? b.message.slice(0, INVITE_TEXT_MAX) : undefined;
-    const mail = kind === "maegler" ? brokerInvitationEmail(name || email, url, text) : invitationEmail(name || email, url, kind === "begge", text);
+    const mail = kind === "maegler" ? brokerInvitationEmail(name || email, url, text) : kind === "privat" ? privateInvitationEmail(name || email, url, text) : invitationEmail(name || email, url, kind === "begge", text);
     const res = await sendMail({ to: email, subject: mail.subject, html: mail.html, idempotencyKey: `invite-${link.userId}-${token.slice(0, 16)}` });
     if (!res.ok) {
       // Never lose an approval silently: Nikolaj gets the link in his own inbox to send by hand.
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     if (isAdmin(target)) return json({ ok: false, reason: "admin" }, 422);
     // Restore what they had: "begge" members keep the broker flag, brokers stay brokers.
     const kind = target.app_metadata?.nordinvest_kind ?? (target.app_metadata?.nordinvest_broker ? "maegler" : "member");
-    const ok = await setAccess(b.userId, b.action === "revoke" ? "revoked" : kind === "maegler" ? "maegler" : "member");
+    const ok = await setAccess(b.userId, b.action === "revoke" ? "revoked" : kind === "maegler" ? "maegler" : kind === "privat" ? "privat" : "member");
     return json({ ok }, ok ? 200 : 502);
   }
 

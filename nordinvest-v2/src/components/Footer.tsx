@@ -18,6 +18,8 @@ const columns = [
       { href: "/deals", label: "Bedste boliger lige nu" },
       { href: "/beregn-husleje", label: "Beregn husleje" },
       { href: "/beregn-afkast", label: "Beregn afkast" },
+      { href: "/boligkoeber", label: "For boligkøbere" },
+      { href: "/hvad-kan-jeg-laane", label: "Hvad kan jeg låne?" },
       { href: "/udlejning-af-lejlighed", label: "Regler og skat ved udlejning" },
       { href: "/priser", label: "Priser" },
       { href: "/adgang", label: "Anmod om adgang" },

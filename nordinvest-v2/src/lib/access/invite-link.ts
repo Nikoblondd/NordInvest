@@ -14,11 +14,11 @@ import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
  * the service role can write.
  */
 
-export type InviteKind = "member" | "maegler" | "begge";
+export type InviteKind = "member" | "maegler" | "begge" | "privat";
 export type LinkPurpose = "invite" | "login";
 
 /** Where each kind of person lands after the invitation. */
-export const INVITE_NEXT: Record<InviteKind, string> = { member: "/app/velkommen", maegler: "/maegler", begge: "/app/velkommen" };
+export const INVITE_NEXT: Record<InviteKind, string> = { member: "/app/velkommen", maegler: "/maegler", begge: "/app/velkommen", privat: "/boligkoeb" };
 
 export type LinkRecord = { hash: string; kind?: InviteKind; next: string; created_at: string; expires_at?: string; used_at?: string };
 
