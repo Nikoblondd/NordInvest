@@ -17,6 +17,7 @@ import { VERDICT_COLOR } from "./BuyerMap";
 import { kr, mio, pct, useImages, VerdictPill } from "./ui";
 import { Gallery } from "./Gallery";
 import { HomeSource } from "./Pulse";
+import { Pegman } from "./StreetView";
 
 /*
  * The home, in the side panel. Everything about it is here, split into short
@@ -99,6 +100,8 @@ type PanelProps = {
   kommuneName: string | null;
   /** When set, the analysis is behind a login: this is shown instead. */
   locked?: React.ReactNode;
+  /** Opens street view in front of the home. */
+  onStreet?: () => void;
 };
 
 const H = ({ children }: { children: React.ReactNode }) => <h2 className="text-[13px] font-semibold uppercase tracking-[0.07em] text-slate-400">{children}</h2>;
@@ -256,6 +259,11 @@ function SecHome(p: PanelProps & { d: Detail | null; img: string | null; expecte
         ))}
       </dl>
       <Follow home={home} saved={p.saved} onToggleSave={p.onToggleSave} onUpdate={p.onUpdate} />
+      {p.onStreet && (
+        <button type="button" onClick={p.onStreet} className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full border border-slate-300 bg-white text-[15px] font-semibold text-slate-900 hover:border-amber-400 hover:bg-amber-50">
+          <Pegman size={22} /> Gå rundt i gaden
+        </button>
+      )}
       <HomeSource broker={d?.listing.broker ?? null} url={d?.listing.url ?? null} since={home.knownStart ? home.firstSeen : null} />
     </div>
   );

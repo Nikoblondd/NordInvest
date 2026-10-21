@@ -21,6 +21,8 @@ export type MapHandle = {
   flyTo: (lat: number, lon: number, zoom?: number) => void;
   fitTo: (points: { lat: number; lon: number }[]) => void;
   bounds: () => [number, number, number, number] | null;
+  /** The place under a point on the screen (client coordinates), or null outside the map. */
+  at: (x: number, y: number) => { lat: number; lon: number } | null;
 };
 
 type Props = {
@@ -54,6 +56,12 @@ export const BuyerMap = forwardRef<MapHandle, Props>(function BuyerMap({ homes, 
       const b = new lib.current.LngLatBounds();
       pts.forEach((p) => b.extend([p.lon, p.lat]));
       map.current.fitBounds(b, { padding: 60, maxZoom: 15, duration: 900 });
+    },
+    at: (x, y) => {
+      const r = box.current?.getBoundingClientRect();
+      if (!map.current || !r || x < r.left || x > r.right || y < r.top || y > r.bottom) return null;
+      const p = map.current.unproject([x - r.left, y - r.top]);
+      return { lat: p.lat, lon: p.lng };
     },
     bounds: () => {
       const b = map.current?.getBounds();

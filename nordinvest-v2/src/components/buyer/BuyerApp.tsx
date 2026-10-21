@@ -10,6 +10,7 @@ import { LoginBox, LoginSheet } from "./Login";
 import { kr, mio, pct, MailToggle, useImages, VerdictPill } from "./ui";
 import { Dashboard } from "./Dashboard";
 import { PulseLine, TrustSheet, usePulse } from "./Pulse";
+import { Pegman, StreetView, type StreetStart } from "./StreetView";
 import { COLS } from "@/lib/buyer/cols";
 import type { BuyerHome } from "@/lib/buyer/market";
 import { compare, matches, TYPE_CHIPS } from "@/lib/buyer/filter";
@@ -74,6 +75,10 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
   const [detail, setDetail] = useState(false);
   const [snap, setSnap] = useState<Snap>("peek");
   const [trust, setTrust] = useState(false);
+  // Street view: where it opened, the little man while he is dragged, and "tap a street" mode.
+  const [street, setStreet] = useState<StreetStart | null>(null);
+  const [peg, setPeg] = useState<{ x: number; y: number } | null>(null);
+  const [picking, setPicking] = useState(false);
   const pulse = usePulse();
   const mapRef = useRef<MapHandle>(null);
   const isDesktop = useMedia("(min-width: 1024px)");
@@ -216,6 +221,24 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
     setState((s) => (s ? { ...s, areas: [{ label, bounds }, ...(s.areas ?? []).filter((a) => a.label !== label)].slice(0, 8) } : s));
   };
 
+  const openStreet = (s: StreetStart) => { setPicking(false); setDrawing(false); setSnap("peek"); setStreet(s); };
+  const closeStreet = (at: { lat: number; lon: number } | null) => { setStreet(null); if (at) mapRef.current?.flyTo(at.lat, at.lon, Math.max(16, view?.zoom ?? 16)); };
+  // The little man: drag him onto a street, or tap him and then tap a street.
+  const pegDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    const x0 = e.clientX, y0 = e.clientY;
+    let moved = false;
+    const move = (ev: PointerEvent) => { if (!moved && Math.hypot(ev.clientX - x0, ev.clientY - y0) > 8) moved = true; if (moved) setPeg({ x: ev.clientX, y: ev.clientY }); };
+    const up = (ev: PointerEvent) => {
+      removeEventListener("pointermove", move); removeEventListener("pointerup", up); removeEventListener("pointercancel", up);
+      setPeg(null);
+      if (!moved) { setSelected(null); setDetail(false); setDrawing(false); setPicking((v) => !v); return; }
+      const at = mapRef.current?.at(ev.clientX, ev.clientY);
+      if (at) openStreet(at);
+    };
+    addEventListener("pointermove", move); addEventListener("pointerup", up); addEventListener("pointercancel", up);
+  };
+
   const onMove = useCallback((v: View) => { setView(v); setShown(PAGE); setState((s) => (s ? { ...s, view: { lat: v.lat, lon: v.lon, zoom: v.zoom, bounds: v.bounds } } : s)); }, []);
 
   const activeCount = (filters.types.length ? 1 : 0) + (filters.priceMin != null || filters.priceMax != null ? 1 : 0) + (filters.areaMin != null ? 1 : 0) + (filters.roomsMin != null ? 1 : 0) + (filters.verdicts.length ? 1 : 0);
@@ -237,6 +260,7 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
       onToggleSave={() => toggleSave(h)} onUpdate={updateSaved} onClose={() => { setSelected(null); setDetail(false); }} onSelect={(id) => open(id, true)}
       onShowPlans={() => { setShowPlans(true); if (!isDesktop) { setDetail(false); setSnap("peek"); } setTab("kort"); mapRef.current?.flyTo(h.lat, h.lon, 14); }}
       kommuneName={h.kommune ? KOMMUNE_NAME.get(h.kommune) ?? null : null}
+      onStreet={() => { if (!isDesktop) setDetail(false); openStreet({ lat: h.lat, lon: h.lon, lookAt: { lat: h.lat, lon: h.lon } }); }}
       locked={locked ? <LoginBox reason={`Du har set ${FREE_HOMES} boliger gratis. Log ind med din e-mail for at se resten. Det er også gratis, og du skal ikke bruge en adgangskode.`} /> : undefined} />
   );
 
@@ -280,6 +304,12 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
                   <button type="button" onClick={() => setDrawing(false)} className="min-h-[32px] shrink-0 rounded-full bg-white/20 px-3 text-[13px]">Annullér</button>
                 </div>
               )}
+              {picking && (
+                <div className="pointer-events-auto inline-flex max-w-full items-center gap-3 rounded-full bg-amber-400 py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-slate-900 shadow-lg">
+                  <span className="min-w-0">Tryk på en gade for at gå rundt</span>
+                  <button type="button" onClick={() => setPicking(false)} className="min-h-[32px] shrink-0 rounded-full bg-white/50 px-3 text-[13px]">Annullér</button>
+                </div>
+              )}
               {!drawing && filters.shape && (
                 <div className="pointer-events-auto inline-flex max-w-full items-center gap-1 rounded-full bg-white py-1.5 pl-3 pr-1.5 text-[14px] font-semibold text-blue-700 shadow-lg ring-1 ring-blue-200">
                   <PenLine size={15} className="shrink-0" /> <span className="ml-1 min-w-0 truncate">{isDesktop ? "Viser kun dit tegnede område" : "Dit område"}</span>
@@ -296,10 +326,20 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
             <div className="pointer-events-auto flex shrink-0 flex-col gap-2">
               <button type="button" onClick={() => { setSelected(null); setDetail(false); setSnap("peek"); setDrawing(!drawing); }} aria-pressed={drawing} title="Tegn et område" aria-label="Tegn et område på kortet"
                 className={`flex h-11 w-11 items-center justify-center rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ${drawing || filters.shape ? "bg-blue-600 text-white ring-blue-600" : "bg-white text-blue-600 ring-slate-200/70"}`}><PenLine size={19} /></button>
+              <button type="button" onPointerDown={pegDown} aria-pressed={picking} title="Gå rundt i gaderne: træk manden ned på en gade" aria-label="Gå rundt i gaderne"
+                className={`flex h-11 w-11 touch-none items-center justify-center rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ${picking ? "bg-amber-100 ring-2 ring-amber-400" : "bg-white ring-slate-200/70"}`}><Pegman size={26} /></button>
               <MapButton label="Find mig" onClick={() => navigator.geolocation?.getCurrentPosition((p) => mapRef.current?.flyTo(p.coords.latitude, p.coords.longitude, 13.5), () => setToast("Vi kunne ikke finde din placering. Tjek, at browseren må bruge den."))}><LocateFixed size={19} /></MapButton>
             </div>
           </div>
         </div>
+
+        {picking && (
+          <div className="absolute inset-0 z-[15] cursor-crosshair" onClick={(e) => { const at = mapRef.current?.at(e.clientX, e.clientY); if (at) openStreet(at); }} />
+        )}
+        {street && (
+          <StreetView key={`${street.lat},${street.lon}`} start={street} homes={filtered} selectedId={selected} isDesktop={isDesktop}
+            onSelect={(id) => { setSelected(id); setDetail(false); }} onClose={closeStreet} />
+        )}
 
         {/* Computer: count, legend and how fresh the market is, on the map */}
         <div className="pointer-events-none absolute bottom-6 left-4 z-20 hidden lg:block">
@@ -314,7 +354,7 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
         </div>
 
         {/* Bottom navigation, floating like the map's own controls */}
-        {!drawing && bottomNav(false)}
+        {!drawing && !(street && !isDesktop) && bottomNav(false)}
       </div>
 
       {/* Desktop side panel: the homes in view, or everything about the tapped home */}
@@ -328,7 +368,7 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
       )}
 
       {/* Phone: the homes in view in a sheet you pull up from the bottom */}
-      {!isDesktop && tab === "kort" && !drawing && !(selectedHome && !detail) && (
+      {!isDesktop && tab === "kort" && !drawing && !street && !(selectedHome && !detail) && (
         <ListSheet snap={snap} onSnap={setSnap} header={
           <>
             <p className="text-[16px] font-semibold tabular-nums text-slate-900">{homes ? boliger(inView.length, "her") : "Henter boliger …"}{homes && goodInView > 0 && <span className="font-medium text-emerald-700"> · {goodInView.toLocaleString("da-DK")} {goodInView === 1 ? "godt køb" : "gode køb"}</span>}</p>
@@ -367,6 +407,7 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
       )}
       {login && <LoginSheet reason={login} onClose={() => setLogin(null)} />}
       {trust && <TrustSheet onClose={() => setTrust(false)} />}
+      {peg && <div className="pointer-events-none fixed z-[90] -translate-x-1/2 -translate-y-full drop-shadow-[0_6px_8px_rgba(0,0,0,0.35)]" style={{ left: peg.x, top: peg.y }}><Pegman size={52} /></div>}
       {toast && <div role="status" className="fixed left-1/2 top-4 z-[95] max-w-[calc(100%-24px)] -translate-x-1/2 rounded-full bg-slate-900 px-5 py-3 text-[14px] font-medium text-white shadow-lg">{toast}</div>}
 
       {filterOpen && <FilterSheet filters={filters} count={(f) => { const b = view?.bounds; return (homes ?? []).filter((h) => (!b || (h.lon >= b[0] && h.lat >= b[1] && h.lon <= b[2] && h.lat <= b[3])) && matches(h, f)).length; }} onApply={(f) => { setFilters(f); setFilterOpen(false); }} onClose={() => setFilterOpen(false)} />}
