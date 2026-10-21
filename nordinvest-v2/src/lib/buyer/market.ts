@@ -90,10 +90,10 @@ async function fetchRows(): Promise<Row[] | null> {
   const cols = "id,lat,lon,price,area,rooms,year_built,energy_label,type,zip,municipality,address,first_seen,price_history";
   const headers = { apikey: KEY(), Authorization: `Bearer ${KEY()}` };
   const page = async (offset: number) => {
-    const r = await fetch(`${URL_BASE()}/rest/v1/market_listings?market=eq.bolig&status=neq.gone&select=${cols}&order=id.asc&limit=1000&offset=${offset}`, { headers, cache: "no-store" }).catch(() => null);
+    const r = await fetch(`${URL_BASE()}/rest/v1/market_listings?market=eq.bolig&status=neq.gone&select=${cols}&order=id.asc&limit=1000&offset=${offset}`, { headers, next: { revalidate: 900 } }).catch(() => null);
     return r?.ok ? ((await r.json()) as Row[]) : null;
   };
-  const head = await fetch(`${URL_BASE()}/rest/v1/market_listings?market=eq.bolig&status=neq.gone&select=id&limit=1`, { headers: { ...headers, Prefer: "count=exact" }, cache: "no-store" }).catch(() => null);
+  const head = await fetch(`${URL_BASE()}/rest/v1/market_listings?market=eq.bolig&status=neq.gone&select=id&limit=1`, { headers: { ...headers, Prefer: "count=exact" }, next: { revalidate: 900 } }).catch(() => null);
   const total = Number(head?.headers.get("content-range")?.split("/")[1]);
   if (!Number.isFinite(total)) return null;
   const offsets: number[] = [];

@@ -6,11 +6,10 @@ import { Footer } from "@/components/Footer";
 import { geist } from "@/components/home/fonts";
 import { FounderNote } from "@/components/shared/FounderNote";
 import { getMarket, TYPE_LABEL, type BuyerHome } from "@/lib/buyer/market";
-import { createClient } from "@/lib/supabase/server";
-import { hasBuyerAccess } from "@/lib/access";
 import { site } from "@/lib/site";
 
-export const dynamic = "force-dynamic";
+// Rebuilt at most once an hour, so the page answers instantly for visitors and search engines.
+export const revalidate = 3600;
 export const maxDuration = 60;
 
 export const metadata: Metadata = {
@@ -57,11 +56,7 @@ const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr.`;
 const mio = (n: number) => `${(n / 1_000_000).toLocaleString("da-DK", { maximumFractionDigits: 2 })} mio. kr.`;
 
 export default async function BoligkoeberPage() {
-  const [market, user] = await Promise.all([
-    getMarket().catch(() => null),
-    (async () => { const s = createClient(); return s ? (await s.auth.getUser()).data.user : null; })(),
-  ]);
-  const member = !!user && hasBuyerAccess(user);
+  const market = await getMarket().catch(() => null);
   const homes = market?.homes ?? [];
   const good = homes.filter((h) => h.verdict === "godt").length;
   const cut = homes.filter((h) => h.cutPct > 0).length;
@@ -75,7 +70,7 @@ export default async function BoligkoeberPage() {
       .slice(0, 3),
   })).filter((c) => c.homes.length);
 
-  const cta = member ? { href: "/boligkoeb", label: "Åbn boligkortet" } : { href: "/adgang?type=privat&kilde=boligkoeber", label: "Få adgang" };
+  const cta = { href: "/adgang?type=privat&kilde=boligkoeber", label: "Få adgang" };
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -121,6 +116,7 @@ export default async function BoligkoeberPage() {
                 <Link href={cta.href} className="inline-flex min-h-[52px] items-center gap-2 rounded-lg bg-blue-600 px-6 text-[16px] font-semibold text-white hover:bg-blue-500">{cta.label} <ArrowRight size={18} /></Link>
                 <Link href="/hvad-kan-jeg-laane" className="inline-flex min-h-[52px] items-center rounded-lg border border-slate-300 px-5 text-[16px] font-semibold text-slate-800 hover:border-slate-400">Hvad kan jeg låne?</Link>
               </div>
+              <p className="mt-4 text-[14px] text-slate-500">Har du allerede adgang? <Link href="/boligkoeb" prefetch={false} className="font-semibold text-blue-700 hover:underline">Åbn boligkortet</Link></p>
               {homes.length > 0 && (
                 <dl className="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-slate-200 pt-6">
                   <div><dt className="text-[13px] text-slate-500">Boliger til salg</dt><dd className="mt-1 text-[24px] font-semibold tabular-nums">{homes.length.toLocaleString("da-DK")}</dd></div>
