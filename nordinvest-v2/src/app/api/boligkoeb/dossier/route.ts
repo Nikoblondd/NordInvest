@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getMarket } from "@/lib/buyer/market";
-import { buyerUser, denied } from "@/lib/buyer/gate";
 import { dossier } from "@/lib/dossier";
 import { getFutureBurdens } from "@/lib/future-burdens";
 
@@ -10,7 +9,6 @@ export const maxDuration = 30;
 
 /** GET /api/boligkoeb/dossier?id=: the public records on a home (BBR, offentlig vurdering, grundskyld, lokalplan and kloak on the plot). Slow, so separate. */
 export async function GET(req: Request) {
-  if (!(await buyerUser())) return denied();
   const id = new URL(req.url).searchParams.get("id") ?? "";
   const h = (await getMarket())?.byId.get(id);
   if (!h) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });

@@ -40,7 +40,7 @@ export async function listAuthUsers(): Promise<AdminUser[]> {
   return out.sort((a, b) => b.created_at.localeCompare(a.created_at));
 }
 
-export async function setAccess(id: string, access: "member" | "revoked" | "maegler" | "privat", extra: Record<string, unknown> = {}): Promise<boolean> {
+export async function setAccess(id: string, access: "member" | "revoked" | "maegler", extra: Record<string, unknown> = {}): Promise<boolean> {
   if (!adminConfigured()) return false;
   const cur = await getAuthUser(id);
   const app_metadata = { ...(cur?.app_metadata ?? {}), nordinvest_access: access, nordinvest_access_at: new Date().toISOString(), ...extra };

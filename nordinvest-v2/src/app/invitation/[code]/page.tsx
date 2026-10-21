@@ -20,7 +20,6 @@ export default async function InvitationPage({ params, searchParams }: { params:
   const meta = (user?.user_metadata ?? {}) as Record<string, unknown>;
   const first = String(meta.full_name ?? "").trim().split(/\s+/)[0];
   const broker = match?.record.kind === "maegler";
-  const buyer = match?.record.kind === "privat";
   const login = match?.purpose === "login";
 
   return (
@@ -28,7 +27,7 @@ export default async function InvitationPage({ params, searchParams }: { params:
       <div className="w-full max-w-[440px] rounded-2xl border border-slate-200 bg-white p-7 shadow-[0_30px_60px_-30px_rgba(15,23,42,0.25)] sm:p-9">
         <div className="flex items-center gap-2.5">
           <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-slate-200"><Image src="/nordinvest-logo.png" alt="" width={40} height={40} className="h-[78%] w-[78%] object-contain" /></span>
-          <span className="text-[17px] font-semibold">NordInvest{broker ? <span className="font-normal text-slate-500"> for mæglere</span> : buyer ? <span className="font-normal text-slate-500"> for boligkøbere</span> : null}</span>
+          <span className="text-[17px] font-semibold">NordInvest{broker ? <span className="font-normal text-slate-500"> for mæglere</span> : null}</span>
         </div>
         {match ? (
           <>
@@ -38,14 +37,12 @@ export default async function InvitationPage({ params, searchParams }: { params:
                 ? "Tryk på knappen for at logge ind. Bagefter kan du vælge en ny adgangskode under Konto."
                 : broker
                   ? "Din adgang til mæglerværktøjet er klar. Tryk på knappen for at logge ind første gang."
-                  : buyer
-                  ? "Dit boligkort er klar. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode bagefter."
                   : "Din konto er klar. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode."}
             </p>
             {searchParams.fejl && <p role="alert" className="mt-4 rounded-lg bg-rose-50 px-3 py-2 text-[14px] font-medium text-rose-700">Det lykkedes ikke at logge ind. Prøv igen om et øjeblik.</p>}
             <form action="/api/invitation" method="post" className="mt-7">
               <input type="hidden" name="code" value={params.code} />
-              <button type="submit" className="inline-flex min-h-[48px] w-full items-center justify-center rounded-lg bg-blue-600 px-5 text-[16px] font-semibold text-white hover:bg-blue-500">{login ? "Log ind" : broker ? "Åbn mæglerværktøjet" : buyer ? "Åbn boligkortet" : "Åbn NordInvest"}</button>
+              <button type="submit" className="inline-flex min-h-[48px] w-full items-center justify-center rounded-lg bg-blue-600 px-5 text-[16px] font-semibold text-white hover:bg-blue-500">{login ? "Log ind" : broker ? "Åbn mæglerværktøjet" : "Åbn NordInvest"}</button>
             </form>
           </>
         ) : (

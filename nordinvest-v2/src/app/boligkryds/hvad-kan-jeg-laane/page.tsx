@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Nav } from "@/components/Nav";
-import { Footer } from "@/components/Footer";
+import { BoligkrydsLogo } from "@/components/buyer/Brand";
 import { LoanCalculator } from "@/components/buyer/LoanCalculator";
 import { getMarketRates } from "@/lib/market-rates";
-import { site } from "@/lib/site";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: { absolute: "Hvad kan jeg låne til bolig? Beregner 2026 · NordInvest" },
+  title: { absolute: "Hvad kan jeg låne til bolig? · Boligkryds" },
   description:
     "Beregn hvor meget du kan låne til en bolig ud fra indkomst, opsparing og gæld. Se udbetaling, månedlig ydelse efter rentefradrag og hvor bidraget på realkreditlånet er billigst.",
-  alternates: { canonical: "/hvad-kan-jeg-laane" },
 };
 
 const FAQ = [
@@ -40,16 +37,16 @@ export default async function HvadKanJegLaanePage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "WebApplication", name: "Hvad kan jeg låne til bolig?", url: `${site.url}/hvad-kan-jeg-laane`, applicationCategory: "FinanceApplication", operatingSystem: "Web", inLanguage: "da-DK", offers: { "@type": "Offer", price: "0", priceCurrency: "DKK" }, publisher: { "@id": `${site.url}/#organization` } },
+      { "@type": "WebApplication", name: "Hvad kan jeg låne til bolig?", url: `https://boligkryds.nordinvest.io/hvad-kan-jeg-laane`, applicationCategory: "FinanceApplication", operatingSystem: "Web", inLanguage: "da-DK", offers: { "@type": "Offer", price: "0", priceCurrency: "DKK" }, },
       { "@type": "FAQPage", mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
-      { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Forside", item: site.url }, { "@type": "ListItem", position: 2, name: "For boligkøbere", item: `${site.url}/boligkoeber` }, { "@type": "ListItem", position: 3, name: "Hvad kan jeg låne?", item: `${site.url}/hvad-kan-jeg-laane` }] },
+      { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Forside", item: "https://boligkryds.nordinvest.io" }, { "@type": "ListItem", position: 2, name: "Hvad kan jeg låne?", item: `https://boligkryds.nordinvest.io/hvad-kan-jeg-laane` }] },
     ],
   };
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <Nav />
-      <div className="mx-auto max-w-3xl px-4 pb-20 pt-28 sm:px-6">
+      <header className="border-b border-slate-200 bg-white"><div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3 sm:px-6"><a href="/" aria-label="Boligkryds"><BoligkrydsLogo size={28} /></a><a href="/" className="inline-flex min-h-[40px] items-center rounded-full bg-emerald-600 px-4 text-[14px] font-semibold text-white">Til kortet</a></div></header>
+      <div className="mx-auto max-w-3xl px-4 pb-20 pt-10 sm:px-6">
         <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-blue-700">Låneberegner</p>
         <h1 className="mt-3 text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance] sm:text-[48px]">Hvad kan jeg låne til en bolig?</h1>
         <p className="mt-4 text-[17px] leading-relaxed text-slate-600">
@@ -65,9 +62,8 @@ export default async function HvadKanJegLaanePage() {
           <p><strong>Rådighedsbeløbet</strong> er det, I har tilbage hver måned. Det er ofte det, der i praksis sætter grænsen for en barnefamilie.</p>
           <h2 className="pt-6 text-[26px] font-semibold tracking-[-0.02em] text-slate-900">Er boligen prisen værd?</h2>
           <p>
-            Når I ved, hvad I kan låne, er næste spørgsmål, om boligen er pengene værd. På <Link href="/boligkoeber" className="font-medium text-blue-700 underline underline-offset-2">NordInvests boligkort</Link> er
+            Når I ved, hvad I kan låne, er næste spørgsmål, om boligen er pengene værd. På <Link href="/" className="font-medium text-emerald-700 underline underline-offset-2">kortet</Link> er
             alle boliger til salg sammenlignet med lignende boliger i nærheden, så I kan se, om I betaler for meget, og hvad der bygges i området.
-            Læs også <Link href="/saadan-byder-du-paa-en-bolig" className="font-medium text-blue-700 underline underline-offset-2">sådan byder du på en bolig</Link>.
           </p>
         </section>
 
@@ -83,7 +79,6 @@ export default async function HvadKanJegLaanePage() {
           </div>
         </section>
       </div>
-      <Footer />
     </main>
   );
 }

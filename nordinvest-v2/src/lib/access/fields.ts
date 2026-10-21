@@ -4,13 +4,10 @@ export const GOALS = ["Udlejningsbolig", "Renovering og salg", "Erhverv", "Andet
 /** Who is asking. Decides which part of NordInvest they are invited to. */
 export const ROLES = [
   { id: "investor", label: "Investor", lead: "Køber bolig til udlejning, renovering eller erhverv" },
-  { id: "privat", label: "Boligkøber", lead: "Køber bolig til mig selv og vil vide, om det er et godt køb" },
   { id: "maegler", label: "Ejendomsmægler", lead: "Vil vise investorer, hvad mine sager kan" },
 ] as const;
 export type Role = (typeof ROLES)[number]["id"];
-export const ROLE_LABEL: Record<Role, string> = { investor: "Investor", privat: "Privat boligkøber", maegler: "Ejendomsmægler" };
-/** What a private buyer is looking for. */
-export const HOME_GOALS = ["Lejlighed", "Hus", "Rækkehus", "Andelsbolig", "Fritidshus"] as const;
+export const ROLE_LABEL: Record<string, string> = { investor: "Investor", maegler: "Ejendomsmægler" };
 export type FieldErrors = Partial<Record<"role" | "name" | "email" | "phone" | "portfolio" | "message", string>>;
 
 export type AccessRequest = {
@@ -57,7 +54,7 @@ export function validate(body: Record<string, unknown>): { data?: Omit<AccessReq
   const phoneRaw = str(body.phone, 40);
   const role = (ROLES.some((r) => r.id === body.role) ? body.role : "") as Role | "";
   const portfolio = role === "investor" ? str(body.portfolio, 40) : "";
-  const allowed: readonly string[] = role === "privat" ? HOME_GOALS : role === "investor" ? GOALS : [];
+  const allowed: readonly string[] = role === "investor" ? GOALS : [];
   const goals = Array.isArray(body.goals) ? body.goals.map((g) => str(g, 40)).filter((g) => allowed.includes(g)) : [];
   const message = typeof body.message === "string" ? body.message.trim().slice(0, 2000) : "";
   const source = str(body.source, 80) || "adgang";

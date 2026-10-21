@@ -3,7 +3,7 @@ import { cronAuthorized } from "@/lib/gate";
 import { getMarket, type BuyerHome } from "@/lib/buyer/market";
 import { readStore, storeOwners, writeStore } from "@/lib/app/store";
 import { getAuthUser } from "@/lib/supabase/admin";
-import { hasBuyerAccess } from "@/lib/access";
+import { BOLIGKRYDS_URL } from "@/lib/buyer/gate";
 import { sendMail } from "@/lib/mail/send";
 import { compare, hasFilters, matches } from "@/lib/buyer/filter";
 import { EMPTY_STATE, type BuyerState } from "@/lib/buyer/state";
@@ -19,10 +19,10 @@ export const maxDuration = 300;
  * market inside the area they were looking at. Saved prices are updated so
  * the same drop is never mailed twice.
  */
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://nordinvest.io";
+const SITE = BOLIGKRYDS_URL;
 const kr = (n: number) => `${Math.round(n).toLocaleString("da-DK")} kr`;
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
-const link = (id: string) => `${SITE}/boligkoeb?bolig=${encodeURIComponent(id)}`;
+const link = (id: string) => `${SITE}/?bolig=${encodeURIComponent(id)}`;
 
 export async function GET(req: Request) {
   if (!cronAuthorized(req)) return NextResponse.json({ ok: false }, { status: 401 });
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
     const s: BuyerState = { ...EMPTY_STATE, ...raw };
     if (!s.mail?.priceDrops && !s.mail?.newMatches) continue;
     const user = await getAuthUser(id);
-    if (!user?.email || !hasBuyerAccess(user)) continue;
+    if (!user?.email) continue;
 
     const drops: { h: BuyerHome; from: number }[] = [];
     const gone: string[] = [];
@@ -74,8 +74,8 @@ export async function GET(req: Request) {
     const next: BuyerState = { ...s, saved, mailedAt: new Date().toISOString() };
     if (body.length) {
       const subject = drops.length ? `Prisfald på ${drops.length === 1 ? "en af dine gemte boliger" : `${drops.length} af dine gemte boliger`}` : fresh.length ? `${fresh.length === 1 ? "1 ny bolig" : `${fresh.length} nye boliger`} i dit område` : "Nyt om dine gemte boliger";
-      const html = `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:560px;color:#0f172a;font-size:15px;line-height:1.55"><p>Hej${user.user_metadata?.full_name ? ` ${esc(String(user.user_metadata.full_name).split(" ")[0])}` : ""},</p><p>Her er det nye siden sidst på dit boligkort.</p>${body.join("")}<p style="margin:28px 0"><a href="${SITE}/boligkoeb" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:8px">Åbn boligkortet</a></p><p style="font-size:12px;color:#94a3b8">Du får denne mail, fordi du har slået mails til på boligkortet. <a href="${SITE}/boligkoeb?panel=indstillinger" style="color:#64748b">Slå dem fra</a>.</p></div>`;
-      const r = await sendMail({ to: user.email, subject, html, idempotencyKey: `boligkoeb-${id}-${new Date().toISOString().slice(0, 10)}` });
+      const html = `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:560px;color:#0f172a;font-size:15px;line-height:1.55"><p>Hej${user.user_metadata?.full_name ? ` ${esc(String(user.user_metadata.full_name).split(" ")[0])}` : ""},</p><p>Her er det nye siden sidst på Boligkryds.</p>${body.join("")}<p style="margin:28px 0"><a href="${SITE}/" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:8px">Åbn Boligkryds</a></p><p style="font-size:12px;color:#94a3b8">Du får denne mail, fordi du har slået mails til på Boligkryds. <a href="${SITE}/?panel=indstillinger" style="color:#64748b">Slå dem fra</a>.</p></div>`;
+      const r = await sendMail({ from: "Boligkryds <adgang@nordinvest.io>", to: user.email, subject, html, idempotencyKey: `boligkoeb-${id}-${new Date().toISOString().slice(0, 10)}` });
       if (r.ok) sent++;
     }
     await writeStore("boligkoeb", id, [next]);

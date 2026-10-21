@@ -5,7 +5,7 @@
  * Nikolaj, so nothing depends on one channel.
  */
 
-export { GOALS, HOME_GOALS, ROLES, ROLE_LABEL, PORTFOLIO, REQUEST_STATUS, validate, type FieldErrors, type RequestStatus } from "./fields";
+export { GOALS, ROLES, ROLE_LABEL, PORTFOLIO, REQUEST_STATUS, validate, type FieldErrors, type RequestStatus } from "./fields";
 import type { AccessRequest } from "./fields";
 import { ROLE_LABEL as RL } from "./fields";
 import { inviteTextToHtml } from "@/lib/access/invite-copy";
@@ -78,7 +78,7 @@ export function notifyEmail(r: AccessRequest): { subject: string; html: string }
     ["Besked", r.message ? esc(r.message).replace(/\n/g, "<br>") : "Ingen"],
   ];
   return {
-    subject: `Ny anmodning om adgang: ${r.name} (${r.role === "privat" ? "boligkøber" : r.role === "maegler" ? "mægler" : r.portfolio})`,
+    subject: `Ny anmodning om adgang: ${r.name} (${r.role === "maegler" ? "mægler" : r.portfolio})`,
     html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:560px;color:#0f172a">
 <h2 style="margin:0 0 4px;font-size:20px">Ny anmodning om adgang</h2>
 <p style="margin:0 0 16px;color:#64748b;font-size:14px">${new Date(r.createdAt).toLocaleString("da-DK", { timeZone: "Europe/Copenhagen" })}. Svar på denne mail for at skrive direkte til ${esc(r.name.split(" ")[0])}.</p>
@@ -98,7 +98,7 @@ export function confirmationEmail(r: AccessRequest): { subject: string; html: st
     subject: "Tak for din anmodning til NordInvest",
     html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
 <p>Hej ${first},</p>
-<p>Tak for din anmodning om adgang til NordInvest. ${r.role === "privat" ? "Du hører fra os inden for en arbejdsdag, så vi kan tale kort om, hvilken bolig du leder efter." : r.role === "maegler" ? "Du hører fra os inden for en arbejdsdag, så vi kan aftale, hvordan I bruger mæglerværktøjet." : "Du hører fra os inden for en arbejdsdag, så vi kan aftale en kort samtale om, hvordan du investerer, og hvad du har brug for."}</p>
+<p>Tak for din anmodning om adgang til NordInvest. ${r.role === "maegler" ? "Du hører fra os inden for en arbejdsdag, så vi kan aftale, hvordan I bruger mæglerværktøjet." : "Du hører fra os inden for en arbejdsdag, så vi kan aftale en kort samtale om, hvordan du investerer, og hvad du har brug for."}</p>
 <p>Når du er godkendt, får du en mail fra adgang@nordinvest.io med dit login. Gem gerne adressen i dine kontakter, så mailen ikke havner i spam.</p>
 <p>Har du spørgsmål inden da, kan du svare på denne mail.</p>
 <p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · contact@nordinvest.io</p>
@@ -115,19 +115,6 @@ export function brokerInvitationEmail(name: string, link: string, text?: string)
 ${text ? inviteTextToHtml(text) : "<p>Som aftalt har du nu adgang til NordInvest for mæglere. Her laver du investoranalyser af jeres sager og sætter en NordInvest-knap på sagen på jeres hjemmeside. Det tager et par minutter pr. sag og er gratis.</p>"}
 <p style="margin:28px 0"><a href="${link}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Åbn mæglerværktøjet</a></p>
 <p style="font-size:13px;color:#64748b">Linket er personligt og udløber ikke. Første gang vælger du en adgangskode, og derefter logger du ind på nordinvest.io/maegler.</p>
-<p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · contact@nordinvest.io</p></div>`,
-  };
-}
-
-export function privateInvitationEmail(name: string, link: string, text?: string): { subject: string; html: string } {
-  const first = esc(name.split(" ")[0] || "der");
-  return {
-    subject: "Din adgang til NordInvest for boligkøbere",
-    html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:520px;color:#0f172a;font-size:15px;line-height:1.6">
-<p>Hej ${first},</p>
-${inviteTextToHtml(text ?? "Du har nu adgang til NordInvest for boligkøbere. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode, og bagefter viser en kort guide dig rundt på kortet.")}
-<p style="margin:28px 0"><a href="${link}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;padding:13px 22px;border-radius:8px">Åbn boligkortet</a></p>
-<p style="font-size:13px;color:#64748b">Linket er personligt og udløber ikke. Første gang vælger du en adgangskode, og derefter logger du ind på nordinvest.io.</p>
 <p>Venlig hilsen<br>Nikolaj Blond<br>NordInvest · contact@nordinvest.io</p></div>`,
   };
 }

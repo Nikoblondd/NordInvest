@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { getMarket } from "@/lib/buyer/market";
-import { buyerUser, denied } from "@/lib/buyer/gate";
 import { COLS } from "@/lib/buyer/cols";
 
 export const runtime = "nodejs";
@@ -13,7 +12,6 @@ export const maxDuration = 60;
  */
 
 export async function GET() {
-  if (!(await buyerUser())) return denied();
   const m = await getMarket();
   if (!m) return NextResponse.json({ ok: false, reason: "unavailable" }, { status: 503 });
   // Repeated strings go out once in `dict` and as an index in each row; ids lose their common prefix; first seen is minutes after the baseline.

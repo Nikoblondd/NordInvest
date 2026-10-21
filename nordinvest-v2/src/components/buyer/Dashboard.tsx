@@ -2,9 +2,8 @@
 /* eslint-disable @next/next/no-img-element -- listing photos come from the portals' own image CDN */
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
+import { BoligkrydsMark } from "./Brand";
 import { ArrowRight, Bell, Building2, Heart, Landmark, Map as MapIcon, MapPinned, Newspaper, Sparkles, TrendingDown, TrendingUp, Wallet } from "lucide-react";
-import { PasswordForm } from "@/components/app/PasswordForm";
 import type { BuyerHome } from "@/lib/buyer/market";
 import { TYPE_LABEL } from "@/lib/buyer/market";
 import type { Plan } from "@/lib/buyer/plans";
@@ -33,8 +32,8 @@ type Props = {
   byId: Map<string, BuyerHome>;
   center: { lat: number; lon: number } | null;
   account: { email: string; name: string | null } | null;
-  preview: boolean;
-  focusPassword: boolean;
+  signedIn: boolean;
+  onLogin: (why: string) => void;
   onHousehold: (h: Household) => void;
   onSaved: (s: SavedHome[]) => void;
   onMail: (m: BuyerState["mail"]) => void;
@@ -91,7 +90,7 @@ export function Dashboard(p: Props) {
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-[#f4f6f9]">
       <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
-        <Image src="/nordinvest-logo.png" alt="" width={30} height={30} className="object-contain mix-blend-multiply" />
+        <BoligkrydsMark size={30} />
         <p className="flex-1 text-[17px] font-semibold tracking-[-0.01em]">Overblik</p>
         <button type="button" onClick={p.onMap} className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-slate-900 px-4 text-[14px] font-semibold text-white hover:bg-slate-800"><MapIcon size={17} /> Til kortet</button>
       </header>
@@ -138,15 +137,20 @@ export function Dashboard(p: Props) {
 
           <Card title="Besked og konto" icon={<Bell size={17} />} className={kommune && !wide ? "" : "lg:col-span-3"}>
             <div className="space-y-2.5">
-              <MailToggle label="Nye boliger i mit område" sub={hasFilters(state.filters) ? "Én mail om dagen, når der kommer nye boliger, der passer på dine filtre." : "Vælg først et filter på kortet, fx pris eller boligtype."} on={state.mail.newMatches} onChange={(v) => p.onMail({ ...state.mail, newMatches: v })} />
-              <MailToggle label="Prisfald og salg på gemte" on={state.mail.priceDrops} onChange={(v) => p.onMail({ ...state.mail, priceDrops: v })} />
+              <MailToggle label="Nye boliger i mit område" sub={hasFilters(state.filters) ? "Én mail om dagen, når der kommer nye boliger, der passer på dine filtre." : "Vælg først et filter på kortet, fx pris eller boligtype."} on={p.signedIn && state.mail.newMatches} onChange={(v) => (p.signedIn ? p.onMail({ ...state.mail, newMatches: v }) : p.onLogin("Log ind, så sender vi en mail, når der kommer nye boliger i dit område."))} />
+              <MailToggle label="Prisfald og salg på gemte" on={p.signedIn && state.mail.priceDrops} onChange={(v) => (p.signedIn ? p.onMail({ ...state.mail, priceDrops: v }) : p.onLogin("Log ind, så giver vi besked ved prisfald på dine gemte boliger."))} />
             </div>
-            {p.account && <p className="mt-4 truncate text-[14px] text-slate-500">{p.account.email}</p>}
-            {!p.preview && <div className="mt-3"><PasswordForm focus={p.focusPassword} /></div>}
-            <div className="mt-4 flex flex-wrap gap-2">
+            {p.signedIn ? (
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+                <p className="min-w-0 truncate text-[14px] text-slate-500">Logget ind som {p.account?.email ?? "dig"}</p>
+                <form action="/auth/signout" method="post"><button type="submit" className="min-h-[40px] rounded-full px-3 text-[14px] font-semibold text-slate-600 hover:bg-slate-100">Log ud</button></form>
+              </div>
+            ) : (
+              <button type="button" onClick={() => p.onLogin("Log ind for at gemme boliger og få mails. Det er gratis, og du skal ikke bruge en adgangskode.")} className="mt-4 flex min-h-[48px] w-full items-center justify-center rounded-full bg-emerald-600 text-[15px] font-semibold text-white">Log ind gratis</button>
+            )}
+            <div className="mt-3 flex flex-wrap gap-2">
               <button type="button" onClick={p.onTour} className="min-h-[44px] rounded-full border border-slate-300 px-4 text-[14px] font-semibold hover:border-slate-400">Se guiden igen</button>
-              <a href="mailto:contact@nordinvest.io" className="inline-flex min-h-[44px] items-center rounded-full border border-slate-300 px-4 text-[14px] font-semibold hover:border-slate-400">Skriv til os</a>
-              {!p.preview && <form action="/auth/signout" method="post"><button type="submit" className="min-h-[44px] rounded-full px-4 text-[14px] font-semibold text-slate-600 hover:bg-slate-100">Log ud</button></form>}
+              <a href="/hvad-kan-jeg-laane" className="inline-flex min-h-[44px] items-center rounded-full border border-slate-300 px-4 text-[14px] font-semibold hover:border-slate-400">Hvad kan jeg låne?</a>
             </div>
           </Card>
         </div>

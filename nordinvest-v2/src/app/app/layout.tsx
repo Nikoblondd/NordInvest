@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { geist } from "@/components/home/fonts";
 import { toolUser } from "@/lib/gate";
-import { isBroker, isPrivate } from "@/lib/access";
+import { isBroker } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +23,6 @@ export default async function AppGate({ children }: { children: React.ReactNode 
     const path = headers().get("x-ni-path") ?? "";
     redirect(`/auth/login?next=${encodeURIComponent(path.startsWith("/app") && !path.startsWith("//") ? path : "/app")}`);
   }
-  if (!(await toolUser())) redirect(isBroker(user) ? "/maegler" : isPrivate(user) ? "/boligkoeb" : "/adgang?kilde=konto");
+  if (!(await toolUser())) redirect(isBroker(user) ? "/maegler" : "/adgang?kilde=konto");
   return <div className={`${geist.variable} min-h-[100dvh] bg-slate-50 font-[family-name:var(--font-geist)] text-slate-900 antialiased`}>{children}</div>;
 }

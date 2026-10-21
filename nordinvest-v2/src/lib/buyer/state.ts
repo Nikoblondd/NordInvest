@@ -56,7 +56,13 @@ export type BuyerState = {
   household: Household;
   /** When the daily mail last ran for this person (ISO). */
   mailedAt?: string | null;
+  /** Places the person searched for, newest first, so a shared list can show them. */
+  areas?: Area[];
+  /** Set by the server when the person shares their list. */
+  shareToken?: string | null;
 };
+
+export type Area = { label: string; bounds: [number, number, number, number] };
 
 export const EMPTY_STATE: BuyerState = {
   filters: EMPTY_FILTERS, view: null, saved: [], lastVisit: null, greetedOn: null, tourDone: false,
@@ -98,6 +104,10 @@ export function cleanState(raw: unknown, prev: BuyerState = EMPTY_STATE): BuyerS
     mail: r.mail && typeof r.mail === "object" ? { newMatches: !!r.mail.newMatches, priceDrops: !!r.mail.priceDrops } : prev.mail,
     household: { income: n(h.income), savings: n(h.savings), debt: n(h.debt), couple: !!h.couple },
     mailedAt: prev.mailedAt ?? null,
+    areas: Array.isArray(r.areas)
+      ? r.areas.filter((a: any) => a && typeof a.label === "string" && Array.isArray(a.bounds) && a.bounds.length === 4 && a.bounds.every((x: unknown) => typeof x === "number" && Number.isFinite(x))).slice(0, 8).map((a: any) => ({ label: String(a.label).slice(0, 80), bounds: a.bounds })) // eslint-disable-line @typescript-eslint/no-explicit-any
+      : prev.areas ?? [],
+    shareToken: prev.shareToken ?? null,
   };
 }
 

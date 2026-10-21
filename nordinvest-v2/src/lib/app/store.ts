@@ -77,3 +77,19 @@ export async function writeCache<T>(name: string, data: T): Promise<void> {
     method: "POST", headers: { ...h(true), "x-upsert": "true", "cache-control": "no-cache" }, body: JSON.stringify({ at: Date.now(), data }),
   }).catch(() => null);
 }
+
+/** A private JSON document at a fixed path in the bucket (share links and the like). Server only. */
+export async function readDoc<T>(path: string): Promise<T | null> {
+  if (!/^[a-z0-9-]+\/[A-Za-z0-9_-]+$/.test(path) || !URL_() || !KEY()) return null;
+  const r = await fetch(`${URL_()}/storage/v1/object/${BUCKET}/${path}.json`, { headers: h(), cache: "no-store" }).catch(() => null);
+  return r?.ok ? ((await r.json().catch(() => null)) as T | null) : null;
+}
+
+export async function writeDoc<T>(path: string, data: T): Promise<boolean> {
+  if (!/^[a-z0-9-]+\/[A-Za-z0-9_-]+$/.test(path) || !URL_() || !KEY()) return false;
+  await ensureBucket();
+  const r = await fetch(`${URL_()}/storage/v1/object/${BUCKET}/${path}.json`, {
+    method: "POST", headers: { ...h(true), "x-upsert": "true", "cache-control": "no-cache" }, body: JSON.stringify(data),
+  }).catch(() => null);
+  return !!r?.ok;
+}

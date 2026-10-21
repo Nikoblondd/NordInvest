@@ -11,7 +11,6 @@ const LINKS = [
   { href: "/funktioner", label: "Funktioner" },
   { href: "/spil", label: "Ejendomsspillet" },
   { href: "/deals", label: "Bedste boliger" },
-  { href: "/boligkoeber", label: "Boligkøbere" },
   { href: "/blog", label: "Viden" },
   { href: "/om", label: "Om os" },
 ];

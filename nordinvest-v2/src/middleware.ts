@@ -18,8 +18,20 @@ const AUTH_PREFIXES = [
   "/velkommen",
   "/auth",
   "/maegler",
-  "/boligkoeb",
 ];
+
+/*
+ * Boligkryds lives on its own host (boligkryds.nordinvest.io, and
+ * boligkryds.localhost in development). Every page there is served from
+ * /boligkryds/* in this app. On NordInvest's own host those pages don't
+ * exist; old links to the buyer pages go to Boligkryds.
+ */
+const BK_PREFIX = "/boligkryds";
+const isBoligkrydsHost = (host: string | null) => !!host && host.toLowerCase().startsWith("boligkryds.");
+const OLD_BUYER_PATHS: Record<string, string> = { "/boligkoeb": "/", "/boligkoeber": "/", "/hvad-kan-jeg-laane": "/hvad-kan-jeg-laane" };
+function boligkrydsOrigin(host: string): string {
+  return host.includes("localhost") ? `http://boligkryds.${host.replace(/^www\./, "")}` : "https://boligkryds.nordinvest.io";
+}
 
 function needsAuth(pathname: string): boolean {
   return AUTH_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
@@ -36,11 +48,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(target, 308);
   }
 
+  const path = request.nextUrl.pathname;
+  const bk = isBoligkrydsHost(host);
+  if (!bk && host) {
+    const old = OLD_BUYER_PATHS[path] ?? (path === BK_PREFIX || path.startsWith(`${BK_PREFIX}/`) ? path.slice(BK_PREFIX.length) || "/" : null);
+    if (old) return NextResponse.redirect(new URL(`${old}${request.nextUrl.search}`, boligkrydsOrigin(host)), 308);
+  }
+
   // Skip Supabase entirely for anonymous public pages — landing, blog, city
   // hubs, /data, /methodology, /om, /kontakt, legal pages, /glossary, etc.
   // Cuts a full Supabase round-trip off every crawler hit and every anonymous
   // pageview, which is the majority of traffic on a marketing site.
-  if (!needsAuth(request.nextUrl.pathname)) {
+  if (!bk && !needsAuth(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
 
@@ -48,6 +67,11 @@ export async function middleware(request: NextRequest) {
   const forward = () => {
     const headers = new Headers(request.headers);
     headers.set("x-ni-path", request.nextUrl.pathname + request.nextUrl.search);
+    if (bk) {
+      const url = request.nextUrl.clone();
+      if (!(url.pathname === BK_PREFIX || url.pathname.startsWith(`${BK_PREFIX}/`))) url.pathname = `${BK_PREFIX}${url.pathname === "/" ? "" : url.pathname}`;
+      return NextResponse.rewrite(url, { request: { headers } });
+    }
     return NextResponse.next({ request: { headers } });
   };
   let response = forward();

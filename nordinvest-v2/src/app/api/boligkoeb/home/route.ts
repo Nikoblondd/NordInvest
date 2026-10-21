@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { basisFor, getMarket, nearbySimilar } from "@/lib/buyer/market";
-import { buyerUser, denied } from "@/lib/buyer/gate";
 import { plansNear, planKind } from "@/lib/buyer/plans";
 import { getDstAppreciationPct, getDstLatestYoY, landsdelOf } from "@/lib/dst";
 import { getMarketRates } from "@/lib/market-rates";
@@ -17,7 +16,6 @@ export const maxDuration = 30;
  * around it from Plandata.
  */
 export async function GET(req: Request) {
-  if (!(await buyerUser())) return denied();
   const id = new URL(req.url).searchParams.get("id") ?? "";
   const m = await getMarket();
   const h = m?.byId.get(id);

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { buyerUser, denied } from "@/lib/buyer/gate";
 import { plansInBox, planKind } from "@/lib/buyer/plans";
 
 export const runtime = "nodejs";
@@ -7,7 +6,6 @@ export const dynamic = "force-dynamic";
 
 /** GET /api/boligkoeb/plans?bbox=w,s,e,n: local plans from the last three years in the map view (only when zoomed in). */
 export async function GET(req: Request) {
-  if (!(await buyerUser())) return denied();
   const b = (new URL(req.url).searchParams.get("bbox") ?? "").split(",").map(Number);
   if (b.length !== 4 || b.some((v) => !Number.isFinite(v))) return NextResponse.json({ ok: false, reason: "bbox" }, { status: 422 });
   const [w, s, e, n] = b;

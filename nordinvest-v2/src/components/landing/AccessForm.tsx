@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Loader2 } from "lucide-react";
-import { GOALS, HOME_GOALS, PORTFOLIO, ROLES, validate, type FieldErrors, type Role } from "@/lib/access/fields";
+import { GOALS, PORTFOLIO, ROLES, validate, type FieldErrors, type Role } from "@/lib/access/fields";
 import { captureEvent } from "@/lib/analytics-events";
 
 /*
@@ -88,7 +88,7 @@ export function AccessForm({ source = "adgang", role: initialRole }: { source?: 
 
       <fieldset className="mt-6">
         <legend className={label}>Hvem er du?</legend>
-        <div className="mt-2 grid gap-2 sm:grid-cols-3" role="radiogroup" aria-invalid={!!errors.role}>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2" role="radiogroup" aria-invalid={!!errors.role}>
           {ROLES.map((r, i) => (
             <button key={r.id} type="button" role="radio" aria-checked={role === r.id} data-field={i === 0 ? "role" : undefined}
               onClick={() => { setRole(r.id); setGoals([]); setErrors((e) => ({ ...e, role: undefined })); }}
@@ -126,15 +126,15 @@ export function AccessForm({ source = "adgang", role: initialRole }: { source?: 
         </div>
         <Err k="portfolio" />
       </fieldset>}
-      {(role === "investor" || role === "privat") && <fieldset className="mt-5">
+      {role === "investor" && <fieldset className="mt-5">
         <legend className={label}>Hvad kigger du efter? <span className="font-normal text-slate-400">Vælg gerne flere</span></legend>
         <div className="mt-2 flex flex-wrap gap-2">
-          {(role === "privat" ? HOME_GOALS : GOALS).map((g) => { const on = goals.includes(g); return <button key={g} type="button" aria-pressed={on} onClick={() => setGoals(on ? goals.filter((x) => x !== g) : [...goals, g])} className={chip(on)}>{g}</button>; })}
+          {GOALS.map((g) => { const on = goals.includes(g); return <button key={g} type="button" aria-pressed={on} onClick={() => setGoals(on ? goals.filter((x) => x !== g) : [...goals, g])} className={chip(on)}>{g}</button>; })}
         </div>
       </fieldset>}
 
       <div className="mt-5">
-        <label htmlFor="af-msg" className={label}>{role === "privat" ? "Hvor leder du, og hvad er vigtigt for dig?" : role === "maegler" ? "Hvilket mæglerfirma er du fra?" : "Hvad skal NordInvest hjælpe dig med?"} <span className="font-normal text-slate-400">(valgfrit)</span></label>
+        <label htmlFor="af-msg" className={label}>{role === "maegler" ? "Hvilket mæglerfirma er du fra?" : "Hvad skal NordInvest hjælpe dig med?"} <span className="font-normal text-slate-400">(valgfrit)</span></label>
         <textarea id="af-msg" name="message" rows={3} className={`mt-1.5 ${input()} h-auto py-2.5`} />
       </div>
 
