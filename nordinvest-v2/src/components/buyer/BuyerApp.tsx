@@ -3,14 +3,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { Bell, Building2, ChevronDown, Heart, LayoutDashboard, List, Loader2, LocateFixed, Map as MapIcon, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import { Bell, Building2, ChevronDown, Heart, LayoutDashboard, List, Loader2, LocateFixed, Map as MapIcon, Search, SlidersHorizontal, X } from "lucide-react";
 import { BuyerMap, VERDICT_COLOR, type MapHandle } from "./BuyerMap";
 import { HomeDetail } from "./HomeDetail";
-import { kr, mio, pct, VerdictPill } from "./ui";
-import { PasswordForm } from "@/components/app/PasswordForm";
+import { kr, mio, pct, MailToggle, useImages, VerdictPill } from "./ui";
+import { Dashboard } from "./Dashboard";
 import { COLS } from "@/lib/buyer/cols";
-import { TYPE_LABEL, type BuyerHome } from "@/lib/buyer/market";
-import { compare, hasFilters, matches, TYPE_CHIPS } from "@/lib/buyer/filter";
+import type { BuyerHome } from "@/lib/buyer/market";
+import { compare, matches, TYPE_CHIPS } from "@/lib/buyer/filter";
 import { EMPTY_FILTERS, EMPTY_STATE, SORTS, dkDay, type BuyerState, type Filters, type SavedHome } from "@/lib/buyer/state";
 import { MUNICIPALITIES } from "@/lib/kommuner";
 import { ZIP_NAME } from "@/lib/postnumre";
@@ -59,18 +59,25 @@ export function BuyerApp() {
   const [freshIds, setFreshIds] = useState<Set<string> | null>(null);
   const [tourStep, setTourStep] = useState<number | null>(null);
   const [focusPassword, setFocusPassword] = useState(false);
+  /** Set when an admin looks at the app as someone else (?som=): nothing is saved. */
+  const [preview, setPreview] = useState<string | null>(null);
   const mapRef = useRef<MapHandle>(null);
   const isDesktop = useMedia("(min-width: 1024px)");
 
   // Load the market and the person's state together.
   useEffect(() => {
     fetch("/api/boligkoeb/homes").then((r) => r.json()).then((j) => { if (j.ok) setHomes(toHomes(j.cols, j.rows, j.dict, j.baseline)); else setLoadErr(true); }).catch(() => setLoadErr(true));
-    fetch("/api/boligkoeb/state").then((r) => r.json()).then((j) => { setState(j.ok ? { ...EMPTY_STATE, ...j.state } : EMPTY_STATE); if (j.ok) setAccount({ email: j.email, name: j.name }); }).catch(() => setState(EMPTY_STATE));
     const q = new URLSearchParams(location.search);
+    const som = q.get("som");
+    fetch(`/api/boligkoeb/state${som ? `?som=${encodeURIComponent(som)}` : ""}`).then((r) => r.json()).then((j) => {
+      setState(j.ok ? { ...EMPTY_STATE, ...j.state } : EMPTY_STATE);
+      if (j.ok) setAccount({ email: j.email, name: j.name });
+      if (j.preview) setPreview(j.preview.name);
+    }).catch(() => setState(EMPTY_STATE));
     if (q.get("bolig")) { setSelected(q.get("bolig")); setDetail(q.get("bolig")); }
     if (q.get("panel") === "indstillinger") setTab("overblik");
     if (q.get("konto") === "adgangskode") { setTab("overblik"); setFocusPassword(true); }
-    if (q.toString()) history.replaceState(null, "", "/boligkoeb");
+    if (q.toString()) history.replaceState(null, "", som ? `/boligkoeb?som=${encodeURIComponent(som)}` : "/boligkoeb");
   }, []);
 
   // Once both are in: welcome back (new homes since last visit, cheaper saved homes) or the first-time tour.
@@ -100,11 +107,11 @@ export function BuyerApp() {
   // Save the state a moment after it changes.
   const loaded = useRef(false);
   useEffect(() => {
-    if (!state) return;
+    if (!state || preview) return;
     if (!loaded.current) { loaded.current = true; return; }
     const t = setTimeout(() => { void fetch("/api/boligkoeb/state", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state) }); }, 1200);
     return () => clearTimeout(t);
-  }, [state]);
+  }, [state, preview]);
 
   const filters = state?.filters ?? EMPTY_FILTERS;
   const setFilters = useCallback((f: Partial<Filters>) => { setState((s) => (s ? { ...s, filters: { ...s.filters, ...f } } : s)); setShown(PAGE); setFreshIds(null); }, []);
@@ -117,10 +124,11 @@ export function BuyerApp() {
   }, [homes, filters, freshIds]);
 
   const inView = useMemo(() => {
-    const b = view?.bounds;
+    // Before the map has reported its view, use the one saved from last time.
+    const b = view?.bounds ?? state?.view?.bounds;
     const list = b ? filtered.filter((h) => h.lon >= b[0] && h.lat >= b[1] && h.lon <= b[2] && h.lat <= b[3]) : filtered;
     return [...list].sort(compare(filters.sort));
-  }, [filtered, view, filters.sort]);
+  }, [filtered, view, state?.view, filters.sort]);
   const goodInView = useMemo(() => inView.filter((h) => h.verdict === "godt").length, [inView]);
 
   const byId = useMemo(() => new Map((homes ?? []).map((h) => [h.id, h])), [homes]);
@@ -144,6 +152,18 @@ export function BuyerApp() {
   const onMove = useCallback((v: View) => { setView(v); setShown(PAGE); setState((s) => (s ? { ...s, view: { lat: v.lat, lon: v.lon, zoom: v.zoom, bounds: v.bounds } } : s)); }, []);
 
   const activeCount = (filters.types.length ? 1 : 0) + (filters.priceMin != null || filters.priceMax != null ? 1 : 0) + (filters.areaMin != null ? 1 : 0) + (filters.roomsMin != null ? 1 : 0) + (filters.verdicts.length ? 1 : 0);
+
+  const bottomNav = (onDashboard: boolean) => (
+    <nav aria-label="Boligkort" data-tour={onDashboard ? undefined : "nav"} className={`${onDashboard ? "fixed lg:hidden" : "absolute lg:bottom-4 lg:justify-end lg:p-0 lg:pr-4"} inset-x-0 bottom-0 z-30 flex justify-center p-3`}>
+      <div className="flex w-full max-w-md items-stretch justify-around rounded-[22px] bg-white/95 p-1.5 shadow-[0_8px_30px_rgba(15,23,42,0.18)] ring-1 ring-slate-200/70 backdrop-blur lg:w-auto lg:gap-1">
+        <NavBtn on={tab === "kort"} onClick={() => setTab("kort")} icon={<MapIcon size={20} />} label="Kort" />
+        {!isDesktop && <NavBtn on={tab === "liste"} onClick={() => setTab("liste")} icon={<List size={20} />} label="Liste" />}
+        <NavBtn on={tab === "gemte"} onClick={() => setTab("gemte")} icon={<Heart size={20} />} label="Gemte" badge={state?.saved.length || undefined} />
+        <NavBtn on={tab === "overblik"} onClick={() => setTab("overblik")} icon={<LayoutDashboard size={20} />} label="Overblik" />
+      </div>
+    </nav>
+  );
+  const showIds = (ids: string[]) => { setFreshIds(new Set(ids)); setTab("kort"); const pts = ids.map((i) => byId.get(i)).filter((h): h is BuyerHome => !!h); if (pts.length) setTimeout(() => mapRef.current?.fitTo(pts), 50); };
 
   if (loadErr) return <Centered><p className="text-[16px] text-slate-700">Boligerne kunne ikke hentes. Genindlæs siden om lidt.</p></Centered>;
 
@@ -207,14 +227,7 @@ export function BuyerApp() {
         )}
 
         {/* Bottom navigation, floating like the map's own controls */}
-        <nav aria-label="Boligkort" data-tour="nav" className="absolute inset-x-0 bottom-0 z-30 flex justify-center p-3 lg:bottom-4 lg:justify-end lg:p-0 lg:pr-4">
-          <div className="flex w-full max-w-md items-stretch justify-around rounded-[22px] bg-white/95 p-1.5 shadow-[0_8px_30px_rgba(15,23,42,0.18)] ring-1 ring-slate-200/70 backdrop-blur lg:w-auto lg:gap-1">
-            <NavBtn on={tab === "kort"} onClick={() => setTab("kort")} icon={<MapIcon size={20} />} label="Kort" />
-            {!isDesktop && <NavBtn on={tab === "liste"} onClick={() => setTab("liste")} icon={<List size={20} />} label="Liste" />}
-            <NavBtn on={tab === "gemte"} onClick={() => setTab("gemte")} icon={<Heart size={20} />} label="Gemte" badge={state?.saved.length || undefined} />
-            <NavBtn on={tab === "overblik"} onClick={() => setTab("overblik")} icon={<LayoutDashboard size={20} />} label="Overblik" />
-          </div>
-        </nav>
+        {bottomNav(false)}
       </div>
 
       {/* Desktop side panel: the homes in view, or the open home */}
@@ -253,11 +266,18 @@ export function BuyerApp() {
         </Sheet>
       )}
       {tab === "overblik" && state && (
-        <Sheet onClose={() => setTab("kort")} title="Overblik" wide>
-          <Overview state={state} homes={homes ?? []} inView={inView} byId={byId} account={account} focusPassword={focusPassword}
-            onOpen={(id) => { setTab("kort"); open(id, true); }} onMail={(mail) => setState((s) => (s ? { ...s, mail } : s))}
-            onTour={() => { setTab("kort"); setTourStep(0); }} onShowNew={() => { const ids = new Set(inView.filter((h) => h.knownStart && Date.now() - Date.parse(h.firstSeen) < 7 * 86400_000).map((h) => h.id)); setTab("kort"); setFreshIds(ids); }} />
-        </Sheet>
+        <Dashboard state={state} inView={inView} byId={byId} center={view ? { lat: view.lat, lon: view.lon } : state.view} account={account} preview={!!preview} focusPassword={focusPassword}
+          onHousehold={(hh) => setState((s) => (s ? { ...s, household: hh } : s))} onSaved={(saved) => setState((s) => (s ? { ...s, saved } : s))}
+          onMail={(mail) => setState((s) => (s ? { ...s, mail } : s))} onOpen={(id) => { setTab("kort"); open(id, true); }} onMap={() => setTab("kort")}
+          onShowIds={showIds} onBudget={(max) => { setFilters({ priceMax: max }); setTab("kort"); }}
+          onGood={() => { setFilters({ verdicts: ["godt"] }); setTab("kort"); }} onPlans={() => { setShowPlans(true); setTab("kort"); if (view && view.zoom < 12.5) mapRef.current?.flyTo(view.lat, view.lon, 13); }}
+          onTour={() => { setTab("kort"); setTourStep(0); }} nav={bottomNav(true)} />
+      )}
+      {preview && (
+        <div className="fixed left-1/2 top-3 z-[90] flex max-w-[calc(100%-24px)] -translate-x-1/2 items-center gap-3 rounded-full bg-amber-400 py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-amber-950 shadow-lg">
+          <span className="truncate">Du ser appen som {preview}. Intet gemmes.</span>
+          <a href="/app/admin/medlemmer" className="shrink-0 rounded-full bg-amber-950 px-3 py-1.5 text-[13px] text-white">Afslut</a>
+        </div>
       )}
 
       {filterOpen && <FilterSheet filters={filters} count={(f) => { const b = view?.bounds; return (homes ?? []).filter((h) => (!b || (h.lon >= b[0] && h.lat >= b[1] && h.lon <= b[2] && h.lat <= b[3])) && matches(h, f)).length; }} onApply={(f) => { setFilters(f); setFilterOpen(false); }} onClose={() => setFilterOpen(false)} />}
@@ -367,20 +387,6 @@ function SearchBox({ homes, onPlace, onHome }: { homes: BuyerHome[]; onPlace: (p
       {note && <p className="absolute left-2 top-[54px] rounded-lg bg-white px-3 py-2 text-[13px] text-slate-600 shadow ring-1 ring-slate-200">{note}</p>}
     </div>
   );
-}
-
-/* Photos for the cards that are on screen, fetched in one go. */
-const imageCache = new Map<string, string | null>();
-function useImages(ids: string[]) {
-  const [, bump] = useState(0);
-  const key = ids.join(",");
-  useEffect(() => {
-    const need = ids.filter((i) => !imageCache.has(i)).slice(0, 60);
-    if (!need.length) return;
-    need.forEach((i) => imageCache.set(i, null));
-    fetch(`/api/boligkoeb/images?ids=${encodeURIComponent(need.join(","))}`).then((r) => r.json()).then((j) => { for (const [k, v] of Object.entries(j.images ?? {})) imageCache.set(k, v as string | null); bump((n) => n + 1); }).catch(() => {});
-  }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
-  return imageCache;
 }
 
 function ListPanel({ list, shown, more, sort, onSort, selected, savedIds, onOpen, onSave, onHover, loading, bare }: {
@@ -535,84 +541,6 @@ function SavedView({ saved, byId, onOpen, onChange, mail, onMail }: { saved: Sav
           );
         })}
       </ul>
-    </div>
-  );
-}
-
-function MailToggle({ label, sub, on, onChange }: { label: string; sub?: string; on: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <label className="flex min-h-[52px] cursor-pointer items-center justify-between gap-4 rounded-xl bg-slate-50 px-4 py-3">
-      <span><span className="block text-[15px] font-semibold text-slate-900">{label}</span>{sub && <span className="block text-[13px] text-slate-500">{sub}</span>}</span>
-      <span className="relative inline-flex">
-        <input type="checkbox" className="peer sr-only" checked={on} onChange={(e) => onChange(e.target.checked)} />
-        <span className="h-7 w-12 rounded-full bg-slate-300 transition-colors peer-checked:bg-blue-600 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-300" />
-        <span className="absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5" />
-      </span>
-    </label>
-  );
-}
-
-function Overview({ state, homes, inView, byId, account, focusPassword, onOpen, onMail, onTour, onShowNew }: {
-  state: BuyerState; homes: BuyerHome[]; inView: BuyerHome[]; byId: Map<string, BuyerHome>; account: { email: string; name: string | null } | null; focusPassword: boolean;
-  onOpen: (id: string) => void; onMail: (m: BuyerState["mail"]) => void; onTour: () => void; onShowNew: () => void;
-}) {
-  const week = Date.now() - 7 * 86400_000;
-  const fresh = inView.filter((h) => h.knownStart && Date.parse(h.firstSeen) >= week);
-  const good = inView.filter((h) => h.verdict === "godt");
-  const cut = inView.filter((h) => h.cutPct > 0);
-  const ppm = inView.map((h) => h.ppm).sort((a, b) => a - b);
-  const top = [...good].sort(compare("bedste")).slice(0, 4);
-  const drops = state.saved.map((s) => ({ s, h: byId.get(s.id) })).filter((x) => x.h && x.h.price < x.s.price);
-  const first = account?.name?.split(" ")[0];
-  return (
-    <div className="px-5 py-5">
-      <p className="text-[22px] font-semibold tracking-[-0.02em]">{first ? `Hej ${first}` : "Dit overblik"}</p>
-      <p className="mt-1 text-[15px] text-slate-500">Tallene gælder det område, du kigger på på kortet, med dine filtre.</p>
-      <div className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-        {[["Til salg", inView.length.toLocaleString("da-DK"), ""], ["Gode køb", good.length.toLocaleString("da-DK"), "text-emerald-700"], ["Nye i ugen", fresh.length.toLocaleString("da-DK"), "text-blue-700"], ["Typisk m²-pris", ppm.length ? kr(ppm[Math.floor(ppm.length / 2)]) : "–", ""]].map(([l, v, c]) => (
-          <div key={l} className="rounded-2xl bg-slate-50 p-4"><p className="text-[12px] font-medium text-slate-500">{l}</p><p className={`mt-1 text-[22px] font-semibold tabular-nums tracking-[-0.01em] ${c}`}>{v}</p></div>
-        ))}
-      </div>
-      {fresh.length > 0 && <button type="button" onClick={onShowNew} className="mt-3 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-blue-600 px-4 text-[15px] font-semibold text-white hover:bg-blue-500"><Sparkles size={16} /> Vis de {fresh.length} nye på kortet</button>}
-      {cut.length > 0 && <p className="mt-3 text-[14px] text-slate-600">{Math.round((cut.length / Math.max(1, inView.length)) * 100)} % af boligerne her er sat ned i pris.</p>}
-
-      {drops.length > 0 && (
-        <div className="mt-7">
-          <h3 className="text-[16px] font-semibold">Prisfald på dine gemte</h3>
-          <ul className="mt-2 divide-y divide-slate-100">{drops.map(({ s, h }) => <li key={s.id}><button type="button" onClick={() => onOpen(s.id)} className="flex min-h-[52px] w-full items-center justify-between gap-3 text-left"><span className="truncate text-[15px] font-medium">{s.address.split(",")[0]}</span><span className="text-[14px] font-semibold tabular-nums text-emerald-700">−{kr(s.price - h!.price)}</span></button></li>)}</ul>
-        </div>
-      )}
-
-      {top.length > 0 && (
-        <div className="mt-7">
-          <h3 className="text-[16px] font-semibold">Bedste køb lige nu i området</h3>
-          <ul className="mt-2 divide-y divide-slate-100">{top.map((h) => (
-            <li key={h.id}><button type="button" onClick={() => onOpen(h.id)} className="flex min-h-[56px] w-full items-center gap-3 text-left">
-              <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: VERDICT_COLOR[h.verdict] }} />
-              <span className="min-w-0 flex-1"><span className="block truncate text-[15px] font-medium">{h.address.split(",")[0]}</span><span className="text-[13px] text-slate-500">{TYPE_LABEL[h.type] ?? ""} · {h.area} m² · {pct(Math.abs(h.deltaPct))} under området</span></span>
-              <span className="text-[15px] font-semibold tabular-nums">{mio(h.price)}</span>
-            </button></li>
-          ))}</ul>
-        </div>
-      )}
-
-      <div className="mt-8 space-y-2.5">
-        <h3 className="text-[16px] font-semibold">Mails</h3>
-        <MailToggle label="Nye boliger i mit område" sub={hasFilters(state.filters) ? "Én mail om dagen, når der kommer nye boliger, der passer på dine filtre i kortudsnittet." : "Vælg først mindst ét filter, fx pris eller boligtype."} on={state.mail.newMatches} onChange={(v) => onMail({ ...state.mail, newMatches: v })} />
-        <MailToggle label="Prisfald og salg på gemte boliger" on={state.mail.priceDrops} onChange={(v) => onMail({ ...state.mail, priceDrops: v })} />
-      </div>
-
-      <div className="mt-8 rounded-2xl border border-slate-200 p-4">
-        <h3 className="text-[16px] font-semibold">Konto</h3>
-        {account && <p className="mt-1 text-[14px] text-slate-500">{account.email}</p>}
-        <div className="mt-3"><PasswordForm focus={focusPassword} /></div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button type="button" onClick={onTour} className="min-h-[44px] rounded-full border border-slate-300 px-4 text-[14px] font-semibold hover:border-slate-400">Se guiden igen</button>
-          <a href="mailto:contact@nordinvest.io" className="inline-flex min-h-[44px] items-center rounded-full border border-slate-300 px-4 text-[14px] font-semibold hover:border-slate-400">Skriv til os</a>
-          <form action="/auth/signout" method="post"><button type="submit" className="min-h-[44px] rounded-full px-4 text-[14px] font-semibold text-slate-600 hover:bg-slate-100">Log ud</button></form>
-        </div>
-      </div>
-      <p className="mt-6 text-[12px] text-slate-400">{homes.length.toLocaleString("da-DK")} boliger til salg i Danmark, opdateret hver 6. time fra boligportalerne.</p>
     </div>
   );
 }

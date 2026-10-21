@@ -346,7 +346,7 @@ function Plans({ plans, onShowPlans }: { plans: (Plan & { kind: string })[]; onS
 
 const fmtMonth = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("da-DK", { month: "short", year: "numeric" }) : "");
 
-function News({ slug, name }: { slug: string; name: string }) {
+export function News({ slug, name }: { slug: string; name: string }) {
   const [n, setN] = useState<AreaNews | null | "loading" | "idle">("idle");
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {

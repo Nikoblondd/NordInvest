@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Bell, Building2, Calculator, Check, FileText, Gavel, KeyRound, ListChecks, Loader2, Mail, Phone, Send, ShieldCheck, UserMinus, UserPlus } from "lucide-react";
+import { ArrowLeft, Eye, Bell, Building2, Calculator, Check, FileText, Gavel, KeyRound, ListChecks, Loader2, Mail, Phone, Send, ShieldCheck, UserMinus, UserPlus } from "lucide-react";
 import { clsx } from "@/lib/clsx";
 import { STAGE_LABEL } from "@/lib/mappe/checklist";
 import type { MemberDetail } from "@/lib/admin/members";
@@ -184,6 +184,8 @@ export function MemberProfile({ m, self }: { m: MemberDetail; self: boolean }) {
             </dl>
           </section>
 
+          {(m.access === "member" || m.access === "broker" || m.access === "privat") && <KindSwitch m={m} busy={busy} onChange={(kind, label) => act(`kind-${kind}`, { action: "kind", userId: m.id, kind }, `Er nu ${label.toLowerCase()}.`)} />}
+
           <section className="rounded-2xl border border-slate-200 bg-white p-5">
             <h2 className="text-[16px] font-semibold text-slate-900">Handlinger</h2>
             <div className="mt-3 space-y-2">
@@ -191,6 +193,9 @@ export function MemberProfile({ m, self }: { m: MemberDetail; self: boolean }) {
                 <button type="button" onClick={sendLink} disabled={!!busy} className="flex min-h-[44px] w-full items-center gap-2.5 rounded-lg border border-slate-200 px-3.5 text-[14px] font-semibold text-slate-700 hover:border-slate-300 disabled:opacity-60">
                   {busy === "link" ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} className="text-slate-400" />} Send login-link
                 </button>
+              )}
+              {m.access === "privat" && (
+                <a href={`/boligkoeb?som=${m.id}`} target="_blank" rel="noopener" className="flex min-h-[44px] w-full items-center gap-2.5 rounded-lg bg-blue-600 px-3.5 text-[14px] font-semibold text-white hover:bg-blue-500"><Eye size={16} /> Se appen som {m.name?.split(" ")[0] || "brugeren"}</a>
               )}
               {m.access === "member" && (ask === "admin" ? (
                 <Confirm text="Giv fuld administratoradgang? De kan godkende anmodninger og se alle medlemmer." yes="Ja, gør til administrator" busy={busy === "admin"} onYes={() => act("admin", { action: "role", userId: m.id, role: "admin" }, "Er nu administrator.")} onNo={() => setAsk(null)} />
@@ -230,5 +235,36 @@ function Confirm({ text, yes, busy, onYes, onNo, danger }: { text: string; yes: 
         <button type="button" onClick={onNo} disabled={busy} className="min-h-[40px] px-2 text-[14px] font-medium text-slate-600">Annullér</button>
       </div>
     </div>
+  );
+}
+
+const KINDS: { id: "member" | "privat" | "maegler" | "begge"; label: string; lead: string }[] = [
+  { id: "member", label: "Investor", lead: "Hele platformen" },
+  { id: "privat", label: "Boligkøber", lead: "Boligkortet for private" },
+  { id: "maegler", label: "Mægler", lead: "Kun mæglerværktøjet" },
+  { id: "begge", label: "Investor og mægler", lead: "Platformen og mæglerværktøjet" },
+];
+
+/** Which part of NordInvest the person uses. A change takes effect the next time they open a page. */
+function KindSwitch({ m, busy, onChange }: { m: MemberDetail; busy: string | null; onChange: (kind: (typeof KINDS)[number]["id"], label: string) => void }) {
+  const current = m.access === "privat" ? "privat" : m.access === "broker" ? "maegler" : m.alsoBroker ? "begge" : "member";
+  const [pick, setPick] = useState<(typeof KINDS)[number]["id"] | null>(null);
+  const target = KINDS.find((k) => k.id === pick);
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-5">
+      <h2 className="text-[16px] font-semibold text-slate-900">Adgangstype</h2>
+      <div className="mt-3 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Adgangstype">
+        {KINDS.map((k) => (
+          <button key={k.id} type="button" role="radio" aria-checked={current === k.id} disabled={!!busy || current === k.id} onClick={() => setPick(k.id)}
+            className={clsx("min-h-[52px] rounded-lg border px-3 py-2 text-left", current === k.id ? "border-blue-600 bg-blue-50 text-blue-900" : pick === k.id ? "border-slate-900" : "border-slate-200 hover:border-slate-300")}>
+            <span className="block text-[14px] font-semibold">{k.label}</span><span className="block text-[12px] text-slate-500">{k.lead}</span>
+          </button>
+        ))}
+      </div>
+      {target && target.id !== current && (
+        <Confirm text={`Skift ${m.name?.split(" ")[0] || "personen"} til ${target.label.toLowerCase()}? ${target.id === "privat" ? "De får boligkortet og lander der, når de logger ind. Deres analyser og ejendomme bevares, men de kan ikke åbne dem som boligkøber." : "Ændringen gælder fra næste side, de åbner."}`}
+          yes={`Ja, skift til ${target.label.toLowerCase()}`} busy={busy === `kind-${target.id}`} onYes={() => { onChange(target.id, target.label); setPick(null); }} onNo={() => setPick(null)} />
+      )}
+    </section>
   );
 }

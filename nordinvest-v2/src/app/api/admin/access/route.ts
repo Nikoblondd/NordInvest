@@ -18,6 +18,7 @@ export const dynamic = "force-dynamic";
  *  { action: "revoke" | "restore", userId }
  *  { action: "status", requestId, requestCreatedAt, status, note? }
  *  { action: "role", userId, role: "admin" | "member" }
+ *  { action: "kind", userId, kind: "member" | "privat" | "maegler" | "begge" }
  * Admin only. Invitations go out as a personal e-mail with a link that does
  * not expire before it is used (see lib/access/invite-link.ts).
  */
@@ -75,6 +76,20 @@ export async function POST(req: Request) {
     // Restore what they had: "begge" members keep the broker flag, brokers stay brokers.
     const kind = target.app_metadata?.nordinvest_kind ?? (target.app_metadata?.nordinvest_broker ? "maegler" : "member");
     const ok = await setAccess(b.userId, b.action === "revoke" ? "revoked" : kind === "maegler" ? "maegler" : kind === "privat" ? "privat" : "member");
+    return json({ ok }, ok ? 200 : 502);
+  }
+
+  if (b.action === "kind") {
+    // Change what kind of access a person has: member, boligkøber, mægler or both member and mægler.
+    const kind = b.kind as InviteKind;
+    if (!b.userId || !["member", "privat", "maegler", "begge"].includes(kind)) return json({ ok: false, reason: "bad" }, 422);
+    const target = await getAuthUser(b.userId);
+    if (!target) return json({ ok: false, reason: "user" }, 404);
+    if (isAdmin(target)) return json({ ok: false, reason: "admin" }, 422);
+    const ok = await setAccess(b.userId, kind === "maegler" ? "maegler" : kind === "privat" ? "privat" : "member", {
+      nordinvest_kind: kind,
+      nordinvest_broker: kind === "maegler" || kind === "begge",
+    });
     return json({ ok }, ok ? 200 : 502);
   }
 
