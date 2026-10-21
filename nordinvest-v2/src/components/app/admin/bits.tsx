@@ -18,9 +18,9 @@ const ACCESS: Record<Access, [string, string]> = {
   none: ["Ingen adgang", "bg-slate-100 text-slate-600 ring-slate-200"],
 };
 
-export function AccessBadge({ access, alsoBroker }: { access: Access; alsoBroker?: boolean }) {
+export function AccessBadge({ access, alsoBroker, alsoPrivate }: { access: Access; alsoBroker?: boolean; alsoPrivate?: boolean }) {
   const [base, tone] = ACCESS[access];
-  const label = alsoBroker && access === "member" ? "Medlem + mægler" : base;
+  const label = alsoBroker && access === "member" ? "Medlem + mægler" : alsoPrivate && access === "member" ? "Medlem + boligkøber" : base;
   return <span className={clsx("inline-flex items-center whitespace-nowrap rounded-md px-1.5 py-0.5 text-[12px] font-semibold ring-1", tone)}>{label}</span>;
 }
 

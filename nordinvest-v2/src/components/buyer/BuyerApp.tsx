@@ -3,15 +3,15 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { Bell, Building2, ChevronDown, Heart, LayoutDashboard, List, Loader2, LocateFixed, Map as MapIcon, Search, SlidersHorizontal, X } from "lucide-react";
+import { Bell, Building2, ChevronDown, Heart, LayoutDashboard, List, Loader2, LocateFixed, Map as MapIcon, Search, SlidersHorizontal, X, ArrowRight } from "lucide-react";
 import { BuyerMap, VERDICT_COLOR, type MapHandle } from "./BuyerMap";
-import { HomeDetail } from "./HomeDetail";
+import { HomeDetail, HomePeek } from "./HomeDetail";
 import { kr, mio, pct, MailToggle, useImages, VerdictPill } from "./ui";
 import { Dashboard } from "./Dashboard";
 import { COLS } from "@/lib/buyer/cols";
 import type { BuyerHome } from "@/lib/buyer/market";
 import { compare, matches, TYPE_CHIPS } from "@/lib/buyer/filter";
-import { EMPTY_FILTERS, EMPTY_STATE, SORTS, dkDay, type BuyerState, type Filters, type SavedHome } from "@/lib/buyer/state";
+import { EMPTY_FILTERS, EMPTY_STATE, SORTS, STAGES, dkDay, type BuyerState, type Filters, type SavedHome } from "@/lib/buyer/state";
 import { MUNICIPALITIES } from "@/lib/kommuner";
 import { ZIP_NAME } from "@/lib/postnumre";
 
@@ -135,13 +135,15 @@ export function BuyerApp() {
   const selectedHome = selected ? byId.get(selected) ?? null : null;
   const detailHome = detail ? byId.get(detail) ?? null : null;
 
-  const select = useCallback((id: string | null) => { setSelected(id); if (!id) setDetail(null); else if (isDesktop) setDetail(null); }, [isDesktop]);
+  const select = useCallback((id: string | null) => { setSelected(id); setDetail(null); }, []);
   const open = (id: string, fly = false) => {
     setSelected(id); setDetail(id);
     const h = byId.get(id);
     if (fly && h) mapRef.current?.flyTo(h.lat, h.lon, Math.max(14, view?.zoom ?? 14));
   };
 
+  const updateSaved = (next: SavedHome) => setState((s) => (s ? { ...s, saved: s.saved.map((x) => (x.id === next.id ? next : x)) } : s));
+  const savedOf = (id: string) => state?.saved.find((x) => x.id === id);
   const toggleSave = (h: BuyerHome) => setState((s) => {
     if (!s) return s;
     const has = s.saved.some((x) => x.id === h.id);
@@ -222,7 +224,10 @@ export function BuyerApp() {
         {/* Phone: the tapped home, one more tap opens it */}
         {!isDesktop && selectedHome && !detail && tab === "kort" && (
           <div className="absolute inset-x-3 bottom-[88px] z-30">
-            <HomeCard h={selectedHome} saved={savedIds.has(selectedHome.id)} onOpen={() => setDetail(selectedHome.id)} onSave={() => toggleSave(selectedHome)} onClose={() => setSelected(null)} raised />
+            <div className="rounded-3xl bg-white p-2 shadow-[0_10px_40px_rgba(15,23,42,0.25)] ring-1 ring-slate-200">
+              <HomeCard h={selectedHome} saved={savedIds.has(selectedHome.id)} onOpen={() => setDetail(selectedHome.id)} onSave={() => toggleSave(selectedHome)} onClose={() => setSelected(null)} />
+              <button type="button" onClick={() => setDetail(selectedHome.id)} className="mt-1.5 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 text-[15px] font-semibold text-white">Se hele boligen <ArrowRight size={17} /></button>
+            </div>
           </div>
         )}
 
@@ -230,16 +235,15 @@ export function BuyerApp() {
         {bottomNav(false)}
       </div>
 
-      {/* Desktop side panel: the homes in view, or the open home */}
+      {/* Desktop side panel: the homes in view, or a short look at the tapped home */}
       {isDesktop && (
-        <aside className="relative flex w-[420px] shrink-0 flex-col border-l border-slate-200 bg-white xl:w-[460px]" data-tour="list">
-          {detailHome && state ? (
-            <HomeDetail home={detailHome} saved={savedIds.has(detailHome.id)} household={state.household} onHousehold={(hh) => setState((s) => (s ? { ...s, household: hh } : s))}
-              onToggleSave={() => toggleSave(detailHome)} onClose={() => setDetail(null)} onSelect={(id) => open(id, true)}
-              onShowPlans={() => { setShowPlans(true); mapRef.current?.flyTo(detailHome.lat, detailHome.lon, 14); }} kommuneName={detailHome.kommune ? KOMMUNE_NAME.get(detailHome.kommune) ?? null : null} />
+        <aside className="relative flex w-[420px] shrink-0 flex-col border-l border-slate-200 bg-white xl:w-[440px]" data-tour="list">
+          {selectedHome ? (
+            <HomePeek home={selectedHome} saved={savedOf(selectedHome.id)} onToggleSave={() => toggleSave(selectedHome)} onUpdate={updateSaved}
+              onOpen={() => setDetail(selectedHome.id)} onClose={() => setSelected(null)} />
           ) : (
             <ListPanel list={inView} shown={shown} more={() => setShown((n) => n + PAGE)} sort={filters.sort} onSort={(s) => setFilters({ sort: s })}
-              selected={selectedHome} savedIds={savedIds} onOpen={(id) => open(id)} onSave={toggleSave} loading={!homes} />
+              selected={null} savedIds={savedIds} onOpen={(id) => { select(id); const h = byId.get(id); if (h) mapRef.current?.flyTo(h.lat, h.lon, Math.max(14, view?.zoom ?? 14)); }} onSave={toggleSave} loading={!homes} />
           )}
         </aside>
       )}
@@ -251,12 +255,11 @@ export function BuyerApp() {
             selected={null} savedIds={savedIds} onOpen={(id) => open(id)} onSave={toggleSave} loading={!homes} bare />
         </Sheet>
       )}
-      {!isDesktop && detailHome && state && (
-        <div className="fixed inset-0 z-[60] bg-white">
-          <HomeDetail home={detailHome} saved={savedIds.has(detailHome.id)} household={state.household} onHousehold={(hh) => setState((s) => (s ? { ...s, household: hh } : s))}
-            onToggleSave={() => toggleSave(detailHome)} onClose={() => setDetail(null)} onSelect={(id) => open(id, true)}
-            onShowPlans={() => { setShowPlans(true); setDetail(null); setTab("kort"); mapRef.current?.flyTo(detailHome.lat, detailHome.lon, 14); }} kommuneName={detailHome.kommune ? KOMMUNE_NAME.get(detailHome.kommune) ?? null : null} />
-        </div>
+      {/* The whole home on one page, on every screen */}
+      {detailHome && state && (
+        <HomeDetail home={detailHome} saved={savedOf(detailHome.id)} household={state.household} onHousehold={(hh) => setState((s) => (s ? { ...s, household: hh } : s))}
+          onToggleSave={() => toggleSave(detailHome)} onUpdate={updateSaved} onClose={() => setDetail(null)} onSelect={(id) => open(id, true)}
+          onShowPlans={() => { setShowPlans(true); setDetail(null); setTab("kort"); mapRef.current?.flyTo(detailHome.lat, detailHome.lon, 14); }} kommuneName={detailHome.kommune ? KOMMUNE_NAME.get(detailHome.kommune) ?? null : null} />
       )}
 
       {tab === "gemte" && state && (
@@ -530,7 +533,8 @@ function SavedView({ saved, byId, onOpen, onChange, mail, onMail }: { saved: Sav
                   {h ? (
                     <span className="block text-[14px] tabular-nums text-slate-600">{mio(h.price)}{diff !== 0 && <span className={diff < 0 ? "font-semibold text-emerald-700" : "text-rose-700"}> {diff < 0 ? "−" : "+"}{kr(Math.abs(diff))} siden du gemte</span>}</span>
                   ) : <span className="block text-[14px] font-medium text-slate-500">Ikke længere til salg</span>}
-                  {h && <span className="mt-1 inline-block"><VerdictPill v={h.verdict} /></span>}
+                  <span className="mt-1 flex flex-wrap items-center gap-1.5">{h && <VerdictPill v={h.verdict} />}{s.stage && <span className="rounded-full bg-slate-900 px-2 py-0.5 text-[11px] font-semibold text-white">{STAGES.find((x) => x.id === s.stage)?.label}</span>}</span>
+                  {s.note && <span className="mt-1 block truncate text-[13px] text-slate-500">{s.note}</span>}
                 </span>
               </button>
               <div className="flex flex-col items-center gap-1">

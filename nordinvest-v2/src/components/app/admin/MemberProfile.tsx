@@ -63,7 +63,7 @@ export function MemberProfile({ m, self }: { m: MemberDetail; self: boolean }) {
         <Avatar m={m} size={56} />
         <div className="min-w-0 flex-1 basis-[220px]">
           <h1 className="flex flex-wrap items-center gap-2.5 text-[26px] font-semibold leading-tight tracking-[-0.025em] text-slate-900 sm:text-[30px]">
-            {m.name || m.email.split("@")[0]} <AccessBadge access={m.access} alsoBroker={m.alsoBroker} />
+            {m.name || m.email.split("@")[0]} <AccessBadge access={m.access} alsoBroker={m.alsoBroker} alsoPrivate={m.alsoPrivate} />
           </h1>
           <p className="mt-1 text-[15px] text-slate-500">{m.access === "member" || m.access === "broker" || m.access === "privat" || m.access === "admin" ? `Medlem siden ${dateDk(m.invitedAt ?? m.createdAt)}` : `Konto siden ${dateDk(m.createdAt)}`} · senest aktiv {ago(m.lastActive).toLowerCase()}</p>
         </div>
@@ -194,7 +194,7 @@ export function MemberProfile({ m, self }: { m: MemberDetail; self: boolean }) {
                   {busy === "link" ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} className="text-slate-400" />} Send login-link
                 </button>
               )}
-              {m.access === "privat" && (
+              {(m.access === "privat" || m.alsoPrivate) && (
                 <a href={`/boligkoeb?som=${m.id}`} target="_blank" rel="noopener" className="flex min-h-[44px] w-full items-center gap-2.5 rounded-lg bg-blue-600 px-3.5 text-[14px] font-semibold text-white hover:bg-blue-500"><Eye size={16} /> Se appen som {m.name?.split(" ")[0] || "brugeren"}</a>
               )}
               {m.access === "member" && (ask === "admin" ? (
@@ -238,16 +238,17 @@ function Confirm({ text, yes, busy, onYes, onNo, danger }: { text: string; yes: 
   );
 }
 
-const KINDS: { id: "member" | "privat" | "maegler" | "begge"; label: string; lead: string }[] = [
+const KINDS: { id: "member" | "privat" | "investor_privat" | "maegler" | "begge"; label: string; lead: string }[] = [
   { id: "member", label: "Investor", lead: "Hele platformen" },
   { id: "privat", label: "Boligkøber", lead: "Boligkortet for private" },
+  { id: "investor_privat", label: "Investor og boligkøber", lead: "Platformen og boligkortet" },
   { id: "maegler", label: "Mægler", lead: "Kun mæglerværktøjet" },
   { id: "begge", label: "Investor og mægler", lead: "Platformen og mæglerværktøjet" },
 ];
 
 /** Which part of NordInvest the person uses. A change takes effect the next time they open a page. */
 function KindSwitch({ m, busy, onChange }: { m: MemberDetail; busy: string | null; onChange: (kind: (typeof KINDS)[number]["id"], label: string) => void }) {
-  const current = m.access === "privat" ? "privat" : m.access === "broker" ? "maegler" : m.alsoBroker ? "begge" : "member";
+  const current = m.access === "privat" ? "privat" : m.access === "broker" ? "maegler" : m.alsoBroker ? "begge" : m.alsoPrivate ? "investor_privat" : "member";
   const [pick, setPick] = useState<(typeof KINDS)[number]["id"] | null>(null);
   const target = KINDS.find((k) => k.id === pick);
   return (
@@ -262,7 +263,7 @@ function KindSwitch({ m, busy, onChange }: { m: MemberDetail; busy: string | nul
         ))}
       </div>
       {target && target.id !== current && (
-        <Confirm text={`Skift ${m.name?.split(" ")[0] || "personen"} til ${target.label.toLowerCase()}? ${target.id === "privat" ? "De får boligkortet og lander der, når de logger ind. Deres analyser og ejendomme bevares, men de kan ikke åbne dem som boligkøber." : "Ændringen gælder fra næste side, de åbner."}`}
+        <Confirm text={`Skift ${m.name?.split(" ")[0] || "personen"} til ${target.label.toLowerCase()}? ${target.id === "investor_privat" ? "De beholder hele platformen og får boligkortet i menuen." : target.id === "privat" ? "De får boligkortet og lander der, når de logger ind. Deres analyser og ejendomme bevares, men de kan ikke åbne dem som boligkøber." : "Ændringen gælder fra næste side, de åbner."}`}
           yes={`Ja, skift til ${target.label.toLowerCase()}`} busy={busy === `kind-${target.id}`} onYes={() => { onChange(target.id, target.label); setPick(null); }} onNo={() => setPick(null)} />
       )}
     </section>

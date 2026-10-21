@@ -41,7 +41,7 @@ export async function GET(req: Request) {
     const drops: { h: BuyerHome; from: number }[] = [];
     const gone: string[] = [];
     const saved = s.saved.map((x) => {
-      if (!x.alert || x.gone) return x;
+      if (!x.alert || x.gone || x.stage === "fravalgt") return x;
       const h = m.byId.get(x.id);
       if (!h) { gone.push(x.address); return { ...x, gone: true }; }
       const ref = x.lastPrice ?? x.price;

@@ -3,14 +3,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { ArrowRight, Bell, Building2, Heart, Landmark, Map as MapIcon, MapPinned, Sparkles, TrendingDown, TrendingUp, Wallet } from "lucide-react";
+import { ArrowRight, Bell, Building2, Heart, Landmark, Map as MapIcon, MapPinned, Newspaper, Sparkles, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { PasswordForm } from "@/components/app/PasswordForm";
 import type { BuyerHome } from "@/lib/buyer/market";
 import { TYPE_LABEL } from "@/lib/buyer/market";
 import type { Plan } from "@/lib/buyer/plans";
 import { compare, hasFilters } from "@/lib/buyer/filter";
 import { capacity, financing } from "@/lib/buyer/finance";
-import type { BuyerState, Household, SavedHome } from "@/lib/buyer/state";
+import { STAGES, type BuyerState, type Household, type SavedHome } from "@/lib/buyer/state";
 import { MUNICIPALITIES } from "@/lib/kommuner";
 import { News } from "./HomeDetail";
 import { kr, mio, MailToggle, pct, useImages, VerdictPill } from "./ui";
@@ -134,7 +134,7 @@ export function Dashboard(p: Props) {
             {wide ? <p className="text-[15px] text-slate-500">Zoom ind på kortet, så viser vi byggeprojekter og prisudvikling for området.</p> : !area ? <div className="h-40 animate-pulse rounded-2xl bg-slate-100" /> : <AreaBlock area={area} onPlans={p.onPlans} />}
           </Card>
 
-          {kommune && !wide && <div className="min-w-0 overflow-hidden rounded-3xl bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-20px_rgba(15,23,42,0.22)] ring-1 ring-slate-200/70 lg:col-span-2 [&>div>section]:border-t-0"><News slug={kommune} name={place ?? kommune} /></div>}
+          {kommune && !wide && <Card title={`Nyt fra ${place ?? kommune}`} icon={<Newspaper size={17} />} className="lg:col-span-2"><News slug={kommune} name={place ?? kommune} max={4} /></Card>}
 
           <Card title="Besked og konto" icon={<Bell size={17} />} className={kommune && !wide ? "" : "lg:col-span-3"}>
             <div className="space-y-2.5">
@@ -212,6 +212,7 @@ function Saved({ saved, byId, onOpen, onSaved, onMap }: { saved: SavedHome[]; by
                   <span className="h-14 w-[72px] shrink-0 overflow-hidden rounded-xl bg-slate-100">{images.get(s.id) && <img src={images.get(s.id)!} alt="" className="h-full w-full object-cover" />}</span>
                   <span className="min-w-0">
                     <span className="block truncate text-[15px] font-semibold text-slate-900">{s.address.split(",")[0]}</span>
+                    {(s.stage || s.note) && <span className="block truncate text-[12px] text-slate-500">{s.stage && <b className="mr-1.5 rounded-full bg-slate-900 px-2 py-0.5 text-[11px] font-semibold text-white">{STAGES.find((x) => x.id === s.stage)?.label}</b>}{s.note}</span>}
                     {h ? <span className="block text-[14px] tabular-nums text-slate-600">{mio(h.price)}{diff !== 0 && <span className={diff < 0 ? "font-semibold text-emerald-700" : "text-rose-700"}> · {diff < 0 ? "−" : "+"}{kr(Math.abs(diff))}</span>}</span> : <span className="block text-[14px] text-slate-500">Ikke længere til salg</span>}
                   </span>
                 </button>

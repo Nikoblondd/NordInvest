@@ -2,8 +2,8 @@
 /* eslint-disable @next/next/no-img-element -- listing photos come from the portals' own image CDN */
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { ArrowLeft, Building2, ExternalLink, FileText, Heart, Landmark, Loader2, MapPinned, Newspaper, Share2, TrendingDown, TrendingUp } from "lucide-react";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { ArrowLeft, ArrowRight, Bell, Building2, Check, ChevronDown, ExternalLink, FileText, Heart, Loader2, MapPinned, Share2, X } from "lucide-react";
 import type { Basis, BuyerHome } from "@/lib/buyer/market";
 import { TYPE_LABEL } from "@/lib/buyer/market";
 import type { Plan } from "@/lib/buyer/plans";
@@ -11,10 +11,19 @@ import type { MarketRates } from "@/lib/market-rates";
 import type { Dossier } from "@/lib/dossier";
 import type { FutureBurdens } from "@/lib/future-burdens";
 import type { AreaNews } from "@/lib/buyer/news";
-import type { Household } from "@/lib/buyer/state";
-import { BANK_RATE, DEBT_FACTOR, INSTITUTES, INSTITUTES_AS_OF, capacity, defaultOwnerCost, equityPath, financing, yearlyBidrag } from "@/lib/buyer/finance";
+import { STAGES, type Household, type SavedHome } from "@/lib/buyer/state";
+import { INSTITUTES, capacity, defaultOwnerCost, equityPath, financing, yearlyBidrag } from "@/lib/buyer/finance";
 import { VERDICT_COLOR } from "./BuyerMap";
-import { kr, mio, pct, VerdictPill } from "./ui";
+import { kr, mio, pct, useImages, VerdictPill } from "./ui";
+
+/*
+ * A home, two ways. The peek sits in the side panel when a dot is tapped:
+ * the photo, the price, the verdict in one sentence, follow it, and one clear
+ * button to the whole home. The full view puts everything on one page as
+ * tiles: the price against the area, what it costs a month, whether you can
+ * borrow for it, the cheapest loan, friværdi, the area, building projects,
+ * the facts and the local news. Short sentences, numbers first.
+ */
 
 type Detail = {
   home: BuyerHome;
@@ -27,33 +36,122 @@ type Detail = {
   plans: (Plan & { kind: string })[];
 };
 
-type Props = {
+/** The verdict as one plain sentence. */
+export function verdictLine(h: BuyerHome): string {
+  if (h.suspect) return "Prisen ligger så skævt, at annoncen nok har en fejl. Tjek areal og boligtype.";
+  const d = Math.round(Math.abs(h.deltaPct));
+  if (d < 2) return "Prisen ligger lige på niveau med lignende boliger i nærheden.";
+  return h.deltaPct < 0 ? `${d} % billigere end lignende boliger i nærheden.` : `${d} % dyrere end lignende boliger i nærheden.`;
+}
+
+/* ───────────────────────── Follow: save, stage, mail, note ───────────────────────── */
+
+export function Follow({ home, saved, onToggleSave, onUpdate, compact }: { home: BuyerHome; saved?: SavedHome; onToggleSave: () => void; onUpdate: (s: SavedHome) => void; compact?: boolean }) {
+  const [note, setNote] = useState(saved?.note ?? "");
+  useEffect(() => setNote(saved?.note ?? ""), [saved?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!saved) {
+    return (
+      <button type="button" onClick={onToggleSave} className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full border border-slate-300 bg-white text-[15px] font-semibold text-slate-900 hover:border-rose-300 hover:text-rose-600">
+        <Heart size={18} /> Gem og følg boligen
+      </button>
+    );
+  }
+  const diff = home.price - saved.price;
+  return (
+    <div className="rounded-2xl bg-rose-50/60 p-4 ring-1 ring-rose-100">
+      <div className="flex items-center justify-between gap-3">
+        <p className="flex items-center gap-2 text-[15px] font-semibold text-rose-700"><Heart size={17} fill="currentColor" /> Du følger boligen</p>
+        <button type="button" onClick={onToggleSave} className="text-[13px] font-medium text-slate-500 hover:text-slate-800">Fjern</button>
+      </div>
+      {diff !== 0 && <p className={`mt-1 text-[14px] font-medium ${diff < 0 ? "text-emerald-700" : "text-slate-600"}`}>{diff < 0 ? `Sat ned ${kr(-diff)}` : `Steget ${kr(diff)}`} siden du gemte den</p>}
+      <div className="mt-3 flex flex-wrap gap-1.5" role="radiogroup" aria-label="Hvor er du med boligen?">
+        {STAGES.map((s) => (
+          <button key={s.id} type="button" role="radio" aria-checked={saved.stage === s.id} onClick={() => onUpdate({ ...saved, stage: saved.stage === s.id ? undefined : s.id })}
+            className={`min-h-[36px] rounded-full px-3 text-[13px] font-semibold transition-colors ${saved.stage === s.id ? "bg-slate-900 text-white" : "bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-slate-300"}`}>{s.label}</button>
+        ))}
+      </div>
+      <label className="mt-3 flex min-h-[40px] cursor-pointer items-center gap-2.5 text-[14px] text-slate-700">
+        <input type="checkbox" checked={saved.alert} onChange={(e) => onUpdate({ ...saved, alert: e.target.checked })} className="h-4 w-4 accent-blue-600" />
+        <Bell size={15} className="text-slate-400" /> Mail mig ved prisfald, og når den bliver solgt
+      </label>
+      {!compact && (
+        <textarea value={note} onChange={(e) => setNote(e.target.value)} onBlur={() => note !== (saved.note ?? "") && onUpdate({ ...saved, note })} rows={2} placeholder="Dine noter, fx fra fremvisningen"
+          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[15px] focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" />
+      )}
+    </div>
+  );
+}
+
+/* ───────────────────────── Peek: the side panel ───────────────────────── */
+
+export function HomePeek({ home, saved, onToggleSave, onUpdate, onOpen, onClose }: { home: BuyerHome; saved?: SavedHome; onToggleSave: () => void; onUpdate: (s: SavedHome) => void; onOpen: () => void; onClose: () => void }) {
+  const images = useImages([home.id]);
+  const img = images.get(home.id);
+  const expected = Math.round((home.expPpm * home.area) / 10000) * 10000;
+  return (
+    <div className="h-full overflow-y-auto overscroll-contain bg-white">
+      <div className="relative aspect-[16/10] w-full bg-slate-100">
+        {img ? <img src={img} alt={`Billede af ${home.address}`} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-slate-300"><Building2 size={36} /></div>}
+        <button type="button" onClick={onClose} aria-label="Tilbage til listen" className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-slate-800 shadow"><X size={18} /></button>
+        {home.cutPct > 0 && <span className="absolute bottom-3 left-3 rounded-lg bg-emerald-600 px-2 py-1 text-[12px] font-semibold text-white">Sat ned {pct(home.cutPct)}</span>}
+      </div>
+      <div className="p-5">
+        <p className="text-[28px] font-semibold tabular-nums tracking-[-0.02em]">{kr(home.price)}</p>
+        <p className="mt-0.5 text-[15px] text-slate-700">{home.address}</p>
+
+        <div className="mt-4 rounded-2xl p-4" style={{ background: `${VERDICT_COLOR[home.verdict]}12` }}>
+          <VerdictPill v={home.verdict} large />
+          <p className="mt-2 text-[16px] font-medium leading-snug text-slate-900">{verdictLine(home)}</p>
+          {!home.suspect && expected > 0 && <p className="mt-1 text-[14px] text-slate-600">Områdets pris for den: ca. {mio(expected)}</p>}
+        </div>
+
+        <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
+          {[["Størrelse", `${home.area} m²`], ["Værelser", home.rooms ? String(home.rooms) : "–"], ["Byggeår", home.year ? String(home.year) : "–"], ["Pris pr. m²", kr(home.ppm)], ["Type", TYPE_LABEL[home.type] ?? "Bolig"], ["Energi", home.energy ?? "–"]].map(([k, v]) => (
+            <div key={k} className="rounded-xl bg-slate-50 px-2 py-2.5"><dt className="text-[11px] font-medium text-slate-500">{k}</dt><dd className="mt-0.5 truncate text-[14px] font-semibold text-slate-900">{v}</dd></div>
+          ))}
+        </dl>
+
+        <button type="button" onClick={onOpen} className="mt-5 flex min-h-[54px] w-full items-center justify-center gap-2 rounded-full bg-blue-600 text-[16px] font-semibold text-white shadow-[0_8px_20px_-8px_rgba(37,99,235,0.7)] hover:bg-blue-500">
+          Se hele boligen <ArrowRight size={18} />
+        </button>
+        <p className="mt-2 text-center text-[13px] text-slate-500">Lån, friværdi, området og byggeprojekter på én side</p>
+
+        <div className="mt-5"><Follow home={home} saved={saved} onToggleSave={onToggleSave} onUpdate={onUpdate} compact /></div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Full: everything on one page ───────────────────────── */
+
+type FullProps = {
   home: BuyerHome;
-  saved: boolean;
+  saved?: SavedHome;
   household: Household;
   onHousehold: (h: Household) => void;
   onToggleSave: () => void;
+  onUpdate: (s: SavedHome) => void;
   onClose: () => void;
   onSelect: (id: string) => void;
   onShowPlans: () => void;
   kommuneName: string | null;
 };
 
-const Section = ({ id, icon, title, children, lead }: { id?: string; icon: React.ReactNode; title: string; lead?: string; children: React.ReactNode }) => (
-  <section id={id} className="border-t border-slate-100 px-5 py-6 sm:px-6">
-    <h3 className="flex items-center gap-2 text-[17px] font-semibold tracking-[-0.01em] text-slate-900"><span className="text-slate-400">{icon}</span>{title}</h3>
-    {lead && <p className="mt-1 text-[14px] leading-relaxed text-slate-500">{lead}</p>}
-    <div className="mt-4">{children}</div>
+const Tile = ({ title, children, className = "", right }: { title: string; children: React.ReactNode; className?: string; right?: React.ReactNode }) => (
+  <section className={`min-w-0 rounded-3xl bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-22px_rgba(15,23,42,0.25)] ring-1 ring-slate-200/70 ${className}`}>
+    <div className="flex items-baseline justify-between gap-3"><h2 className="text-[15px] font-semibold text-slate-500">{title}</h2>{right}</div>
+    <div className="mt-3">{children}</div>
   </section>
 );
+const Big = ({ children, tone }: { children: React.ReactNode; tone?: "pos" | "neg" }) => <p className={`text-[30px] font-semibold leading-none tabular-nums tracking-[-0.02em] ${tone === "pos" ? "text-emerald-700" : tone === "neg" ? "text-rose-700" : "text-slate-900"}`}>{children}</p>;
+const Skel = ({ h = 90 }: { h?: number }) => <div className="animate-pulse rounded-2xl bg-slate-100" style={{ height: h }} />;
 
-const Skeleton = ({ h = 80 }: { h?: number }) => <div className="animate-pulse rounded-xl bg-slate-100" style={{ height: h }} />;
-
-export function HomeDetail({ home, saved, household, onHousehold, onToggleSave, onClose, onSelect, onShowPlans, kommuneName }: Props) {
+export function HomeDetail({ home, saved, household, onHousehold, onToggleSave, onUpdate, onClose, onSelect, onShowPlans, kommuneName }: FullProps) {
   const [d, setD] = useState<Detail | null>(null);
   const [err, setErr] = useState(false);
   const [dos, setDos] = useState<{ dossier: Dossier | null; burdens: FutureBurdens | null } | "loading" | null>("loading");
   const scroller = useRef<HTMLDivElement>(null);
+  const images = useImages([home.id]);
 
   useEffect(() => {
     let live = true;
@@ -63,291 +161,260 @@ export function HomeDetail({ home, saved, household, onHousehold, onToggleSave, 
     fetch(`/api/boligkoeb/dossier?id=${encodeURIComponent(home.id)}`).then((r) => r.json()).then((j) => { if (live) setDos(j.ok ? { dossier: j.dossier, burdens: j.burdens } : null); }).catch(() => live && setDos(null));
     return () => { live = false; };
   }, [home.id]);
+  useEffect(() => { const k = (e: KeyboardEvent) => e.key === "Escape" && onClose(); addEventListener("keydown", k); return () => removeEventListener("keydown", k); }, [onClose]);
 
   const share = async () => {
     const url = `${location.origin}/boligkoeb?bolig=${encodeURIComponent(home.id)}`;
     try { if (navigator.share) await navigator.share({ title: home.address, url }); else { await navigator.clipboard.writeText(url); alert("Linket er kopieret."); } } catch { /* cancelled */ }
   };
 
+  const img = d?.listing.image ?? images.get(home.id) ?? null;
   const expected = Math.round((home.expPpm * home.area) / 10000) * 10000;
-  const gap = home.price - expected;
+  const hist = d?.listing.history ?? [];
+  const firstPrice = hist.length ? hist[0].price : home.price;
 
   return (
-    <div ref={scroller} className="h-full overflow-y-auto overscroll-contain bg-white">
-      {/* Header */}
-      <div className="sticky top-0 z-10 flex items-center gap-2 border-b border-slate-100 bg-white/95 px-3 py-2 backdrop-blur">
-        <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100" aria-label="Tilbage til listen"><ArrowLeft size={20} /></button>
-        <p className="min-w-0 flex-1 truncate text-[15px] font-semibold text-slate-900">{home.address.split(",")[0]}</p>
-        <button type="button" onClick={share} className="flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100" aria-label="Del boligen"><Share2 size={18} /></button>
-        <button type="button" onClick={onToggleSave} aria-pressed={saved} className={`flex h-10 items-center gap-1.5 rounded-full px-3 text-[14px] font-semibold ${saved ? "bg-rose-50 text-rose-600" : "text-slate-700 hover:bg-slate-100"}`}>
-          <Heart size={18} fill={saved ? "currentColor" : "none"} /> {saved ? "Gemt" : "Gem"}
+    <div className="fixed inset-0 z-[60] flex flex-col bg-[#f4f6f9]">
+      <header className="flex items-center gap-2 border-b border-slate-200 bg-white px-3 py-2.5 sm:px-5">
+        <button type="button" onClick={onClose} className="inline-flex min-h-[44px] items-center gap-2 rounded-full px-3 text-[15px] font-semibold text-slate-800 hover:bg-slate-100"><ArrowLeft size={18} /> <span className="hidden sm:inline">Tilbage til kortet</span></button>
+        <p className="min-w-0 flex-1 truncate text-center text-[15px] font-semibold sm:text-left">{home.address.split(",")[0]}</p>
+        <button type="button" onClick={share} className="flex h-11 w-11 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100" aria-label="Del boligen"><Share2 size={18} /></button>
+        <button type="button" onClick={onToggleSave} aria-pressed={!!saved} className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold ${saved ? "bg-rose-50 text-rose-600" : "bg-slate-900 text-white hover:bg-slate-800"}`}>
+          <Heart size={17} fill={saved ? "currentColor" : "none"} /> {saved ? "Følger" : "Gem"}
         </button>
-      </div>
+      </header>
 
-      {/* Photo + key facts */}
-      <div className="relative aspect-[16/9] w-full bg-slate-100">
-        {d?.listing.image ? <img src={d.listing.image} alt={`Billede af ${home.address}`} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-slate-300"><Building2 size={40} /></div>}
-      </div>
-      <div className="px-5 pb-5 pt-4 sm:px-6">
-        <p className="text-[13px] font-medium text-slate-500">{TYPE_LABEL[home.type] ?? "Bolig"}{home.year ? ` · opført ${home.year}` : ""}{home.energy ? ` · energimærke ${home.energy}` : ""}</p>
-        <h2 className="mt-1 text-[22px] font-semibold leading-tight tracking-[-0.02em] text-slate-900">{home.address}</h2>
-        <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <span className="text-[26px] font-semibold tracking-[-0.02em] tabular-nums">{kr(home.price)}</span>
-          <span className="text-[15px] text-slate-600 tabular-nums">{home.area} m²{home.rooms ? ` · ${home.rooms} vær.` : ""} · {kr(home.ppm)}/m²</span>
-        </div>
-        {d?.listing.url && <a href={d.listing.url} target="_blank" rel="noopener" className="mt-3 inline-flex min-h-[40px] items-center gap-1.5 text-[14px] font-semibold text-blue-700 hover:underline">Se annoncen hos mægleren <ExternalLink size={14} /></a>}
-      </div>
-
-      {/* Verdict */}
-      <div className="mx-5 mb-6 rounded-2xl border p-5 sm:mx-6" style={{ borderColor: `${VERDICT_COLOR[home.verdict]}55`, background: `${VERDICT_COLOR[home.verdict]}0d` }}>
-        <div className="flex flex-wrap items-center gap-3">
-          <VerdictPill v={home.verdict} large />
-          <span className="text-[15px] font-semibold text-slate-900">
-            {home.rank < 1 ? "Billigst pr. m² blandt lignende boliger i nærheden" : home.rank > 99 ? "Dyrest pr. m² blandt lignende boliger i nærheden" : home.rank <= 50 ? `Billigere pr. m² end ${100 - home.rank} % af lignende boliger` : `Dyrere pr. m² end ${home.rank} % af lignende boliger`}
-          </span>
-        </div>
-        <p className="mt-3 text-[15px] leading-relaxed text-slate-700">
-          {home.verdict === "godt" && <>Boligen hører til den billigste fjerdedel pr. m² blandt lignende boliger til salg i området. Forventet pris ud fra området er ca. <b>{kr(expected)}</b>, så du betaler {kr(Math.abs(gap))} {gap < 0 ? "mindre" : "mere"}.</>}
-          {home.verdict === "middel" && !home.suspect && <>Prisen er tæt på, hvad lignende boliger koster i området (ca. <b>{kr(expected)}</b>). Der er normalt plads til at forhandle et par procent.</>}
-          {home.verdict === "dyrt" && <>Boligen hører til den dyreste fjerdedel pr. m² blandt lignende boliger til salg i området. Forventet pris er ca. <b>{kr(expected)}</b>, {kr(Math.abs(gap))} under udbudsprisen. Spørg mægleren, hvad der begrunder prisen, eller byd lavere.</>}
-          {home.cutPct > 0 && <> Prisen er allerede sat ned med {pct(home.cutPct)}.</>}
-        </p>
-        {home.suspect && <p className="mt-3 rounded-lg bg-white/70 p-3 text-[14px] leading-relaxed text-amber-900 ring-1 ring-amber-200"><b>Tjek annoncen.</b> Prisen pr. m² ligger så langt fra lignende boliger, at der sandsynligvis er en fejl i annoncen: forkert areal, en andelsbolig eller husbåd listet som ejerlejlighed, eller en bolig, der skal totalrenoveres. Vi viser den derfor som middel.</p>}
-        {d ? <RangeBar basis={d.basis} ppm={home.ppm} /> : <div className="mt-4"><Skeleton h={56} /></div>}
-        {d && <p className="mt-3 text-[13px] leading-relaxed text-slate-500">Sammenlignet med {d.basis.n} {(TYPE_LABEL[home.type] ?? "boliger").toLowerCase()}er på {d.basis.band} til salg {d.basis.level === "naer" ? d.basis.place : d.basis.level === "postnummer" ? `i ${d.basis.place}` : d.basis.level === "kommune" ? `i ${kommuneName ?? "kommunen"} Kommune` : "i hele landet"}. Det er udbudspriser, ikke salgspriser: stand, beliggenhed i gaden og udsigt er ikke med.</p>}
-      </div>
-
-      {err && <p className="mx-6 mb-6 rounded-lg bg-rose-50 px-4 py-3 text-[14px] text-rose-800">Detaljerne kunne ikke hentes. Prøv igen om lidt.</p>}
-
-      {d && d.listing.history.length > 1 && (
-        <Section icon={<TrendingDown size={18} />} title="Prishistorik">
-          <ol className="space-y-2">
-            {d.listing.history.map((p, i) => (
-              <li key={p.d + i} className="flex items-center justify-between text-[15px]">
-                <span className="text-slate-600">{new Date(p.d).toLocaleDateString("da-DK", { day: "numeric", month: "short", year: "numeric" })}</span>
-                <span className="font-semibold tabular-nums">{kr(p.price)}{i > 0 && p.price !== d.listing.history[i - 1].price && <span className={`ml-2 text-[13px] ${p.price < d.listing.history[i - 1].price ? "text-emerald-700" : "text-rose-700"}`}>{p.price < d.listing.history[i - 1].price ? "−" : "+"}{kr(Math.abs(p.price - d.listing.history[i - 1].price))}</span>}</span>
-              </li>
-            ))}
-          </ol>
-        </Section>
-      )}
-
-      <Money home={home} d={d} household={household} onHousehold={onHousehold} expected={expected} />
-
-      <Section icon={<MapPinned size={18} />} title="Området" lead={d ? `Postnummer ${home.zip} og ${d.trend.region}` : undefined}>
-        {!d ? <Skeleton h={140} /> : (
-          <>
-            <div className="grid grid-cols-2 gap-2.5">
-              <Stat label="Prisudvikling seneste år" value={d.trend.yoy != null ? `${d.trend.yoy > 0 ? "+" : ""}${pct(d.trend.yoy)}` : "–"} tone={d.trend.yoy == null ? undefined : d.trend.yoy >= 0 ? "pos" : "neg"} note={`Salgspriser, ${d.trend.region}`} />
-              <Stat label="Om året, seneste 10 år" value={d.trend.growth != null ? `+${pct(d.trend.growth)}` : "–"} note="Danmarks Statistik" />
-              <Stat label="Boliger til salg her" value={String(d.area.homes)} note={`${d.area.newLast30} nye de seneste 30 dage`} />
-              <Stat label="Sat ned i pris" value={d.area.cutShare != null ? `${d.area.cutShare} %` : "–"} note="af boligerne i postnummeret" />
+      <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <div className="mx-auto grid max-w-[1180px] gap-4 px-3 py-4 sm:px-6 sm:py-6 lg:grid-cols-3">
+          {/* Photo + the essentials */}
+          <div className="min-w-0 overflow-hidden rounded-3xl bg-slate-200 lg:col-span-2">
+            <div className="relative aspect-[16/10] w-full lg:aspect-auto lg:h-full lg:min-h-[380px]">
+              {img ? <img src={img} alt={`Billede af ${home.address}`} className="absolute inset-0 h-full w-full object-cover" /> : <div className="absolute inset-0 flex items-center justify-center text-slate-400"><Building2 size={40} /></div>}
             </div>
-            <p className="mt-3 text-[14px] leading-relaxed text-slate-600">
-              {d.area.cutShare != null && d.area.cutShare >= 30 ? "Mange boliger i postnummeret er sat ned. Det er en købers marked her: du kan byde lavere." : d.area.cutShare != null && d.area.cutShare <= 12 ? "Få boliger er sat ned i postnummeret. Boligerne sælges tæt på udbudsprisen." : "Et normalt marked: nogle boliger sættes ned, og der er plads til forhandling."}
-            </p>
-          </>
-        )}
-      </Section>
+          </div>
+          <section className="min-w-0 rounded-3xl bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-22px_rgba(15,23,42,0.25)] ring-1 ring-slate-200/70 sm:p-6">
+            <p className="text-[13px] font-medium text-slate-500">{TYPE_LABEL[home.type] ?? "Bolig"} · {home.area} m²{home.rooms ? ` · ${home.rooms} vær.` : ""}{home.year ? ` · ${home.year}` : ""}</p>
+            <h1 className="mt-1 text-[20px] font-semibold leading-snug tracking-[-0.01em]">{home.address}</h1>
+            <p className="mt-3 text-[34px] font-semibold leading-none tabular-nums tracking-[-0.025em]">{kr(home.price)}</p>
+            {firstPrice > home.price && <p className="mt-2 text-[14px] font-medium text-emerald-700">Sat ned {kr(firstPrice - home.price)} siden {new Date(hist[0].d).toLocaleDateString("da-DK", { day: "numeric", month: "short" })}</p>}
+            <div className="mt-4 rounded-2xl p-4" style={{ background: `${VERDICT_COLOR[home.verdict]}12` }}>
+              <VerdictPill v={home.verdict} large />
+              <p className="mt-2 text-[16px] font-medium leading-snug">{verdictLine(home)}</p>
+              {d ? <RangeBar basis={d.basis} ppm={home.ppm} /> : <div className="mt-3"><Skel h={36} /></div>}
+            </div>
+            <div className="mt-4"><Follow home={home} saved={saved} onToggleSave={onToggleSave} onUpdate={onUpdate} /></div>
+            {d?.listing.url && <a href={d.listing.url} target="_blank" rel="noopener" className="mt-3 flex min-h-[44px] items-center justify-center gap-1.5 text-[14px] font-semibold text-blue-700 hover:underline">Se annoncen hos mægleren <ExternalLink size={14} /></a>}
+          </section>
 
-      <Section icon={<Building2 size={18} />} title="Byggeprojekter i nærheden" lead="Lokalplaner fra de seneste 3 år inden for 2 km. En ny lokalplan er sådan, kommunen åbner for nye boliger, butikker, skoler og erhverv. Kilde: Plandata.dk">
-        {!d ? <Skeleton h={120} /> : <Plans plans={d.plans} onShowPlans={onShowPlans} />}
-      </Section>
+          {err && <p className="rounded-2xl bg-rose-50 px-4 py-3 text-[14px] text-rose-800 lg:col-span-3">Noget af boligens data kunne ikke hentes. Prøv igen om lidt.</p>}
 
-      {home.kommune && <News slug={home.kommune} name={kommuneName ?? home.kommune} />}
+          <Money home={home} d={d} household={household} onHousehold={onHousehold} />
 
-      <Section icon={<Landmark size={18} />} title="Offentlige oplysninger" lead="Fra BBR, Vurderingsstyrelsen og Plandata for netop denne adresse.">
-        <Records dos={dos} price={home.price} />
-      </Section>
+          <EquityTile home={home} d={d} expected={expected} />
 
-      {d && d.similar.length > 0 && (
-        <Section icon={<Building2 size={18} />} title="Lignende boliger i nærheden">
-          <ul className="divide-y divide-slate-100">
-            {d.similar.map((s) => (
-              <li key={s.id}>
-                <button type="button" onClick={() => onSelect(s.id)} className="flex w-full items-center gap-3 py-3 text-left hover:bg-slate-50">
-                  <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: VERDICT_COLOR[s.verdict] }} />
-                  <span className="min-w-0 flex-1"><span className="block truncate text-[15px] font-medium text-slate-900">{s.address.split(",")[0]}</span><span className="text-[13px] text-slate-500">{s.area} m² · {kr(s.ppm)}/m²</span></span>
-                  <span className="text-[15px] font-semibold tabular-nums">{mio(s.price)}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
-      <p className="px-6 pb-10 pt-2 text-[12px] leading-relaxed text-slate-400">Vurderingen er et overblik ud fra offentlige data og udbudspriser, ikke en vurdering fra en ejendomsmægler eller en bank. Tjek altid tilstandsrapport, elinstallationsrapport og ejerudgifter i salgsopstillingen før du byder.</p>
+          <Tile title="Området">
+            {!d ? <Skel h={150} /> : (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  <Mini label="Priser seneste år" value={d.trend.yoy != null ? `${d.trend.yoy > 0 ? "+" : ""}${pct(d.trend.yoy)}` : "–"} tone={d.trend.yoy == null ? undefined : d.trend.yoy >= 0 ? "pos" : "neg"} />
+                  <Mini label="Om året, 10 år" value={d.trend.growth != null ? `+${pct(d.trend.growth)}` : "–"} />
+                  <Mini label="Til salg her" value={String(d.area.homes)} />
+                  <Mini label="Sat ned i pris" value={d.area.cutShare != null ? `${d.area.cutShare} %` : "–"} />
+                </div>
+                <p className="mt-3 text-[14px] text-slate-600">{d.area.cutShare != null && d.area.cutShare >= 30 ? "Mange er sat ned. Du kan byde lavere her." : d.area.cutShare != null && d.area.cutShare <= 12 ? "Få er sat ned. Boligerne sælges tæt på prisen." : "Normalt marked. Der er plads til at forhandle lidt."}</p>
+                <p className="mt-1 text-[12px] text-slate-400">Postnummer {home.zip} · {d.trend.region} · Danmarks Statistik</p>
+              </>
+            )}
+          </Tile>
+
+          <Tile title="Bygges der i nærheden?" className="lg:col-span-2" right={d && d.plans.length > 0 ? <button type="button" onClick={onShowPlans} className="inline-flex items-center gap-1 text-[14px] font-semibold text-violet-700 hover:underline"><MapPinned size={14} /> Vis på kortet</button> : undefined}>
+            {!d ? <Skel h={120} /> : <Plans plans={d.plans} />}
+          </Tile>
+
+          <Tile title="Fakta om boligen">
+            <Records dos={dos} price={home.price} energy={home.energy} />
+          </Tile>
+
+          {home.kommune && (
+            <Tile title={`Nyt fra ${kommuneName ?? "kommunen"}`} className="lg:col-span-2"><News slug={home.kommune} name={kommuneName ?? home.kommune} /></Tile>
+          )}
+
+          {d && d.similar.length > 0 && (
+            <Tile title="Lignende boliger i nærheden" className={home.kommune ? "" : "lg:col-span-3"}>
+              <ul className="divide-y divide-slate-100">
+                {d.similar.slice(0, 5).map((s) => (
+                  <li key={s.id}>
+                    <button type="button" onClick={() => onSelect(s.id)} className="flex min-h-[52px] w-full items-center gap-3 text-left hover:bg-slate-50">
+                      <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: VERDICT_COLOR[s.verdict] }} />
+                      <span className="min-w-0 flex-1"><span className="block truncate text-[14px] font-medium">{s.address.split(",")[0]}</span><span className="text-[12px] text-slate-500">{s.area} m² · {kr(s.ppm)}/m²</span></span>
+                      <span className="text-[14px] font-semibold tabular-nums">{mio(s.price)}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </Tile>
+          )}
+
+          <details className="group rounded-3xl bg-white/60 px-5 py-4 text-[13px] text-slate-500 ring-1 ring-slate-200/70 lg:col-span-3">
+            <summary className="flex cursor-pointer list-none items-center gap-1.5 font-semibold text-slate-600">Hvordan regner vi? <ChevronDown size={14} className="transition-transform group-open:rotate-180" /></summary>
+            <p className="mt-2 leading-relaxed">Prisen sammenlignes med {d?.basis.n ?? "lignende"} boliger af samme type og lignende størrelse til salg {d?.basis.level === "naer" ? d.basis.place : "i området"}. Det er udbudspriser, ikke salgspriser, og stand og udsigt er ikke med. Renten er Nationalbankens tal for nye boliglån, bidraget er fra realkreditinstitutternes prisblade 2026, prisudviklingen fra Danmarks Statistik og lokalplanerne fra Plandata.dk. Læs altid tilstandsrapporten, før du byder.</p>
+          </details>
+        </div>
+      </div>
     </div>
   );
 }
 
-function Stat({ label, value, note, tone }: { label: string; value: string; note?: string; tone?: "pos" | "neg" }) {
-  return (
-    <div className="rounded-xl bg-slate-50 p-3.5">
-      <p className="text-[12px] font-medium text-slate-500">{label}</p>
-      <p className={`mt-1 text-[20px] font-semibold tabular-nums tracking-[-0.01em] ${tone === "pos" ? "text-emerald-700" : tone === "neg" ? "text-rose-700" : "text-slate-900"}`}>{value}</p>
-      {note && <p className="mt-0.5 text-[12px] text-slate-500">{note}</p>}
-    </div>
-  );
-}
+const Mini = ({ label, value, tone }: { label: string; value: string; tone?: "pos" | "neg" }) => (
+  <div className="rounded-2xl bg-slate-50 p-3"><p className="text-[12px] text-slate-500">{label}</p><p className={`mt-0.5 text-[19px] font-semibold tabular-nums ${tone === "pos" ? "text-emerald-700" : tone === "neg" ? "text-rose-700" : "text-slate-900"}`}>{value}</p></div>
+);
 
-/** Where this home's m² price sits among similar homes: the middle half and the median. */
+/** Where this home's m² price sits among similar homes. */
 function RangeBar({ basis, ppm }: { basis: Basis; ppm: number }) {
   if (!basis.n || !basis.median) return null;
   const lo = Math.min(basis.q1 * 0.75, ppm * 0.95), hi = Math.max(basis.q3 * 1.25, ppm * 1.05);
   const x = (v: number) => `${Math.max(0, Math.min(100, ((v - lo) / (hi - lo)) * 100))}%`;
   return (
-    <div className="mt-5">
-      <div className="relative h-2.5 rounded-full" style={{ background: `linear-gradient(90deg, ${VERDICT_COLOR.godt}55, ${VERDICT_COLOR.middel}55 50%, ${VERDICT_COLOR.dyrt}55)` }}>
-        <div className="absolute top-0 h-full rounded-full bg-slate-900/10" style={{ left: x(basis.q1), width: `calc(${x(basis.q3)} - ${x(basis.q1)})` }} />
-        <div className="absolute -top-1 h-[18px] w-0.5 bg-slate-500" style={{ left: x(basis.median) }} />
-        <div className="absolute -top-[7px] h-6 w-6 -translate-x-1/2 rounded-full border-[3px] border-white shadow-[0_2px_6px_rgba(15,23,42,0.35)]" style={{ left: x(ppm), background: "#0f172a" }} />
+    <div className="mt-4">
+      <div className="relative h-2 rounded-full" style={{ background: `linear-gradient(90deg, ${VERDICT_COLOR.godt}66, ${VERDICT_COLOR.middel}66 50%, ${VERDICT_COLOR.dyrt}66)` }}>
+        <div className="absolute -top-[7px] h-[22px] w-[22px] -translate-x-1/2 rounded-full border-[3px] border-white bg-slate-900 shadow-[0_2px_6px_rgba(15,23,42,0.35)]" style={{ left: x(ppm) }} />
       </div>
-      <div className="mt-2.5 flex justify-between text-[12px] text-slate-500">
-        <span>Billigere</span>
-        <span>Typisk {kr(basis.median)}/m²</span>
-        <span>Dyrere</span>
-      </div>
+      <div className="mt-2 flex justify-between text-[12px] text-slate-500"><span>Billigere</span><span>Typisk {kr(basis.median)}/m²</span><span>Dyrere</span></div>
     </div>
   );
 }
 
-function Money({ home, d, household, onHousehold, expected }: { home: BuyerHome; d: Detail | null; household: Household; onHousehold: (h: Household) => void; expected: number }) {
+function Money({ home, d, household, onHousehold }: { home: BuyerHome; d: Detail | null; household: Household; onHousehold: (h: Household) => void }) {
   const rate = d?.rates?.household.fixed ?? 4.5;
   const [downPct, setDownPct] = useState(5);
   const [owner, setOwner] = useState(() => defaultOwnerCost(home.type, home.area, home.price));
+  const [edit, setEdit] = useState(false);
+  const [editHh, setEditHh] = useState(false);
   useEffect(() => { setOwner(defaultOwnerCost(home.type, home.area, home.price)); setDownPct(5); }, [home.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const f = useMemo(() => financing(home.price, { downPct, mortgageRate: rate, ownerCost: owner, couple: household.couple }), [home.price, downPct, rate, owner, household.couple]);
   const cap = household.income ? capacity(household.income, household.savings ?? 0, household.debt ?? 0) : null;
-  // Friværdi starts from what you pay: the bank values the home at the price on day one.
-  const marketValue = home.price;
-  const areaGap = d && d.basis.n >= 8 ? expected - home.price : 0;
-  const dstGrowth = d?.trend.growth ?? null;
-  const growth = Math.max(0, Math.min(3, dstGrowth ?? 2));
-  const path = useMemo(() => equityPath(f, marketValue, growth, rate), [f, marketValue, growth, rate]);
   const banks = INSTITUTES.map((i) => ({ ...i, yearly: yearlyBidrag(home.price, f.mortgage, i.bands) })).sort((a, b) => a.yearly - b.yearly);
-  const cheapest = banks[0], dearest = banks[banks.length - 1];
-  const numIn = (v: number | null, set: (n: number | null) => void, label: string, id: string) => (
-    <label htmlFor={id} className="block">
-      <span className="text-[13px] font-medium text-slate-600">{label}</span>
-      <div className="relative mt-1">
-        <input id={id} inputMode="numeric" value={v == null ? "" : v.toLocaleString("da-DK")} onChange={(e) => { const n = Number(e.target.value.replace(/\D/g, "")); set(e.target.value.trim() === "" ? null : n); }}
-          className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 pr-10 text-[16px] tabular-nums focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" placeholder="0" />
-        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[14px] text-slate-400">kr</span>
-      </div>
+  const num = (v: number | null, set: (n: number | null) => void, label: string) => (
+    <label className="block min-w-0"><span className="text-[12px] text-slate-500">{label}</span>
+      <input inputMode="numeric" value={v == null ? "" : v.toLocaleString("da-DK")} placeholder="0" onChange={(e) => { const x = e.target.value.replace(/\D/g, ""); set(x ? Number(x) : null); }}
+        className="mt-1 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-[16px] tabular-nums focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100" />
     </label>
   );
   return (
     <>
-      <Section icon={<Landmark size={18} />} title="Hvad koster den om måneden?" lead={`Med ${pct(downPct, 0)} i udbetaling, fastforrentet realkreditlån og banklån. Rente ${pct(rate)} inkl. bidrag (${d?.rates ? `Nationalbanken, ${d.rates.label}` : "skøn"}), banklån ${pct(BANK_RATE)}.`}>
-        <div className="rounded-2xl bg-slate-900 p-5 text-white">
-          <p className="text-[13px] text-white/60">Pr. måned efter rentefradrag</p>
-          <p className="mt-1 text-[32px] font-semibold tabular-nums tracking-[-0.02em]">{kr(f.monthlyNet)}</p>
-          <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-[14px]">
-            <dt className="text-white/60">Realkreditlån ({mio(f.mortgage)})</dt><dd className="text-right tabular-nums">{kr(f.mortgagePay)}</dd>
-            <dt className="text-white/60">Banklån ({mio(f.bank)})</dt><dd className="text-right tabular-nums">{kr(f.bankPay)}</dd>
-            <dt className="text-white/60">Ejerudgift (skøn)</dt><dd className="text-right tabular-nums">{kr(f.ownerCost)}</dd>
-            <dt className="text-white/60">Rentefradrag</dt><dd className="text-right tabular-nums text-emerald-300">−{kr(f.deductionMonthly)}</dd>
-          </dl>
-        </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <label className="block">
-            <span className="flex justify-between text-[13px] font-medium text-slate-600"><span>Udbetaling</span><span className="tabular-nums text-slate-900">{pct(downPct, 0)} · {kr(f.down)}</span></span>
-            <input type="range" min={5} max={50} step={1} value={downPct} onChange={(e) => setDownPct(Number(e.target.value))} className="mt-3 w-full accent-blue-600" />
-          </label>
-          {numIn(owner, (n) => setOwner(n ?? 0), "Ejerudgift pr. måned (står i salgsopstillingen)", "own-cost")}
-        </div>
-        <p className="mt-3 text-[14px] text-slate-600">Kontant ved køb: <b className="tabular-nums">{kr(f.cashNeeded)}</b> ({kr(f.down)} i udbetaling og {kr(f.costs)} til tinglysning og rådgiver).</p>
-      </Section>
-
-      <Section icon={<Landmark size={18} />} title="Hvad kan du låne?" lead={`Bankerne ser særligt på, om din samlede gæld bliver over ${DEBT_FACTOR} gange husstandens indkomst før skat, og du skal selv have mindst 5 % i udbetaling.`}>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {numIn(household.income, (n) => onHousehold({ ...household, income: n }), "Indkomst før skat, om året", "hh-inc")}
-          {numIn(household.savings, (n) => onHousehold({ ...household, savings: n }), "Opsparing", "hh-sav")}
-          {numIn(household.debt, (n) => onHousehold({ ...household, debt: n }), "Anden gæld (bil, SU)", "hh-debt")}
-        </div>
-        <label className="mt-3 flex min-h-[40px] items-center gap-2 text-[15px] text-slate-700"><input type="checkbox" checked={household.couple} onChange={(e) => onHousehold({ ...household, couple: e.target.checked })} className="h-4 w-4 accent-blue-600" /> Vi køber sammen (to indkomster lagt sammen)</label>
-        {cap ? (
-          <div className={`mt-3 rounded-xl p-4 ${cap.maxPrice >= home.price ? "bg-emerald-50 text-emerald-900" : "bg-amber-50 text-amber-900"}`}>
-            <p className="text-[15px]">Du kan købe for op til ca. <b className="tabular-nums">{kr(Math.floor(cap.maxPrice / 10000) * 10000)}</b>.</p>
-            <p className="mt-1 text-[14px] leading-relaxed">{cap.maxPrice >= home.price ? "Denne bolig ligger inden for, hvad banken normalt vil låne dig." : cap.limitedBy === "opsparing" ? `Din opsparing rækker ikke til 5 % i udbetaling og omkostninger. Du mangler ca. ${kr(f.cashNeeded - (household.savings ?? 0))}.` : `Boligen kræver mere gæld end ${DEBT_FACTOR} gange din indkomst. Banken vil se nøje på dit rådighedsbeløb.`}</p>
+      <Tile title="Pr. måned" right={<button type="button" onClick={() => setEdit(!edit)} className="text-[13px] font-semibold text-blue-700 hover:underline">{edit ? "Færdig" : "Ret tal"}</button>}>
+        <Big>{kr(f.monthlyNet)}</Big>
+        <p className="mt-1.5 text-[14px] text-slate-500">Efter rentefradrag, med {pct(downPct, 0)} udbetaling</p>
+        <dl className="mt-4 space-y-1.5 text-[14px]">
+          <div className="flex justify-between"><dt className="text-slate-500">Lån</dt><dd className="tabular-nums">{kr(f.mortgagePay + f.bankPay)}</dd></div>
+          <div className="flex justify-between"><dt className="text-slate-500">Ejerudgift</dt><dd className="tabular-nums">{kr(f.ownerCost)}</dd></div>
+          <div className="flex justify-between"><dt className="text-slate-500">Rentefradrag</dt><dd className="tabular-nums text-emerald-700">−{kr(f.deductionMonthly)}</dd></div>
+          <div className="flex justify-between border-t border-slate-100 pt-1.5"><dt className="text-slate-500">Kontant ved køb</dt><dd className="font-semibold tabular-nums">{kr(f.cashNeeded)}</dd></div>
+        </dl>
+        {edit && (
+          <div className="mt-4 space-y-3 rounded-2xl bg-slate-50 p-3">
+            <label className="block"><span className="flex justify-between text-[12px] text-slate-500"><span>Udbetaling</span><span className="font-semibold text-slate-900">{pct(downPct, 0)}</span></span>
+              <input type="range" min={5} max={50} value={downPct} onChange={(e) => setDownPct(Number(e.target.value))} className="mt-2 w-full accent-blue-600" /></label>
+            {num(owner, (n) => setOwner(n ?? 0), "Ejerudgift pr. måned (står i salgsopstillingen)")}
           </div>
-        ) : <p className="mt-3 text-[14px] text-slate-500">Skriv din indkomst, så regner vi det ud. Tallene gemmes kun på din konto.</p>}
-      </Section>
+        )}
+        <p className="mt-3 text-[12px] text-slate-400">Rente {pct(rate)} inkl. bidrag{d?.rates ? `, Nationalbanken ${d.rates.label}` : ""}</p>
+      </Tile>
 
-      <Section icon={<Landmark size={18} />} title="Hvor låner du billigst?" lead={`Renten på et realkreditlån er den samme hos alle institutter, fordi lånet finansieres med obligationer. Forskellen er bidraget. Her er bidraget på dit lån på ${mio(f.mortgage)} (${INSTITUTES_AS_OF}).`}>
-        <ul className="space-y-2">
+      <Tile title="Kan I låne til den?">
+        {cap && !editHh ? (
+          <>
+            <p className={`flex items-center gap-2 text-[22px] font-semibold leading-tight ${cap.maxPrice >= home.price ? "text-emerald-700" : "text-amber-700"}`}>
+              {cap.maxPrice >= home.price ? <><Check size={24} strokeWidth={3} /> Ja, den passer</> : <><X size={24} strokeWidth={3} /> Lidt for dyr</>}
+            </p>
+            <p className="mt-1.5 text-[14px] text-slate-600">I kan købe for op til {mio(Math.floor(cap.maxPrice / 10000) * 10000)}.{cap.maxPrice < home.price && cap.limitedBy === "opsparing" ? ` I mangler ca. ${kr(f.cashNeeded - (household.savings ?? 0))} i opsparing.` : ""}</p>
+            <button type="button" onClick={() => setEditHh(true)} className="mt-3 text-[13px] font-semibold text-blue-700 hover:underline">Ret jeres tal</button>
+          </>
+        ) : (
+          <>
+            <p className="text-[14px] text-slate-600">Skriv jeres tal, så svarer vi med det samme.</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="col-span-2">{num(household.income, (n) => onHousehold({ ...household, income: n }), "Indkomst før skat, om året")}</div>
+              {num(household.savings, (n) => onHousehold({ ...household, savings: n }), "Opsparing")}
+              {num(household.debt, (n) => onHousehold({ ...household, debt: n }), "Anden gæld")}
+            </div>
+            <label className="mt-2 flex min-h-[36px] items-center gap-2 text-[14px] text-slate-600"><input type="checkbox" checked={household.couple} onChange={(e) => onHousehold({ ...household, couple: e.target.checked })} className="h-4 w-4 accent-blue-600" /> Vi køber to</label>
+            {editHh && cap && <button type="button" onClick={() => setEditHh(false)} className="mt-2 min-h-[40px] rounded-full bg-slate-900 px-4 text-[14px] font-semibold text-white">Se svaret</button>}
+          </>
+        )}
+      </Tile>
+
+      <Tile title="Billigste realkreditlån">
+        <ul className="space-y-1.5">
           {banks.map((b, i) => (
-            <li key={b.name} className={`flex items-center gap-3 rounded-xl border p-3.5 ${i === 0 ? "border-emerald-300 bg-emerald-50/60" : "border-slate-200"}`}>
-              <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-2 text-[15px] font-semibold text-slate-900">{b.name}{i === 0 && <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[11px] font-semibold text-white">Billigst</span>}</span>
-                <span className="block text-[13px] text-slate-500">{b.via}</span>
-              </span>
-              <span className="text-right"><span className="block text-[15px] font-semibold tabular-nums">{kr(b.yearly / 12)}/md.</span><span className="text-[12px] text-slate-500 tabular-nums">{kr(b.yearly)} om året</span></span>
+            <li key={b.name} className={`flex items-center justify-between rounded-xl px-3 py-2.5 ${i === 0 ? "bg-emerald-50 ring-1 ring-emerald-200" : ""}`}>
+              <span className="text-[14px] font-semibold">{b.name}{i === 0 && <span className="ml-2 text-[12px] font-semibold text-emerald-700">Billigst</span>}</span>
+              <span className="text-[14px] tabular-nums text-slate-700">{kr(b.yearly / 12)}/md.</span>
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-[14px] leading-relaxed text-slate-600">{cheapest.name} er {kr(dearest.yearly - cheapest.yearly)} billigere om året end {dearest.name} på dette lån. Bidraget er det samme i hele landet, men i områder med få handler kræver nogle banker større udbetaling. Spørg altid to banker om et samlet tilbud, også på banklånet. <a href={cheapest.url} target="_blank" rel="noopener" className="font-medium text-blue-700 hover:underline">Se {cheapest.name}s prisblad</a>.</p>
-      </Section>
+        <p className="mt-3 text-[13px] text-slate-500">Renten er den samme alle steder. Forskellen er bidraget: {kr(banks[banks.length - 1].yearly - banks[0].yearly)} om året.</p>
+      </Tile>
+    </>
+  );
+}
 
-      <Section icon={<TrendingUp size={18} />} title="Din friværdi" lead={`Boligens værdi minus restgælden. Værdien starter i købsprisen og stiger med ${pct(growth)} om året${dstGrowth != null ? ` (salgspriserne i ${d?.trend.region} er steget ${pct(dstGrowth)} om året de seneste 10 år, så vi regner forsigtigt med højst 3 %)` : ""}. Den stiplede linje er, hvis priserne står stille.`}>
-        <div className="grid grid-cols-3 gap-2.5">
+function EquityTile({ home, d, expected }: { home: BuyerHome; d: Detail | null; expected: number }) {
+  const rate = d?.rates?.household.fixed ?? 4.5;
+  const growth = Math.max(0, Math.min(3, d?.trend.growth ?? 2));
+  const f = useMemo(() => financing(home.price, { mortgageRate: rate, ownerCost: 0 }), [home.price, rate]);
+  const path = useMemo(() => equityPath(f, home.price, growth, rate), [f, home.price, growth, rate]);
+  const gap = d && d.basis.n >= 8 ? expected - home.price : 0;
+  return (
+    <Tile title="Din friværdi" className="lg:col-span-2">
+      <div className="grid gap-4 sm:grid-cols-[auto_1fr] sm:items-center">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-1 sm:gap-3">
           {[0, 5, 10].map((y) => (
-            <div key={y} className="rounded-xl bg-slate-50 p-3">
-              <p className="text-[12px] font-medium text-slate-500">{y === 0 ? "Ved køb" : `Om ${y} år`}</p>
-              <p className={`mt-1 text-[18px] font-semibold tabular-nums ${path[y].equity < 0 ? "text-rose-700" : "text-slate-900"}`}>{mio(path[y].equity)}</p>
-              {y > 0 && <p className="text-[12px] text-slate-500 tabular-nums">{mio(path[y].equityFlat)} uden prisstigning</p>}
-            </div>
+            <div key={y}><p className="text-[12px] text-slate-500">{y === 0 ? "Ved køb" : `Om ${y} år`}</p><p className="text-[20px] font-semibold tabular-nums">{mio(path[y].equity)}</p></div>
           ))}
         </div>
-        {areaGap > 50_000 && <p className="mt-3 rounded-xl bg-emerald-50 p-3.5 text-[14px] leading-relaxed text-emerald-900">Koster boligen det samme som lignende boliger i nærheden, er den ca. <b>{kr(areaGap)}</b> mere værd, end du betaler. Det er ikke regnet med ovenfor.</p>}
-        <div className="mt-4 h-[200px] w-full">
+        <div className="h-[150px] min-w-0">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={path.map((p) => ({ år: p.year, Friværdi: Math.round(p.equity), "Uden prisstigning": Math.round(p.equityFlat) }))} margin={{ top: 6, right: 6, left: 0, bottom: 0 }}>
-              <defs><linearGradient id="eq" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#2563eb" stopOpacity={0.3} /><stop offset="100%" stopColor="#2563eb" stopOpacity={0.02} /></linearGradient></defs>
-              <CartesianGrid stroke="#eef2f7" vertical={false} />
-              <XAxis dataKey="år" tickFormatter={(v) => (v === 0 ? "Nu" : `${v} år`)} tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
-              <YAxis tickFormatter={(v) => mio(v).replace(" kr", "")} tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} width={58} />
-              <Tooltip formatter={(v) => kr(Number(v))} labelFormatter={(v) => (v === 0 ? "Ved køb" : `Om ${v} år`)} />
-              <Area type="monotone" dataKey="Friværdi" stroke="#2563eb" strokeWidth={2.5} fill="url(#eq)" />
-              <Area type="monotone" dataKey="Uden prisstigning" stroke="#94a3b8" strokeDasharray="5 4" strokeWidth={2} fill="none" />
+            <AreaChart data={path.map((p) => ({ år: p.year, v: Math.round(p.equity) }))} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+              <defs><linearGradient id="eqf" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#2563eb" stopOpacity={0.28} /><stop offset="100%" stopColor="#2563eb" stopOpacity={0.02} /></linearGradient></defs>
+              <XAxis dataKey="år" tickFormatter={(v) => (v === 0 ? "Nu" : `${v} år`)} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} interval={4} />
+              <Tooltip formatter={(v) => [kr(Number(v)), "Friværdi"]} labelFormatter={(v) => (v === 0 ? "Ved køb" : `Om ${v} år`)} />
+              <Area type="monotone" dataKey="v" stroke="#2563eb" strokeWidth={2.5} fill="url(#eqf)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </Section>
-    </>
+      </div>
+      <p className="mt-2 text-[13px] text-slate-500">Afdrag plus {pct(growth)} prisstigning om året.{gap > 50_000 ? ` Køber du til områdets pris, er den ca. ${mio(gap)} mere værd fra start.` : ""}</p>
+    </Tile>
   );
 }
 
-function Plans({ plans, onShowPlans }: { plans: (Plan & { kind: string })[]; onShowPlans: () => void }) {
+function Plans({ plans }: { plans: (Plan & { kind: string })[] }) {
   const [all, setAll] = useState(false);
-  if (!plans.length) return <p className="text-[15px] text-slate-600">Ingen nye lokalplaner inden for 2 km de seneste 3 år. Området ændrer sig ikke meget lige nu.</p>;
+  if (!plans.length) return <p className="text-[15px] text-slate-600">Ingen nye lokalplaner inden for 2 km de seneste 3 år. Et roligt område.</p>;
   const housing = plans.filter((p) => /bolig/i.test(p.kind)).length;
-  const shown = all ? plans : plans.slice(0, 5);
+  const shown = all ? plans : plans.slice(0, 4);
   return (
     <>
-      <p className="text-[15px] leading-relaxed text-slate-700"><b>{plans.length} {plans.length === 1 ? "lokalplan" : "lokalplaner"}</b> i nærheden{housing ? `, heraf ${housing} med nye boliger` : ""}. {plans.length >= 10 ? "Et område i vækst: der bygges meget, og der kommer flere indbyggere." : plans.length >= 4 ? "Der sker en del i området." : "Lidt aktivitet i området."}</p>
-      <ul className="mt-3 space-y-2">
+      <p className="text-[16px] font-medium">{plans.length} nye lokalplaner inden for 2 km{housing ? `, ${housing} med boliger` : ""}. <span className="text-slate-500">{plans.length >= 10 ? "Et område i vækst." : plans.length >= 4 ? "Der sker en del." : "Lidt aktivitet."}</span></p>
+      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
         {shown.map((p) => (
-          <li key={p.id} className="rounded-xl border border-slate-200 p-3.5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-violet-700">{p.status === "forslag" ? "Forslag i høring" : "Vedtaget"} · {fmtMonth(p.adopted ?? p.proposed)} · {p.distanceM != null ? (p.distanceM < 1000 ? `${Math.round(p.distanceM / 10) * 10} m` : `${(p.distanceM / 1000).toFixed(1).replace(".", ",")} km`) : ""} væk</p>
-            <p className="mt-1 text-[15px] font-semibold leading-snug text-slate-900">{p.name}</p>
-            <p className="text-[13px] text-slate-500">{p.kind}{p.district ? `, ${p.district}` : ""}</p>
-            {p.link && <a href={p.link} target="_blank" rel="noopener" className="mt-1.5 inline-flex min-h-[32px] items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline"><FileText size={14} /> Læs planen</a>}
+          <li key={p.id} className="rounded-2xl bg-slate-50 p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.05em] text-violet-700">{p.status === "forslag" ? "Forslag" : "Vedtaget"}{p.distanceM != null ? ` · ${p.distanceM < 1000 ? `${Math.round(p.distanceM / 10) * 10} m` : `${(p.distanceM / 1000).toFixed(1).replace(".", ",")} km`}` : ""}</p>
+            <p className="mt-0.5 line-clamp-2 text-[14px] font-semibold leading-snug">{p.name}</p>
+            <p className="mt-0.5 flex items-center justify-between gap-2 text-[12px] text-slate-500"><span>{p.kind}</span>{p.link && <a href={p.link} target="_blank" rel="noopener" className="inline-flex items-center gap-1 font-semibold text-blue-700 hover:underline"><FileText size={12} /> Plan</a>}</p>
           </li>
         ))}
       </ul>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {plans.length > 5 && <button type="button" onClick={() => setAll(!all)} className="min-h-[40px] rounded-lg border border-slate-300 px-3.5 text-[14px] font-semibold text-slate-700 hover:border-slate-400">{all ? "Vis færre" : `Vis alle ${plans.length}`}</button>}
-        <button type="button" onClick={onShowPlans} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg bg-violet-600 px-3.5 text-[14px] font-semibold text-white hover:bg-violet-500"><MapPinned size={15} /> Vis på kortet</button>
-      </div>
+      {plans.length > 4 && <button type="button" onClick={() => setAll(!all)} className="mt-3 text-[14px] font-semibold text-blue-700 hover:underline">{all ? "Vis færre" : `Vis alle ${plans.length}`}</button>}
     </>
   );
 }
 
-const fmtMonth = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("da-DK", { month: "short", year: "numeric" }) : "");
-
-export function News({ slug, name }: { slug: string; name: string }) {
+/** Local news for a kommune: a short summary and the top items, each with its source. Loads when it scrolls into view. */
+export function News({ slug, name, max = 3 }: { slug: string; name: string; max?: number }) {
   const [n, setN] = useState<AreaNews | null | "loading" | "idle">("idle");
+  const [more, setMore] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     setN("idle");
@@ -365,59 +432,57 @@ export function News({ slug, name }: { slug: string; name: string }) {
   }, [slug]);
   return (
     <div ref={ref}>
-      <Section icon={<Newspaper size={18} />} title={`Nyt fra ${name}`} lead="Byggeri, butikker, infrastruktur og arbejdspladser fra lokale medier og kommunen. Hvert punkt har sin kilde.">
-        {n === "idle" || n === "loading" ? (
-          <div className="flex items-center gap-2 text-[14px] text-slate-500"><Loader2 size={16} className="animate-spin" /> Læser lokale nyheder om {name}. Det tager op til et minut første gang.</div>
-        ) : !n ? (
-          <p className="text-[14px] text-slate-500">Nyhederne kunne ikke hentes lige nu.</p>
-        ) : (
-          <>
-            {n.summary && <p className="rounded-xl bg-slate-50 p-4 text-[15px] leading-relaxed text-slate-700"><b className={n.outlook === "vaekst" ? "text-emerald-700" : n.outlook === "tilbagegang" ? "text-rose-700" : "text-slate-900"}>{n.outlook === "vaekst" ? "Kommune i vækst. " : n.outlook === "tilbagegang" ? "Kommune under pres. " : ""}</b>{n.summary}</p>}
-            <ul className="mt-3 space-y-3">
-              {n.items.map((i) => (
-                <li key={i.url + i.title} className="flex gap-3">
-                  <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${i.effect === "positiv" ? "bg-emerald-500" : i.effect === "negativ" ? "bg-rose-500" : "bg-slate-300"}`} />
-                  <span className="min-w-0">
-                    <span className="block text-[15px] font-semibold leading-snug text-slate-900">{i.title}</span>
-                    {i.what && <span className="mt-0.5 block text-[14px] leading-relaxed text-slate-600">{i.what}</span>}
-                    <a href={i.url} target="_blank" rel="noopener nofollow" className="mt-0.5 inline-flex items-center gap-1 text-[13px] font-medium text-blue-700 hover:underline">{i.source}{i.date ? `, ${i.date}` : ""} <ExternalLink size={12} /></a>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 text-[12px] text-slate-400">Samlet af AI fra nettet {new Date(n.checkedAt).toLocaleDateString("da-DK")}. Læs kilden, før du lægger vægt på et punkt.</p>
-          </>
-        )}
-      </Section>
+      {n === "idle" || n === "loading" ? (
+        <p className="flex items-center gap-2 text-[14px] text-slate-500"><Loader2 size={16} className="animate-spin" /> Læser lokale nyheder om {name} …</p>
+      ) : !n || (!n.items.length && !n.summary) ? (
+        <p className="text-[14px] text-slate-500">Ingen nyheder lige nu.</p>
+      ) : (
+        <>
+          {n.summary && <p className="text-[15px] leading-relaxed text-slate-700"><b className={n.outlook === "vaekst" ? "text-emerald-700" : n.outlook === "tilbagegang" ? "text-rose-700" : "text-slate-900"}>{n.outlook === "vaekst" ? "I vækst. " : n.outlook === "tilbagegang" ? "Under pres. " : ""}</b>{n.summary}</p>}
+          <ul className="mt-3 space-y-2.5">
+            {(more ? n.items : n.items.slice(0, max)).map((i) => (
+              <li key={i.url + i.title} className="flex gap-2.5">
+                <span className={`mt-[7px] h-2 w-2 shrink-0 rounded-full ${i.effect === "positiv" ? "bg-emerald-500" : i.effect === "negativ" ? "bg-rose-500" : "bg-slate-300"}`} />
+                <a href={i.url} target="_blank" rel="noopener nofollow" className="group min-w-0">
+                  <span className="block text-[14px] font-semibold leading-snug text-slate-900 group-hover:underline">{i.title}</span>
+                  <span className="text-[12px] text-slate-500">{i.source}{i.date ? ` · ${i.date}` : ""}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          {n.items.length > max && <button type="button" onClick={() => setMore(!more)} className="mt-3 text-[14px] font-semibold text-blue-700 hover:underline">{more ? "Vis færre" : `Vis alle ${n.items.length}`}</button>}
+        </>
+      )}
     </div>
   );
 }
 
-function Records({ dos, price }: { dos: { dossier: Dossier | null; burdens: FutureBurdens | null } | "loading" | null; price: number }) {
-  if (dos === "loading") return <div className="flex items-center gap-2 text-[14px] text-slate-500"><Loader2 size={16} className="animate-spin" /> Henter fra BBR og Vurderingsstyrelsen …</div>;
+function Records({ dos, price, energy }: { dos: { dossier: Dossier | null; burdens: FutureBurdens | null } | "loading" | null; price: number; energy: string | null }) {
+  if (dos === "loading") return <p className="flex items-center gap-2 text-[14px] text-slate-500"><Loader2 size={16} className="animate-spin" /> Henter fra BBR …</p>;
   const d = dos?.dossier;
-  const b = dos?.burdens;
-  if (!d && !b) return <p className="text-[14px] text-slate-500">Vi kunne ikke slå adressen op i registrene. Det sker for nogle lejligheder og nybyggeri.</p>;
   const rows: [string, string][] = [];
-  if (d?.valuation?.propertyValue) rows.push([`Offentlig ejendomsværdi (${d.valuation.year})`, `${kr(d.valuation.propertyValue)}${price ? `, prisen er ${Math.round((price / d.valuation.propertyValue) * 100)} % af den` : ""}`]);
-  if (d?.valuation?.landValue) rows.push(["Grundværdi", kr(d.valuation.landValue)]);
-  if (d?.landTax) rows.push([`Grundskyld ${d.landTax.year}`, `${kr(d.landTax.annual)} om året (${String(d.landTax.promille).replace(".", ",")} ‰)`]);
-  if (d?.building?.builtYear) rows.push(["Opført", `${d.building.builtYear}${d.building.renovatedYear ? `, ombygget ${d.building.renovatedYear}` : ""}`]);
-  if (d?.building?.roof) rows.push(["Tag", d.building.roof]);
-  if (d?.building?.wall) rows.push(["Ydervægge", d.building.wall]);
-  if (d?.building?.heating) rows.push(["Opvarmning", [d.building.heating, d.building.fuel].filter(Boolean).join(", ")]);
-  const burdens = (b?.burdens ?? []).filter((x, i, all) => x.severity === "burden" && all.findIndex((y) => y.title === x.title) === i);
+  // The register sometimes answers for the whole plot or building (several homes). A valuation far
+  // from the asking price is then not this home's, so it is left out rather than shown wrong.
+  const val = d?.valuation?.propertyValue ?? null;
+  const fits = val != null && price > 0 && price / val > 0.6 && price / val < 3.5;
+  if (fits) rows.push(["Offentlig vurdering", `${mio(val!)}`]);
+  if (fits && d?.landTax) rows.push(["Grundskyld", `${kr(d.landTax.annual / 12)}/md.`]);
+  // When the valuation is for a bigger property, the building facts may be for another building too.
+  const trust = val == null || fits;
+  if (trust && d?.building?.renovatedYear) rows.push(["Ombygget", String(d.building.renovatedYear)]);
+  if (trust && d?.building?.heating) rows.push(["Varme", d.building.heating]);
+  if (trust && d?.building?.roof) rows.push(["Tag", d.building.roof]);
+  if (trust && d?.building?.wall) rows.push(["Vægge", d.building.wall]);
+  if (energy) rows.push(["Energimærke", energy]);
+  const warnings = [...(trust ? d?.risks ?? [] : []).map((r) => r.title), ...(dos?.burdens?.burdens ?? []).filter((x) => x.severity === "burden").map((x) => x.title.replace(/:.*/, ""))].filter((t, i, a) => a.indexOf(t) === i);
+  if (!rows.length && !warnings.length) return <p className="text-[14px] text-slate-500">Adressen kunne ikke slås op i registrene.</p>;
   return (
     <>
-      {rows.length > 0 && (
-        <dl className="divide-y divide-slate-100 rounded-xl border border-slate-200">
-          {rows.map(([k, v]) => <div key={k} className="flex flex-wrap justify-between gap-x-4 gap-y-0.5 px-4 py-2.5 text-[14px]"><dt className="text-slate-500">{k}</dt><dd className="font-medium text-slate-900">{v}</dd></div>)}
-        </dl>
-      )}
-      {(d?.risks ?? []).map((r) => <p key={r.title} className={`mt-3 rounded-xl p-3.5 text-[14px] leading-relaxed ${r.level === "hoej" ? "bg-rose-50 text-rose-900" : "bg-amber-50 text-amber-900"}`}><b>{r.title}.</b> {r.note}</p>)}
-      {burdens.map((x) => <p key={x.title} className="mt-3 rounded-xl bg-amber-50 p-3.5 text-[14px] leading-relaxed text-amber-900"><b>{x.title}.</b> {x.detail}</p>)}
-      {d?.valuation?.propertyValue && <p className="mt-3 text-[13px] leading-relaxed text-slate-500">Den offentlige vurdering bruges til boligskatten og er ofte lavere end handelsprisen. En pris langt over vurderingen er ikke i sig selv et faresignal, men spørg ind til den.</p>}
+      <dl className="space-y-1.5 text-[14px]">
+        {rows.map(([k, v]) => <div key={k} className="flex justify-between gap-3"><dt className="shrink-0 text-slate-500">{k}</dt><dd className="min-w-0 truncate text-right font-medium">{v}</dd></div>)}
+      </dl>
+      {warnings.length > 0 && <div className="mt-3 flex flex-wrap gap-1.5">{warnings.map((w) => <span key={w} className="rounded-full bg-amber-50 px-2.5 py-1 text-[12px] font-semibold text-amber-800 ring-1 ring-amber-200">{w}</span>)}</div>}
+      {fits && <p className="mt-3 text-[12px] text-slate-400">Prisen er {Math.round((price / val!) * 100)} % af den offentlige vurdering, som ofte er lavere end handelsprisen.</p>}
     </>
   );
 }
-

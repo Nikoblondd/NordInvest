@@ -50,9 +50,14 @@ export function isPrivate(user: AccessUser): boolean {
   return user?.app_metadata?.nordinvest_access === "privat";
 }
 
-/** Can this account use the home buyer's map (/boligkoeb)? Private buyers, members and admins. */
+/** A member who was also given the home buyer's map (invited or switched to "investor og boligkøber"). */
+export function isMemberPrivate(user: AccessUser): boolean {
+  return isMember(user) && user?.app_metadata?.nordinvest_private === true;
+}
+
+/** Can this account use the home buyer's map (/boligkoeb)? Private buyers, members given it by an admin, and admins. */
 export function hasBuyerAccess(user: AccessUser): boolean {
-  return isAdmin(user) || isMember(user) || isPrivate(user);
+  return isAdmin(user) || isPrivate(user) || isMemberPrivate(user);
 }
 
 /** A member who was also given the broker tools (invited as "begge"). */

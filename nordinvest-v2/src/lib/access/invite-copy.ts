@@ -4,7 +4,7 @@
  * the box is what the person reads between "Hej <fornavn>," and the button.
  * Shared by the form (client) and the mail (server), so no server imports.
  */
-export type InviteCopyKind = "member" | "maegler" | "begge" | "privat";
+export type InviteCopyKind = "member" | "maegler" | "begge" | "privat" | "investor_privat";
 
 const MEMBER = "Du er nu inviteret til NordInvest, og din konto er klar. Tryk på knappen for at logge ind første gang. Du vælger selv en adgangskode, og bagefter viser en kort guide dig rundt.";
 const BROKER = "Som aftalt har du nu adgang til NordInvest for mæglere. Her laver du investoranalyser af jeres sager og sætter en NordInvest-knap på sagen på jeres hjemmeside. Det tager et par minutter pr. sag og er gratis.";
@@ -17,6 +17,7 @@ export const DEFAULT_INVITE_TEXT: Record<InviteCopyKind, string> = {
   maegler: `${BROKER}\n\n${QUESTIONS}`,
   begge: `${MEMBER}\n\n${BOTH}\n\n${QUESTIONS}`,
   privat: `${PRIVATE}\n\n${QUESTIONS}`,
+  investor_privat: `${MEMBER}\n\nDu har også adgang til boligkortet, hvor alle boliger til salg er vurderet mod lignende boliger i nærheden. Du finder det i menuen under Boligkort.\n\n${QUESTIONS}`,
 };
 
 export const INVITE_TEXT_MAX = 4000;

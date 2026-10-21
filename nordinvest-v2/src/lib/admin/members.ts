@@ -58,6 +58,8 @@ export type MemberSummary = {
   access: Access;
   /** A member who also has the broker tools (invited as "Begge"). */
   alsoBroker: boolean;
+  /** A member who also has the home buyer's map. */
+  alsoPrivate: boolean;
   /** Admin through the allowlist; cannot be changed from the board. */
   ownerAdmin: boolean;
   createdAt: string;
@@ -140,6 +142,7 @@ function summarise(u: AdminUser, p: ProfileRow | undefined, own: AnalysisRow[], 
     phone: p?.phone ?? "",
     access: accessOf(u),
     alsoBroker: u.app_metadata?.nordinvest_access === "member" && u.app_metadata?.nordinvest_broker === true,
+    alsoPrivate: u.app_metadata?.nordinvest_access === "member" && u.app_metadata?.nordinvest_private === true,
     ownerAdmin: isAdmin({ ...u, app_metadata: { ...(u.app_metadata ?? {}), nordinvest_role: null } }),
     createdAt: u.created_at,
     invitedAt: (u.app_metadata?.nordinvest_invited_at as string | undefined) ?? null,

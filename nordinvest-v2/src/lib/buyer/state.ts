@@ -29,7 +29,16 @@ export type Filters = {
 
 export const EMPTY_FILTERS: Filters = { types: [], priceMin: null, priceMax: null, areaMin: null, roomsMin: null, verdicts: [], onlyCut: false, onlyNew: false, sort: "bedste" };
 
-export type SavedHome = { id: string; savedAt: string; price: number; address: string; alert: boolean; lastPrice?: number; gone?: boolean };
+/** Where the buyer is with a saved home. */
+export type Stage = "interesseret" | "fremvisning" | "bud" | "fravalgt";
+export const STAGES: { id: Stage; label: string }[] = [
+  { id: "interesseret", label: "Interesseret" },
+  { id: "fremvisning", label: "Fremvisning" },
+  { id: "bud", label: "Har budt" },
+  { id: "fravalgt", label: "Fravalgt" },
+];
+
+export type SavedHome = { id: string; savedAt: string; price: number; address: string; alert: boolean; lastPrice?: number; gone?: boolean; stage?: Stage; note?: string };
 
 export type Household = { income: number | null; savings: number | null; debt: number | null; couple: boolean };
 
@@ -76,6 +85,8 @@ export function cleanState(raw: unknown, prev: BuyerState = EMPTY_STATE): BuyerS
         id: String(s.id).slice(0, 80), savedAt: typeof s.savedAt === "string" ? s.savedAt : new Date().toISOString(),
         price: n(s.price) ?? 0, address: String(s.address ?? "").slice(0, 160), alert: s.alert !== false,
         ...(n(s.lastPrice) != null ? { lastPrice: s.lastPrice } : {}), ...(s.gone ? { gone: true } : {}),
+        ...(STAGES.some((x) => x.id === s.stage) ? { stage: s.stage } : {}),
+        ...(typeof s.note === "string" && s.note.trim() ? { note: s.note.slice(0, 1000) } : {}),
       }))
     : prev.saved;
   const h = (r.household && typeof r.household === "object" ? r.household : prev.household) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any

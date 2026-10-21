@@ -14,7 +14,7 @@ import { Tour, startTour } from "./Tour";
  * and finds your own, and a tab bar on phones. Every page under /app sits in it.
  */
 
-export type ShellUser = { name: string; email: string; admin: boolean; broker?: boolean; tour: string | null };
+export type ShellUser = { name: string; email: string; admin: boolean; broker?: boolean; buyer?: boolean; tour: string | null };
 export type ShellProperty = { id: string; address: string };
 
 export const NAV = [
@@ -66,6 +66,12 @@ export function AppShell({ user, props, counts, children }: { user: ShellUser; p
             );
           })}
         </nav>
+        {!user.admin && user.buyer && (
+          <div className="mt-6">
+            <p className="px-3 text-[12px] font-semibold text-white/40">Til dig selv</p>
+            <Link href="/boligkoeb" className="mt-1.5 flex h-9 items-center gap-3 rounded-lg px-3 text-[14px] text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white"><MapPinned size={16} />Boligkort</Link>
+          </div>
+        )}
         {!user.admin && user.broker && (
           <div className="mt-6">
             <p className="px-3 text-[12px] font-semibold text-white/40">For mæglere</p>
@@ -221,6 +227,7 @@ function UserMenu({ user }: { user: ShellUser }) {
           <Link href="/app/konto" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50"><Settings size={16} className="text-slate-400" /> Konto og indstillinger</Link>
           <button type="button" onClick={() => { setOpen(false); startTour(); }} className="flex min-h-[44px] w-full items-center gap-2.5 px-4 text-left text-[14px] text-slate-700 hover:bg-slate-50"><CircleHelp size={16} className="text-slate-400" /> Vis guiden igen</button>
           <Link href="/app/kontakt" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50"><Mail size={16} className="text-slate-400" /> Kontakt</Link>
+          {user.buyer && !user.admin && <Link href="/boligkoeb" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50 lg:hidden"><MapPinned size={16} className="text-slate-400" /> Boligkort</Link>}
           {user.broker && !user.admin && <Link href="/maegler" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50 lg:hidden"><Code2 size={16} className="text-slate-400" /> Mæglerværktøj</Link>}
           {user.admin && <Link href="/app/admin/medlemmer" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50 lg:hidden"><Users size={16} className="text-slate-400" /> Medlemmer (admin)</Link>}
           {user.admin && <Link href="/app/admin/adgang" onClick={() => setOpen(false)} className="flex min-h-[44px] items-center gap-2.5 px-4 text-[14px] text-slate-700 hover:bg-slate-50 lg:hidden"><KeyRound size={16} className="text-slate-400" /> Anmodninger (admin)</Link>}

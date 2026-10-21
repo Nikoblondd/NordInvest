@@ -112,7 +112,7 @@ export function MembersBoard({ members, pending }: { members: MemberSummary[]; p
                       <Link href={`/app/admin/medlemmer/${m.id}`} onClick={(e) => e.stopPropagation()} className="flex min-w-0 items-center gap-3 focus:outline-none">
                         <Avatar m={m} size={36} />
                         <span className="min-w-0">
-                          <span className="flex items-center gap-2"><span className="truncate font-semibold text-slate-900 group-hover:text-blue-700">{m.name || m.email.split("@")[0]}</span><AccessBadge access={m.access} alsoBroker={m.alsoBroker} /></span>
+                          <span className="flex items-center gap-2"><span className="truncate font-semibold text-slate-900 group-hover:text-blue-700">{m.name || m.email.split("@")[0]}</span><AccessBadge access={m.access} alsoBroker={m.alsoBroker} alsoPrivate={m.alsoPrivate} /></span>
                           <span className="block truncate text-[13px] text-slate-500">{m.email}</span>
                         </span>
                       </Link>
@@ -144,7 +144,7 @@ export function MembersBoard({ members, pending }: { members: MemberSummary[]; p
                       <span className="block truncate text-[15px] font-semibold text-slate-900">{m.name || m.email.split("@")[0]}</span>
                       <span className="block truncate text-[13px] text-slate-500">{m.email}</span>
                     </span>
-                    <AccessBadge access={m.access} alsoBroker={m.alsoBroker} />
+                    <AccessBadge access={m.access} alsoBroker={m.alsoBroker} alsoPrivate={m.alsoPrivate} />
                   </span>
                   <span className="mt-3 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-[13px]">
                     <span><span className="block text-slate-500">Analyser</span><b className="text-[16px] font-semibold tabular-nums">{m.analyses}</b></span>

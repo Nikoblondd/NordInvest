@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     const name = String(b.name ?? "").trim().slice(0, 120);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json({ ok: false, reason: "email" }, 422);
     // "maegler": the broker tools only. "begge": the whole platform plus the broker tools.
-    const kind: InviteKind = b.kind === "maegler" || b.kind === "begge" || b.kind === "privat" ? b.kind : "member";
+    const kind: InviteKind = b.kind === "maegler" || b.kind === "begge" || b.kind === "privat" || b.kind === "investor_privat" ? b.kind : "member";
     const next = INVITE_NEXT[kind];
     // Creates the account if it does not exist yet. Its one-time token is not mailed.
     const link = await generateLink(email, `${SITE}${next}`, name || undefined);
@@ -47,6 +47,7 @@ export async function POST(req: Request) {
     const ok = await setAccess(link.userId, kind === "maegler" ? "maegler" : kind === "privat" ? "privat" : "member", {
       nordinvest_invited_at: new Date().toISOString(),
       nordinvest_broker: kind === "maegler" || kind === "begge",
+      nordinvest_private: kind === "investor_privat",
       nordinvest_kind: kind,
       [FIELD.invite]: record,
       ...(note ? { nordinvest_note: note } : {}),
@@ -82,13 +83,14 @@ export async function POST(req: Request) {
   if (b.action === "kind") {
     // Change what kind of access a person has: member, boligkøber, mægler or both member and mægler.
     const kind = b.kind as InviteKind;
-    if (!b.userId || !["member", "privat", "maegler", "begge"].includes(kind)) return json({ ok: false, reason: "bad" }, 422);
+    if (!b.userId || !["member", "privat", "maegler", "begge", "investor_privat"].includes(kind)) return json({ ok: false, reason: "bad" }, 422);
     const target = await getAuthUser(b.userId);
     if (!target) return json({ ok: false, reason: "user" }, 404);
     if (isAdmin(target)) return json({ ok: false, reason: "admin" }, 422);
     const ok = await setAccess(b.userId, kind === "maegler" ? "maegler" : kind === "privat" ? "privat" : "member", {
       nordinvest_kind: kind,
       nordinvest_broker: kind === "maegler" || kind === "begge",
+      nordinvest_private: kind === "investor_privat",
     });
     return json({ ok }, ok ? 200 : 502);
   }
