@@ -12,6 +12,7 @@ import { capacity, financing } from "@/lib/buyer/finance";
 import { STAGES, type BuyerState, type Household, type SavedHome } from "@/lib/buyer/state";
 import { MUNICIPALITIES } from "@/lib/kommuner";
 import { News } from "./HomeDetail";
+import { PulseLine, TrustSheet, usePulse } from "./Pulse";
 import { kr, mio, MailToggle, pct, useImages, VerdictPill } from "./ui";
 
 /*
@@ -60,6 +61,8 @@ const Card = ({ title, icon, children, className = "", action }: { title: string
 export function Dashboard(p: Props) {
   const { state, inView, byId, center } = p;
   const [area, setArea] = useState<Area | null>(null);
+  const [trust, setTrust] = useState(false);
+  const pulse = usePulse();
 
   // The kommune the person is mostly looking at.
   const kommune = useMemo(() => {
@@ -104,6 +107,7 @@ export function Dashboard(p: Props) {
               {wide ? "Hele Danmark lige nu" : place ? `${place} og omegn lige nu` : "Dit område lige nu"}
             </h1>
             <p className="mt-1 text-[15px] text-white/60">{wide ? "Zoom ind på kortet for at se tallene for et område." : "Tallene følger det udsnit, du kigger på på kortet, med dine filtre."}</p>
+            <PulseLine pulse={pulse} onOpen={() => setTrust(true)} dark className="mt-3 text-[13px]" />
             <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
               {([
                 ["Til salg", inView.length.toLocaleString("da-DK"), "text-white"],
@@ -156,6 +160,7 @@ export function Dashboard(p: Props) {
         </div>
       </div>
       {p.nav}
+      {trust && <TrustSheet onClose={() => setTrust(false)} />}
     </div>
   );
 }

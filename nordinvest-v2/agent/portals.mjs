@@ -193,6 +193,8 @@ function normBoligsiden(c, queryType) {
     lon: c?.coordinates?.lon ?? null,
     // BFE number: the key Ejerfortegnelsen's tinglyste sales are joined on.
     bfe: Array.isArray(a.bfeNumbers) && a.bfeNumbers.length === 1 ? Number(a.bfeNumbers[0]) : null,
+    // Days on the market in total (across agents, relistings included): gives the real listing date.
+    daysOnMarket: Number.isFinite(c?.timeOnMarket?.total?.days) ? c.timeOnMarket.total.days : Number.isFinite(c?.daysOnMarket) ? c.daysOnMarket : null,
   };
 }
 

@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { ArrowDown, ArrowUp, Bell, Check, ExternalLink, FileText, Heart, Loader2, MapPinned, Share2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Bell, Check, FileText, Heart, Loader2, MapPinned, Share2, X } from "lucide-react";
 import type { Basis, BuyerHome } from "@/lib/buyer/market";
 import { TYPE_LABEL } from "@/lib/buyer/market";
 import type { Plan } from "@/lib/buyer/plans";
@@ -16,6 +16,7 @@ import { INSTITUTES, capacity, defaultOwnerCost, equityPath, financing, yearlyBi
 import { VERDICT_COLOR } from "./BuyerMap";
 import { kr, mio, pct, useImages, VerdictPill } from "./ui";
 import { Gallery } from "./Gallery";
+import { HomeSource } from "./Pulse";
 
 /*
  * The home, in the side panel. Everything about it is here, split into short
@@ -28,7 +29,7 @@ import { Gallery } from "./Gallery";
 
 type Detail = {
   home: BuyerHome;
-  listing: { image: string | null; url: string | null; history: { d: string; price: number }[] };
+  listing: { image: string | null; url: string | null; broker?: string | null; history: { d: string; price: number }[] };
   basis: Basis;
   similar: BuyerHome[];
   area: { zip: number; homes: number; sameKind: number; medianPpm: number | null; cutShare: number | null; newLast30: number; goodShare: number | null };
@@ -186,7 +187,7 @@ export function HomePanel(p: PanelProps) {
 
   return (
     <div className="flex h-full flex-col bg-white">
-      <div className="flex items-center gap-1.5 border-b border-slate-100 px-2.5 py-2">
+      <div data-drag className="flex items-center gap-1.5 border-b border-slate-100 px-2.5 py-2">
         <button type="button" onClick={p.onClose} aria-label="Luk boligen" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-700 hover:bg-slate-100"><X size={19} /></button>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-semibold leading-tight">{home.address.split(",")[0]}</p>
@@ -198,10 +199,10 @@ export function HomePanel(p: PanelProps) {
 
       {p.locked ? <div className="min-h-0 flex-1 overflow-y-auto">{p.locked}</div> : (
         <>
-          <div ref={tabs} className="flex gap-1 overflow-x-auto border-b border-slate-100 px-2.5 py-2 [scrollbar-width:none]" role="tablist" aria-label="Afsnit">
+          <div ref={tabs} className="flex gap-0.5 overflow-x-auto border-b border-slate-100 px-2 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist" aria-label="Afsnit">
             {sections.map((s, n) => (
               <button key={s.id} type="button" role="tab" data-tab={n} aria-selected={i === n} onClick={() => go(n)}
-                className={`shrink-0 rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors ${i === n ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"}`}>{s.title}</button>
+                className={`min-h-[34px] flex-1 shrink-0 whitespace-nowrap rounded-full px-2.5 text-[13px] font-semibold transition-colors ${i === n ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"}`}>{s.title}</button>
             ))}
           </div>
 
@@ -216,7 +217,7 @@ export function HomePanel(p: PanelProps) {
           </div>
 
           {err && <p className="mx-4 mb-2 rounded-xl bg-rose-50 px-3 py-2 text-[13px] text-rose-800">Noget data kunne ikke hentes. Prøv igen om lidt.</p>}
-          <div className="flex items-center gap-2 border-t border-slate-100 px-3 py-2.5">
+          <div className="flex items-center gap-2 border-t border-slate-100 px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))]">
             <button type="button" onClick={() => go(i - 1)} disabled={i === 0} aria-label="Forrige afsnit" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-200 text-slate-700 hover:border-slate-300 disabled:opacity-30"><ArrowUp size={19} /></button>
             <span className="w-12 shrink-0 text-center text-[13px] font-medium tabular-nums text-slate-400">{i + 1} / {sections.length}</span>
             <button type="button" onClick={() => go(i === last ? 0 : i + 1)} className="flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 text-[15px] font-semibold text-white hover:bg-emerald-500">
@@ -255,7 +256,7 @@ function SecHome(p: PanelProps & { d: Detail | null; img: string | null; expecte
         ))}
       </dl>
       <Follow home={home} saved={p.saved} onToggleSave={p.onToggleSave} onUpdate={p.onUpdate} />
-      {d?.listing.url && <a href={d.listing.url} target="_blank" rel="noopener" className="flex min-h-[40px] items-center justify-center gap-1.5 text-[14px] font-semibold text-emerald-700 hover:underline">Se annoncen hos mægleren <ExternalLink size={14} /></a>}
+      <HomeSource broker={d?.listing.broker ?? null} url={d?.listing.url ?? null} since={home.knownStart ? home.firstSeen : null} />
     </div>
   );
 }

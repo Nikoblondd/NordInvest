@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { geist } from "@/components/home/fonts";
 
 /*
@@ -15,6 +15,12 @@ export const metadata: Metadata = {
   alternates: { canonical: null },
 };
 
+// Edge to edge on phones (the map runs under the notch; controls keep clear of it with the safe-area insets).
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#ffffff" };
+
+// No rubber-band bounce or pull-to-refresh behind the map and the sheets; the sheet slides in from below.
+const CSS = `html,body{overscroll-behavior:none}[data-drag]{touch-action:none;user-select:none;-webkit-user-select:none}@keyframes bk-up{from{transform:translateY(100%)}to{transform:none}}@keyframes bk-fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}`;
+
 export default function BoligkrydsLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`${geist.variable} font-[family-name:var(--font-geist)]`}>{children}</div>;
+  return <div className={`${geist.variable} font-[family-name:var(--font-geist)]`}><style dangerouslySetInnerHTML={{ __html: CSS }} />{children}</div>;
 }

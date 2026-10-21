@@ -1,5 +1,6 @@
 import { kommuneOf } from "@/lib/postnumre";
 import { ZIP_NAME } from "@/lib/postnumre";
+import { brokerOf, isChain } from "@/lib/buyer/brokers";
 
 /*
  * Server only. The whole residential market for the home buyer's map: every
@@ -74,7 +75,7 @@ export type Basis = { level: "naer" | "postnummer" | "kommune" | "landet"; radiu
 type Row = {
   id: string; lat: number | null; lon: number | null; price: number | null; area: number | null; rooms: number | null;
   year_built: number | null; energy_label: string | null; type: string | null; zip: number | null; municipality: string | null;
-  address: string | null; first_seen: string | null; price_history: { d: string; price: number }[] | null;
+  address: string | null; first_seen: string | null; price_history: { d: string; price: number }[] | null; url: string | null;
 };
 
 const median = (s: number[]) => quantile(s, 0.5);
@@ -88,7 +89,7 @@ function quantile(sorted: number[], q: number) {
 
 async function fetchRows(): Promise<Row[] | null> {
   if (!URL_BASE() || !KEY()) return null;
-  const cols = "id,lat,lon,price,area,rooms,year_built,energy_label,type,zip,municipality,address,first_seen,price_history";
+  const cols = "id,lat,lon,price,area,rooms,year_built,energy_label,type,zip,municipality,address,first_seen,price_history,url";
   const headers = { apikey: KEY(), Authorization: `Bearer ${KEY()}` };
   const page = async (offset: number) => {
     const r = await fetch(`${URL_BASE()}/rest/v1/market_listings?market=eq.bolig&status=neq.gone&select=${cols}&order=id.asc&limit=1000&offset=${offset}`, { headers, next: { revalidate: 900 } }).catch(() => null);
@@ -105,7 +106,9 @@ async function fetchRows(): Promise<Row[] | null> {
 }
 
 type Group = { sorted: number[] };
-export type Market = { homes: BuyerHome[]; byId: Map<string, BuyerHome>; groups: Map<string, Group>; bandFactor: Map<string, number>; basis: Map<string, Basis>; builtAt: number; baseline: string };
+/** What the market looks like today, to show the buyer the data is live: who it comes from and what moved. */
+export type Pulse = { total: number; new24h: number; cut24h: number; brokers: { name: string; n: number }[]; otherBrokers: number; otherHomes: number };
+export type Market = { homes: BuyerHome[]; byId: Map<string, BuyerHome>; groups: Map<string, Group>; bandFactor: Map<string, number>; basis: Map<string, Basis>; builtAt: number; baseline: string; pulse: Pulse };
 
 let cache: { at: number; market: Market } | null = null;
 let inflight: Promise<Market | null> | null = null;
@@ -231,7 +234,32 @@ function build(rows: Row[]): Market {
       cutPct: Math.round(cutPct * 10) / 10, firstSeen, knownStart: Date.parse(firstSeen) - baseDay > 2 * 86400_000, suspect,
     };
   });
-  return { homes, byId: new Map(homes.map((h) => [h.id, h])), groups: sortedGroups, bandFactor, basis: basisById, builtAt: Date.now(), baseline };
+  return { homes, byId: new Map(homes.map((h) => [h.id, h])), groups: sortedGroups, bandFactor, basis: basisById, builtAt: Date.now(), baseline, pulse: pulseOf(ok, homes) };
+}
+
+function pulseOf(ok: Row[], homes: BuyerHome[]): Pulse {
+  const counts = new Map<string, number>();
+  for (const r of ok) { const b = brokerOf(r.url); if (b) counts.set(b, (counts.get(b) ?? 0) + 1); }
+  const all = Array.from(counts, ([name, n]) => ({ name, n })).sort((a, b) => b.n - a.n);
+  const brokers = all.filter((x) => isChain(x.name)).slice(0, 12);
+  const named = new Set(brokers.map((x) => x.name));
+  const rest = all.filter((x) => !named.has(x.name));
+  const day = Date.now() - 86400_000;
+  const since = new Date(day).toISOString().slice(0, 10);
+  let cut24h = 0;
+  for (const r of ok) {
+    const h = Array.isArray(r.price_history) ? r.price_history : [];
+    const last = h[h.length - 1], prev = h[h.length - 2];
+    if (last && prev && last.d >= since && Number(last.price) < Number(prev.price)) cut24h++;
+  }
+  return {
+    total: homes.length,
+    new24h: homes.filter((h) => h.knownStart && Date.parse(h.firstSeen) > day).length,
+    cut24h,
+    brokers,
+    otherBrokers: rest.length,
+    otherHomes: rest.reduce((a, x) => a + x.n, 0),
+  };
 }
 
 function expected(groups: Map<string, Group>, bandFactor: Map<string, number>, zip: number, kom: string, g: string, b: number): Basis {

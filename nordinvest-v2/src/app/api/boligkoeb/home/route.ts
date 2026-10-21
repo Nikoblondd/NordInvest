@@ -3,6 +3,7 @@ import { basisFor, getMarket, nearbySimilar } from "@/lib/buyer/market";
 import { plansNear, planKind } from "@/lib/buyer/plans";
 import { getDstAppreciationPct, getDstLatestYoY, landsdelOf } from "@/lib/dst";
 import { getMarketRates } from "@/lib/market-rates";
+import { brokerOf } from "@/lib/buyer/brokers";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -51,7 +52,7 @@ export async function GET(req: Request) {
   return NextResponse.json({
     ok: true,
     home: h,
-    listing: { image: (row?.image as string) ?? null, url: (row?.url as string) ?? null, history: Array.isArray(row?.price_history) ? row!.price_history : [] },
+    listing: { image: (row?.image as string) ?? null, url: (row?.url as string) ?? null, broker: brokerOf(row?.url as string | null), history: Array.isArray(row?.price_history) ? row!.price_history : [] },
     basis: basisFor(m, h),
     similar: nearbySimilar(m, h, 8),
     area,

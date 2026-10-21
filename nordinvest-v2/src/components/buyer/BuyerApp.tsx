@@ -9,6 +9,7 @@ import { BoligkrydsMark } from "./Brand";
 import { LoginBox, LoginSheet } from "./Login";
 import { kr, mio, pct, MailToggle, useImages, VerdictPill } from "./ui";
 import { Dashboard } from "./Dashboard";
+import { PulseLine, TrustSheet, usePulse } from "./Pulse";
 import { COLS } from "@/lib/buyer/cols";
 import type { BuyerHome } from "@/lib/buyer/market";
 import { compare, matches, TYPE_CHIPS } from "@/lib/buyer/filter";
@@ -69,6 +70,11 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
   const [greeting, setGreeting] = useState<{ fresh: BuyerHome[]; drops: { h: BuyerHome; from: number }[]; since: string } | null>(null);
   const [freshIds, setFreshIds] = useState<Set<string> | null>(null);
   const [tourStep, setTourStep] = useState<number | null>(null);
+  // Phone: a tapped dot shows a small card first; `detail` opens everything about the home over the map.
+  const [detail, setDetail] = useState(false);
+  const [snap, setSnap] = useState<Snap>("peek");
+  const [trust, setTrust] = useState(false);
+  const pulse = usePulse();
   const mapRef = useRef<MapHandle>(null);
   const isDesktop = useMedia("(min-width: 1024px)");
 
@@ -102,7 +108,7 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
     } else {
       setState({ ...EMPTY_STATE, ...(local ?? {}) });
     }
-    if (q.get("bolig")) setSelected(q.get("bolig"));
+    if (q.get("bolig")) { setSelected(q.get("bolig")); setDetail(true); }
     if (q.get("panel") === "indstillinger") setTab("overblik");
     if (q.get("velkommen")) setToast(`Du er logget ind${email ? ` som ${email}` : ""}. Dine boliger gemmes nu på din konto.`);
     if (q.toString()) history.replaceState(null, "", "/");
@@ -160,21 +166,34 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
     return [...list].sort(compare(filters.sort));
   }, [filtered, view, state?.view, filters.sort]);
   const goodInView = useMemo(() => inView.filter((h) => h.verdict === "godt").length, [inView]);
+  const newInView = useMemo(() => { const day = Date.now() - 86400_000; return inView.filter((h) => h.knownStart && Date.parse(h.firstSeen) > day).length; }, [inView]);
 
   const byId = useMemo(() => new Map((homes ?? []).map((h) => [h.id, h])), [homes]);
   const selectedHome = selected ? byId.get(selected) ?? null : null;
+  // The analysis that is open: on the computer the selected home, on the phone only once its card is opened.
+  const opened = isDesktop || detail ? selected : null;
   // Opening a home counts towards the free homes; after that the analysis asks for a (free) login.
   useEffect(() => {
-    if (!selected || signedIn || seen.includes(selected)) return;
+    if (!opened || signedIn || seen.includes(opened)) return;
     if (seen.length >= FREE_HOMES) return;
-    const next = [...seen, selected];
+    const next = [...seen, opened];
     setSeen(next); writeLocal(LOCAL_SEEN, next);
-  }, [selected, signedIn]); // eslint-disable-line react-hooks/exhaustive-deps
-  const locked = !!selected && !signedIn && seen.length >= FREE_HOMES && !seen.includes(selected);
+  }, [opened, signedIn]); // eslint-disable-line react-hooks/exhaustive-deps
+  const locked = !!opened && !signedIn && seen.length >= FREE_HOMES && !seen.includes(opened);
 
-  const select = useCallback((id: string | null) => { setSelected(id); }, []);
+  // Phone: the back button closes the open home instead of leaving the page.
+  useEffect(() => {
+    if (isDesktop || !detail) return;
+    history.pushState({ bkDetail: 1 }, "");
+    const pop = () => { setDetail(false); setSelected(null); };
+    addEventListener("popstate", pop);
+    return () => { removeEventListener("popstate", pop); if (history.state?.bkDetail) history.back(); };
+  }, [detail, isDesktop]);
+
+  const select = useCallback((id: string | null) => { setSelected(id); setDetail(false); }, []);
   const open = (id: string, fly = false) => {
     setSelected(id);
+    setDetail(true);
     const h = byId.get(id);
     if (fly && h) mapRef.current?.flyTo(h.lat, h.lon, Math.max(14, view?.zoom ?? 14));
   };
@@ -202,10 +221,10 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
   const activeCount = (filters.types.length ? 1 : 0) + (filters.priceMin != null || filters.priceMax != null ? 1 : 0) + (filters.areaMin != null ? 1 : 0) + (filters.roomsMin != null ? 1 : 0) + (filters.verdicts.length ? 1 : 0);
 
   const bottomNav = (onDashboard: boolean) => (
-    <nav aria-label="Boligkort" data-tour={onDashboard ? undefined : "nav"} className={`${onDashboard ? "fixed lg:hidden" : "absolute lg:bottom-4 lg:justify-end lg:p-0 lg:pr-4"} inset-x-0 bottom-0 z-30 flex justify-center p-3`}>
+    <nav aria-label="Boligkort" data-tour={onDashboard ? undefined : "nav"} className={`${onDashboard ? "fixed lg:hidden" : "fixed lg:absolute lg:bottom-4 lg:justify-end lg:p-0 lg:pr-4"} inset-x-0 bottom-0 ${tab === "gemte" ? "z-[55]" : "z-[45]"} flex justify-center px-3 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] lg:z-30`}>
       <div className="flex w-full max-w-md items-stretch justify-around rounded-[22px] bg-white/95 p-1.5 shadow-[0_8px_30px_rgba(15,23,42,0.18)] ring-1 ring-slate-200/70 backdrop-blur lg:w-auto lg:gap-1">
-        <NavBtn on={tab === "kort"} onClick={() => setTab("kort")} icon={<MapIcon size={20} />} label="Kort" />
-        {!isDesktop && <NavBtn on={tab === "liste"} onClick={() => setTab("liste")} icon={<List size={20} />} label="Liste" />}
+        <NavBtn on={tab === "kort" && (isDesktop || snap !== "full")} onClick={() => { setTab("kort"); setSnap("peek"); }} icon={<MapIcon size={20} />} label="Kort" />
+        {!isDesktop && <NavBtn on={tab === "kort" && snap === "full"} onClick={() => { setTab("kort"); setSelected(null); setDetail(false); setSnap("full"); }} icon={<List size={20} />} label="Liste" />}
         <NavBtn on={tab === "gemte"} onClick={() => setTab("gemte")} icon={<Heart size={20} />} label="Gemte" badge={state?.saved.length || undefined} />
         <NavBtn on={tab === "overblik"} onClick={() => setTab("overblik")} icon={<LayoutDashboard size={20} />} label="Overblik" />
       </div>
@@ -215,8 +234,8 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
 
   const panel = (h: BuyerHome) => (
     <HomePanel home={h} saved={savedOf(h.id)} household={state!.household} onHousehold={(hh) => setState((s) => (s ? { ...s, household: hh } : s))}
-      onToggleSave={() => toggleSave(h)} onUpdate={updateSaved} onClose={() => setSelected(null)} onSelect={(id) => open(id, true)}
-      onShowPlans={() => { setShowPlans(true); if (!isDesktop) setSelected(null); setTab("kort"); mapRef.current?.flyTo(h.lat, h.lon, 14); }}
+      onToggleSave={() => toggleSave(h)} onUpdate={updateSaved} onClose={() => { setSelected(null); setDetail(false); }} onSelect={(id) => open(id, true)}
+      onShowPlans={() => { setShowPlans(true); if (!isDesktop) { setDetail(false); setSnap("peek"); } setTab("kort"); mapRef.current?.flyTo(h.lat, h.lon, 14); }}
       kommuneName={h.kommune ? KOMMUNE_NAME.get(h.kommune) ?? null : null}
       locked={locked ? <LoginBox reason={`Du har set ${FREE_HOMES} boliger gratis. Log ind med din e-mail for at se resten. Det er også gratis, og du skal ikke bruge en adgangskode.`} /> : undefined} />
   );
@@ -233,65 +252,69 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
         {!homes && <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60 backdrop-blur-[2px]"><div className="flex items-center gap-2.5 rounded-full bg-white px-5 py-3 text-[15px] font-medium shadow-lg ring-1 ring-slate-200"><Loader2 size={18} className="animate-spin text-blue-600" /> Henter alle boliger til salg …</div></div>}
 
         {/* Top controls */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 p-3 sm:p-4">
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 px-3 pb-3 pt-[max(12px,env(safe-area-inset-top))] sm:px-4 sm:pb-4 sm:pt-4">
           <div className="flex items-start gap-2">
             <a href="/" className="pointer-events-auto hidden h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ring-slate-200/70 sm:flex" aria-label="Boligkryds">
               <BoligkrydsMark size={30} />
             </a>
             <div className="pointer-events-auto min-w-0 flex-1 sm:max-w-[400px]" data-tour="search">
-              <SearchBox homes={homes ?? []} onPlace={(pts, label) => { mapRef.current?.fitTo(pts); rememberArea(label, pts); }} onHome={(h) => open(h.id, true)} />
+              <SearchBox homes={homes ?? []} onPlace={(pts, label) => { setSnap("peek"); mapRef.current?.fitTo(pts); rememberArea(label, pts); }} onHome={(h) => open(h.id, true)} />
             </div>
-            <button type="button" data-tour="filters" onClick={() => setFilterOpen(true)} className={`pointer-events-auto flex h-12 shrink-0 items-center gap-2 rounded-full px-4 text-[15px] font-semibold shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ${activeCount ? "bg-slate-900 text-white ring-slate-900" : "bg-white text-slate-800 ring-slate-200/70"}`}>
+            <button type="button" data-tour="filters" onClick={() => setFilterOpen(true)} aria-label="Filtre" className={`pointer-events-auto flex h-12 shrink-0 items-center gap-2 rounded-full px-4 text-[15px] font-semibold shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ${activeCount ? "bg-slate-900 text-white ring-slate-900" : "bg-white text-slate-800 ring-slate-200/70"}`}>
               <SlidersHorizontal size={17} /> <span className="hidden sm:inline">Filtre</span>{activeCount > 0 && <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white px-1 text-[12px] text-slate-900">{activeCount}</span>}
             </button>
           </div>
-          <div className="pointer-events-auto -mx-3 mt-2 flex gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0">
+          <div className="pointer-events-auto -mx-3 mt-2 flex gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
             <Chip on={filters.verdicts.length === 1 && filters.verdicts[0] === "godt"} onClick={() => setFilters({ verdicts: filters.verdicts.length === 1 && filters.verdicts[0] === "godt" ? [] : ["godt"] })} dot={VERDICT_COLOR.godt}>Kun gode køb</Chip>
             <Chip on={filters.onlyCut} onClick={() => setFilters({ onlyCut: !filters.onlyCut })}>Sat ned i pris</Chip>
             <Chip on={filters.onlyNew} onClick={() => setFilters({ onlyNew: !filters.onlyNew })}>Nye denne uge</Chip>
             {TYPE_CHIPS.slice(0, 4).map((c) => <Chip key={c.id} on={filters.types.includes(c.id)} onClick={() => setFilters({ types: filters.types.includes(c.id) ? filters.types.filter((t) => t !== c.id) : [...filters.types, c.id] })}>{c.label}</Chip>)}
             <Chip on={showPlans} onClick={() => setShowPlans(!showPlans)} dot="#7c3aed">Byggeprojekter</Chip>
           </div>
-          {drawing && (
-            <div className="pointer-events-auto mt-2 inline-flex items-center gap-3 rounded-full bg-blue-600 py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-white shadow-lg">
-              Tegn en ring om området med musen eller fingeren
-              <button type="button" onClick={() => setDrawing(false)} className="rounded-full bg-white/20 px-3 py-1 text-[13px]">Annullér</button>
+          {/* Banners on the left, the map's own buttons on the right: one row, so they never overlap. */}
+          <div className="mt-2 flex items-start gap-2">
+            <div className="flex min-w-0 flex-1 flex-col items-start gap-2">
+              {drawing && (
+                <div className="pointer-events-auto inline-flex max-w-full items-center gap-3 rounded-full bg-blue-600 py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-white shadow-lg">
+                  <span className="min-w-0">{isDesktop ? "Tegn en ring om området med musen" : "Tegn en ring med fingeren"}</span>
+                  <button type="button" onClick={() => setDrawing(false)} className="min-h-[32px] shrink-0 rounded-full bg-white/20 px-3 text-[13px]">Annullér</button>
+                </div>
+              )}
+              {!drawing && filters.shape && (
+                <div className="pointer-events-auto inline-flex max-w-full items-center gap-1 rounded-full bg-white py-1.5 pl-3 pr-1.5 text-[14px] font-semibold text-blue-700 shadow-lg ring-1 ring-blue-200">
+                  <PenLine size={15} className="shrink-0" /> <span className="ml-1 min-w-0 truncate">{isDesktop ? "Viser kun dit tegnede område" : "Dit område"}</span>
+                  <button type="button" onClick={() => setDrawing(true)} className="min-h-[32px] shrink-0 rounded-full px-2 text-[13px] text-slate-600 hover:bg-slate-100">Tegn igen</button>
+                  <button type="button" onClick={() => setFilters({ shape: null })} aria-label="Fjern det tegnede område" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 hover:bg-blue-100"><X size={14} /></button>
+                </div>
+              )}
+              {freshIds && (
+                <div className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-blue-600 py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-white shadow-lg">
+                  Viser {freshIds.size} nye boliger <button type="button" onClick={() => setFreshIds(null)} className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20" aria-label="Vis alle boliger igen"><X size={14} /></button>
+                </div>
+              )}
             </div>
-          )}
-          {!drawing && filters.shape && (
-            <div className="pointer-events-auto mt-2 inline-flex items-center gap-2 rounded-full bg-white py-1.5 pl-3 pr-1.5 text-[14px] font-semibold text-blue-700 shadow-lg ring-1 ring-blue-200">
-              <PenLine size={15} /> Viser kun dit tegnede område
-              <button type="button" onClick={() => setDrawing(true)} className="rounded-full px-2 py-1 text-[13px] text-slate-600 hover:bg-slate-100">Tegn igen</button>
-              <button type="button" onClick={() => setFilters({ shape: null })} aria-label="Fjern det tegnede område" className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 hover:bg-blue-100"><X size={14} /></button>
-            </div>
-          )}
-          {freshIds && (
-            <div className="pointer-events-auto mt-2 inline-flex items-center gap-2 rounded-full bg-blue-600 py-1.5 pl-4 pr-1.5 text-[14px] font-semibold text-white shadow-lg">
-              Viser {freshIds.size} nye boliger <button type="button" onClick={() => setFreshIds(null)} className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20" aria-label="Vis alle boliger igen"><X size={14} /></button>
-            </div>
-          )}
-        </div>
-
-        {/* Right-side map buttons */}
-        <div className="absolute right-3 top-[132px] z-20 flex flex-col gap-2 sm:right-4">
-          <button type="button" onClick={() => { setSelected(null); setDrawing(!drawing); }} aria-pressed={drawing} title="Tegn et område" aria-label="Tegn et område på kortet"
-            className={`flex h-11 w-11 items-center justify-center rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ${drawing || filters.shape ? "bg-blue-600 text-white ring-blue-600" : "bg-white text-blue-600 ring-slate-200/70"}`}><PenLine size={19} /></button>
-          <MapButton label="Find mig" onClick={() => navigator.geolocation?.getCurrentPosition((p) => mapRef.current?.flyTo(p.coords.latitude, p.coords.longitude, 13.5), () => alert("Vi kunne ikke finde din placering."))}><LocateFixed size={19} /></MapButton>
-        </div>
-
-        {/* Count + legend */}
-        <div className="pointer-events-none absolute bottom-[92px] left-3 z-20 sm:left-4 lg:bottom-6">
-          <div className="pointer-events-auto rounded-2xl bg-white/95 px-4 py-2.5 shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ring-slate-200/70 backdrop-blur">
-            <p className="text-[14px] font-semibold tabular-nums text-slate-900">{homes ? `${inView.length.toLocaleString("da-DK")} boliger her` : "…"}{homes && goodInView > 0 && <span className="font-medium text-emerald-700"> · {goodInView.toLocaleString("da-DK")} gode køb</span>}</p>
-            <div className="mt-1 flex items-center gap-3 text-[12px] text-slate-600">
-              {(["godt", "middel", "dyrt"] as const).map((v) => <span key={v} className="flex items-center gap-1 whitespace-nowrap"><span className="h-2.5 w-2.5 rounded-full ring-2 ring-white" style={{ background: VERDICT_COLOR[v] }} />{v === "godt" ? "Godt køb" : v === "middel" ? "Middel" : "Dyr"}</span>)}
-              {showPlans && <span className="hidden items-center gap-1 whitespace-nowrap sm:flex"><span className="h-2.5 w-3 rounded-sm border border-dashed border-violet-600 bg-violet-200" />{plansState === "zoom" ? "Zoom ind: byggeprojekter" : plansState === "loading" ? "Henter …" : "Byggeprojekt"}</span>}
+            <div className="pointer-events-auto flex shrink-0 flex-col gap-2">
+              <button type="button" onClick={() => { setSelected(null); setDetail(false); setSnap("peek"); setDrawing(!drawing); }} aria-pressed={drawing} title="Tegn et område" aria-label="Tegn et område på kortet"
+                className={`flex h-11 w-11 items-center justify-center rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ${drawing || filters.shape ? "bg-blue-600 text-white ring-blue-600" : "bg-white text-blue-600 ring-slate-200/70"}`}><PenLine size={19} /></button>
+              <MapButton label="Find mig" onClick={() => navigator.geolocation?.getCurrentPosition((p) => mapRef.current?.flyTo(p.coords.latitude, p.coords.longitude, 13.5), () => setToast("Vi kunne ikke finde din placering. Tjek, at browseren må bruge den."))}><LocateFixed size={19} /></MapButton>
             </div>
           </div>
         </div>
 
+        {/* Computer: count, legend and how fresh the market is, on the map */}
+        <div className="pointer-events-none absolute bottom-6 left-4 z-20 hidden lg:block">
+          <div className="pointer-events-auto rounded-2xl bg-white/95 px-4 py-2.5 shadow-[0_4px_16px_rgba(15,23,42,0.14)] ring-1 ring-slate-200/70 backdrop-blur">
+            <p className="text-[14px] font-semibold tabular-nums text-slate-900">{homes ? boliger(inView.length, "her") : "…"}{homes && goodInView > 0 && <span className="font-medium text-emerald-700"> · {goodInView.toLocaleString("da-DK")} {goodInView === 1 ? "godt køb" : "gode køb"}</span>}</p>
+            <div className="mt-1 flex items-center gap-3 text-[12px] text-slate-600">
+              {(["godt", "middel", "dyrt"] as const).map((v) => <span key={v} className="flex items-center gap-1 whitespace-nowrap"><span className="h-2.5 w-2.5 rounded-full ring-2 ring-white" style={{ background: VERDICT_COLOR[v] }} />{v === "godt" ? "Godt køb" : v === "middel" ? "Middel" : "Dyr"}</span>)}
+              {showPlans && <span className="flex items-center gap-1 whitespace-nowrap"><span className="h-2.5 w-3 rounded-sm border border-dashed border-violet-600 bg-violet-200" />{plansState === "zoom" ? "Zoom ind: byggeprojekter" : plansState === "loading" ? "Henter …" : "Byggeprojekt"}</span>}
+            </div>
+            <PulseLine pulse={pulse} onOpen={() => setTrust(true)} tail={newInView > 0 ? ` · ${newInView} nye her i dag` : ""} className="mt-1.5 border-t border-slate-100 pt-1.5" />
+          </div>
+        </div>
+
         {/* Bottom navigation, floating like the map's own controls */}
-        {bottomNav(false)}
+        {!drawing && bottomNav(false)}
       </div>
 
       {/* Desktop side panel: the homes in view, or everything about the tapped home */}
@@ -304,23 +327,34 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
         </aside>
       )}
 
-      {/* Phone: list, and the open home, full screen */}
-      {!isDesktop && tab === "liste" && (
-        <Sheet onClose={() => setTab("kort")} title={`${inView.length.toLocaleString("da-DK")} boliger i kortudsnittet`}>
+      {/* Phone: the homes in view in a sheet you pull up from the bottom */}
+      {!isDesktop && tab === "kort" && !drawing && !(selectedHome && !detail) && (
+        <ListSheet snap={snap} onSnap={setSnap} header={
+          <>
+            <p className="text-[16px] font-semibold tabular-nums text-slate-900">{homes ? boliger(inView.length, "her") : "Henter boliger …"}{homes && goodInView > 0 && <span className="font-medium text-emerald-700"> · {goodInView.toLocaleString("da-DK")} {goodInView === 1 ? "godt køb" : "gode køb"}</span>}</p>
+            <div className="mt-1 flex items-center justify-between gap-3">
+              <PulseLine pulse={pulse} onOpen={() => setTrust(true)} tail={newInView > 0 ? ` · ${newInView} nye her` : ""} />
+              <span className="flex shrink-0 items-center gap-1.5" aria-label="Grøn er godt køb, gul er middel, rød er dyr">{(["godt", "middel", "dyrt"] as const).map((v) => <span key={v} className="h-2.5 w-2.5 rounded-full" style={{ background: VERDICT_COLOR[v] }} />)}</span>
+            </div>
+          </>
+        }>
           <ListPanel list={inView} shown={shown} more={() => setShown((n) => n + PAGE)} sort={filters.sort} onSort={(s) => setFilters({ sort: s })}
             selected={null} savedIds={savedIds} onOpen={(id) => open(id)} onSave={toggleSave} loading={!homes} bare />
-        </Sheet>
+        </ListSheet>
       )}
-      {/* Phone: the tapped home as a sheet over the map */}
-      {!isDesktop && selectedHome && state && (
-        <div className="fixed inset-x-0 bottom-0 top-10 z-[60] overflow-hidden rounded-t-3xl bg-white shadow-[0_-12px_40px_rgba(15,23,42,0.25)]">{panel(selectedHome)}</div>
+      {/* Phone: a tapped dot shows its card; tap or swipe it up for everything */}
+      {!isDesktop && tab === "kort" && selectedHome && !detail && state && (
+        <Preview key={selectedHome.id} h={selectedHome} saved={savedIds.has(selectedHome.id)} onOpen={() => setDetail(true)} onSave={() => toggleSave(selectedHome)} onClose={() => select(null)} />
+      )}
+      {!isDesktop && selectedHome && detail && state && (
+        <MobileDetail onClose={() => { setDetail(false); setSelected(null); }}>{panel(selectedHome)}</MobileDetail>
       )}
 
       {tab === "gemte" && state && (
         <Sheet onClose={() => setTab("kort")} title="Gemte boliger" wide>
-          <SavedView saved={state.saved} byId={byId} onOpen={(id) => { setTab("kort"); open(id, true); }} signedIn={signedIn} onLogin={() => setLogin("Gem boliger, få mails og del din liste.")}
+          <div className="pb-28 lg:pb-0"><SavedView saved={state.saved} byId={byId} onOpen={(id) => { setTab("kort"); open(id, true); }} signedIn={signedIn} onLogin={() => setLogin("Gem boliger, få mails og del din liste.")}
             onChange={(saved) => setState((s) => (s ? { ...s, saved } : s))} mail={state.mail} onMail={(mail) => setState((s) => (s ? { ...s, mail } : s))}
-            shareToken={state.shareToken ?? null} onShareToken={(t) => setState((s) => (s ? { ...s, shareToken: t } : s))} />
+            shareToken={state.shareToken ?? null} onShareToken={(t) => setState((s) => (s ? { ...s, shareToken: t } : s))} /></div>
         </Sheet>
       )}
       {tab === "overblik" && state && (
@@ -332,6 +366,7 @@ export function BuyerApp({ signedIn, email }: { signedIn: boolean; email: string
           onTour={() => { setTab("kort"); setTourStep(0); }} nav={bottomNav(true)} />
       )}
       {login && <LoginSheet reason={login} onClose={() => setLogin(null)} />}
+      {trust && <TrustSheet onClose={() => setTrust(false)} />}
       {toast && <div role="status" className="fixed left-1/2 top-4 z-[95] max-w-[calc(100%-24px)] -translate-x-1/2 rounded-full bg-slate-900 px-5 py-3 text-[14px] font-medium text-white shadow-lg">{toast}</div>}
 
       {filterOpen && <FilterSheet filters={filters} count={(f) => { const b = view?.bounds; return (homes ?? []).filter((h) => (!b || (h.lon >= b[0] && h.lat >= b[1] && h.lon <= b[2] && h.lat <= b[3])) && matches(h, f)).length; }} onApply={(f) => { setFilters(f); setFilterOpen(false); }} onClose={() => setFilterOpen(false)} />}
@@ -353,6 +388,9 @@ function useMedia(q: string) {
   useEffect(() => { const mm = window.matchMedia(q); setM(mm.matches); const on = () => setM(mm.matches); mm.addEventListener("change", on); return () => mm.removeEventListener("change", on); }, [q]);
   return m;
 }
+
+/** "1 bolig her", "2.340 boliger her". */
+const boliger = (n: number, tail = "") => `${n.toLocaleString("da-DK")} ${n === 1 ? "bolig" : "boliger"}${tail ? ` ${tail}` : ""}`;
 
 const Centered = ({ children }: { children: React.ReactNode }) => <div className="fixed inset-0 flex items-center justify-center bg-white p-6 text-center">{children}</div>;
 
@@ -386,7 +424,122 @@ function Sheet({ title, onClose, children, wide }: { title: string; onClose: () 
           <h2 className="text-[18px] font-semibold tracking-[-0.01em]">{title}</h2>
           <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100" aria-label="Luk"><X size={20} /></button>
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+/*
+ * Phone: the list lives in a sheet over the map. It peeks with the count and
+ * how fresh the market is; pull it halfway or all the way up (or tap Liste).
+ * The search bar stays visible above it.
+ */
+type Snap = "peek" | "half" | "full";
+const SHEET_TOP = 70;
+const PEEK = 160;
+
+function ListSheet({ snap, onSnap, header, children }: { snap: Snap; onSnap: (s: Snap) => void; header: React.ReactNode; children: React.ReactNode }) {
+  const [vh, setVh] = useState(800);
+  useEffect(() => { const on = () => setVh(window.innerHeight); on(); addEventListener("resize", on); return () => removeEventListener("resize", on); }, []);
+  const H = vh - SHEET_TOP;
+  const pos: Record<Snap, number> = { full: 0, half: Math.max(0, Math.round(H - vh * 0.55)), peek: H - PEEK };
+  const [drag, setDrag] = useState<number | null>(null);
+  const g = useRef<{ y: number; base: number; t: number; moved: boolean } | null>(null);
+  const list = useRef<HTMLDivElement>(null);
+  // Leaving the full list scrolls it back to the top, so it opens at the best homes next time.
+  useEffect(() => { if (snap === "peek") list.current?.scrollTo({ top: 0 }); }, [snap]);
+
+  const settle = (cur: number, v: number) => {
+    const order: Snap[] = ["full", "half", "peek"];
+    if (Math.abs(v) > 0.45) { // a flick goes one step in its direction
+      const i = order.indexOf(snap) + (v > 0 ? 1 : -1);
+      return order[Math.max(0, Math.min(2, i))];
+    }
+    return order.reduce((a, b) => (Math.abs(pos[b] - cur) < Math.abs(pos[a] - cur) ? b : a));
+  };
+  const handlers = {
+    onPointerDown: (e: React.PointerEvent) => {
+      if ((e.target as HTMLElement).closest("button,a,select,input")) return;
+      g.current = { y: e.clientY, base: pos[snap], t: Date.now(), moved: false };
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    },
+    onPointerMove: (e: React.PointerEvent) => {
+      const s = g.current; if (!s) return;
+      const dy = e.clientY - s.y;
+      if (Math.abs(dy) > 6) s.moved = true;
+      if (s.moved) setDrag(Math.max(0, Math.min(pos.peek + 30, s.base + dy)));
+    },
+    onPointerUp: (e: React.PointerEvent) => {
+      const s = g.current; g.current = null;
+      if (!s) return;
+      setDrag(null);
+      if (!s.moved) { onSnap(snap === "peek" ? "half" : "peek"); return; }
+      const dy = e.clientY - s.y;
+      onSnap(settle(s.base + dy, dy / Math.max(1, Date.now() - s.t)));
+    },
+    onPointerCancel: () => { g.current = null; setDrag(null); },
+  };
+  const y = drag ?? pos[snap];
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 flex flex-col rounded-t-[26px] bg-white shadow-[0_-10px_40px_rgba(15,23,42,0.18)]"
+      style={{ height: H, transform: `translate3d(0, ${y}px, 0)`, transition: drag == null ? "transform .38s cubic-bezier(.22,1,.36,1)" : "none" }}>
+      <div {...handlers} className="shrink-0 cursor-grab touch-none select-none px-5 pb-3 pt-2.5" role="button" aria-label={snap === "peek" ? "Vis listen" : "Skjul listen"} tabIndex={0}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSnap(snap === "peek" ? "half" : "peek"); } }}>
+        <span className="mx-auto mb-2 block h-1.5 w-10 rounded-full bg-slate-300" />
+        {header}
+      </div>
+      <div ref={list} className={`min-h-0 flex-1 overscroll-contain border-t border-slate-100 ${snap === "peek" ? "overflow-hidden" : "overflow-y-auto"}`}
+        style={{ paddingBottom: snap === "half" ? pos.half : 0 }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* Phone: the card for a tapped dot. Tap it or swipe it up to open the home; swipe down to close. */
+function Preview({ h, saved, onOpen, onSave, onClose }: { h: BuyerHome; saved: boolean; onOpen: () => void; onSave: () => void; onClose: () => void }) {
+  const y0 = useRef(0);
+  const [dy, setDy] = useState(0);
+  return (
+    <div className="fixed inset-x-3 bottom-[calc(90px+env(safe-area-inset-bottom))] z-40 animate-[bk-fade_.25s_ease-out]"
+      style={{ transform: dy ? `translateY(${dy}px)` : undefined, transition: dy ? "none" : "transform .2s" }}
+      onTouchStart={(e) => { y0.current = e.touches[0].clientY; }}
+      onTouchMove={(e) => setDy(Math.max(-40, Math.min(120, e.touches[0].clientY - y0.current)))}
+      onTouchEnd={(e) => { const d = e.changedTouches[0].clientY - y0.current; setDy(0); if (d < -40) onOpen(); else if (d > 60) onClose(); }}>
+      <HomeCard h={h} saved={saved} onOpen={onOpen} onSave={onSave} onClose={onClose} raised />
+      <button type="button" onClick={onOpen} className="mt-2 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-emerald-600 text-[15px] font-semibold text-white shadow-[0_8px_24px_rgba(5,150,105,0.35)]">Se hele boligen</button>
+    </div>
+  );
+}
+
+/* Phone: everything about the home, slid up over the map. Drag the top down (or use back) to close. */
+function MobileDetail({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
+  const [dy, setDy] = useState(0);
+  const [closing, setClosing] = useState(false);
+  const g = useRef<{ y: number; t: number } | null>(null);
+  const close = () => { setClosing(true); setTimeout(onClose, 220); };
+  return (
+    <div className="fixed inset-0 z-[60]">
+      <div className={`absolute inset-0 bg-slate-900/30 transition-opacity duration-200 ${closing ? "opacity-0" : ""}`} onClick={close} />
+      <div className="absolute inset-x-0 bottom-0 top-[max(16px,env(safe-area-inset-top))] flex flex-col overflow-hidden rounded-t-[26px] bg-white shadow-[0_-12px_40px_rgba(15,23,42,0.25)] animate-[bk-up_.34s_cubic-bezier(.22,1,.36,1)]"
+        style={{ transform: closing ? "translateY(100%)" : dy ? `translateY(${dy}px)` : undefined, transition: g.current ? "none" : "transform .22s ease-out" }}
+        onPointerDown={(e) => {
+          const t = e.target as HTMLElement;
+          if (!t.closest("[data-drag]") || t.closest("button,a,input,textarea,select")) return;
+          g.current = { y: e.clientY, t: Date.now() };
+          (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        }}
+        onPointerMove={(e) => { if (g.current) setDy(Math.max(0, e.clientY - g.current.y)); }}
+        onPointerUp={(e) => {
+          const s = g.current; g.current = null;
+          if (!s) return;
+          const d = e.clientY - s.y, v = d / Math.max(1, Date.now() - s.t);
+          if (d > 110 || (d > 30 && v > 0.6)) close(); else setDy(0);
+        }}
+        onPointerCancel={() => { g.current = null; setDy(0); }}>
+        <div data-drag className="flex shrink-0 touch-none justify-center pb-0.5 pt-2"><span className="h-1.5 w-10 rounded-full bg-slate-300" /></div>
+        <div className="min-h-0 flex-1">{children}</div>
       </div>
     </div>
   );
@@ -452,7 +605,7 @@ function ListPanel({ list, shown, more, sort, onSort, selected, savedIds, onOpen
   return (
     <div className={`flex min-h-0 flex-col ${bare ? "" : "h-full"}`}>
       <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3">
-        {!bare && <p className="text-[15px] font-semibold tabular-nums text-slate-900">{loading ? "Henter boliger …" : `${list.length.toLocaleString("da-DK")} boliger i kortudsnittet`}</p>}
+        {!bare && <p className="text-[15px] font-semibold tabular-nums text-slate-900">{loading ? "Henter boliger …" : boliger(list.length, "i kortudsnittet")}</p>}
         <label className={`relative flex items-center ${bare ? "w-full" : ""}`}>
           <span className="sr-only">Sortér efter</span>
           <select value={sort} onChange={(e) => onSort(e.target.value as Filters["sort"])} className="h-10 w-full appearance-none rounded-full border border-slate-200 bg-white pl-4 pr-9 text-[14px] font-semibold text-slate-800 focus:border-blue-500 focus:outline-none">
@@ -543,9 +696,9 @@ function FilterSheet({ filters, count, onApply, onClose }: { filters: Filters; c
           <button type="button" aria-pressed={f.onlyNew} onClick={() => setF({ ...f, onlyNew: !f.onlyNew })} className={pill(f.onlyNew)}>Nye denne uge</button>
         </div></div>
       </div>
-      <div className="sticky bottom-0 flex items-center gap-3 border-t border-slate-100 bg-white px-5 py-3">
+      <div className="sticky bottom-0 flex items-center gap-3 border-t border-slate-100 bg-white px-5 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
         <button type="button" onClick={() => setF({ ...EMPTY_FILTERS, sort: f.sort })} className="min-h-[48px] px-2 text-[15px] font-semibold text-slate-600 underline-offset-2 hover:underline">Nulstil</button>
-        <button type="button" onClick={() => onApply(f)} className="min-h-[48px] flex-1 rounded-full bg-blue-600 text-[16px] font-semibold text-white hover:bg-blue-500">Vis {n.toLocaleString("da-DK")} boliger her</button>
+        <button type="button" onClick={() => onApply(f)} className="min-h-[48px] flex-1 rounded-full bg-blue-600 text-[16px] font-semibold text-white hover:bg-blue-500">Vis {boliger(n, "her")}</button>
       </div>
     </Sheet>
   );
@@ -695,7 +848,7 @@ function ShareBox({ token, count, onToken }: { token: string | null; count: numb
   };
   const send = async (link: string) => {
     try {
-      if (navigator.share) await navigator.share({ title: "Mine boliger på Boligkryds", text: `Se de ${count} boliger, jeg kigger på`, url: link });
+      if (navigator.share) await navigator.share({ title: "Mine boliger på Boligkryds", text: count === 1 ? "Se den bolig, jeg kigger på" : `Se de ${count} boliger, jeg kigger på`, url: link });
       else { await navigator.clipboard.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 2500); }
     } catch { /* cancelled */ }
   };
@@ -703,7 +856,7 @@ function ShareBox({ token, count, onToken }: { token: string | null; count: numb
   return (
     <div className="rounded-2xl bg-emerald-50 p-4 ring-1 ring-emerald-100">
       <p className="text-[15px] font-semibold text-emerald-950">Del listen med familien</p>
-      <p className="mt-0.5 text-[14px] text-emerald-900/80">De ser dine {count} boliger og de steder, du har søgt. Listen opdaterer sig selv.</p>
+      <p className="mt-0.5 text-[14px] text-emerald-900/80">De ser {count === 1 ? "din bolig" : `dine ${count} boliger`} og de steder, du har søgt. Listen opdaterer sig selv.</p>
       {token ? (
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <button type="button" onClick={() => send(url)} className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-emerald-600 px-4 text-[14px] font-semibold text-white">{copied ? <><Check size={16} /> Link kopieret</> : <><Share2 size={16} /> Del linket</>}</button>
