@@ -132,18 +132,7 @@ export async function readInvestmentDeals(opts: {
   if (sf) q.push(sf);
   const rows = await queryAll(q.join("&"), opts.limit ?? 3000);
   if (!rows) return null;
-  return rows.map(toInvestment);
-}
-
-/** One investment listing by its id (e.g. "ejendomstorvet:123"), or null. */
-export async function readInvestmentListing(id: string): Promise<InvestmentListing | null> {
-  if (!/^[\w:.-]{3,80}$/.test(id)) return null;
-  const rows = await queryAll(`market=eq.investering&id=eq.${encodeURIComponent(id)}&select=*`, 1);
-  return rows?.[0] ? toInvestment(rows[0]) : null;
-}
-
-function toInvestment(r: any): InvestmentListing {
-  return {
+  return rows.map((r) => ({
     id: r.id,
     source: "ejendomstorvet.dk",
     url: r.url ?? "",
@@ -164,5 +153,5 @@ function toInvestment(r: any): InvestmentListing {
     lon: num(r.lon),
     municipality: r.municipality ?? null,
     firstSeen: r.first_seen ?? null,
-  };
+  }));
 }
