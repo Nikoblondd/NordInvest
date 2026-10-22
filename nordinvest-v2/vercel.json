@@ -35,14 +35,6 @@
     {
       "path": "/api/agents/cron",
       "schedule": "3 * * * *"
-    },
-    {
-      "path": "/api/boligkoeb/mail",
-      "schedule": "30 6 * * *"
-    },
-    {
-      "path": "/api/boligkoeb/news/warm",
-      "schedule": "20 * * * *"
     }
   ]
 }
