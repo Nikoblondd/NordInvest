@@ -117,6 +117,12 @@ export async function readBoligDeals(opts: {
 }
 
 // ── investment / commercial ──────────────────────────────────────────────────
+/** How many investment and commercial properties are for sale right now (the agent's live count). */
+export async function countInvestments(): Promise<number | null> {
+  const r = await queryPage("market=eq.investering&status=neq.gone&select=id&limit=1", true);
+  return r?.total ?? null;
+}
+
 export async function readInvestmentDeals(opts: {
   municipalities?: string[];
   region?: string;

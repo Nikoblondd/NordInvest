@@ -12,7 +12,9 @@ import { Walkthrough } from "@/components/landing/Walkthrough";
 import { QuickTest } from "@/components/landing/QuickTest";
 import { Faq } from "@/components/landing/Faq";
 import { CountUp, Reveal } from "@/components/landing/motion";
+import { unstable_cache } from "next/cache";
 import { getDealSnapshot } from "@/lib/deals-snapshot";
+import { countInvestments } from "@/lib/portals/marketdb";
 import { site } from "@/lib/site";
 import { HaveAccount } from "@/components/auth/HaveAccount";
 
@@ -61,8 +63,11 @@ const FAQ = [
   { q: "Jeg har allerede en konto. Hvad nu?", a: "Du logger ind som før. Dine gemte boliger og analyser er der stadig." },
 ];
 
+// The number of investment and commercial properties for sale, straight from the market data (refreshed every 15 min).
+const investmentCount = unstable_cache(countInvestments, ["investment-count"], { revalidate: 900 });
+
 export default async function Home() {
-  const snap = await getDealSnapshot(null, 4).catch(() => null);
+  const [snap, investments] = await Promise.all([getDealSnapshot(null, 4).catch(() => null), investmentCount().catch(() => null)]);
 
   return (
     <div className={`${geist.variable} min-h-screen bg-white font-[family-name:var(--font-geist)] text-slate-900 antialiased`}>
@@ -216,7 +221,7 @@ export default async function Home() {
               {[
                 [snap.scanned, "boliger til salg regnet igennem i dag"],
                 [snap.positive, "af dem betaler sig selv med 20 % udbetaling og 5 % rente"],
-                [snap.investmentsScanned, "investerings- og erhvervsejendomme regnet med"],
+                [investments ?? snap.investmentsScanned, "investerings- og erhvervsejendomme til salg regnet med"],
               ].map(([v, l], i) => (
                 <Reveal key={l as string} delay={i * 120} y={16} className="bg-white p-6 sm:p-8">
                   <p className="text-[40px] font-semibold leading-none tracking-[-0.04em] text-[#0b1b33] sm:text-[52px]"><CountUp value={v as number} duration={1700 + i * 200} /></p>
