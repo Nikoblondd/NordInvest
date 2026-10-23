@@ -24,14 +24,13 @@ const AUTH_PREFIXES = [
  * Boligkryds lives on its own host (boligkryds.nordinvest.io, and
  * boligkryds.localhost in development). Every page there is served from
  * /boligkryds/* in this app. On NordInvest's own host those pages don't
- * exist; old links to the buyer pages go to Boligkryds.
+ * exist. Boligkryds is a separate product on its own domain (boligkryds.dk)
+ * with no link from NordInvest, so old links to the buyer pages go to
+ * NordInvest's front page.
  */
 const BK_PREFIX = "/boligkryds";
 const isBoligkrydsHost = (host: string | null) => !!host && host.toLowerCase().startsWith("boligkryds.");
 const OLD_BUYER_PATHS: Record<string, string> = { "/boligkoeb": "/", "/boligkoeber": "/", "/hvad-kan-jeg-laane": "/hvad-kan-jeg-laane" };
-function boligkrydsOrigin(host: string): string {
-  return host.includes("localhost") ? `http://boligkryds.${host.replace(/^www\./, "")}` : "https://boligkryds.nordinvest.io";
-}
 
 function needsAuth(pathname: string): boolean {
   return AUTH_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
@@ -51,8 +50,7 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const bk = isBoligkrydsHost(host);
   if (!bk && host) {
-    const old = OLD_BUYER_PATHS[path] ?? (path === BK_PREFIX || path.startsWith(`${BK_PREFIX}/`) ? path.slice(BK_PREFIX.length) || "/" : null);
-    if (old) return NextResponse.redirect(new URL(`${old}${request.nextUrl.search}`, boligkrydsOrigin(host)), 308);
+    if (OLD_BUYER_PATHS[path] || path === BK_PREFIX || path.startsWith(`${BK_PREFIX}/`)) return NextResponse.redirect(new URL("/", request.url), 308);
   }
 
   // Skip Supabase entirely for anonymous public pages — landing, blog, city
