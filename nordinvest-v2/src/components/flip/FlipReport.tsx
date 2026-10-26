@@ -5,7 +5,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Check, ChevronDown, Copy, ExternalLink, FileDown, Info, Loader2, ScanSearch, ShieldAlert, ShoppingCart } from "lucide-react";
+import { ArrowUpRight, Bookmark, Check, ChevronDown, Copy, ExternalLink, FileDown, Info, Loader2, ScanSearch, ShieldAlert, ShoppingCart } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { EMPTY_MAPPE, type Mappe } from "@/lib/mappe/checklist";
 import { clsx } from "@/lib/clsx";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { FlipSheet } from "@/components/flip/FlipSheet";
@@ -45,17 +47,18 @@ export function FlipReport() {
   const router = useRouter();
   const url = sp.get("url") ?? "";
   const seed = useMemo(() => {
-    try { return JSON.parse(atob(sp.get("a") ?? "")) as FlipAnswers & { type?: Property["type"] }; } catch { return null; }
+    try { return JSON.parse(atob(sp.get("a") ?? "")) as FlipAnswers & { type?: Property["type"]; arv?: number; price?: number; plan?: Plan }; } catch { return null; }
   }, [sp]);
 
   const [listing, setListing] = useState<Listing | null>(null);
   const [market, setMarket] = useState<FlipMarket | null>(null);
   const [answers, setAnswers] = useState<FlipAnswers>({ ...DEFAULT_ANSWERS, ...(seed ?? {}) });
   const type: Property["type"] = seed?.type ?? "villa";
-  const [arv, setArv] = useState<number | null>(null);
-  const [arvTouched, setArvTouched] = useState(false);
-  const [price, setPrice] = useState<number | null>(null);
-  const [plan, setPlan] = useState<Plan>(() => defaultPlan(seed?.level ?? "medium"));
+  // A saved flip comes back with its own sale value, price and plan.
+  const [arv, setArv] = useState<number | null>(seed?.arv ?? null);
+  const [arvTouched, setArvTouched] = useState(!!seed?.arv);
+  const [price, setPrice] = useState<number | null>(seed?.price ?? null);
+  const [plan, setPlan] = useState<Plan>(() => seed?.plan ?? defaultPlan(seed?.level ?? "medium"));
   const [planFromAi, setPlanFromAi] = useState(false);
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [ai, setAi] = useState<Ai>({ status: "idle" });
@@ -63,6 +66,7 @@ export function FlipReport() {
   const [gate, setGate] = useState<"none" | "signup" | "paywall">("none");
   const [freeMax, setFreeMax] = useState(3);
   const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [exporting, setExporting] = useState(false);
   const [upgrade, setUpgrade] = useState(false);
 
@@ -110,11 +114,10 @@ export function FlipReport() {
         if (!d?.ok) { setAi({ status: d?.reason === "no_images" || d?.reason === "not_configured" ? "none" : "error" }); return; }
         const c = d.condition as Condition;
         setAi({ status: "done", condition: c, images: d.imagesUsed });
-        setPlan(planFromCondition(c.elements, answers.level));
-        setPlanFromAi(true);
+        if (!seed?.plan) { setPlan(planFromCondition(c.elements, answers.level)); setPlanFromAi(true); }
       })
       .catch(() => setAi({ status: "error" }));
-  }, [listing, answers.level]);
+  }, [listing, answers.level]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const property = useMemo<Property | null>(
     () => (listing?.area && (price ?? listing.price) ? { price: price ?? listing.price!, area: listing.area, rooms: listing.rooms, yearBuilt: listing.yearBuilt, zip: listing.zip ?? "8000", monthlyExpenses: listing.monthlyExpenses, type } : null),
@@ -352,6 +355,24 @@ export function FlipReport() {
       assumptions: [market.ok && market.q3Renovated ? `Salgspris +${fmtPct(Math.round(upPct * 10) / 10)}: øverste fjerdedel af renoverede boliger, højst +10 %` : "Salgspris +5 % (skøn)", "Renovering og tid som planlagt"] },
   ];
   const setPlanEl = (e: Element, a: Action) => { setPlan((p) => ({ ...p, [e]: a })); captureEvent("flip_plan_edit", { element: e, action: a }); };
+  // Save the flip as a property under Ejendomme, with everything needed to open it again as it was.
+  const saveFlip = async () => {
+    const supabase = createClient();
+    if (!supabase) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setGate("signup"); return; }
+    setSaved("saving");
+    const a = btoa(JSON.stringify({ ...answers, type, arv, price: property.price, plan }));
+    const link = `/app/analyser/flip?url=${encodeURIComponent(url)}&a=${encodeURIComponent(a)}`;
+    const mappe: Mappe = { ...EMPTY_MAPPE, stage: "screening", log: [{ at: new Date().toISOString(), text: "Gemt fra flip-analysen", kind: "oprettet" }] };
+    const { error } = await supabase.from("analyses").insert({
+      user_id: user.id, property_url: listing.address ?? url, strategy: "value_add", investment_score: flipScore(result.margin), verdict: "flip", saved_to_portfolio: true,
+      property_data: { address: listing.address ?? undefined, price: property.price, area: listing.area ?? undefined, rooms: listing.rooms ?? undefined, zip: listing.zip ?? undefined, image: listing.images[0] ?? undefined, listingUrl: url || undefined, strategy: "value_add", flip: { link, arv, profit: Math.round(result.profit), margin: result.margin }, mappe },
+      analysis_result: { profit: Math.round(result.profit), margin: result.margin, arv },
+    });
+    setSaved(error ? "error" : "saved");
+    captureEvent("flip_saved", { ok: !error });
+  };
   const share = async () => {
     try { await navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* ignore */ }
   };
@@ -371,6 +392,13 @@ export function FlipReport() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-medium text-blue-300">{answers.strategy === "live_flip" ? "Bo og flip" : "Flip"} · {listing.address ?? "Boligen"}</p>
             <div className="no-print flex gap-2">
+              {saved === "saved" ? (
+                <Link href="/app/ejendomme" className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3.5 py-2 text-[13px] font-semibold text-emerald-200 ring-1 ring-inset ring-emerald-400/30 hover:bg-emerald-500/30"><Check size={14} /> Gemt under Ejendomme</Link>
+              ) : (
+                <button type="button" onClick={saveFlip} disabled={saved === "saving"} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-2 text-[13px] font-semibold text-white ring-1 ring-inset ring-white/15 hover:bg-white/15 disabled:opacity-60">
+                  {saved === "saving" ? <Loader2 size={14} className="animate-spin" /> : <Bookmark size={14} />} {saved === "error" ? "Prøv igen" : "Gem"}
+                </button>
+              )}
               <button type="button" onClick={share} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-2 text-[13px] font-semibold text-white ring-1 ring-inset ring-white/15 hover:bg-white/15">
                 {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Link kopieret" : "Del"}
               </button>

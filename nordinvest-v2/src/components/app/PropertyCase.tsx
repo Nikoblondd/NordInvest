@@ -65,6 +65,9 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
   const ar = row.analysis_result ?? {};
   const image = typeof pd.image === "string" ? pd.image : null;
   const listing = typeof pd.listingUrl === "string" ? pd.listingUrl : null;
+  // A saved flip opens the flip analysis as it was saved; everything else the cash-flow analysis.
+  const flipLink = (pd.flip as { link?: unknown } | undefined)?.link;
+  const analysisHref = typeof flipLink === "string" ? flipLink : `/app/analyser?saved=${row.id}`;
 
   // Debounced save, always built on the newest case (a document review can
   // finish a minute later and must not undo what was typed meanwhile).
@@ -157,7 +160,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
           <StageSelect value={m.stage} onChange={setStage} />
           <button type="button" onClick={() => setEvent({ rowId: row.id, kind: "fremvisning" })} className={btn.secondary}><CalendarPlus size={15} /> Ny aftale</button>
           <button type="button" onClick={() => setOfferEdit({ offer: null })} className={btn.secondary}><Gavel size={15} /> Registrér bud</button>
-          <Link href={`/app/analyser?saved=${row.id}`} className={btn.secondary}><Calculator size={15} /> Analysen</Link>
+          <Link href={analysisHref} className={btn.secondary}><Calculator size={15} /> Analysen</Link>
           {listing && <a href={listing} target="_blank" rel="noopener noreferrer" className={btn.secondary}><ExternalLink size={15} /> Annoncen</a>}
           <span className="ml-1 flex min-w-[70px] items-center gap-1.5 text-[13px] text-slate-500" aria-live="polite">
             {saving === "saving" && <><Loader2 size={13} className="animate-spin" /> Gemmer</>}
@@ -221,7 +224,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
         {tab === "overblik" && (
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
             <div className="space-y-5">
-              <Card title="Tallene" action={<Link href={`/app/analyser?saved=${row.id}`} className="inline-flex items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">Åbn analysen <ArrowRight size={14} /></Link>}>
+              <Card title="Tallene" action={<Link href={analysisHref} className="inline-flex items-center gap-1 text-[14px] font-semibold text-blue-700 hover:underline">Åbn analysen <ArrowRight size={14} /></Link>}>
                 {ar.cashFlow == null && ar.capRate == null ? (
                   <p className="text-[15px] text-slate-500">Ingen analyse endnu. Åbn analysen for at beregne ejendommen.</p>
                 ) : (
@@ -380,7 +383,7 @@ export function PropertyCase({ row, initialTab }: { row: MappeRow; initialTab?: 
                   <span className="text-[13px] text-slate-500">kr.</span>
                 </div>
                 {m.maxBid && price ? <p className="mt-2 text-[13px] text-slate-500">{num(((m.maxBid - price) / price) * 100)} % fra udbudsprisen</p> : null}
-                <Link href={`/app/analyser?saved=${row.id}`} className="mt-3 inline-flex min-h-[40px] items-center gap-1.5 text-[14px] font-semibold text-blue-700 hover:underline"><Calculator size={15} /> Beregn dit maksimale bud i analysen</Link>
+                <Link href={analysisHref} className="mt-3 inline-flex min-h-[40px] items-center gap-1.5 text-[14px] font-semibold text-blue-700 hover:underline"><Calculator size={15} /> Beregn dit maksimale bud i analysen</Link>
               </Card>
               <Card title="Før du byder">
                 <ul className="space-y-2.5 text-[15px] text-slate-700">
