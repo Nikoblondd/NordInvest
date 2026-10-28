@@ -171,3 +171,10 @@ async function build(municipality: string | null, topN: number): Promise<DealSna
 }
 
 export const getDealSnapshot = unstable_cache(build, ["deal-snapshot-v4"], { revalidate: 21600 });
+
+/** Every helårsbolig in a kommune as the Deal-motor counts it (same rent, assumptions and plausibility filter as the kommune pages). */
+export async function analyzedHomes(municipality: string): Promise<AnalyzedDeal[]> {
+  const homes = await readHomes(municipality);
+  return homes.map((l) => analyzeDeal(l, BOLIG)).filter((d): d is AnalyzedDeal => d !== null && plausibilityIssue(d) === null);
+}
+
